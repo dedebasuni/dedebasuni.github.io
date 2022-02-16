@@ -1,0 +1,30 @@
+@font-face {
+  font-family: 'Rajdhani';
+  font-style: normal;
+  font-weight: 300;
+  src: local('Rajdhani Light'), local('Rajdhani-Light'), url(fontcss/s/rajdhani/v9/LDI2apCSOBg7S-QT7pasEfOreeE.woff) format('woff');
+}
+@font-face {
+  font-family: 'Rajdhani';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Rajdhani Regular'), local('Rajdhani-Regular'), url(fontcss/s/rajdhani/v9/LDIxapCSOBg7S-QT7p4HM-A.woff) format('woff');
+}
+@font-face {
+  font-family: 'Rajdhani';
+  font-style: normal;
+  font-weight: 500;
+  src: local('Rajdhani Medium'), local('Rajdhani-Medium'), url(fontcss/s/rajdhani/v9/LDI2apCSOBg7S-QT7pb0EPOreeE.woff) format('woff');
+}
+@font-face {
+  font-family: 'Rajdhani';
+  font-style: normal;
+  font-weight: 600;
+  src: local('Rajdhani SemiBold'), local('Rajdhani-SemiBold'), url(fontcss/s/rajdhani/v9/LDI2apCSOBg7S-QT7pbYF_OreeE.woff) format('woff');
+}
+@font-face {
+  font-family: 'Rajdhani';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Rajdhani Bold'), local('Rajdhani-Bold'), url(fontcss/s/rajdhani/v9/LDI2apCSOBg7S-QT7pa8FvOreeE.woff) format('woff');
+}

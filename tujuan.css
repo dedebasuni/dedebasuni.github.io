@@ -1,0 +1,97 @@
+body{
+	background-color: #007cad;
+	margin: 0px;
+}
+.header{
+	
+	width:auto;
+	height:auto;
+	padding: 30px;
+	background:#014661;
+	font-family:arial;
+	color:white;
+	font-size: 17pt;
+
+}	
+.header img{
+	width: 50px;
+	position: absolute;
+	left: 40px;
+	top: 20px;
+	cursor: pointer;
+}
+.header img:hover{
+	transform: scale(1.2);
+}
+.konten{
+	margin-left: 3%;
+	margin-top: 20px;
+	width: 90%;
+	height: auto;
+	text-align: justify;
+	background-color: white;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12pt;
+	padding: 20px;
+	border-radius: 10px;
+	line-height: 1.5;
+}
+
+/*css3 design scrollbar*/
+::-webkit-scrollbar {
+    width: 10px;
+}
+ 
+::-webkit-scrollbar-track {     
+    background: #257C9F;    
+}
+ 
+::-webkit-scrollbar-thumb {
+    background:white ;
+	border-radius:10px;
+}
+.nav{
+	display: none;
+}
+.menu{
+	display: none;
+}
+.nav{
+	display: none;
+}
+
+@media screen and (max-width:760px){
+
+	.header{
+	
+		width:auto;
+		height:auto;
+		padding: 30px;
+		background:#014661;
+		font-family:arial;
+		color:white;
+		font-size: 14pt;
+		margin: 0px;
+	
+	}
+	.header img{
+		width: 50px;
+		position: absolute;
+		left: 10px;
+		top: 25px;
+		cursor: pointer;
+	}
+	.konten{
+		position:initial;
+		width: 82%;
+		height: auto;
+		text-align: justify;
+		background-color: white;
+		font-family: Arial, Helvetica, sans-serif;
+		font-size: 12pt;
+		padding-right: 40px;
+		border-radius: 0px;
+		line-height: 1.5;
+		margin: 0px;
+	}
+}

@@ -1,0 +1,113 @@
+body{
+	background: #007cad;
+	background-size: 100%;
+	margin: 0px;
+	padding: 0px;
+}
+
+
+.laygambar{
+	float: left;
+	margin-top: 10%;
+	width:100%;
+	height:40%;
+	font-family: Arial, Helvetica, sans-serif;
+	
+}
+.margin{
+	width: auto;
+	margin-left: 26%;
+}
+.header{
+	float: left;
+	margin-top: 5%;
+	margin-left: 20%;
+	width:60%;
+	height:auto;
+	border-radius:25px;
+	background:white;
+	font-family:arial;
+	color:#007cad;
+	padding: 10px;
+	font-size: 17pt;
+
+}	
+.footer{
+	float: left;
+	margin-top: 6%;
+	margin-left: 39%;
+	color: white;
+	font-family: Arial, Helvetica, sans-serif;
+}
+.gambaricon{
+	float:left;
+	width:15%;
+	height:67%;
+	transition: all .2s ease-in-out; 
+	margin-left:5%;
+	background-color: white;
+	border-radius:25px;
+	padding: 10px;
+}
+
+
+
+.gambaricon:hover{
+transform: scale(1.2);
+}
+
+@media screen and (max-width: 760px) {
+	.header{
+		float: left;
+		margin-top: 5%;
+		margin-left: 7%;
+		width:80%;
+		height:auto;
+		border-radius:25px;
+		background:white;
+		font-family:arial;
+		color:#007cad;
+		padding: 10px;
+		font-size: 17pt;
+	
+	}
+	.iconabout{
+		float:left;
+		width:60px;
+		height:60px;
+		margin-left:5%;
+		margin-top: -1%;
+	}
+	.laygambar{
+		float: left;
+		width:100%;
+		height:60%;
+		font-family:arial;
+		font-size:8pt;
+		margin-top: 8%;
+	}
+	.margin{
+		width: 40%;
+		height: 60%;
+		margin-left: 35%;
+	}
+	.gambaricon{
+		float:left;
+			width:65%;
+			height:50%;
+		margin-top: 10px;
+		margin-left: 0px;
+	}
+	.gambaricon:hover{
+		transform: scale(1.1);
+		}
+		.footer{
+			float: left;
+			margin-top: 25%;
+			margin-left: 17%;
+			color: white;
+			font-size: 10pt;
+			font-family: Arial, Helvetica, sans-serif;
+		}
+	}
+

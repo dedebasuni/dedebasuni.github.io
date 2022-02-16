@@ -1,0 +1,137 @@
+
+body{
+	margin: unset;
+	font-family: Arial, Helvetica, sans-serif;
+}
+table tr img{
+	width: 70%;
+}
+.border{
+	background-color:rgba(47, 79, 79, 0.212) ;
+	border-radius: 10px;
+	padding: 5px;
+}
+.header{
+	
+	width:auto;
+	height:auto;
+	padding: 30px;
+	background:#014661;
+	font-family:arial;
+	color:white;
+	font-size: 17pt;
+	
+
+}	
+.info{
+	background-color: #007cad;
+	color: white;
+	width: 70%;
+	padding: 5%;
+	border-radius: 7px;
+}
+.header img{
+	width: 50px;
+	position: absolute;
+	left: 40px;
+	top: 20px;
+	cursor: pointer;
+}
+.header img:hover{
+	transform: scale(1.2);
+}
+.petunjuk{
+	width:50%;
+	height:15%;
+	position: absolute;
+	left: 25%;
+	font-family:arial;
+	font-size:8pt;
+	color:#32404E;
+	text-align: center;
+	
+
+}
+
+button{
+	background-color:#257C9F ;
+	color: white;
+	width: 200px;
+	padding: 10px;
+	border-radius: 10px;
+	cursor: pointer;
+	border-width: 0px;
+}
+button:hover{
+	background-color:#2d96c0 ;
+}
+
+
+/*css3 design scrollbar*/
+::-webkit-scrollbar {
+    width: 10px;
+}
+ 
+::-webkit-scrollbar-track {     
+    background: white;    
+}
+ 
+::-webkit-scrollbar-thumb {
+    background: #257C9F;
+	border-radius:10px;
+}
+.nav{
+	display: none;
+}
+.menu{
+	display: none;
+}
+.nav{
+	display: none;
+}
+.gambaricon:hover{
+transform: scale(1.5);
+}
+.iconabout:hover{
+transform: scale(1.8);
+}
+/*Tampilan hp*/
+@media screen and (max-width:760px){
+
+	table tr img{
+		width: 300px;
+	}
+
+	table{
+		margin-left: -60px;
+	}
+	
+	.info{
+		background-color: #007cad;
+		color: white;
+		width: 70%;
+		padding: 5%;
+		border-radius: 7px;
+		font-size: 10pt;
+	}
+	.header{
+	
+		width:auto;
+		height:auto;
+		padding: 30px;
+		background:#014661;
+		font-family:arial;
+		color:white;
+		font-size: 14pt;
+		margin: 0px;
+	
+	}
+	.header img{
+		width: 50px;
+		position: absolute;
+		left: 10px;
+		top: 25px;
+		cursor: pointer;
+	}
+
+}

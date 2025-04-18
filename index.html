@@ -87,7 +87,7 @@
         document.getElementById('search').addEventListener('input', function() {
             const searchTerm = this.value.toLowerCase();
             const filteredPosts = posts.filter(post => {
-                return post.Judul?.toLowerCase().includes(searchTerm) || (post.Tags?.toLowerCase().includes(searchTerm) || "");
+                return post.Judul?.toLowerCase().includes(searchTerm) || (post.Tags && post.Tags.toLowerCase().includes(searchTerm));
             });
             renderFilteredPosts(filteredPosts);
         });

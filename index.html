@@ -14,8 +14,16 @@
   <header class="bg-light py-3 text-center shadow">
     <h1 class="text-primary">📓 Notes</h1>
     <div class="input-group w-75 mx-auto my-3">
-      <input type="text" id="search" class="form-control" placeholder="Cari judul atau tag...">
-      <button class="btn btn-outline-primary" onclick="randomPost()">🎲 Post Acak</button>
+      <input type="text" id="search" class="form-control border rounded-lg shadow" placeholder="Cari judul atau tag">
+      <button class="btn btn-primary ms-2 rounded-lg" onclick="randomPost()">🎲 Post Acak</button>
+    </div>
+    <div class="input-group w-75 mx-auto my-3">
+      <select id="categoryFilter" class="form-control border rounded-lg shadow">
+        <option value="">Filter Kategori</option>
+        <option value="Teknologi">Teknologi</option>
+        <option value="Lifestyle">Lifestyle</option>
+        <option value="Health">Health</option>
+      </select>
     </div>
   </header>
 
@@ -113,6 +121,25 @@
         openModal(randomIndex);
       }
     }
+  document.getElementById('categoryFilter').addEventListener('change', function() {
+    let selectedCategory = this.value.toLowerCase();
+    document.querySelectorAll('.card').forEach(card => {
+      let postCategory = card.dataset.category.toLowerCase();
+      card.style.display = (selectedCategory === "" || postCategory.includes(selectedCategory)) ? 'block' : 'none';
+    });
+  });
+
+function setDarkMode() {
+  const hours = new Date().getHours();
+  const isNight = hours >= 18 || hours <= 6;
+  if (isNight) {
+    document.body.classList.add('bg-dark', 'text-light');
+  } else {
+    document.body.classList.remove('bg-dark', 'text-light');
+  }
+}
+
+setDarkMode();    
   </script>
 </body>
 </html>

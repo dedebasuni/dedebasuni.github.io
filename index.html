@@ -53,6 +53,29 @@
         <p>&copy; 2025 My Notes | 🔔 <span id="newPostAlert"></span></p>
     </footer>
 
+    <div id="postModal" class="modal fade" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="modalTitle" class="modal-title font-weight-bold"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="modalContent"></p>
+                    <img id="modalImage" class="img-fluid d-none lazy-load" alt="Post Image">
+                </div>
+                <div class="modal-footer">
+                    <button id="likeButton" class="btn btn-outline-danger">
+                        <i class="fas fa-heart"></i> Like
+                    </button>
+                    <span id="likeCount" class="ms-2">0 Likes</span>
+                    <span id="viewCount" class="ms-2">👁️ 0 views</span>
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         const apiUrl = "https://script.google.com/macros/s/AKfycby9EhjLZtCAv8e65-K-5vl5B2Rz5ny82bzuts_TZnbFUVq0eD2jbJ6gB2QR2CP-KU7rXg/exec";
         let posts = [];
@@ -61,8 +84,8 @@
             try {
                 const res = await fetch(apiUrl);
                 posts = await res.json();
-                posts = posts.filter(post => post.Status === "publish");
-                posts.sort((a, b) => new Date(b.Tanggal) - new Date(a.Tanggal));
+                posts = posts.filter(post => post.Status.toLowerCase() === "publish"); // Hanya tampilkan yang dipublikasikan
+                posts.sort((a, b) => new Date(b.Tanggal) - new Date(a.Tanggal)); // Sortir berdasarkan tanggal terbaru
                 populateCategoryFilter();
                 renderPosts(posts);
             } catch (error) {
@@ -98,36 +121,38 @@
                         <div class="card p-3 shadow-sm">
                             <div class="card-body">
                                 <h5 class="card-title text-primary cursor-pointer" onclick="openModal('${post.Judul}')">${post.Judul}</h5>
-                                <p class="text-muted">${post.Kategori} | ${post.Tag ? post.Tag : 'Tanpa tag'}</p>
-                                <img class="lazy-load img-fluid" data-src="${post.Gambar}" alt="${post.Judul}">
+                                <p class="text-muted">${post.Kategori} | ${post.Tags ? post.Tags : 'Tanpa tag'}</p>
                             </div>
                         </div>
                     </div>
                 `;
             });
             document.getElementById('posts').innerHTML = htmlContent;
-            lazyLoadImages();
-        }
-
-        function lazyLoadImages() {
-            const images = document.querySelectorAll(".lazy-load");
-            const observer = new IntersectionObserver(entries => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const img = entry.target;
-                        img.src = img.getAttribute("data-src");
-                        img.classList.add("loaded");
-                        observer.unobserve(img);
-                    }
-                });
-            }, { threshold: 0.1 });
-
-            images.forEach(img => observer.observe(img));
         }
 
         function openModal(title) {
             const post = posts.find(p => p.Judul === title);
-            alert(`Menampilkan artikel: ${post.Judul}`);
+            document.getElementById('modalTitle').innerText = post.Judul;
+            document.getElementById('modalContent').innerText = post.Isi;
+            
+            let modalImage = document.getElementById('modalImage');
+            if (post.Gambar) {
+                modalImage.src = post.Gambar;
+                modalImage.classList.remove("d-none");
+            } else {
+                modalImage.classList.add("d-none");
+            }
+
+            let views = localStorage.getItem(`views_${post.Judul}`) || 0;
+            views++;
+            localStorage.setItem(`views_${post.Judul}`, views);
+            document.getElementById('viewCount').innerText = `👁️ ${views} views`;
+
+            let likeCount = localStorage.getItem(`likeCount_${post.Judul}`) || 0;
+            document.getElementById('likeCount').innerText = `${likeCount} Likes`;
+
+            let modalElement = new bootstrap.Modal(document.getElementById('postModal'));
+            modalElement.show();
         }
 
         function randomPost() {

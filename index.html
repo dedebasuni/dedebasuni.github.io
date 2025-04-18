@@ -59,11 +59,21 @@
     const apiUrl = "https://script.google.com/macros/s/AKfycby9EhjLZtCAv8e65-K-5vl5B2Rz5ny82bzuts_TZnbFUVq0eD2jbJ6gB2QR2CP-KU7rXg/exec";
     let posts = [];
 
+    // Tambahkan fungsi untuk memilih postingan acak
+    function randomPost() {
+      if (posts.length > 0) {
+        const randomIndex = Math.floor(Math.random() * posts.length);
+        openModal(randomIndex);
+      } else {
+        alert("Belum ada postingan tersedia.");
+      }
+    }
+
     fetch(apiUrl)
       .then(res => res.json())
       .then(data => {
         posts = data;
-        renderPosts(posts);
+        renderPosts();
       })
       .catch(err => {
         document.getElementById("posts").innerHTML = "<p class='text-danger'>Gagal memuat data. Cek koneksi atau URL API.</p>";
@@ -83,7 +93,8 @@
           </div>
         `;
       });
-      document.getElementById('postsContainer').innerHTML = htmlContent;
+      // Perbaiki: Ganti 'postsContainer' menjadi 'posts'
+      document.getElementById('posts').innerHTML = htmlContent;
     }
 
     document.getElementById('search').addEventListener('input', function() {
@@ -109,7 +120,8 @@
           </div>
         `;
       });
-      document.getElementById('postsContainer').innerHTML = htmlContent;
+      // Perbaiki: Ganti 'postsContainer' menjadi 'posts'
+      document.getElementById('posts').innerHTML = htmlContent;
     }
 
     function openModal(index) {
@@ -142,7 +154,7 @@
         let dislikeCount = localStorage.getItem(`dislikeCount_${post.Judul}`) || 0;
         dislikeCount++;
         localStorage.setItem(`dislikeCount_${post.Judul}`, dislikeCount);
-        alert(`Dislike count: ${dislikeCount}`); // Optional: show alert for dislike count
+        alert(`Dislike count: ${dislikeCount}`);
       };
 
       let modalElement = new bootstrap.Modal(document.getElementById('postModal'));
@@ -153,8 +165,6 @@
       let modalElement = bootstrap.Modal.getInstance(document.getElementById('postModal'));
       modalElement.hide();
     }
-
-    renderPosts();
   </script>
 </body>
 </html>

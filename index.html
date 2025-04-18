@@ -146,6 +146,16 @@
       let modalElement = new bootstrap.Modal(document.getElementById('postModal'));
       modalElement.show();
     }
+
+    function randomPost() {
+      if (posts.length === 0) {
+        alert("Belum ada postingan tersedia. Coba muat ulang halaman.");
+        return;
+      }
+
+      const randomIndex = Math.floor(Math.random() * posts.length);
+      openModal(randomIndex);
+    }
   </script>
 </body>
 </html>

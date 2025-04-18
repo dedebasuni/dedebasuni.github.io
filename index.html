@@ -6,8 +6,7 @@
   <title>My Notes Blog</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"> <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
   <style>
     .cursor-pointer { cursor: pointer; }
   </style>
@@ -28,17 +27,17 @@
   <footer class="bg-light text-center py-3">
     <p>&copy; 2025 My Notes Blog | 🔔 <span id="newPostAlert"></span></p>
   </footer>
-  
+
   <div id="postModal" class="modal fade" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
-    <div class="modal-dialog modal-lg max-w-screen-lg mx-auto">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
           <h5 id="modalTitle" class="modal-title text-lg font-bold"></h5>
-          <button type="button" class="btn-close" onclick="closeModal()"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
           <p id="modalContent"></p>
-          <img id="modalImage" class="img-fluid max-w-full h-auto d-none" alt="Post Image">
+          <img id="modalImage" class="img-fluid d-none" alt="Post Image">
         </div>
         <div class="modal-footer">
           <button id="likeButton" class="btn btn-outline-danger">
@@ -49,7 +48,7 @@
           </button>
           <span id="likeCount" class="ms-2">0 Likes</span>
           <span id="viewCount" class="ms-2">👁️ 0 views</span>
-          <button class="btn btn-secondary" onclick="closeModal()">Tutup</button>
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
         </div>
       </div>
     </div>
@@ -59,26 +58,18 @@
     const apiUrl = "https://script.google.com/macros/s/AKfycby9EhjLZtCAv8e65-K-5vl5B2Rz5ny82bzuts_TZnbFUVq0eD2jbJ6gB2QR2CP-KU7rXg/exec";
     let posts = [];
 
-    // Tambahkan fungsi untuk memilih postingan acak
-    function randomPost() {
-      if (posts.length > 0) {
-        const randomIndex = Math.floor(Math.random() * posts.length);
-        openModal(randomIndex);
-      } else {
-        alert("Belum ada postingan tersedia.");
+    async function fetchPosts() {
+      try {
+        const res = await fetch(apiUrl);
+        posts = await res.json();
+        renderPosts();
+      } catch (error) {
+        document.getElementById("posts").innerHTML = "<p class='text-danger'>Gagal memuat data.</p>";
+        console.error("Error fetching data:", error);
       }
     }
 
-    fetch(apiUrl)
-      .then(res => res.json())
-      .then(data => {
-        posts = data;
-        renderPosts();
-      })
-      .catch(err => {
-        document.getElementById("posts").innerHTML = "<p class='text-danger'>Gagal memuat data. Cek koneksi atau URL API.</p>";
-        console.error("Error fetching data:", err);
-      });
+    fetchPosts();
 
     function renderPosts() {
       let htmlContent = '';
@@ -93,15 +84,14 @@
           </div>
         `;
       });
-      // Perbaiki: Ganti 'postsContainer' menjadi 'posts'
       document.getElementById('posts').innerHTML = htmlContent;
     }
 
     document.getElementById('search').addEventListener('input', function() {
       const searchTerm = this.value.toLowerCase();
       const filteredPosts = posts.filter(post => {
-        return post.Judul.toLowerCase().includes(searchTerm) || 
-               post.Tags.toLowerCase().includes(searchTerm);
+        return post.Judul?.toLowerCase().includes(searchTerm) || 
+               post.Tags?.toLowerCase().includes(searchTerm);
       });
       renderFilteredPosts(filteredPosts);
     });
@@ -120,7 +110,6 @@
           </div>
         `;
       });
-      // Perbaiki: Ganti 'postsContainer' menjadi 'posts'
       document.getElementById('posts').innerHTML = htmlContent;
     }
 
@@ -151,19 +140,11 @@
       };
 
       document.getElementById('dislikeButton').onclick = function() {
-        let dislikeCount = localStorage.getItem(`dislikeCount_${post.Judul}`) || 0;
-        dislikeCount++;
-        localStorage.setItem(`dislikeCount_${post.Judul}`, dislikeCount);
-        alert(`Dislike count: ${dislikeCount}`);
+        alert("Terima kasih atas feedbacknya!");
       };
 
       let modalElement = new bootstrap.Modal(document.getElementById('postModal'));
       modalElement.show();
-    }
-
-    function closeModal() {
-      let modalElement = bootstrap.Modal.getInstance(document.getElementById('postModal'));
-      modalElement.hide();
     }
   </script>
 </body>

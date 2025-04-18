@@ -59,7 +59,7 @@
             try {
                 const res = await fetch(apiUrl);
                 posts = await res.json();
-                renderPosts();
+                renderPosts(posts);
             } catch (error) {
                 document.getElementById("posts").innerHTML = "<p class='text-danger'>Gagal memuat data.</p>";
                 console.error("Error fetching data:", error);
@@ -68,9 +68,9 @@
 
         fetchPosts();
 
-        function renderPosts() {
+        function renderPosts(postList) {
             let htmlContent = '';
-            posts.forEach((post, index) => {
+            postList.forEach((post, index) => {
                 htmlContent += `
                     <div class="col-12 col-md-6">
                         <div class="card shadow-sm">
@@ -89,7 +89,7 @@
             const filteredPosts = posts.filter(post => {
                 return post.Judul?.toLowerCase().includes(searchTerm) || (post.Tags && post.Tags.toLowerCase().includes(searchTerm));
             });
-            renderFilteredPosts(filteredPosts);
+            renderPosts(filteredPosts);
         });
 
         function openModal(index) {

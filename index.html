@@ -61,8 +61,8 @@
             try {
                 const res = await fetch(apiUrl);
                 posts = await res.json();
-                posts = posts.filter(post => post.Status === "Published"); // Hanya tampilkan yang dipublikasikan
-                posts.sort((a, b) => new Date(b.Tanggal) - new Date(a.Tanggal)); // Sortir berdasarkan tanggal terbaru
+                posts = posts.filter(post => post.Status === "publish");
+                posts.sort((a, b) => new Date(b.Tanggal) - new Date(a.Tanggal));
                 populateCategoryFilter();
                 renderPosts(posts);
             } catch (error) {

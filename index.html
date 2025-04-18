@@ -12,6 +12,7 @@
   </style>
 </head>
 <body>
+  <!-- Header Section -->
   <header class="bg-light py-3 text-center shadow-md">
     <h1 class="text-lg font-bold text-gray-800">My Blog</h1>
     <div class="input-group w-75 mx-auto my-3">
@@ -20,14 +21,17 @@
     </div>
   </header>
 
+  <!-- Main Content Section -->
   <main class="container py-4">
     <div class="row" id="posts"></div>
   </main>
 
+  <!-- Footer Section -->
   <footer class="bg-light text-center py-3">
     <p>&copy; 2025 My Blog | 🔔 <span id="newPostAlert"></span></p>
   </footer>
-  
+
+  <!-- Modal for Post Details -->
   <div id="postModal" class="modal fade" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
     <div class="modal-dialog modal-lg max-w-screen-lg mx-auto">
       <div class="modal-content">
@@ -50,10 +54,12 @@
     </div>
   </div>
 
+  <!-- JavaScript Section -->
   <script>
     const apiUrl = "https://script.google.com/macros/s/AKfycby9EhjLZtCAv8e65-K-5vl5B2Rz5ny82bzuts_TZnbFUVq0eD2jbJ6gB2QR2CP-KU7rXg/exec";
     let posts = [];
 
+    // Fetch posts from the API
     fetch(apiUrl)
       .then(res => res.json())
       .then(data => {
@@ -65,6 +71,7 @@
         console.error("Error fetching data:", err);
       });
 
+    // Render Posts Function
     function renderPosts() {
       let htmlContent = '';
       posts.forEach((post, index) => {
@@ -78,40 +85,43 @@
           </div>
         `;
       });
-      document.getElementById('postsContainer').innerHTML = htmlContent;
+      document.getElementById('posts').innerHTML = htmlContent;
     }
 
-  document.getElementById('search').addEventListener('input', function() {
-    const searchTerm = this.value.toLowerCase();
-    const filteredPosts = posts.filter(post => {
-      return post.Judul.toLowerCase().includes(searchTerm) || 
-             post.Tags.toLowerCase().includes(searchTerm);
+    // Search Functionality
+    document.getElementById('search').addEventListener('input', function() {
+      const searchTerm = this.value.toLowerCase();
+      const filteredPosts = posts.filter(post => 
+        post.Judul.toLowerCase().includes(searchTerm) || post.Tags.toLowerCase().includes(searchTerm)
+      );
+      renderFilteredPosts(filteredPosts);
     });
-    renderFilteredPosts(filteredPosts);
-  });
 
-  function renderFilteredPosts(filteredPosts) {
-    let htmlContent = '';
-    filteredPosts.forEach(post => {
-      htmlContent += `
-        <div class="col-12 col-md-6">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">${post.Judul}</h5>
-              <p class="card-text">${post.Isi}</p>
+    // Render Filtered Posts Based on Search
+    function renderFilteredPosts(filteredPosts) {
+      let htmlContent = '';
+      filteredPosts.forEach(post => {
+        htmlContent += `
+          <div class="col-12 col-md-6">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">${post.Judul}</h5>
+                <p class="card-text">${post.Isi}</p>
+              </div>
             </div>
           </div>
-        </div>
-      `;
-    });
-    document.getElementById('postsContainer').innerHTML = htmlContent;
-  }
+        `;
+      });
+      document.getElementById('posts').innerHTML = htmlContent;
+    }
 
+    // Open Post Modal Function
     function openModal(index) {
       const post = posts[index];
       document.getElementById('modalTitle').innerText = post.Judul;
       document.getElementById('modalContent').innerText = post.Isi;
 
+      // Show Image if Available
       if (post.Gambar) {
         document.getElementById('modalImage').src = post.Gambar;
         document.getElementById('modalImage').classList.remove('d-none');
@@ -119,20 +129,22 @@
         document.getElementById('modalImage').classList.add('d-none');
       }
 
+      // Increment View Count and Display
       let views = localStorage.getItem(`views_${post.Judul}`) || 0;
       views++;
       localStorage.setItem(`views_${post.Judul}`, views);
       document.getElementById('viewCount').innerText = `👁️ ${views} views`;
 
+      // Like Button Click Handler
       let likeCount = localStorage.getItem(`likeCount_${post.Judul}`) || 0;
       document.getElementById('likeCount').innerText = `${likeCount} Likes`;
-
       document.getElementById('likeButton').onclick = function() {
         likeCount++;
         localStorage.setItem(`likeCount_${post.Judul}`, likeCount);
         document.getElementById('likeCount').innerText = `${likeCount} Likes`;
       };
 
+      // Dislike Button Click Handler
       document.getElementById('dislikeButton').onclick = function() {
         let dislikeCount = localStorage.getItem(`dislikeCount_${post.Judul}`) || 0;
         dislikeCount++;
@@ -140,15 +152,18 @@
         alert(`Dislike count: ${dislikeCount}`); // Optional: show alert for dislike count
       };
 
+      // Show Modal
       let modalElement = new bootstrap.Modal(document.getElementById('postModal'));
       modalElement.show();
     }
 
+    // Close Modal Function
     function closeModal() {
       let modalElement = bootstrap.Modal.getInstance(document.getElementById('postModal'));
       modalElement.hide();
     }
 
+    // Initial Render of Posts
     renderPosts();
   </script>
 </body>

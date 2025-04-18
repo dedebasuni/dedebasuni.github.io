@@ -49,19 +49,15 @@
 
   <div class="container-fluid">
     <div class="row">
-      <!-- Sidebar -->
-      <div class="col-md-2 sidebar py-4">
-        <ul class="nav flex-column">
-          <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-home me-2"></i>Beranda</a></li>
-          <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-user-friends me-2"></i>Teman</a></li>
-          <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-bookmark me-2"></i>Tersimpan</a></li>
-          <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-cog me-2"></i>Pengaturan</a></li>
-        </ul>
+
+      <div class="col-md-2 sidebar py-4 text-center border-end">
+        <img src="https://i.pravatar.cc/150?img=3" class="rounded-circle mb-2" alt="Foto Profil" width="80" height="80">
+        <h6 class="fw-bold">Nama Penulis</h6>
+        <p class="text-muted small">Menulis untuk berbagi cerita dan inspirasi.</p>
+        <hr>
       </div>
 
-      <!-- Main Feed -->
       <div class="col-md-7 py-4">
-        <!-- Status update -->
         <div class="card mb-3 shadow-sm">
           <div class="card-body">
             <div class="d-flex">
@@ -74,11 +70,9 @@
           </div>
         </div>
 
-        <!-- Feed Posts -->
         <div id="posts"></div>
       </div>
 
-      <!-- Right Sidebar -->
       <div class="col-md-3 py-4">
         <div class="card shadow-sm mb-3">
           <div class="card-header">Notifikasi Terbaru</div>
@@ -97,7 +91,6 @@
     </div>
   </div>
 
-  <!-- Modal -->
   <div id="postModal" class="modal fade" tabindex="-1">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
@@ -120,7 +113,6 @@
     </div>
   </div>
 
-  <!-- Script -->
   <script>
     const apiUrl = "https://script.google.com/macros/s/AKfycby9EhjLZtCAv8e65-K-5vl5B2Rz5ny82bzuts_TZnbFUVq0eD2jbJ6gB2QR2CP-KU7rXg/exec";
     let posts = [];

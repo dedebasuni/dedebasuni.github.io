@@ -108,36 +108,36 @@
     <p>&copy; 2025 My Notes | 🔔 <span id="newPostAlert"></span></p>
   </footer>
 
-  <!-- Modal untuk detail postingan dan komentar -->
+
   <div id="postModal" class="modal fade" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
-        <!-- Header Modal -->
+
         <div class="modal-header">
           <h5 id="modalTitle" class="modal-title font-weight-bold"></h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <!-- Body Modal -->
+
         <div class="modal-body">
           <p id="modalContent"></p>
           <img id="modalImage" class="img-fluid d-none lazy-load" alt="Post Image">
           <hr>
-          <!-- Komentar Pengunjung -->
+
           <h6>Komentar Pengunjung:</h6>
           <ul id="commentsList" class="list-group">
             <li class="list-group-item">Belum ada komentar.</li>
           </ul>
           <hr>
-          <!-- Balasan Admin -->
+
           <h6>Balasan Admin:</h6>
           <p id="adminReply" class="text-muted">Belum ada balasan dari admin.</p>
           <hr>
-          <!-- Form Tambahkan Komentar -->
+
           <input id="nameInput" type="text" class="form-control my-2" placeholder="Nama Anda">
           <textarea id="commentInput" class="form-control my-2" placeholder="Tambahkan komentar"></textarea>
           <button class="btn btn-primary" onclick="submitComment()">Kirim</button>
         </div>
-        <!-- Footer Modal -->
+
         <div class="modal-footer">
           <button id="likeButton" class="btn btn-outline-danger">
             <i class="fas fa-heart"></i> Like
@@ -151,16 +151,10 @@
   </div>
 
   <script>
-    /* 
-      Perhatian:
-      Pastikan Apps Script Anda mendukung parameter 'sheet' untuk membedakan antara "Post" dan "Komentar".
-      Jika belum, sesuaikan script doGet Anda agar memeriksa e.parameter.sheet dan memproses sheet yang sesuai.
-    */
     const postsApiUrl = "https://script.google.com/macros/s/AKfycbyl_tLV9i5K6cngdpXd9OfvVtNj53hP2FiOoXp1UZn1G8luBhMJZVN6JRhR2amLomyjMw/exec?sheet=Post";
     const commentsApiUrl = "https://script.google.com/macros/s/AKfycbyl_tLV9i5K6cngdpXd9OfvVtNj53hP2FiOoXp1UZn1G8luBhMJZVN6JRhR2amLomyjMw/exec?sheet=Komentar";
     let posts = [];
 
-    // Ambil data postingan (Sheet "Post")
     async function fetchPosts() {
       try {
         const res = await fetch(postsApiUrl);
@@ -177,7 +171,6 @@
       }
     }
 
-    // Isi dropdown kategori
     function populateCategoryFilter() {
       let categories = [...new Set(posts.map(post => post.Kategori))];
       const categorySelect = document.getElementById("categoryFilter");
@@ -194,7 +187,6 @@
       });
     }
 
-    // Tampilkan postingan
     function renderPosts(postList) {
       let htmlContent = '';
       postList.forEach(post => {
@@ -212,7 +204,6 @@
       document.getElementById('posts').innerHTML = htmlContent;
     }
 
-    // Buka modal untuk postingan tertentu dan tampilkan detail serta komentar
     function openModal(title) {
       const post = posts.find(p => p.Judul === title);
       if (!post) {
@@ -241,7 +232,6 @@
       modalElement.show();
     }
 
-    // Ambil dan tampilkan komentar untuk postingan (Sheet "Komentar")
     async function loadComments(title) {
       try {
         const res = await fetch(commentsApiUrl);
@@ -268,7 +258,6 @@
       }
     }
 
-    // Kirim komentar baru ke API (Sheet "Komentar")
     async function submitComment() {
       const name = document.getElementById('nameInput').value.trim();
       const comment = document.getElementById('commentInput').value.trim();
@@ -305,7 +294,6 @@
       }
     }
 
-    // Pilih postingan acak
     function randomPost() {
       if (posts.length === 0) {
         alert("Belum ada postingan tersedia. Coba muat ulang halaman.");
@@ -315,7 +303,6 @@
       openModal(posts[randomIndex].Judul);
     }
 
-    // Mode gelap
     document.getElementById("darkModeToggle").addEventListener("click", function() {
       document.body.classList.toggle("dark-mode");
       document.querySelector("header").classList.toggle("dark-mode");
@@ -323,7 +310,6 @@
       document.querySelectorAll(".modal-content").forEach(modal => modal.classList.toggle("dark-mode"));
     });
 
-    // Inisialisasi Particles.js
     particlesJS("particles-js", {
       "particles": {
         "number": { "value": 50 },
@@ -334,7 +320,6 @@
       }
     });
 
-    // Mulai ambil data ketika halaman dimuat
     fetchPosts();
   </script>
 </body>

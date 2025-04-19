@@ -134,43 +134,50 @@
     </div>
 
     <script>
-        const apiUrl = "https://script.google.com/macros/s/AKfycby9EhjLZtCAv8e65-K-5vl5B2Rz5ny82bzuts_TZnbFUVq0eD2jbJ6gB2QR2CP-KU7rXg/exec";
-        let posts = [];
+const apiUrl = "https://script.google.com/macros/s/AKfycby9EhjLZtCAv8e65-K-5vl5B2Rz5ny82bzuts_TZnbFUVq0eD2jbJ6gB2QR2CP-KU7rXg/exec";
+let posts = [];
 
-        async function fetchPosts() {
-            try {
-                const res = await fetch(apiUrl);
-                posts = await res.json();
-                posts = posts.filter(post => post.Status.toLowerCase() === "publish");
-                posts.sort((a, b) => new Date(b.Tanggal) - new Date(a.Tanggal));
-                document.getElementById('loader').style.display = "none"; // Hide loader
-                populateCategoryFilter();
-                renderPosts(posts);
-            } catch (error) {
-                document.getElementById("posts").innerHTML = "<p class='text-danger'>Gagal memuat data.</p>";
-                console.error("Error fetching data:", error);
-                document.getElementById('loader').style.display = "none";
-            }
-        }
+// Fungsi untuk mengambil data dari spreadsheet
+async function fetchPosts() {
+    try {
+        const res = await fetch(apiUrl);
+        posts = await res.json();
 
-        fetchPosts();
+        // Filter untuk hanya menampilkan postingan dengan status publish
+        posts = posts.filter(post => post.Status.toLowerCase() === "publish");
+        // Sortir berdasarkan tanggal terbaru
+        posts.sort((a, b) => new Date(b.Tanggal) - new Date(a.Tanggal));
 
-        function populateCategoryFilter() {
-            let categories = [...new Set(posts.map(post => post.Kategori))];
-            const categorySelect = document.getElementById("categoryFilter");
-            categories.forEach(category => {
-                let option = document.createElement("option");
-                option.value = category;
-                option.textContent = category;
-                categorySelect.appendChild(option);
-            });
+        // Sembunyikan loader setelah data diambil
+        document.getElementById('loader').style.display = "none";
 
-            categorySelect.addEventListener("change", function() {
-                let selectedCategory = this.value;
-                let filteredPosts = selectedCategory ? posts.filter(post => post.Kategori === selectedCategory) : posts;
-                renderPosts(filteredPosts);
-            });
-        }
+        populateCategoryFilter(); // Mengisi kategori
+        renderPosts(posts);       // Menampilkan postingan
+    } catch (error) {
+        document.getElementById("posts").innerHTML = "<p class='text-danger'>Gagal memuat data.</p>";
+        console.error("Error fetching data:", error);
+        document.getElementById('loader').style.display = "none";
+    }
+}
+
+// Mengisi kategori ke dropdown filter
+function populateCategoryFilter() {
+    let categories = [...new Set(posts.map(post => post.Kategori))];
+    const categorySelect = document.getElementById("categoryFilter");
+    categories.forEach(category => {
+        let option = document.createElement("option");
+        option.value = category;
+        option.textContent = category;
+        categorySelect.appendChild(option);
+    });
+
+    // Event listener untuk filter kategori
+    categorySelect.addEventListener("change", function() {
+        let selectedCategory = this.value;
+        let filteredPosts = selectedCategory ? posts.filter(post => post.Kategori === selectedCategory) : posts;
+        renderPosts(filteredPosts);
+    });
+}
 
         function renderPosts(postList) {
             let htmlContent = '';
@@ -180,7 +187,8 @@
                         <div class="card p-3 shadow-sm">
                             <div class="card-body">
                                 <h5 class="card-title text-primary cursor-pointer" onclick="openModal('${post.Judul}')">${post.Judul}</h5>
-                                <p class="text-muted">${post.Kategori} | ${post.Tags ? post.Tags : 'Tanpa tag'}</p>
+                                <p class="text-muted">${post.Kategori} | ${post.Tag ? post.Tag : 'Tanpa tag'}</p>
+                                <p class="text-muted">🗓️ ${new Date(post.Tanggal).toLocaleDateString('id-ID')}</p>
                             </div>
                         </div>
                     </div>
@@ -191,10 +199,11 @@
 
         function openModal(title) {
             const post = posts.find(p => p.Judul === title);
+
             document.getElementById('modalTitle').innerText = post.Judul;
             document.getElementById('modalContent').innerText = post.Isi;
-            
-            let modalImage = document.getElementById('modalImage');
+
+            const modalImage = document.getElementById('modalImage');
             if (post.Gambar) {
                 modalImage.src = post.Gambar;
                 modalImage.classList.remove("d-none");
@@ -210,10 +219,7 @@
             let likeCount = localStorage.getItem(`likeCount_${post.Judul}`) || 0;
             document.getElementById('likeCount').innerText = `${likeCount} Likes`;
 
-            let modalElement = new bootstrap.Modal(document.getElementById('postModal'));
-            modalElement.show
-
-            let modalElement = new bootstrap.Modal(document.getElementById('postModal'));
+            const modalElement = new bootstrap.Modal(document.getElementById('postModal'));
             modalElement.show();
         }
 
@@ -232,6 +238,9 @@
             document.querySelectorAll(".card").forEach(card => card.classList.toggle("dark-mode"));
             document.querySelectorAll(".modal-content").forEach(modal => modal.classList.toggle("dark-mode"));
         });
+
+// Mulai mengambil data ketika halaman dimuat
+        fetchPosts();
     </script>
 </body>
 </html>        

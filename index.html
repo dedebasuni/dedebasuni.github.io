@@ -33,6 +33,15 @@
             font-size: 0.875rem;
             color: #6c757d;
         }        
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #007bff;
+        }
+        .modal-body .text-muted {
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
         header {
             background: linear-gradient(45deg, #007bff, #6610f2);
             color: white;
@@ -216,6 +225,12 @@
             document.querySelector("header").classList.toggle("dark-mode");
             document.querySelectorAll(".card").forEach(card => card.classList.toggle("dark-mode"));
             document.querySelectorAll(".modal-content").forEach(modal => modal.classList.toggle("dark-mode"));
+            document.querySelectorAll(".modal-title, .modal-body").forEach(element => {
+                if (document.body.classList.contains("dark-mode")) {
+                    element.style.color = "#ffffff";
+                } else {
+                    element.style.color = "";
+                }
         });
     </script>
 </body>

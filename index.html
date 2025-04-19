@@ -1,301 +1,340 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Notes</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Poppins', sans-serif;
-            transition: background-color 0.5s, color 0.5s;
-        }
-        .cursor-pointer { cursor: pointer; }
-        .card {
-            transition: transform 0.3s, box-shadow 0.3s;
-            border-radius: 10px;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        .card-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #007bff;
-        }
-        .text-muted {
-            font-size: 0.875rem;
-            color: #6c757d;
-        }
-        .modal-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #007bff;
-        }
-        header {
-            background: linear-gradient(45deg, #007bff, #6610f2);
-            color: white;
-            transition: background 0.5s ease-in-out;
-        }
-        header.sticky {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            background: linear-gradient(45deg, #6610f2, #007bff);
-            z-index: 1000;
-        }
-        .fade-in {
-            opacity: 0;
-            animation: fadeIn 1.5s forwards;
-        }
-        @keyframes fadeIn {
-            to {
-                opacity: 1;
-            }
-        }
-        #particles-js {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-        }
-        body.dark-mode {
-            background-color: #343a40;
-            color: #ffffff;
-        }
-        header.dark-mode {
-            background: linear-gradient(45deg, #2f2f7f, #4b0082);
-        }
-        .card.dark-mode {
-            background-color: #495057;
-            color: #ffffff;
-        }
-        .modal-content.dark-mode {
-            background-color: #495057;
-            color: #ffffff;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Notes</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <style>
+    body {
+      background-color: #f8f9fa;
+      font-family: 'Poppins', sans-serif;
+      transition: background-color 0.5s, color 0.5s;
+    }
+    .cursor-pointer { cursor: pointer; }
+    .card {
+      transition: transform 0.3s, box-shadow 0.3s;
+      border-radius: 10px;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #007bff;
+    }
+    .text-muted {
+      font-size: 0.875rem;
+      color: #6c757d;
+    }
+    .modal-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #007bff;
+    }
+    header {
+      background: linear-gradient(45deg, #007bff, #6610f2);
+      color: white;
+      transition: background 0.5s ease-in-out;
+    }
+    header.sticky {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: linear-gradient(45deg, #6610f2, #007bff);
+      z-index: 1000;
+    }
+    .fade-in {
+      opacity: 0;
+      animation: fadeIn 1.5s forwards;
+    }
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+    #particles-js {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+    body.dark-mode {
+      background-color: #343a40;
+      color: #ffffff;
+    }
+    header.dark-mode {
+      background: linear-gradient(45deg, #2f2f7f, #4b0082);
+    }
+    .card.dark-mode {
+      background-color: #495057;
+      color: #ffffff;
+    }
+    .modal-content.dark-mode {
+      background-color: #495057;
+      color: #ffffff;
+    }
+  </style>
 </head>
 <body class="fade-in">
-    <div id="particles-js"></div>
-    <header class="py-4 text-center shadow-lg">
-        <h2 class="font-weight-bold">My Notes</h2>
-        <div class="input-group w-75 mx-auto my-3">
-            <select id="categoryFilter" class="form-select w-25">
-                <option value="">Semua Kategori</option>
-            </select>
-            <button class="btn btn-primary ms-2" onclick="randomPost()">🎲 Acak</button>
-            <button id="darkModeToggle" class="btn btn-light ms-2">🌙 Mode</button>
-        </div>
-    </header>
-
-    <main class="container py-4">
-        <div id="loader" class="text-center my-5">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-        </div>
-        <div class="row g-4" id="posts"></div>
-    </main>
-
-    <footer class="bg-light text-center py-3">
-        <p>&copy; 2025 My Notes | 🔔 <span id="newPostAlert"></span></p>
-    </footer>
-
-    <div id="postModal" class="modal fade" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <!-- Header Modal -->
-                <div class="modal-header">
-                    <h5 id="modalTitle" class="modal-title font-weight-bold"></h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-
-                <!-- Body Modal -->
-                <div class="modal-body">
-                    <!-- Isi Postingan -->
-                    <p id="modalContent"></p>
-                    <img id="modalImage" class="img-fluid d-none lazy-load" alt="Post Image">
-                    <hr>
-
-                    <!-- Komentar Pengunjung -->
-                    <h6>Komentar Pengunjung:</h6>
-                    <ul id="commentsList" class="list-group">
-                        <li class="list-group-item">Belum ada komentar.</li>
-                    </ul>
-
-                    <!-- Form Tambahkan Komentar -->
-                    <input id="nameInput" type="text" class="form-control my-2" placeholder="Nama Anda">
-                    <textarea id="commentInput" class="form-control my-2" placeholder="Tambahkan komentar"></textarea>
-                    <button class="btn btn-primary" onclick="submitComment()">Kirim</button>
-                    <hr>
-
-                    <!-- Balasan Admin -->
-                    <h6>Balasan Admin:</h6>
-                    <p id="adminReply" class="text-muted">Belum ada balasan dari admin.</p>
-                </div>
-
-                <!-- Footer Modal -->
-                <div class="modal-footer">
-                    <button id="likeButton" class="btn btn-outline-danger">
-                        <i class="fas fa-heart"></i> Like
-                    </button>
-                    <span id="likeCount" class="ms-2">0 Likes</span>
-                    <span id="viewCount" class="ms-2">👁️ 0 views</span>
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                </div>
-            </div>
-        </div>
+  <div id="particles-js"></div>
+  <header class="py-4 text-center shadow-lg">
+    <h2 class="font-weight-bold">My Notes</h2>
+    <div class="input-group w-75 mx-auto my-3">
+      <select id="categoryFilter" class="form-select w-25">
+        <option value="">Semua Kategori</option>
+      </select>
+      <button class="btn btn-primary ms-2" onclick="randomPost()">🎲 Acak</button>
+      <button id="darkModeToggle" class="btn btn-light ms-2">🌙 Mode</button>
     </div>
-   
-    <script>
-        const apiUrl = "https://script.google.com/macros/s/AKfycbw3bsqZ8u3Z66ULf4PgpOZABLgXYMx6zBv1Tnb3OfBTylg2zv67-xImhuT5WJ1Hq_rEPw/exec";
-        let posts = [];
+  </header>
 
-        // Fungsi untuk mengambil data postingan dari API
-        async function fetchPosts() {
-            try {
-                const res = await fetch(apiUrl);
-                posts = await res.json();
+  <main class="container py-4">
+    <div id="loader" class="text-center my-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+    <div class="row g-4" id="posts"></div>
+  </main>
 
-                // Filter postingan dengan status "publish"
-                posts = posts.filter(post => post.Status.toLowerCase() === "publish");
+  <footer class="bg-light text-center py-3">
+    <p>&copy; 2025 My Notes | 🔔 <span id="newPostAlert"></span></p>
+  </footer>
 
-                // Sortir postingan berdasarkan tanggal terbaru
-                posts.sort((a, b) => new Date(b.Tanggal) - new Date(a.Tanggal));
+  <!-- Modal untuk detail postingan dan komentar -->
+  <div id="postModal" class="modal fade" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <!-- Header Modal -->
+        <div class="modal-header">
+          <h5 id="modalTitle" class="modal-title font-weight-bold"></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <!-- Body Modal -->
+        <div class="modal-body">
+          <p id="modalContent"></p>
+          <img id="modalImage" class="img-fluid d-none lazy-load" alt="Post Image">
+          <hr>
+          <!-- Komentar Pengunjung -->
+          <h6>Komentar Pengunjung:</h6>
+          <ul id="commentsList" class="list-group">
+            <li class="list-group-item">Belum ada komentar.</li>
+          </ul>
+          <!-- Form Tambahkan Komentar -->
+          <input id="nameInput" type="text" class="form-control my-2" placeholder="Nama Anda">
+          <textarea id="commentInput" class="form-control my-2" placeholder="Tambahkan komentar"></textarea>
+          <button class="btn btn-primary" onclick="submitComment()">Kirim</button>
+          <hr>
+          <!-- Balasan Admin -->
+          <h6>Balasan Admin:</h6>
+          <p id="adminReply" class="text-muted">Belum ada balasan dari admin.</p>
+        </div>
+        <!-- Footer Modal -->
+        <div class="modal-footer">
+          <button id="likeButton" class="btn btn-outline-danger">
+            <i class="fas fa-heart"></i> Like
+          </button>
+          <span id="likeCount" class="ms-2">0 Likes</span>
+          <span id="viewCount" class="ms-2">👁️ 0 views</span>
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-                document.getElementById('loader').style.display = "none"; // Sembunyikan loader
+  <script>
+    /* 
+      Perhatian:
+      Pastikan Apps Script Anda mendukung parameter 'sheet' untuk membedakan antara "Post" dan "Komentar".
+      Jika belum, sesuaikan script doGet Anda agar memeriksa e.parameter.sheet dan memproses sheet yang sesuai.
+    */
+    const postsApiUrl = "https://script.google.com/macros/s/AKfycbyl_tLV9i5K6cngdpXd9OfvVtNj53hP2FiOoXp1UZn1G8luBhMJZVN6JRhR2amLomyjMw/exec?sheet=Post";
+    const commentsApiUrl = "https://script.google.com/macros/s/AKfycbyl_tLV9i5K6cngdpXd9OfvVtNj53hP2FiOoXp1UZn1G8luBhMJZVN6JRhR2amLomyjMw/exec?sheet=Komentar";
+    let posts = [];
 
-                populateCategoryFilter(); // Isi filter kategori
-                renderPosts(posts);       // Tampilkan postingan
-            } catch (error) {
-                document.getElementById("posts").innerHTML = "<p class='text-danger'>Gagal memuat data.</p>";
-                console.error("Error fetching posts:", error);
-                document.getElementById('loader').style.display = "none"; // Sembunyikan loader saat error
-            }
+    // Ambil data postingan (Sheet "Post")
+    async function fetchPosts() {
+      try {
+        const res = await fetch(postsApiUrl);
+        posts = await res.json();
+        posts = posts.filter(post => post.Status.toLowerCase() === "publish");
+        posts.sort((a, b) => new Date(b.Tanggal) - new Date(a.Tanggal));
+        document.getElementById('loader').style.display = "none";
+        populateCategoryFilter();
+        renderPosts(posts);
+      } catch (error) {
+        document.getElementById("posts").innerHTML = "<p class='text-danger'>Gagal memuat data.</p>";
+        console.error("Error fetching posts:", error);
+        document.getElementById('loader').style.display = "none";
+      }
+    }
+
+    // Isi dropdown kategori
+    function populateCategoryFilter() {
+      let categories = [...new Set(posts.map(post => post.Kategori))];
+      const categorySelect = document.getElementById("categoryFilter");
+      categories.forEach(category => {
+        let option = document.createElement("option");
+        option.value = category;
+        option.textContent = category;
+        categorySelect.appendChild(option);
+      });
+      categorySelect.addEventListener("change", function() {
+        let selectedCategory = this.value;
+        let filteredPosts = selectedCategory ? posts.filter(post => post.Kategori === selectedCategory) : posts;
+        renderPosts(filteredPosts);
+      });
+    }
+
+    // Tampilkan postingan
+    function renderPosts(postList) {
+      let htmlContent = '';
+      postList.forEach(post => {
+        htmlContent += `
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="card p-3 shadow-sm">
+              <div class="card-body">
+                <h5 class="card-title text-primary cursor-pointer" onclick="openModal('${post.Judul}')">${post.Judul}</h5>
+                <p class="text-muted">${post.Kategori} | ${post.Tag ? post.Tag : 'Tanpa tag'}</p>
+                <p class="text-muted">🗓️ ${new Date(post.Tanggal).toLocaleDateString('id-ID')}</p>
+              </div>
+            </div>
+          </div>`;
+      });
+      document.getElementById('posts').innerHTML = htmlContent;
+    }
+
+    // Buka modal untuk postingan tertentu dan tampilkan detail serta komentar
+    function openModal(title) {
+      const post = posts.find(p => p.Judul === title);
+      if (!post) {
+        alert("Postingan tidak ditemukan!");
+        return;
+      }
+      document.getElementById('modalTitle').innerText = post.Judul;
+      document.getElementById('modalContent').innerText = post.Isi;
+      const modalImage = document.getElementById('modalImage');
+      if (post.Gambar) {
+        modalImage.src = post.Gambar;
+        modalImage.classList.remove("d-none");
+      } else {
+        modalImage.classList.add("d-none");
+      }
+      // Update view count di localStorage
+      let views = localStorage.getItem(`views_${post.Judul}`) || 0;
+      views++;
+      localStorage.setItem(`views_${post.Judul}`, views);
+      document.getElementById('viewCount').innerText = `👁️ ${views} views`;
+      // Update like count di localStorage
+      let likeCount = localStorage.getItem(`likeCount_${post.Judul}`) || 0;
+      document.getElementById('likeCount').innerText = `${likeCount} Likes`;
+      loadComments(post.Judul);
+      const modalElement = new bootstrap.Modal(document.getElementById('postModal'));
+      modalElement.show();
+    }
+
+    // Ambil dan tampilkan komentar untuk postingan (Sheet "Komentar")
+    async function loadComments(title) {
+      try {
+        const res = await fetch(commentsApiUrl);
+        const data = await res.json();
+        const commentsList = data.filter(comment => comment.Judul === title);
+        const commentsContainer = document.getElementById('commentsList');
+        commentsContainer.innerHTML = '';
+        if (commentsList.length === 0) {
+          commentsContainer.innerHTML = '<li class="list-group-item">Belum ada komentar.</li>';
+        } else {
+          commentsList.forEach(comment => {
+            const li = document.createElement('li');
+            li.classList.add('list-group-item');
+            li.innerHTML = `<strong>${comment.Nama || "Anonim"}:</strong> ${comment.Komentar || ""}`;
+            commentsContainer.appendChild(li);
+          });
         }
+        const adminReply = commentsList.length > 0 && commentsList[0].Balas ? commentsList[0].Balas : "Belum ada balasan dari admin.";
+        document.getElementById('adminReply').innerText = adminReply;
+      } catch (error) {
+        console.error("Error loading comments:", error);
+        document.getElementById('commentsList').innerHTML = '<li class="list-group-item text-danger">Gagal memuat komentar.</li>';
+        document.getElementById('adminReply').innerText = "Gagal memuat balasan admin.";
+      }
+    }
 
-        // Fungsi untuk mengisi filter kategori
-        function populateCategoryFilter() {
-            let categories = [...new Set(posts.map(post => post.Kategori))];
-            const categorySelect = document.getElementById("categoryFilter");
-            categories.forEach(category => {
-                let option = document.createElement("option");
-                option.value = category;
-                option.textContent = category;
-                categorySelect.appendChild(option);
-            });
-
-            categorySelect.addEventListener("change", function() {
-                let selectedCategory = this.value;
-                let filteredPosts = selectedCategory ? posts.filter(post => post.Kategori === selectedCategory) : posts;
-                renderPosts(filteredPosts); // Tampilkan postingan yang difilter
-            });
-        }
-
-        // Fungsi untuk menampilkan daftar postingan
-        function renderPosts(postList) {
-            let htmlContent = '';
-            postList.forEach(post => {
-                htmlContent += `
-                    <div class="col-12 col-md-6 col-lg-4">
-                        <div class="card p-3 shadow-sm">
-                            <div class="card-body">
-                                <h5 class="card-title text-primary cursor-pointer" onclick="openModal('${post.Judul}')">${post.Judul}</h5>
-                                <p class="text-muted">${post.Kategori} | ${post.Tag ? post.Tag : 'Tanpa tag'}</p>
-                                <p class="text-muted">🗓️ ${new Date(post.Tanggal).toLocaleDateString('id-ID')}</p>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-            document.getElementById('posts').innerHTML = htmlContent; // Tampilkan postingan di halaman
-        }
-
-        // Fungsi untuk membuka modal postingan
-        function openModal(title) {
-            const post = posts.find(p => p.Judul === title);
-
-            document.getElementById('modalTitle').innerText = post.Judul;
-            document.getElementById('modalContent').innerText = post.Isi;
-
-            const modalImage = document.getElementById('modalImage');
-            if (post.Gambar) {
-                modalImage.src = post.Gambar;
-                modalImage.classList.remove("d-none");
-            } else {
-                modalImage.classList.add("d-none");
-            }
-
-            let views = localStorage.getItem(`views_${post.Judul}`) || 0;
-            views++;
-            localStorage.setItem(`views_${post.Judul}`, views);
-            document.getElementById('viewCount').innerText = `👁️ ${views} views`;
-
-            let likeCount = localStorage.getItem(`likeCount_${post.Judul}`) || 0;
-            document.getElementById('likeCount').innerText = `${likeCount} Likes`;
-
-            loadComments(title); // Muat komentar berdasarkan judul
-
-            const modalElement = new bootstrap.Modal(document.getElementById('postModal'));
-            modalElement.show();
-        }
-
-        // Fungsi untuk mengambil dan menampilkan komentar di modal
-        async function loadComments(title) {
-            try {
-                const res = await fetch(apiUrl);
-                const data = await res.json();
-
-                // Filter komentar berdasarkan judul postingan
-                const commentsList = data.filter(comment => comment.Judul === title);
-
-                const commentsContainer = document.getElementById('commentsList');
-                commentsContainer.innerHTML = ''; // Kosongkan daftar komentar sebelumnya
-
-                commentsList.forEach(comment => {
-                    const li = document.createElement('li');
-                    li.classList.add('list-group-item');
-                    li.innerHTML = `<strong>${comment.Nama}:</strong> ${comment.Komentar}`;
-                    commentsContainer.appendChild(li);
-                });
-
-                // Menampilkan balasan admin
-                const adminReply = commentsList.length > 0 ? commentsList[0].Balas : "Belum ada balasan dari admin.";
-                document.getElementById('adminReply').innerText = adminReply;
-            } catch (error) {
-                console.error("Error loading comments:", error);
-            }
-        }
-
-        // Fungsi untuk memilih postingan acak
-        function randomPost() {
-            if (posts.length === 0) {
-                alert("Belum ada postingan tersedia. Coba muat ulang halaman.");
-                return;
-            }
-            const randomIndex = Math.floor(Math.random() * posts.length);
-            openModal(posts[randomIndex].Judul);
-        }
-
-        // Fungsi untuk mengaktifkan mode gelap
-        document.getElementById("darkModeToggle").addEventListener("click", function() {
-            document.body.classList.toggle("dark-mode");
-            document.querySelector("header").classList.toggle("dark-mode");
-            document.querySelectorAll(".card").forEach(card => card.classList.toggle("dark-mode"));
-            document.querySelectorAll(".modal-content").forEach(modal => modal.classList.toggle("dark-mode"));
+    // Kirim komentar baru ke API (Sheet "Komentar")
+    async function submitComment() {
+      const name = document.getElementById('nameInput').value.trim();
+      const comment = document.getElementById('commentInput').value.trim();
+      const title = document.getElementById('modalTitle').innerText;
+      const date = new Date().toISOString();
+      if (!name || !comment) {
+        alert("Harap isi nama dan komentar!");
+        return;
+      }
+      const postData = {
+        Nama: name,
+        Komentar: comment,
+        Judul: title,
+        Tanggal: date
+      };
+      try {
+        const res = await fetch(commentsApiUrl, {
+          method: "POST",
+          body: JSON.stringify(postData),
+          headers: { "Content-Type": "application/json" }
         });
+        const result = await res.json();
+        if (result.status === "success") {
+          alert("Komentar berhasil dikirim!");
+          document.getElementById('nameInput').value = '';
+          document.getElementById('commentInput').value = '';
+          loadComments(title);
+        } else {
+          alert("Gagal mengirim komentar. Silakan coba lagi.");
+        }
+      } catch (error) {
+        console.error("Error submitting comment:", error);
+        alert("Terjadi kesalahan. Silakan coba lagi.");
+      }
+    }
 
-        // Mulai mengambil data ketika halaman dimuat
-        fetchPosts();
-    </script>
+    // Pilih postingan acak
+    function randomPost() {
+      if (posts.length === 0) {
+        alert("Belum ada postingan tersedia. Coba muat ulang halaman.");
+        return;
+      }
+      const randomIndex = Math.floor(Math.random() * posts.length);
+      openModal(posts[randomIndex].Judul);
+    }
+
+    // Mode gelap
+    document.getElementById("darkModeToggle").addEventListener("click", function() {
+      document.body.classList.toggle("dark-mode");
+      document.querySelector("header").classList.toggle("dark-mode");
+      document.querySelectorAll(".card").forEach(card => card.classList.toggle("dark-mode"));
+      document.querySelectorAll(".modal-content").forEach(modal => modal.classList.toggle("dark-mode"));
+    });
+
+    // Inisialisasi Particles.js
+    particlesJS("particles-js", {
+      "particles": {
+        "number": { "value": 50 },
+        "color": { "value": "#6610f2" },
+        "shape": { "type": "circle" },
+        "opacity": { "value": 0.5 },
+        "size": { "value": 3 }
+      }
+    });
+
+    // Mulai ambil data ketika halaman dimuat
+    fetchPosts();
+  </script>
 </body>
-</html>        
+</html>

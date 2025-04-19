@@ -128,13 +128,22 @@
                     <span id="likeCount" class="ms-2">0 Likes</span>
                     <span id="viewCount" class="ms-2">👁️ 0 views</span>
                     <button class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    <hr>
+                    <h6>Komentar Pengunjung:</h6>
+                    <ul id="commentsList" class="list-group"></ul>
+                    <textarea id="commentInput" class="form-control my-2" placeholder="Tambahkan komentar"></textarea>
+                    <input id="nameInput" type="text" class="form-control my-2" placeholder="Nama Anda">
+                    <button class="btn btn-primary" onclick="submitComment()">Kirim</button>
+                    <hr>
+                    <h6>Balasan Admin:</h6>
+                    <p id="adminReply"></p>
                 </div>
             </div>
         </div>
     </div>
-
+   
     <script>
-        const apiUrl = "https://script.google.com/macros/s/AKfycby9EhjLZtCAv8e65-K-5vl5B2Rz5ny82bzuts_TZnbFUVq0eD2jbJ6gB2QR2CP-KU7rXg/exec";
+        const apiUrl = "https://script.google.com/macros/s/AKfycbw3bsqZ8u3Z66ULf4PgpOZABLgXYMx6zBv1Tnb3OfBTylg2zv67-xImhuT5WJ1Hq_rEPw/exec";
         let posts = [];
 
         async function fetchPosts() {
@@ -150,13 +159,30 @@
 
                 populateCategoryFilter();
                 renderPosts(posts);
+
+                const commentsList = data.filter(comment => comment.Judul === title);
+
+                const commentsContainer = document.getElementById('commentsList');
+                commentsContainer.innerHTML = ''; // Kosongkan daftar sebelumnya
+
+                commentsList.forEach(comment => {
+                    const li = document.createElement('li');
+                    li.classList.add('list-group-item');
+                    li.innerHTML = `<strong>${comment.Nama}:</strong> ${comment.Komentar}`;
+                    commentsContainer.appendChild(li);
+                });
+
+                const adminReply = commentsList.length > 0 ? commentsList[0].Balas : "Belum ada balasan dari admin.";
+                document.getElementById('adminReply').innerText = adminReply;
+                
             } catch (error) {
                 document.getElementById("posts").innerHTML = "<p class='text-danger'>Gagal memuat data.</p>";
                 console.error("Error fetching data:", error);
+                console.error("Error loading comments:", error);
                 document.getElementById('loader').style.display = "none";
             }
         }
-
+       
         function populateCategoryFilter() {
             let categories = [...new Set(posts.map(post => post.Kategori))];
             const categorySelect = document.getElementById("categoryFilter");

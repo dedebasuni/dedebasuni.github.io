@@ -146,43 +146,30 @@
         const apiUrl = "https://script.google.com/macros/s/AKfycbw3bsqZ8u3Z66ULf4PgpOZABLgXYMx6zBv1Tnb3OfBTylg2zv67-xImhuT5WJ1Hq_rEPw/exec";
         let posts = [];
 
+        // Fungsi untuk mengambil data postingan dari API
         async function fetchPosts() {
             try {
                 const res = await fetch(apiUrl);
                 posts = await res.json();
 
+                // Filter postingan dengan status "publish"
                 posts = posts.filter(post => post.Status.toLowerCase() === "publish");
-        
+
+                // Sortir postingan berdasarkan tanggal terbaru
                 posts.sort((a, b) => new Date(b.Tanggal) - new Date(a.Tanggal));
 
-                document.getElementById('loader').style.display = "none";
+                document.getElementById('loader').style.display = "none"; // Sembunyikan loader
 
-                populateCategoryFilter();
-                renderPosts(posts);
-
-                const commentsList = data.filter(comment => comment.Judul === title);
-
-                const commentsContainer = document.getElementById('commentsList');
-                commentsContainer.innerHTML = ''; // Kosongkan daftar sebelumnya
-
-                commentsList.forEach(comment => {
-                    const li = document.createElement('li');
-                    li.classList.add('list-group-item');
-                    li.innerHTML = `<strong>${comment.Nama}:</strong> ${comment.Komentar}`;
-                    commentsContainer.appendChild(li);
-                });
-
-                const adminReply = commentsList.length > 0 ? commentsList[0].Balas : "Belum ada balasan dari admin.";
-                document.getElementById('adminReply').innerText = adminReply;
-                
+                populateCategoryFilter(); // Isi filter kategori
+                renderPosts(posts);       // Tampilkan postingan
             } catch (error) {
                 document.getElementById("posts").innerHTML = "<p class='text-danger'>Gagal memuat data.</p>";
-                console.error("Error fetching data:", error);
-                console.error("Error loading comments:", error);
-                document.getElementById('loader').style.display = "none";
+                console.error("Error fetching posts:", error);
+                document.getElementById('loader').style.display = "none"; // Sembunyikan loader saat error
             }
         }
-       
+
+        // Fungsi untuk mengisi filter kategori
         function populateCategoryFilter() {
             let categories = [...new Set(posts.map(post => post.Kategori))];
             const categorySelect = document.getElementById("categoryFilter");
@@ -196,10 +183,11 @@
             categorySelect.addEventListener("change", function() {
                 let selectedCategory = this.value;
                 let filteredPosts = selectedCategory ? posts.filter(post => post.Kategori === selectedCategory) : posts;
-                renderPosts(filteredPosts);
+                renderPosts(filteredPosts); // Tampilkan postingan yang difilter
             });
         }
 
+        // Fungsi untuk menampilkan daftar postingan
         function renderPosts(postList) {
             let htmlContent = '';
             postList.forEach(post => {
@@ -215,9 +203,10 @@
                     </div>
                 `;
             });
-            document.getElementById('posts').innerHTML = htmlContent;
+            document.getElementById('posts').innerHTML = htmlContent; // Tampilkan postingan di halaman
         }
 
+        // Fungsi untuk membuka modal postingan
         function openModal(title) {
             const post = posts.find(p => p.Judul === title);
 
@@ -240,10 +229,40 @@
             let likeCount = localStorage.getItem(`likeCount_${post.Judul}`) || 0;
             document.getElementById('likeCount').innerText = `${likeCount} Likes`;
 
+            loadComments(title); // Muat komentar berdasarkan judul
+
             const modalElement = new bootstrap.Modal(document.getElementById('postModal'));
             modalElement.show();
         }
 
+        // Fungsi untuk mengambil dan menampilkan komentar di modal
+        async function loadComments(title) {
+            try {
+                const res = await fetch(apiUrl);
+                const data = await res.json();
+
+                // Filter komentar berdasarkan judul postingan
+                const commentsList = data.filter(comment => comment.Judul === title);
+
+                const commentsContainer = document.getElementById('commentsList');
+                commentsContainer.innerHTML = ''; // Kosongkan daftar komentar sebelumnya
+
+                commentsList.forEach(comment => {
+                    const li = document.createElement('li');
+                    li.classList.add('list-group-item');
+                    li.innerHTML = `<strong>${comment.Nama}:</strong> ${comment.Komentar}`;
+                    commentsContainer.appendChild(li);
+                });
+
+                // Menampilkan balasan admin
+                const adminReply = commentsList.length > 0 ? commentsList[0].Balas : "Belum ada balasan dari admin.";
+                document.getElementById('adminReply').innerText = adminReply;
+            } catch (error) {
+                console.error("Error loading comments:", error);
+            }
+        }
+
+        // Fungsi untuk memilih postingan acak
         function randomPost() {
             if (posts.length === 0) {
                 alert("Belum ada postingan tersedia. Coba muat ulang halaman.");
@@ -253,6 +272,7 @@
             openModal(posts[randomIndex].Judul);
         }
 
+        // Fungsi untuk mengaktifkan mode gelap
         document.getElementById("darkModeToggle").addEventListener("click", function() {
             document.body.classList.toggle("dark-mode");
             document.querySelector("header").classList.toggle("dark-mode");
@@ -260,7 +280,7 @@
             document.querySelectorAll(".modal-content").forEach(modal => modal.classList.toggle("dark-mode"));
         });
 
-// Mulai mengambil data ketika halaman dimuat
+        // Mulai mengambil data ketika halaman dimuat
         fetchPosts();
     </script>
 </body>

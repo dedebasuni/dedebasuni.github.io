@@ -113,14 +113,35 @@
     <div id="postModal" class="modal fade" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
+                <!-- Header Modal -->
                 <div class="modal-header">
                     <h5 id="modalTitle" class="modal-title font-weight-bold"></h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+
+                <!-- Body Modal -->
                 <div class="modal-body">
+                    <!-- Isi Postingan -->
                     <p id="modalContent"></p>
                     <img id="modalImage" class="img-fluid d-none lazy-load" alt="Post Image">
+                    <hr>
+
+                    <!-- Komentar Pengunjung -->
+                    <h6>Komentar Pengunjung:</h6>
+                    <ul id="commentsList" class="list-group"></ul>
+
+                    <!-- Form Tambahkan Komentar -->
+                    <textarea id="commentInput" class="form-control my-2" placeholder="Tambahkan komentar"></textarea>
+                    <input id="nameInput" type="text" class="form-control my-2" placeholder="Nama Anda">
+                    <button class="btn btn-primary" onclick="submitComment()">Kirim</button>
+                    <hr>
+
+                    <!-- Balasan Admin -->
+                    <h6>Balasan Admin:</h6>
+                    <p id="adminReply" class="text-muted">Belum ada balasan dari admin.</p>
                 </div>
+
+                <!-- Footer Modal -->
                 <div class="modal-footer">
                     <button id="likeButton" class="btn btn-outline-danger">
                         <i class="fas fa-heart"></i> Like
@@ -128,15 +149,6 @@
                     <span id="likeCount" class="ms-2">0 Likes</span>
                     <span id="viewCount" class="ms-2">👁️ 0 views</span>
                     <button class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                    <hr>
-                    <h6>Komentar Pengunjung:</h6>
-                    <ul id="commentsList" class="list-group"></ul>
-                    <textarea id="commentInput" class="form-control my-2" placeholder="Tambahkan komentar"></textarea>
-                    <input id="nameInput" type="text" class="form-control my-2" placeholder="Nama Anda">
-                    <button class="btn btn-primary" onclick="submitComment()">Kirim</button>
-                    <hr>
-                    <h6>Balasan Admin:</h6>
-                    <p id="adminReply"></p>
                 </div>
             </div>
         </div>

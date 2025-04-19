@@ -1,79 +1,72 @@
-<!-- https://github.com/dedebasuni/ -->
-<!-- April 15, 2021 -->
-<!-- LEAVE A STAR, IF YOU LIKE IT ! -->
+<!-- 🌟 Leave a STAR if you like it! 🌟 -->
 
 <!-- Title -->
-<h3 align="center">
-        <samp>&gt; Hey There!, I am
-                <b><a target="_blank" href="https://dedebasuni.github.io/">Dede Basuni</a></b>
-        </samp>
-</h3>
-<br>
+<h2 align="center">
+  <samp>&lt;/&gt; Hi, I'm <a href="https://dedebasuni.github.io/" target="_blank">Dede Basuni</a> 👋</samp>
+</h2>
 
 <p align="center">
-        <!-- Intro -->
-        <samp>
-                「 I'm a software developer from <b>Indonesia</b> 」
-                <br>
-                「 Focused on creating impactful web applications that improve lives</b> 」
-                <br>
-                <br>
-        </samp>
-        <!-- Technologies -->
-        <!-- JavaScript -->
-        <a href="https://github.com/dedebasuni?tab=repositories" target="_blank"><img alt="JavaScript"
-                        src="https://img.shields.io/badge/-JavaScript-F7DF1E?style=flat-square&logo=JavaScript&logoColor=white">
-        </a>
-        <!-- React -->
-        <a href="https://github.com/dedebasuni?tab=repositories" target="_blank"><img alt="React"
-                        src="https://img.shields.io/badge/-React-02cdf1?style=flat-square&logo=React&logoColor=white">
-        </a>
-        <!-- NextJS -->
-        <a href="https://github.com/dedebasuni?tab=repositories" target="_blank"><img alt="NextJS"
-                        src="https://img.shields.io/badge/-NextJS-white?style=flat-square&logo=Next.js&logoColor=black">
-        </a>
-        <!-- TailwindCSS -->
-        <a href="https://github.com/dedebasuni?tab=repositories" target="_blank"><img alt="TailwindCSS"
-                        src="https://img.shields.io/badge/-TailwindCSS-10172a?style=flat-square&logo=Tailwindcss&logoColor=37bcf8">
-        </a>
-        <!-- Arduino -->
-        <a href="https://github.com/dedebasuni?tab=repositories" target="_blank"><img alt="Arduino"
-                        src="https://img.shields.io/badge/-Arduino-00979D?style=flat-square&logo=Arduino&logoColor=white">
-        </a>
+  <samp>
+    🧑‍💻 Fullstack Developer | ⚡ Tech Explorer | 🇮🇩 Based in Indonesia
+    <br>
+    🚀 Passionate about building intuitive & impactful digital experiences
+  </samp>
 </p>
 
-<!-- Details Section -->
-<details align="center">
-    <summary> <samp>&#9776; More</samp></summary>
-    <p align="center">
-        <br>
-        <!-- Social Links -->
-        <p>Find me on</p>
-        <!-- Mail -->
-        <a href="mailto:mr.dedebasuni@gmail.com" target="_blank"><img alt="Mail"
-                src="https://img.shields.io/badge/-Mail-EA4335?style=flat-square&logo=Gmail&logoColor=white">
-        </a>
-        <!-- Twitter -->
-        <a href="https://twitter.com/dede_basuni" target="_blank"><img alt="Twitter"
-                src="https://img.shields.io/badge/-Twitter-1c9bef?style=flat-square&logo=Twitter&logoColor=white">
-        </a>
-        <!-- Linkedin -->
-        <a href="https://www.facebook.com/dede.basuni/" target="_blank"><img alt="Facebook"
-                src="https://img.shields.io/badge/-Linkedin-0A66C2?style=flat-square&logo=Linkedin&logoColor=white">
-        </a>
-        <!-- Youtube -->
-        <a href="https://www.youtube.com/@dedebasuni" target="_blank"><img alt="Youtube"
-                src="https://img.shields.io/badge/-Youtube-FF0000?style=flat-square&logo=Youtube&logoColor=white">
-        </a>
-    </p>
-</details>
-<br>
+---
 
-<!-- Footer -->
-<samp>
-    <p align="center">
-        ════ ⋆★⋆ ════
-        <br>
-        "Happy Coding👨‍💻"
-    </p>
-</samp>
+### 🛠️ Tech Stack & Tools I Use
+<p align="center">
+  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black" />
+  <img src="https://img.shields.io/badge/React-02cdf1?style=flat-square&logo=react&logoColor=white" />
+  <img src="https://img.shields.io/badge/Next.js-black?style=flat-square&logo=next.js&logoColor=white" />
+  <img src="https://img.shields.io/badge/TailwindCSS-0ea5e9?style=flat-square&logo=tailwindcss&logoColor=white" />
+  <img src="https://img.shields.io/badge/Arduino-00979D?style=flat-square&logo=arduino&logoColor=white" />
+</p>
+
+---
+
+### 🤝 Let’s Connect
+<p align="center">
+  <a href="mailto:mr.dedebasuni@gmail.com" target="_blank">
+    <img src="https://img.shields.io/badge/Email-EA4335?style=flat-square&logo=gmail&logoColor=white" />
+  </a>
+  <a href="https://twitter.com/dede_basuni" target="_blank">
+    <img src="https://img.shields.io/badge/Twitter-1DA1F2?style=flat-square&logo=twitter&logoColor=white" />
+  </a>
+  <a href="https://www.linkedin.com/in/dedebasuni/" target="_blank">
+    <img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=flat-square&logo=linkedin&logoColor=white" />
+  </a>
+  <a href="https://www.youtube.com/@dedebasuni" target="_blank">
+    <img src="https://img.shields.io/badge/Youtube-FF0000?style=flat-square&logo=youtube&logoColor=white" />
+  </a>
+</p>
+
+---
+
+<details>
+  <summary><b>🧩 About Me</b></summary>
+  <br>
+  <ul>
+    <li>🌱 Always learning & tinkering with new tech</li>
+    <li>🎯 Currently deep-diving into <strong>Next.js</strong> and modern front-end architecture</li>
+    <li>📦 I love building side projects and open source tools</li>
+    <li>🎨 Big fan of minimalistic design & clean code</li>
+  </ul>
+</details>
+
+---
+
+<p align="center">
+  <samp>
+    ✨ Thanks for stopping by! Keep learning, keep building.
+    <br><br>
+    <strong>“Code is like humor. When you have to explain it, it’s bad.”</strong> – Cory House
+    <br><br>
+    <i>~ Happy Coding 👨‍💻 ~</i>
+  </samp>
+</p>
+
+<p align="center">
+  ════════ ⋆⋅☆⋅⋆ ════════
+</p>

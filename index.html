@@ -64,6 +64,10 @@
             background-color: #495057;
             color: #ffffff;
         }
+        .modal-content.dark-mode {
+            background-color: #495057;
+            color: #ffffff;
+        }        
     </style>
 </head>
 <body class="fade-in">
@@ -202,6 +206,13 @@
             document.body.classList.toggle("dark-mode");
             document.querySelector("header").classList.toggle("dark-mode");
             document.querySelectorAll(".card").forEach(card => card.classList.toggle("dark-mode"));
+        });
+
+        document.getElementById("darkModeToggle").addEventListener("click", function() {
+            document.body.classList.toggle("dark-mode");
+            document.querySelector("header").classList.toggle("dark-mode");
+            document.querySelectorAll(".card").forEach(card => card.classList.toggle("dark-mode"));
+            document.querySelectorAll(".modal-content").forEach(modal => modal.classList.toggle("dark-mode"));
         });
     </script>
 </body>

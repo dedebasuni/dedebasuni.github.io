@@ -32,15 +32,11 @@
         .text-muted {
             font-size: 0.875rem;
             color: #6c757d;
-        }        
+        }
         .modal-title {
             font-size: 1.5rem;
             font-weight: 600;
             color: #007bff;
-        }
-        .modal-body .text-muted {
-            font-size: 0.875rem;
-            color: #6c757d;
         }
         header {
             background: linear-gradient(45deg, #007bff, #6610f2);
@@ -85,7 +81,7 @@
         .modal-content.dark-mode {
             background-color: #495057;
             color: #ffffff;
-        }        
+        }
     </style>
 </head>
 <body class="fade-in">
@@ -96,12 +92,17 @@
             <select id="categoryFilter" class="form-select w-25">
                 <option value="">Semua Kategori</option>
             </select>
-            <button class="btn btn-primary ms-2" onclick="randomPost()"> 🎲 </button>
-            <button id="darkModeToggle" class="btn btn-light ms-2"> 🌙 </button>
+            <button class="btn btn-primary ms-2" onclick="randomPost()">🎲 Post Acak</button>
+            <button id="darkModeToggle" class="btn btn-light ms-2">🌙 Mode Gelap</button>
         </div>
     </header>
 
     <main class="container py-4">
+        <div id="loader" class="text-center my-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
         <div class="row g-4" id="posts"></div>
     </main>
 
@@ -142,11 +143,13 @@
                 posts = await res.json();
                 posts = posts.filter(post => post.Status.toLowerCase() === "publish");
                 posts.sort((a, b) => new Date(b.Tanggal) - new Date(a.Tanggal));
+                document.getElementById('loader').style.display = "none";
                 populateCategoryFilter();
                 renderPosts(posts);
             } catch (error) {
                 document.getElementById("posts").innerHTML = "<p class='text-danger'>Gagal memuat data.</p>";
                 console.error("Error fetching data:", error);
+                document.getElementById('loader').style.display = "none";
             }
         }
 
@@ -208,6 +211,9 @@
             document.getElementById('likeCount').innerText = `${likeCount} Likes`;
 
             let modalElement = new bootstrap.Modal(document.getElementById('postModal'));
+            modalElement.show
+            
+            let modalElement = new bootstrap.Modal(document.getElementById('postModal'));
             modalElement.show();
         }
 
@@ -225,12 +231,6 @@
             document.querySelector("header").classList.toggle("dark-mode");
             document.querySelectorAll(".card").forEach(card => card.classList.toggle("dark-mode"));
             document.querySelectorAll(".modal-content").forEach(modal => modal.classList.toggle("dark-mode"));
-            document.querySelectorAll(".modal-title, .modal-body").forEach(element => {
-                if (document.body.classList.contains("dark-mode")) {
-                    element.style.color = "#ffffff";
-                } else {
-                    element.style.color = "";
-                }
         });
     </script>
 </body>

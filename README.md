@@ -94,18 +94,16 @@ Kontribusi sangat diterima! Jika Anda ingin berkontribusi, silakan buat pull req
 
 ---
 
+## 🙏 Ucapan Terima Kasih
+Terima kasih telah melihat proyek ini! Semoga blog ini dapat menjadi sumber inspirasi bagi Anda. Jangan ragu untuk memberikan feedback atau saran melalui email atau media sosial.
+
+Happy Coding! 🚀✨
+
+---
+
 ## 📝 Preview Folder Structure
    ```bash
    my-notes/
    ├── index.html          # File utama blog
    ├── README.md           # Dokumentasi proyek
    └── assets/             # Folder opsional untuk aset tambahan (gambar, font, dll.)
-
-Simpan kode di atas sebagai file `README.md` di root direktori repositori Anda. Ini akan memberikan gambaran jelas tentang proyek, fitur-fiturnya, dan cara berkontribusi. Anda juga dapat menyesuaikan konten sesuai kebutuhan.
-
----
-
-## 🙏 Ucapan Terima Kasih
-Terima kasih telah melihat proyek ini! Semoga blog ini dapat menjadi sumber inspirasi bagi Anda. Jangan ragu untuk memberikan feedback atau saran melalui email atau media sosial.
-
-Happy Coding! 🚀✨

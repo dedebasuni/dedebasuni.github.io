@@ -98,7 +98,6 @@
       <button id="darkModeToggle" class="btn btn-light ms-2">🌙 Mode</button>
     </div>
   </header>
-
   <main class="container py-4">
     <div id="loader" class="text-center my-5">
       <div class="spinner-border text-primary" role="status">
@@ -112,11 +111,9 @@
       </nav>
     </div>    
   </main>
-
   <footer id="footer" class="bg-light text-center py-3">
     <p>&copy; 2025 My Notes | 🔔 <span id="newPostAlert"></span></p>
   </footer>
-
   <div id="postModal" class="modal fade" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
@@ -139,11 +136,9 @@
       </div>
     </div>
   </div>
-
   <script>
     const postsApiUrl = "https://script.google.com/macros/s/AKfycbyl_tLV9i5K6cngdpXd9OfvVtNj53hP2FiOoXp1UZn1G8luBhMJZVN6JRhR2amLomyjMw/exec?sheet=Post";
     let posts = [];
-
     let filteredPosts = [];
     let currentPage = 1;
     const postsPerPage = 10;
@@ -242,17 +237,14 @@
       } else {
         modalImage.classList.add("d-none");
       }
-
       const viewKey = `viewCount_${post.Judul}`;
       let viewCount = parseInt(localStorage.getItem(viewKey)) || 0;
       viewCount++;
       localStorage.setItem(viewKey, viewCount);
       document.getElementById('viewCount').innerText = `👁️ ${viewCount} views`;
-
       const likeKey = `likeCount_${post.Judul}`;
       let likeCount = parseInt(localStorage.getItem(likeKey)) || 0;
       document.getElementById('likeCount').innerText = `${likeCount} Likes`;
-
       const modalElement = new bootstrap.Modal(document.getElementById('postModal'));
       modalElement.show();
     }

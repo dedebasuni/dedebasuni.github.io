@@ -94,7 +94,6 @@
       <select id="categoryFilter" class="form-select w-25 d-none">
         <option value="">Semua Kategori</option>
       </select>
-      <input id="searchInput" class="form-control ms-2 w-50" placeholder="Cari judul atau isi..." oninput="searchPosts()">
       <button class="btn btn-primary ms-2" onclick="randomPost()">🎲 Acak</button>
       <button id="darkModeToggle" class="btn btn-light ms-2">🌙 Mode</button>
     </div>
@@ -170,16 +169,6 @@
 
     function goToPage(page) {
       currentPage = page;
-      paginatePosts(filteredPosts);
-    }
-
-    function searchPosts() {
-      const query = document.getElementById('searchInput').value.toLowerCase();
-      filteredPosts = posts.filter(post => 
-        post.Judul.toLowerCase().includes(query) || 
-        post.Isi.toLowerCase().includes(query)
-      );
-      currentPage = 1;
       paginatePosts(filteredPosts);
     }
 

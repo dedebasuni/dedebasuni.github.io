@@ -1,245 +1,161 @@
-window.onload = function () {
-    displayClock();
-    displayDate();
-    quoteLiveTile();
+const postsApiUrl = "https://script.google.com/macros/s/AKfycbyl_tLV9i5K6cngdpXd9OfvVtNj53hP2FiOoXp1UZn1G8luBhMJZVN6JRhR2amLomyjMw/exec?sheet=Post";
+let posts = [];
+let filteredPosts = [];
+let currentPage = 1;
+const postsPerPage = 9;
+
+function paginatePosts(postList) {
+  const totalPages = Math.ceil(postList.length / postsPerPage);
+  const start = (currentPage - 1) * postsPerPage;
+  const end = start + postsPerPage;
+  renderPosts(postList.slice(start, end));
+  renderPaginationControls(totalPages);
 }
 
-document.addEventListener('contextmenu', (e) => {
-  e.preventDefault();
-});
-
-const tiles = document.querySelectorAll('.tile');
-const customMenu = document.getElementById('custom-menu');
-
-tiles.forEach(tile => {
-  tile.addEventListener('contextmenu', (e) => {
-    e.preventDefault();
-    const menuX = e.pageX + 'px';
-    const menuY = e.pageY + 'px';
-
-    customMenu.style.left = menuX;
-    customMenu.style.top = menuY;
-    customMenu.style.display = 'block';
-  });
-
-  document.addEventListener('click', () => {
-    customMenu.style.display = 'none';
-  });
-});
-
-// For touch devices (long-press detection)
-tiles.forEach(tile => {
-  let pressTimer;
-
-  tile.addEventListener('touchstart', (e) => {
-    pressTimer = setTimeout(() => {
-      const menuX = e.touches[0].pageX + 'px';
-      const menuY = e.touches[0].pageY + 'px';
-
-      customMenu.style.left = menuX;
-      customMenu.style.top = menuY;
-      customMenu.style.display = 'block';
-    }, 2000);
-  });
-
-  tile.addEventListener('touchend', () => {
-    clearTimeout(pressTimer);
-  });
-});
-
-function displayClock(){
-  var now = new Date();
-  var hours = now.getHours();
-  var minutes = now.getMinutes();
-  if(hours < 10) {
-    hours = '0' + hours;
-  }
-  if(minutes < 10) {
-    minutes = '0' + minutes;
-  }
-  var display = hours + ':' + minutes;
-  var clock = document.getElementById('clock');
-  clock.textContent = display;
-  
-  setTimeout(displayClock, 1000); 
-}
-
-function displayDate() {
-    var now = new Date();
-    var date = now.getDate();
-    var calendar = document.getElementById('calendar');
-    calendar.textContent = date;
-}
-
-function toggleAllApps() {
-  const allApps = document.getElementById('app-center');
-  const startScreen = document.getElementById('start-screen');
-  startScreen.classList.toggle('hidden');
-  allApps.classList.toggle('open');
-}
-
-let touchstartX = 0;
-let touchendX = 0;
-const swipeThreshold = 50;  // Minimum swipe distance in pixels
-
-const startScreen = document.getElementById('start-screen');
-const allApps = document.getElementById('app-center');
-
-startScreen.addEventListener('touchstart', (e) => {
-  touchstartX = e.changedTouches[0].screenX;
-});
-
-startScreen.addEventListener('touchend', (e) => {
-  touchendX = e.changedTouches[0].screenX;
-  handleGesture(0);
-});
-
-allApps.addEventListener('touchstart', (e) => {
-  touchstartX = e.changedTouches[0].screenX;
-});
-
-allApps.addEventListener('touchend', (e) => {
-  touchendX = e.changedTouches[0].screenX;
-  handleGesture(1);
-});
-
-function handleGesture(pointer) {
-  const swipeDistance = touchendX - touchstartX;
-
-  if (pointer === 1) {
-    if (swipeDistance > swipeThreshold) {
-      toggleAllApps();
-    }
-  } else if (pointer === 0) {
-    if (swipeDistance < -swipeThreshold) {
-      toggleAllApps();
-    }
+function renderPaginationControls(totalPages) {
+  const pagination = document.getElementById('paginationControls');
+  pagination.innerHTML = '';
+  for (let i = 1; i <= totalPages; i++) {
+const li = document.createElement('li');
+li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+li.innerHTML = `<button class="page-link" onclick="goToPage(${i})">${i}</button>`;
+pagination.appendChild(li);
   }
 }
 
-async function quoteLiveTile() {
+function goToPage(page) {
+  currentPage = page;
+  paginatePosts(filteredPosts);
+}
+
+async function fetchPosts() {
   try {
-    const response = await fetch('https://yurippe.vercel.app/api/quotes?show=violet%20evergarden&random=1');
-    if (!response.ok) {
-      throw new Error(`Error status: ${response.status}`);
-    }
-    const quote = await response.json();
-    // console.log(quote);
-    let liveTile = document.getElementById('live-tile');
-    liveTile.textContent = quote[0].quote;
+const res = await fetch(postsApiUrl);
+if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
+posts = await res.json().then(data => data.filter(p => p.Status.toLowerCase() === "publish"));
+filteredPosts = posts;
+currentPage = 1;
+paginatePosts(filteredPosts);
+populateCategoryFilter();
+checkNewPost();
+document.getElementById("loader").style.display = "none";
+document.getElementById("categoryFilter").classList.remove("d-none");
   } catch (error) {
-    console.error(error.message);
+console.error("Error fetching posts:", error);
+document.getElementById("posts").innerHTML = "<p class='text-danger'>Gagal memuat data.</p>";
+document.getElementById("loader").style.display = "none";
   }
 }
 
-function flipTile() {
-  const tile = document.getElementById('quote-tile');
-  tile.classList.toggle('flipped');
-  setTimeout(() => {
-    quoteLiveTile();
-  }, 1000);
+function populateCategoryFilter() {
+  let categories = [...new Set(posts.map(post => post.Kategori))];
+  const categorySelect = document.getElementById("categoryFilter");
+  categorySelect.innerHTML = '<option value="">Semua Kategori</option>';
+  categories.forEach(category => {
+let option = document.createElement("option");
+option.value = category;
+option.textContent = category;
+categorySelect.appendChild(option);
+  });
+  categorySelect.addEventListener("change", function () {
+let selectedCategory = this.value;
+filteredPosts = selectedCategory ? posts.filter(post => post.Kategori === selectedCategory) : posts;
+currentPage = 1;
+paginatePosts(filteredPosts);
+  });
 }
 
-function applyTileColor(tileColor) {
-  const defaultTileColor = '#1BA1E2';
-  if (tileColor === '#000000') {
-    alert("Can't use pure black as accent colour");
-    return false; // Indicate failure
+function renderPosts(postList) {
+  const postsContainer = document.getElementById('posts');
+  postsContainer.innerHTML = postList.map(post => `
+<div class="col-md-4">
+  <div class="card p-3 shadow-sm h-100 d-flex flex-column">
+<h5 class="card-title cursor-pointer" onclick="openModal('${post.Judul}')">${post.Judul}</h5>
+<p class="card-category">${post.Kategori} | ${post.Tag || 'Tanpa tag'}</p>
+  </div>
+</div>`).join('');
+}
+
+function updateLike(title) {
+  const likeKey = `likeCount_${title}`;
+  let likeCount = parseInt(localStorage.getItem(likeKey)) || 0;
+  likeCount++;
+  localStorage.setItem(likeKey, likeCount);
+  document.getElementById('likeCount').innerText = `${likeCount} Likes`;
+}
+
+function updateView(title) {
+  const viewKey = `viewCount_${title}`;
+  let viewCount = parseInt(localStorage.getItem(viewKey)) || 0;
+  viewCount++;
+  localStorage.setItem(viewKey, viewCount);
+  document.getElementById('viewCount').innerText = `👁️ ${viewCount} views`;
+}
+
+function openModal(title) {
+  const post = posts.find(p => p.Judul === title);
+  if (!post) return alert("Postingan tidak ditemukan!");
+  document.getElementById('modalTitle').innerText = post.Judul;
+  document.getElementById('modalContent').innerText = post.Isi;
+  const modalImage = document.getElementById('modalImage');
+  if (post.Gambar) {
+modalImage.src = post.Gambar;
+modalImage.classList.remove("d-none");
   } else {
-    const isValidColor = /^#([0-9A-F]{3}){1,2}$/i.test(tileColor) || /^rgba?\(\s*(\d{1,3}\s*,\s*){2,3}\d{1,3}\s*(,\s*(0(\.\d+)?|1(\.0+)?))?\s*\)$/i.test(tileColor);
-    if (isValidColor) {
-      document.documentElement.style.setProperty('--accent', tileColor);
-      localStorage.setItem('Windows-Phone-Accent-Colour', tileColor);
-      return true;
-    } else {
-      alert('Invalid color value. Please enter a valid hex (#rrggbb format) or rgba color (rr,gg,bb,aa format)');
-      return false;
-    }
+modalImage.classList.add("d-none");
+  }
+  updateView(post.Judul);
+  const likeKey = `likeCount_${post.Judul}`;
+  let likeCount = parseInt(localStorage.getItem(likeKey)) || 0;
+  document.getElementById('likeCount').innerText = `${likeCount} Likes`;
+  const modalElement = new bootstrap.Modal(document.getElementById('postModal'));
+  modalElement.show();
+}
+
+function randomPost() {
+  if (filteredPosts.length === 0) return;
+  const randomIndex = Math.floor(Math.random() * filteredPosts.length);
+  openModal(filteredPosts[randomIndex].Judul);
+}
+
+function checkNewPost() {
+  const lastSeen = localStorage.getItem("lastCheck") || new Date(0);
+  const newCount = posts.filter(p => new Date(p.Tanggal) > new Date(lastSeen)).length;
+  if (newCount > 0) {
+document.getElementById("newPostAlert").innerText = `${newCount} post baru`;
+  }
+  localStorage.setItem("lastCheck", new Date().toISOString());
+}
+
+function applySavedDarkMode() {
+  const isDark = localStorage.getItem("darkMode") === "true";
+  if (isDark) {
+document.body.classList.add('dark-mode');
+document.querySelectorAll('.card, .modal-content').forEach(el => el.classList.add('dark-mode'));
+document.querySelector('header').classList.add('dark-mode');
+document.querySelector('footer').classList.add('dark-mode');
   }
 }
 
-function applyBackgroundImage(backgroundImageUrl) {
-  const defaultBackground = '#000000';
-  
-  const canvas = document.getElementById('blur-canvas');
-  const ctx = canvas.getContext('2d');
-
-  if (backgroundImageUrl) {
-    const img = new Image();
-    img.crossOrigin = "anonymous"; // Allow cross-origin image loading if needed
-    img.src = backgroundImageUrl;
-
-    img.onload = function() {
-      resizeCanvas();
-
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.filter = 'blur(12px)';
-      for (let y = 0; y < canvas.height; y += img.height) {
-        ctx.drawImage(img, 0, y, canvas.width, img.height);
-      }
-
-      localStorage.setItem('Windows-Phone-Background', backgroundImageUrl);
-    };
-
-    img.onerror = function() {
-      alert('Failed to load image. Please check the URL and try again.');
-      document.body.style.backgroundColor = defaultBackground;
-    };
-  } else {
-    document.body.style.backgroundColor = defaultBackground;
-  }
-}
-
-
-function applySettings() {
-  const selectedColor = document.querySelector('input[name="tile-color"]:checked').value;
-  const isTileColorValid = applyTileColor(selectedColor);
-
-  if (isTileColorValid) {
-    const backgroundImageUrlInput = document.getElementById('background-image-url').value;
-    applyBackgroundImage(backgroundImageUrlInput);
-  }
-}
-
-function loadSettings() {
-  const savedTileColor = localStorage.getItem('Windows-Phone-Accent-Colour') || '#1BA1E2';
-  const savedBackgroundImage = localStorage.getItem('Windows-Phone-Background') || '#000000';
-
-  document.documentElement.style.setProperty('--accent', savedTileColor);
-  if (savedBackgroundImage.startsWith('http')) {
-    applyBackgroundImage(savedBackgroundImage);  // Use the applyBackgroundImage function to load the saved image
-  } else {
-    document.body.style.backgroundColor = savedBackgroundImage;
-  }
-}
-
-document.getElementById('apply-settings-button').addEventListener('click', applySettings);
-
-document.addEventListener('DOMContentLoaded', () => {
-  loadSettings();
-  resizeCanvas();
+window.addEventListener("scroll", () => {
+  const header = document.querySelector("header");
+  header.classList.toggle("sticky", window.scrollY > 50);
 });
 
-document.getElementById('background-image-url').addEventListener('keypress', function(event) {
-  if (event.key === 'Enter') {
-    applySettings();
-  }
+document.getElementById('likeButton').addEventListener('click', function () {
+  const title = document.getElementById('modalTitle').innerText;
+  updateLike(title);
 });
 
-function clearStorage() {
-  localStorage.removeItem('Windows-Phone-Accent-Colour');
-  localStorage.removeItem('Windows-Phone-Background');
-  loadSettings();
-}
+document.getElementById('darkModeToggle').addEventListener('click', function () {
+  const isDark = document.body.classList.toggle('dark-mode');
+  document.querySelectorAll('.card, .modal-content').forEach(el => el.classList.toggle('dark-mode', isDark));
+  document.querySelector('header').classList.toggle('dark-mode', isDark);
+  document.querySelector('footer').classList.toggle('dark-mode', isDark);
+  localStorage.setItem("darkMode", isDark);
+});
 
-function resizeCanvas() {
-  const canvas = document.getElementById('blur-canvas');
-  if (canvas) {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight + window.innerHeight;
-  }
-}
-
-window.addEventListener('resize', resizeCanvas);
-
-setInterval(flipTile, 10000);
+document.addEventListener("DOMContentLoaded", () => {
+  applySavedDarkMode();
+  fetchPosts();
+});

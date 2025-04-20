@@ -102,6 +102,7 @@
         <option value="">Semua Kategori</option>
       </select>
       <button class="btn btn-primary ms-2" onclick="randomPost()">🎲 Acak</button>
+      <button class="btn btn-outline-primary ms-2" onclick="fetchPosts()">🔄 Reload</button>
       <button id="darkModeToggle" class="btn btn-light ms-2">🌙 Mode</button>
     </div>
   </header>
@@ -133,9 +134,7 @@
           <img id="modalImage" class="img-fluid d-none" alt="Post Image">
         </div>
         <div class="modal-footer">
-          <button id="likeButton" class="btn btn-outline-danger">
-            <i class="fas fa-heart"></i> Like
-          </button>
+          <button id="likeButton" class="btn btn-outline-danger"><i class="fas fa-heart"></i> Like</button>
           <span id="likeCount" class="ms-2">0 Likes</span>
           <span id="viewCount" class="ms-2">👁️ 0 views</span>
           <button class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
@@ -151,14 +150,13 @@
     const postsPerPage = 10;
 
     function paginatePosts(postList) {
-      console.log("Paginating posts:", postList);
       const totalPages = Math.ceil(postList.length / postsPerPage);
       const start = (currentPage - 1) * postsPerPage;
       const end = start + postsPerPage;
       renderPosts(postList.slice(start, end));
       renderPaginationControls(totalPages);
     }
-    
+
     function renderPaginationControls(totalPages) {
       const pagination = document.getElementById('paginationControls');
       pagination.innerHTML = '';
@@ -182,9 +180,7 @@
         posts = await res.json().then(data => data.filter(p => p.Status.toLowerCase() === "publish"));
         filteredPosts = posts;
         currentPage = 1;
-
         paginatePosts(filteredPosts);
-
         populateCategoryFilter();
         checkNewPost();
         document.getElementById("loader").style.display = "none";
@@ -195,10 +191,11 @@
         document.getElementById("loader").style.display = "none";
       }
     }
-    
+
     function populateCategoryFilter() {
       let categories = [...new Set(posts.map(post => post.Kategori))];
       const categorySelect = document.getElementById("categoryFilter");
+      categorySelect.innerHTML = '<option value="">Semua Kategori</option>';
       categories.forEach(category => {
         let option = document.createElement("option");
         option.value = category;
@@ -207,8 +204,9 @@
       });
       categorySelect.addEventListener("change", function () {
         let selectedCategory = this.value;
-        let filteredPosts = selectedCategory ? posts.filter(post => post.Kategori === selectedCategory) : posts;
-        renderPosts(filteredPosts);
+        filteredPosts = selectedCategory ? posts.filter(post => post.Kategori === selectedCategory) : posts;
+        currentPage = 1;
+        paginatePosts(filteredPosts);
       });
     }
 
@@ -218,17 +216,30 @@
         <div class="col-md-4">
           <div class="card p-3 shadow-sm h-100 d-flex flex-column">
             <h5 class="card-title cursor-pointer" onclick="openModal('${post.Judul}')">${post.Judul}</h5>
-            <p class="card-category">${post.Kategori} | ${post.Tag ? post.Tag : 'Tanpa tag'}</p>
+            <p class="card-category">${post.Kategori} | ${post.Tag || 'Tanpa tag'}</p>
           </div>
         </div>`).join('');
     }
 
+    function updateLike(title) {
+      const likeKey = `likeCount_${title}`;
+      let likeCount = parseInt(localStorage.getItem(likeKey)) || 0;
+      likeCount++;
+      localStorage.setItem(likeKey, likeCount);
+      document.getElementById('likeCount').innerText = `${likeCount} Likes`;
+    }
+
+    function updateView(title) {
+      const viewKey = `viewCount_${title}`;
+      let viewCount = parseInt(localStorage.getItem(viewKey)) || 0;
+      viewCount++;
+      localStorage.setItem(viewKey, viewCount);
+      document.getElementById('viewCount').innerText = `👁️ ${viewCount} views`;
+    }
+
     function openModal(title) {
       const post = posts.find(p => p.Judul === title);
-      if (!post) {
-        alert("Postingan tidak ditemukan!");
-        return;
-      }
+      if (!post) return alert("Postingan tidak ditemukan!");
       document.getElementById('modalTitle').innerText = post.Judul;
       document.getElementById('modalContent').innerText = post.Isi;
       const modalImage = document.getElementById('modalImage');
@@ -238,11 +249,7 @@
       } else {
         modalImage.classList.add("d-none");
       }
-      const viewKey = `viewCount_${post.Judul}`;
-      let viewCount = parseInt(localStorage.getItem(viewKey)) || 0;
-      viewCount++;
-      localStorage.setItem(viewKey, viewCount);
-      document.getElementById('viewCount').innerText = `👁️ ${viewCount} views`;
+      updateView(post.Judul);
       const likeKey = `likeCount_${post.Judul}`;
       let likeCount = parseInt(localStorage.getItem(likeKey)) || 0;
       document.getElementById('likeCount').innerText = `${likeCount} Likes`;
@@ -250,30 +257,53 @@
       modalElement.show();
     }
 
+    function randomPost() {
+      if (filteredPosts.length === 0) return;
+      const randomIndex = Math.floor(Math.random() * filteredPosts.length);
+      openModal(filteredPosts[randomIndex].Judul);
+    }
+
+    function checkNewPost() {
+      const lastSeen = localStorage.getItem("lastCheck") || new Date(0);
+      const newCount = posts.filter(p => new Date(p.Tanggal) > new Date(lastSeen)).length;
+      if (newCount > 0) {
+        document.getElementById("newPostAlert").innerText = `${newCount} post baru`;
+      }
+      localStorage.setItem("lastCheck", new Date().toISOString());
+    }
+
+    function applySavedDarkMode() {
+      const isDark = localStorage.getItem("darkMode") === "true";
+      if (isDark) {
+        document.body.classList.add('dark-mode');
+        document.querySelectorAll('.card, .modal-content').forEach(el => el.classList.add('dark-mode'));
+        document.querySelector('header').classList.add('dark-mode');
+        document.querySelector('footer').classList.add('dark-mode');
+      }
+    }
+
+    window.addEventListener("scroll", () => {
+      const header = document.querySelector("header");
+      header.classList.toggle("sticky", window.scrollY > 50);
+    });
+
     document.getElementById('likeButton').addEventListener('click', function () {
       const title = document.getElementById('modalTitle').innerText;
-      const likeKey = `likeCount_${title}`;
-      let likeCount = parseInt(localStorage.getItem(likeKey)) || 0;
-      likeCount++;
-      localStorage.setItem(likeKey, likeCount);
-      document.getElementById('likeCount').innerText = `${likeCount} Likes`;
+      updateLike(title);
     });
 
     document.getElementById('darkModeToggle').addEventListener('click', function () {
-      document.body.classList.toggle('dark-mode');
-      document.querySelectorAll('.card, .modal-content').forEach(el => el.classList.toggle('dark-mode'));
-      document.querySelector('header').classList.toggle('dark-mode');
-      document.querySelector('footer').classList.toggle('dark-mode');
+      const isDark = document.body.classList.toggle('dark-mode');
+      document.querySelectorAll('.card, .modal-content').forEach(el => el.classList.toggle('dark-mode', isDark));
+      document.querySelector('header').classList.toggle('dark-mode', isDark);
+      document.querySelector('footer').classList.toggle('dark-mode', isDark);
+      localStorage.setItem("darkMode", isDark);
     });
 
-    function randomPost() {
-      if (posts.length === 0) {
-        alert("Belum ada postingan tersedia. Coba muat ulang halaman.");
-        return;
-      }
-      const randomIndex = Math.floor(Math.random() * posts.length);
-      openModal(posts[randomIndex].Judul);
-    }
+    document.addEventListener("DOMContentLoaded", () => {
+      applySavedDarkMode();
+      fetchPosts();
+    });
 
     particlesJS("particles-js", {
       "particles": {
@@ -284,12 +314,6 @@
         "size": { "value": 3 }
       }
     });
-
-    document.addEventListener("DOMContentLoaded", () => {
-      fetchPosts();
-    });
-
-    document.getElementById("loader").style.display = "none";
   </script>
 </body>
 </html>

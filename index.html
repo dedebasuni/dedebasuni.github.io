@@ -4,19 +4,50 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>My Notes</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
+    body {
+      background-color: #f8f9fa;
+      font-family: 'Poppins', sans-serif;
+      transition: background-color 0.5s, color 0.5s;
+    }
+    .cursor-pointer { cursor: pointer; }
+    .card {
+      transition: transform 0.3s, box-shadow 0.3s;
+      border-radius: 10px;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    .modal-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #007bff;
+    }
+    header {
+      background: linear-gradient(45deg, #007bff, #6610f2);
+      color: white;
+      transition: background 0.5s ease-in-out;
+    }
+    .fade-in {
+      opacity: 0;
+      animation: fadeIn 1.5s forwards;
+    }
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
     body.dark-mode {
-      background-color: #121212;
+      background-color: #343a40;
       color: #fff;
     }
-    .dark-mode .card {
-      background-color: #1e1e1e;
-      color: #fff;
-    }
+    .dark-mode .card,
     .dark-mode .modal-content {
-      background-color: #2c2c2c;
-      color: #fff;
+      background-color: #495057;
+      color: #ffffff;
     }
     .category-btn {
       margin: 0.2rem;
@@ -26,65 +57,54 @@
     }
   </style>
 </head>
-<body>
+<body class="fade-in">
   <header class="d-flex justify-content-between align-items-center p-3 border-bottom">
     <h1 class="fs-4">📝 My Notes</h1>
     <div class="d-flex align-items-center gap-2">
-      <button class="btn btn-sm btn-secondary" onclick="toggleDarkMode()">🌙</button>
+      <button class="btn btn-primary ms-2" onclick="randomPost()">🎲 Acak</button>
+      <button id="darkModeToggle" class="btn btn-light ms-2" onclick="toggleDarkMode()">🌙 Mode</button>      
       <input id="searchInput" class="form-control" placeholder="Cari judul atau isi..." oninput="searchPosts()">
     </div>
   </header>
 
   <main class="container my-4">
     <div id="newPostAlert" class="alert alert-info d-none"></div>
-    
     <div id="loader" class="text-center">
       <div class="spinner-border text-primary" role="status"></div>
       <p>Memuat data...</p>
     </div>
-
     <div class="mb-3 d-none" id="categoryFilter">
       <button class="btn btn-outline-primary category-btn" onclick="filterByCategory('Semua')">Semua</button>
-      <div id="categoryButtons" class="d-inline"></div>
+      <div id="categoryButtons"></div>
     </div>
-
     <div id="posts" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"></div>
-
-    <div class="d-flex justify-content-center my-4">
-      <nav>
-        <ul class="pagination" id="paginationControls"></ul>
-      </nav>
-    </div>
+    <nav>
+      <ul class="pagination" id="paginationControls"></ul>
+    </nav>
   </main>
 
-  <!-- Modal Preview -->
-  <div class="modal fade" id="previewModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+  <div id="postModal" class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="previewModalLabel"></h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+          <h5 id="modalTitle"></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
-        <div class="modal-body" id="previewContent"></div>
+        <div class="modal-body">
+          <p id="modalContent"></p>
+        </div>
         <div class="modal-footer">
-          <small id="previewInfo" class="text-muted"></small>
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
         </div>
       </div>
     </div>
   </div>
 
   <footer class="text-center py-3 border-top mt-5">
-    <p class="mb-0">&copy; 2025 My Notes</p>
+    <p>&copy; 2025 My Notes</p>
   </footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    const postsApiUrl = "https://script.google.com/macros/s/AKfycbyl_tLV9i5K6cngdpXd9OfvVtNj53hP2FiOoXp1UZn1G8luBhMJZVN6JRhR2amLomyjMw/exec?sheet=Post";
-    let posts = [];
-    let filteredPosts = [];
-    let currentPage = 1;
-    const postsPerPage = 10;
-
     document.addEventListener("DOMContentLoaded", () => {
       loadDarkMode();
       fetchPosts();
@@ -103,114 +123,34 @@
 
     async function fetchPosts() {
       try {
-        const res = await fetch(postsApiUrl);
+        const res = await fetch("https://script.google.com/macros/s/AKfycbyl_tLV9i5K6cngdpXd9OfvVtNj53hP2FiOoXp1UZn1G8luBhMJZVN6JRhR2amLomyjMw/exec?sheet=Post");
         if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
-        posts = await res.json().then(data => data.filter(p => p.Status.toLowerCase() === "publish"));
-        filteredPosts = posts;
-        currentPage = 1;
-        paginatePosts(filteredPosts);
-        populateCategoryFilter();
-        checkNewPost();
-        document.getElementById("loader").style.display = "none";
-        document.getElementById("categoryFilter").classList.remove("d-none");
+        let posts = await res.json();
+        renderPosts(posts.filter(p => p.Status.toLowerCase() === "publish"));
       } catch (error) {
-        console.error("Error fetching posts:", error);
         document.getElementById("posts").innerHTML = "<p class='text-danger'>Gagal memuat data.</p>";
-        document.getElementById("loader").style.display = "none";
       }
+      document.getElementById("loader").style.display = "none";
     }
 
-    function paginatePosts(postList) {
-      const totalPages = Math.ceil(postList.length / postsPerPage);
-      const start = (currentPage - 1) * postsPerPage;
-      const end = start + postsPerPage;
-      renderPosts(postList.slice(start, end));
-      renderPaginationControls(totalPages);
-    }
-
-    function renderPaginationControls(totalPages) {
-      const pagination = document.getElementById("paginationControls");
-      pagination.innerHTML = "";
-      for (let i = 1; i <= totalPages; i++) {
-        const li = document.createElement("li");
-        li.className = `page-item ${i === currentPage ? "active" : ""}`;
-        li.innerHTML = `<button class="page-link" onclick="goToPage(${i})">${i}</button>`;
-        pagination.appendChild(li);
-      }
-    }
-
-    function goToPage(page) {
-      currentPage = page;
-      paginatePosts(filteredPosts);
-    }
-
-    function searchPosts() {
-      const query = document.getElementById("searchInput").value.toLowerCase();
-      filteredPosts = posts.filter(post => 
-        post.Judul.toLowerCase().includes(query) || 
-        post.Isi.toLowerCase().includes(query)
-      );
-      currentPage = 1;
-      paginatePosts(filteredPosts);
-    }
-
-    function renderPosts(postList) {
-      const container = document.getElementById("posts");
-      container.innerHTML = "";
-      if (postList.length === 0) {
-        container.innerHTML = "<p class='text-muted'>Tidak ada postingan ditemukan.</p>";
-        return;
-      }
-      postList.forEach(post => {
-        const col = document.createElement("div");
-        col.className = "col";
-        col.innerHTML = `
-          <div class="card h-100 shadow-sm" onclick="openModal('${post.Judul}', \`${post.Isi.replace(/`/g, "\\`")}\`, '${post.Kategori}')">
+    function renderPosts(posts) {
+      let container = document.getElementById("posts");
+      container.innerHTML = posts.length ? posts.map(post => `
+        <div class="col">
+          <div class="card shadow-sm" onclick="openModal('${post.Judul}', \`${post.Isi}\`)">
             <div class="card-body">
-              <h5 class="card-title">${post.Judul}</h5>
-              <p class="card-text text-muted">${post.Kategori}</p>
+              <h5>${post.Judul}</h5>
+              <p>${post.Kategori}</p>
             </div>
-          </div>`;
-        container.appendChild(col);
-      });
+          </div>
+        </div>
+      `).join('') : "<p class='text-muted'>Tidak ada postingan ditemukan.</p>";
     }
 
-    function openModal(judul, isi, kategori) {
-      document.getElementById("previewModalLabel").textContent = judul;
-      document.getElementById("previewContent").innerHTML = isi;
-      document.getElementById("previewInfo").textContent = `Kategori: ${kategori}`;
-      const modal = new bootstrap.Modal(document.getElementById("previewModal"));
-      modal.show();
-    }
-
-    function populateCategoryFilter() {
-      const categorySet = new Set(posts.map(p => p.Kategori));
-      const container = document.getElementById("categoryButtons");
-      container.innerHTML = "";
-      categorySet.forEach(kat => {
-        const btn = document.createElement("button");
-        btn.className = "btn btn-outline-secondary category-btn";
-        btn.textContent = kat;
-        btn.onclick = () => filterByCategory(kat);
-        container.appendChild(btn);
-      });
-    }
-
-    function filterByCategory(category) {
-      filteredPosts = category === "Semua" ? posts : posts.filter(p => p.Kategori === category);
-      currentPage = 1;
-      paginatePosts(filteredPosts);
-    }
-
-    function checkNewPost() {
-      const lastSeen = localStorage.getItem("lastSeenPost");
-      const latest = posts[0]?.Judul;
-      const alertBox = document.getElementById("newPostAlert");
-      if (latest && latest !== lastSeen) {
-        alertBox.innerHTML = `📢 <strong>Postingan baru:</strong> "${latest}"`;
-        alertBox.classList.remove("d-none");
-        localStorage.setItem("lastSeenPost", latest);
-      }
+    function openModal(title, content) {
+      document.getElementById("modalTitle").textContent = title;
+      document.getElementById("modalContent").innerHTML = content;
+      new bootstrap.Modal(document.getElementById("postModal")).show();
     }
   </script>
 </body>

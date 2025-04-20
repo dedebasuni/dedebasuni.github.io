@@ -84,13 +84,13 @@ Kontribusi sangat diterima! Jika Anda ingin berkontribusi, silakan buat pull req
 ---
 
 ## 🔗 Tautan Penting
-Demo Online : My Notes – Dede Basuni
-Email : mr.dedebasuni@gmail.com
-Media Sosial :
-Facebook: @dede.basuni
-Twitter: @dede_basuni
-Instagram: @dede.basuni
-YouTube: @dedebasuni
+- **Demo Online** : My Notes – Dede Basuni
+- **Email** : dedebasuni@gmail.com
+- **Media Sosial** :
+  **Facebook**: @dede.basuni
+  **Twitter**: @dede_basuni
+  **Instagram**: @dede.basuni
+  **YouTube**: @dedebasuni
 
 ---
 
@@ -101,11 +101,13 @@ Happy Coding! 🚀✨
 
 ---
 
-## Preview Folder Structure
+## 📝 Preview Folder Structure
    ```bash
    my-notes/
    ├── index.html          # File utama blog
    ├── README.md           # Dokumentasi proyek
    └── assets/             # Folder opsional untuk aset tambahan (gambar, font, dll.)
 
+---
+## 
    ```bash Simpan kode di atas sebagai file `README.md` di root direktori repositori Anda. Ini akan memberikan gambaran jelas tentang proyek, fitur-fiturnya, dan cara berkontribusi. Anda juga dapat menyesuaikan konten sesuai kebutuhan.

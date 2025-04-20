@@ -52,14 +52,6 @@ header.sticky {
 @keyframes fadeIn {
   to { opacity: 1; }
 }
-#particles-js {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-}
 body.dark-mode {
   background-color: #343a40;
   color: #ffffff;

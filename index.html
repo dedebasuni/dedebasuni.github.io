@@ -19,36 +19,14 @@
     .card {
       transition: transform 0.3s, box-shadow 0.3s;
       border-radius: 10px;
-      overflow: hidden;
     }
     .card:hover {
       transform: translateY(-5px);
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     }
-    .card-title {
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: #007bff;
-      margin-bottom: 0.5rem;
-    }
-    .card-category {
-      font-size: 0.9rem;
-      color: #6c757d;
-      margin-bottom: 0.25rem;
-    }
-    .card-tag {
-      font-size: 0.875rem;
-      color: #adb5bd;
-    }
-    .modal-title {
-      font-size: 1.5rem;
-      font-weight: 600;
-      color: #007bff;
-    }
     header {
       background: linear-gradient(45deg, #007bff, #6610f2);
       color: white;
-      transition: background 0.5s ease-in-out;
     }
     header.sticky {
       position: fixed;
@@ -57,45 +35,14 @@
       background: linear-gradient(45deg, #6610f2, #007bff);
       z-index: 1000;
     }
-    .fade-in {
-      opacity: 0;
-      animation: fadeIn 1.5s forwards;
-    }
-    @keyframes fadeIn {
-      to { opacity: 1; }
-    }
-    #particles-js {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-    }
     body.dark-mode {
       background-color: #343a40;
       color: #ffffff;
     }
-    header.dark-mode {
-      background: linear-gradient(45deg, #2f2f7f, #4b0082);
-    }
-    .card.dark-mode {
-      background-color: #495057;
-      color: #ffffff;
-    }
-    .modal-content.dark-mode {
-      background-color: #495057;
-      color: #ffffff;
-    }
-    footer.dark-mode {
-      background-color: #212529;
-      color: #ffffff;
-    }
   </style>
 </head>
-<body class="fade-in">
-  <div id="particles-js"></div>
-  <header class="py-4 text-center shadow-lg">
+<body>
+  <header class="py-4 text-center">
     <h2 class="font-weight-bold">My Notes</h2>
     <div class="input-group w-75 mx-auto my-3">
       <select id="categoryFilter" class="form-select w-25 d-none">
@@ -112,37 +59,10 @@
       </div>
     </div>
     <div class="row g-4" id="posts"></div>
-    <div class="d-flex justify-content-center my-4">
-      <nav>
-        <ul class="pagination" id="paginationControls"></ul>
-      </nav>
-    </div>    
+    <nav class="d-flex justify-content-center my-4">
+      <ul class="pagination" id="paginationControls"></ul>
+    </nav>    
   </main>
-  <footer id="footer" class="bg-light text-center py-3">
-    <p>&copy; 2025 My Notes | 🔔 <span id="newPostAlert"></span></p>
-  </footer>
-  <div id="postModal" class="modal fade" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 id="modalTitle" class="modal-title font-weight-bold">Post Title</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <p id="modalContent">Post content goes here...</p>
-          <img id="modalImage" class="img-fluid d-none" alt="Post Image">
-        </div>
-        <div class="modal-footer">
-          <button id="likeButton" class="btn btn-outline-danger">
-            <i class="fas fa-heart"></i> Like
-          </button>
-          <span id="likeCount" class="ms-2">0 Likes</span>
-          <span id="viewCount" class="ms-2">👁️ 0 views</span>
-          <button class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-        </div>
-      </div>
-    </div>
-  </div>
   <script>
     const postsApiUrl = "https://script.google.com/macros/s/AKfycbyl_tLV9i5K6cngdpXd9OfvVtNj53hP2FiOoXp1UZn1G8luBhMJZVN6JRhR2amLomyjMw/exec?sheet=Post";
     let posts = [];
@@ -151,17 +71,26 @@
     const postsPerPage = 10;
 
     function paginatePosts(postList) {
-      console.log("Paginating posts:", postList);
+      if (!postList || postList.length === 0) {
+        document.getElementById('posts').innerHTML = "<p class='text-danger'>Tidak ada postingan tersedia.</p>";
+        document.getElementById('paginationControls').innerHTML = "";
+        return;
+      }
+
       const totalPages = Math.ceil(postList.length / postsPerPage);
       const start = (currentPage - 1) * postsPerPage;
       const end = start + postsPerPage;
+
+      console.log("Menampilkan halaman:", currentPage, "dari", totalPages);
+      
       renderPosts(postList.slice(start, end));
       renderPaginationControls(totalPages);
     }
-    
+
     function renderPaginationControls(totalPages) {
       const pagination = document.getElementById('paginationControls');
       pagination.innerHTML = '';
+
       for (let i = 1; i <= totalPages; i++) {
         const li = document.createElement('li');
         li.className = `page-item ${i === currentPage ? 'active' : ''}`;
@@ -181,12 +110,11 @@
         if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
         posts = await res.json().then(data => data.filter(p => p.Status.toLowerCase() === "publish"));
         filteredPosts = posts;
-        currentPage = 1;
+
+        console.log("Total post yang diterima:", posts.length);
 
         paginatePosts(filteredPosts);
-
         populateCategoryFilter();
-        checkNewPost();
         document.getElementById("loader").style.display = "none";
         document.getElementById("categoryFilter").classList.remove("d-none");
       } catch (error) {
@@ -195,101 +123,31 @@
         document.getElementById("loader").style.display = "none";
       }
     }
-    
+
     function populateCategoryFilter() {
       let categories = [...new Set(posts.map(post => post.Kategori))];
       const categorySelect = document.getElementById("categoryFilter");
+
+      categorySelect.innerHTML = '<option value="">Semua Kategori</option>';
+
       categories.forEach(category => {
         let option = document.createElement("option");
         option.value = category;
         option.textContent = category;
         categorySelect.appendChild(option);
       });
+
       categorySelect.addEventListener("change", function () {
         let selectedCategory = this.value;
-        let filteredPosts = selectedCategory ? posts.filter(post => post.Kategori === selectedCategory) : posts;
-        renderPosts(filteredPosts);
+        filteredPosts = selectedCategory ? posts.filter(post => post.Kategori === selectedCategory) : posts;
+        currentPage = 1;
+        paginatePosts(filteredPosts);
       });
     }
-
-    function renderPosts(postList) {
-      const postsContainer = document.getElementById('posts');
-      postsContainer.innerHTML = postList.map(post => `
-        <div class="col-md-4">
-          <div class="card p-3 shadow-sm h-100 d-flex flex-column">
-            <h5 class="card-title cursor-pointer" onclick="openModal('${post.Judul}')">${post.Judul}</h5>
-            <p class="card-category">${post.Kategori} | ${post.Tag ? post.Tag : 'Tanpa tag'}</p>
-          </div>
-        </div>`).join('');
-    }
-
-    function openModal(title) {
-      const post = posts.find(p => p.Judul === title);
-      if (!post) {
-        alert("Postingan tidak ditemukan!");
-        return;
-      }
-      document.getElementById('modalTitle').innerText = post.Judul;
-      document.getElementById('modalContent').innerText = post.Isi;
-      const modalImage = document.getElementById('modalImage');
-      if (post.Gambar) {
-        modalImage.src = post.Gambar;
-        modalImage.classList.remove("d-none");
-      } else {
-        modalImage.classList.add("d-none");
-      }
-      const viewKey = `viewCount_${post.Judul}`;
-      let viewCount = parseInt(localStorage.getItem(viewKey)) || 0;
-      viewCount++;
-      localStorage.setItem(viewKey, viewCount);
-      document.getElementById('viewCount').innerText = `👁️ ${viewCount} views`;
-      const likeKey = `likeCount_${post.Judul}`;
-      let likeCount = parseInt(localStorage.getItem(likeKey)) || 0;
-      document.getElementById('likeCount').innerText = `${likeCount} Likes`;
-      const modalElement = new bootstrap.Modal(document.getElementById('postModal'));
-      modalElement.show();
-    }
-
-    document.getElementById('likeButton').addEventListener('click', function () {
-      const title = document.getElementById('modalTitle').innerText;
-      const likeKey = `likeCount_${title}`;
-      let likeCount = parseInt(localStorage.getItem(likeKey)) || 0;
-      likeCount++;
-      localStorage.setItem(likeKey, likeCount);
-      document.getElementById('likeCount').innerText = `${likeCount} Likes`;
-    });
-
-    document.getElementById('darkModeToggle').addEventListener('click', function () {
-      document.body.classList.toggle('dark-mode');
-      document.querySelectorAll('.card, .modal-content').forEach(el => el.classList.toggle('dark-mode'));
-      document.querySelector('header').classList.toggle('dark-mode');
-      document.querySelector('footer').classList.toggle('dark-mode');
-    });
-
-    function randomPost() {
-      if (posts.length === 0) {
-        alert("Belum ada postingan tersedia. Coba muat ulang halaman.");
-        return;
-      }
-      const randomIndex = Math.floor(Math.random() * posts.length);
-      openModal(posts[randomIndex].Judul);
-    }
-
-    particlesJS("particles-js", {
-      "particles": {
-        "number": { "value": 50 },
-        "color": { "value": "#6610f2" },
-        "shape": { "type": "circle" },
-        "opacity": { "value": 0.5 },
-        "size": { "value": 3 }
-      }
-    });
 
     document.addEventListener("DOMContentLoaded", () => {
       fetchPosts();
     });
-
-    document.getElementById("loader").style.display = "none";
   </script>
 </body>
 </html>

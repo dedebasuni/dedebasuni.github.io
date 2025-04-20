@@ -19,19 +19,26 @@
     .card {
       transition: transform 0.3s, box-shadow 0.3s;
       border-radius: 10px;
+      overflow: hidden;
     }
     .card:hover {
       transform: translateY(-5px);
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     }
     .card-title {
-      font-size: 1.25rem;
+      font-size: 1.2rem;
       font-weight: 600;
       color: #007bff;
+      margin-bottom: 0.5rem;
     }
-    .text-muted {
-      font-size: 0.875rem;
+    .card-category {
+      font-size: 0.9rem;
       color: #6c757d;
+      margin-bottom: 0.25rem;
+    }
+    .card-tag {
+      font-size: 0.875rem;
+      color: #adb5bd;
     }
     .modal-title {
       font-size: 1.5rem;
@@ -167,15 +174,6 @@
       paginatePosts(filteredPosts);
     }
 
-    function checkNewPost() {
-      const lastSeen = localStorage.getItem("lastSeenPost");
-      const latest = posts[0]?.Judul;
-      if (latest && latest !== lastSeen) {
-        document.getElementById("newPostAlert").innerHTML = `Ada postingan baru: <strong>${latest}</strong>!`;
-        localStorage.setItem("lastSeenPost", latest);
-      }
-    }
-
     async function fetchPosts() {
       try {
         const res = await fetch(postsApiUrl);
@@ -215,9 +213,10 @@
       const postsContainer = document.getElementById('posts');
       postsContainer.innerHTML = postList.map(post => `
         <div class="col-md-4">
-          <div class="card p-3 shadow-sm">
-            <h5 class="card-title text-primary cursor-pointer" onclick="openModal('${post.Judul}')">${post.Judul}</h5>
-            <p class="text-muted">${post.Kategori} | ${post.Tag ? post.Tag : 'Tanpa tag'}</p>
+          <div class="card p-3 shadow-sm h-100 d-flex flex-column">
+            <h5 class="card-title cursor-pointer" onclick="openModal('${post.Judul}')">${post.Judul}</h5>
+            <p class="card-category">${post.Kategori}</p>
+            <p class="card-tag">${post.Tag ? post.Tag : 'Tanpa tag'}</p>
           </div>
         </div>`).join('');
     }

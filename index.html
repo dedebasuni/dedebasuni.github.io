@@ -98,9 +98,12 @@
   <header class="py-4 text-center shadow-lg">
     <h2 class="font-weight-bold">My Notes</h2>
     <div class="input-group w-75 mx-auto my-3">
-      <button class="btn btn-primary ms-2" onclick="randomPost()">🎲 Acak</button>
-      <button class="btn btn-outline-primary ms-2" onclick="fetchPosts()">🔄 Reload</button>
-      <button id="darkModeToggle" class="btn btn-light ms-2">🌙 Mode</button>
+      <select id="categoryFilter" class="form-select w-25 d-none">
+        <option value="">Semua Kategori</option>
+      </select>
+      <button class="btn btn-primary ms-2" onclick="randomPost()"> 🎲 </button>
+      <button class="btn btn-outline-primary ms-2" onclick="fetchPosts()"> 🔄 </button>
+      <button id="darkModeToggle" class="btn btn-light ms-2"> 🌙 </button>
     </div>
   </header>
   <main class="container py-4">

@@ -218,8 +218,7 @@
         <div class="col-md-4">
           <div class="card p-3 shadow-sm h-100 d-flex flex-column">
             <h5 class="card-title cursor-pointer" onclick="openModal('${post.Judul}')">${post.Judul}</h5>
-            <p class="card-category">${post.Kategori}</p>
-            <p class="card-tag">${post.Tag ? post.Tag : 'Tanpa tag'}</p>
+            <p class="card-category">${post.Kategori} | ${post.Tag ? post.Tag : 'Tanpa tag'}</p>
           </div>
         </div>`).join('');
     }

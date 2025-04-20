@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>My Notes</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -58,7 +58,7 @@
     }
     body.dark-mode {
       background-color: #343a40;
-      color: #ffffff;
+      color: #fff;
     }
     header.dark-mode {
       background: linear-gradient(45deg, #2f2f7f, #4b0082);
@@ -71,48 +71,57 @@
       background-color: #495057;
       color: #ffffff;
     }
+    .category-btn {
+      margin: 0.2rem;
+    }
+    .card {
+      cursor: pointer;
+    }
   </style>
 </head>
 <body class="fade-in">
-  <div id="particles-js"></div>
-  <header class="py-4 text-center shadow-lg">
-    <h2 class="font-weight-bold">My Notes</h2>
-    <div class="input-group w-75 mx-auto my-3">
-      <select id="categoryFilter" class="form-select w-25">
-        <option value="">Semua Kategori</option>
-      </select>
+  <header class="d-flex justify-content-between align-items-center p-3 border-bottom">
+    <h1 class="fs-4">📝 My Notes</h1>
+    <div class="d-flex align-items-center gap-2">
       <button class="btn btn-primary ms-2" onclick="randomPost()">🎲 Acak</button>
-      <button id="darkModeToggle" class="btn btn-light ms-2">🌙 Mode</button>
+      <button id="darkModeToggle" class="btn btn-light ms-2 onclick="toggleDarkMode()">🌙 Mode</button>      
+      <input id="searchInput" class="form-control" placeholder="Cari judul atau isi..." oninput="searchPosts()">
     </div>
   </header>
 
-  <main class="container py-4">
-    <div id="loader" class="text-center my-5">
-      <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
-      </div>
+  <main class="container my-4">
+    <div id="newPostAlert" class="alert alert-info d-none"></div>
+    
+    <div id="loader" class="text-center">
+      <div class="spinner-border text-primary" role="status"></div>
+      <p>Memuat data...</p>
     </div>
-    <div class="row g-4" id="posts"></div>
-  </main>
 
-  <footer class="bg-light text-center py-3">
-    <p>&copy; 2025 My Notes | 🔔 <span id="newPostAlert"></span></p>
-  </footer>
+    <div class="mb-3 d-none" id="categoryFilter">
+      <button class="btn btn-outline-primary category-btn" onclick="filterByCategory('Semua')">Semua</button>
+      <div id="categoryButtons" class="d-inline"></div>
+    </div>
+
+    <div id="posts" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"></div>
+
+    <div class="d-flex justify-content-center my-4">
+      <nav>
+        <ul class="pagination" id="paginationControls"></ul>
+      </nav>
+    </div>
+  </main>
 
   <div id="postModal" class="modal fade" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
-
         <div class="modal-header">
-          <h5 id="modalTitle" class="modal-title font-weight-bold"></h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <h5 class="modal-title" id="previewModalLabel"></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
         </div>
-
-        <div class="modal-body">
+        <div class="modal-body" id="previewContent"></div>
           <p id="modalContent"></p>
           <img id="modalImage" class="img-fluid d-none lazy-load" alt="Post Image">
-        </div>
-        
+          <hr>        
         <div class="modal-footer">
           <button id="likeButton" class="btn btn-outline-danger">
             <i class="fas fa-heart"></i> Like
@@ -120,12 +129,24 @@
           <span id="likeCount" class="ms-2">0 Likes</span>
           <span id="viewCount" class="ms-2">👁️ 0 views</span>
           <button class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+          <small id="previewInfo" class="text-muted"></small>
         </div>
       </div>
     </div>
   </div>
 
+  <footer class="text-center py-3 border-top mt-5">
+    <p>&copy; 2025 My Notes | 🔔 <span id="newPostAlert"></span></p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
+    const postsApiUrl = "https://script.google.com/macros/s/AKfycbyl_tLV9i5K6cngdpXd9OfvVtNj53hP2FiOoXp1UZn1G8luBhMJZVN6JRhR2amLomyjMw/exec?sheet=Post";
+    let posts = [];
+    let filteredPosts = [];
+    let currentPage = 1;
+    const postsPerPage = 10;
+
     document.addEventListener("DOMContentLoaded", () => {
       loadDarkMode();
       fetchPosts();
@@ -142,45 +163,77 @@
       }
     }
 
-    const postsApiUrl = "https://script.google.com/macros/s/AKfycbyl_tLV9i5K6cngdpXd9OfvVtNj53hP2FiOoXp1UZn1G8luBhMJZVN6JRhR2amLomyjMw/exec?sheet=Post";
-    const commentsApiUrl = "https://script.google.com/macros/s/AKfycbyl_tLV9i5K6cngdpXd9OfvVtNj53hP2FiOoXp1UZn1G8luBhMJZVN6JRhR2amLomyjMw/exec?sheet=Komentar";
-    let posts = [];
-
     async function fetchPosts() {
       try {
         const res = await fetch(postsApiUrl);
-        posts = await res.json();
-        posts = posts.filter(post => post.Status.toLowerCase() === "publish");
-        posts.sort((a, b) => new Date(b.Tanggal) - new Date(a.Tanggal));
-        document.getElementById('loader').style.display = "none";
+        if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
+        posts = await res.json().then(data => data.filter(p => p.Status.toLowerCase() === "publish"));
+        filteredPosts = posts;
+        currentPage = 1;
+        paginatePosts(filteredPosts);
         populateCategoryFilter();
-        renderPosts(posts);
+        checkNewPost();
+        document.getElementById("loader").style.display = "none";
+        document.getElementById("categoryFilter").classList.remove("d-none");
       } catch (error) {
-        document.getElementById("posts").innerHTML = "<p class='text-danger'>Gagal memuat data.</p>";
         console.error("Error fetching posts:", error);
-        document.getElementById('loader').style.display = "none";
+        document.getElementById("posts").innerHTML = "<p class='text-danger'>Gagal memuat data.</p>";
+        document.getElementById("loader").style.display = "none";
       }
     }
 
-    function openModal(title, content) {
-      document.getElementById("modalTitle").textContent = title;
-      document.getElementById("modalContent").innerHTML = content;
-      new bootstrap.Modal(document.getElementById("postModal")).show();
+    function paginatePosts(postList) {
+      const totalPages = Math.ceil(postList.length / postsPerPage);
+      const start = (currentPage - 1) * postsPerPage;
+      const end = start + postsPerPage;
+      renderPosts(postList.slice(start, end));
+      renderPaginationControls(totalPages);
     }
-    
-    function populateCategoryFilter() {
-      let categories = [...new Set(posts.map(post => post.Kategori))];
-      const categorySelect = document.getElementById("categoryFilter");
-      categories.forEach(category => {
-        let option = document.createElement("option");
-        option.value = category;
-        option.textContent = category;
-        categorySelect.appendChild(option);
-      });
-      categorySelect.addEventListener("change", function() {
-        let selectedCategory = this.value;
-        let filteredPosts = selectedCategory ? posts.filter(post => post.Kategori === selectedCategory) : posts;
-        renderPosts(filteredPosts);
+
+    function renderPaginationControls(totalPages) {
+      const pagination = document.getElementById("paginationControls");
+      pagination.innerHTML = "";
+      for (let i = 1; i <= totalPages; i++) {
+        const li = document.createElement("li");
+        li.className = `page-item ${i === currentPage ? "active" : ""}`;
+        li.innerHTML = `<button class="page-link" onclick="goToPage(${i})">${i}</button>`;
+        pagination.appendChild(li);
+      }
+    }
+
+    function goToPage(page) {
+      currentPage = page;
+      paginatePosts(filteredPosts);
+    }
+
+    function searchPosts() {
+      const query = document.getElementById("searchInput").value.toLowerCase();
+      filteredPosts = posts.filter(post => 
+        post.Judul.toLowerCase().includes(query) || 
+        post.Isi.toLowerCase().includes(query)
+      );
+      currentPage = 1;
+      paginatePosts(filteredPosts);
+    }
+
+    function renderPosts(postList) {
+      const container = document.getElementById("posts");
+      container.innerHTML = "";
+      if (postList.length === 0) {
+        container.innerHTML = "<p class='text-muted'>Tidak ada postingan ditemukan.</p>";
+        return;
+      }
+      postList.forEach(post => {
+        const col = document.createElement("div");
+        col.className = "col";
+        col.innerHTML = `
+          <div class="card h-100 shadow-sm" onclick="openModal('${post.Judul}', \`${post.Isi.replace(/`/g, "\\`")}\`, '${post.Kategori}')">
+            <div class="card-body">
+              <h5 class="card-title">${post.Judul}</h5>
+              <p class="card-text text-muted">${post.Kategori}</p>
+            </div>
+          </div>`;
+        container.appendChild(col);
       });
     }
 
@@ -193,6 +246,7 @@
               <div class="card-body">
                 <h5 class="card-title text-primary cursor-pointer" onclick="openModal('${post.Judul}')">${post.Judul}</h5>
                 <p class="text-muted">${post.Kategori} | ${post.Tag ? post.Tag : 'Tanpa tag'}</p>
+                <p class="text-muted">🗓️ ${new Date(post.Tanggal).toLocaleDateString('id-ID')}</p>
               </div>
             </div>
           </div>`;
@@ -228,28 +282,52 @@
       modalElement.show();
     }
 
-    function renderPosts(posts) {
-      let container = document.getElementById("posts");
-      container.innerHTML = posts.length ? posts.map(post => `
-        <div class="col">
-          <div class="card shadow-sm" onclick="openModal('${post.Judul}', \`${post.Isi}\`)">
-            <div class="card-body">
-              <h5>${post.Judul}</h5>
-              <p>${post.Kategori}</p>
-            </div>
-          </div>
-        </div>
-      `).join('') : "<p class='text-muted'>Tidak ada postingan ditemukan.</p>";
+    function randomPost() {
+      if (posts.length === 0) {
+        alert("Belum ada postingan tersedia. Coba muat ulang halaman.");
+        return;
+      }
+      const randomIndex = Math.floor(Math.random() * posts.length);
+      openModal(posts[randomIndex].Judul);
     }
     
-    document.getElementById("darkModeToggle").addEventListener("click", function() {
-      document.body.classList.toggle("dark-mode");
-      document.querySelector("header").classList.toggle("dark-mode");
-      document.querySelectorAll(".card").forEach(card => card.classList.toggle("dark-mode"));
-      document.querySelectorAll(".modal-content").forEach(modal => modal.classList.toggle("dark-mode"));
-    });
+    function openModal(judul, isi, kategori) {
+      document.getElementById("previewModalLabel").textContent = judul;
+      document.getElementById("previewContent").innerHTML = isi;
+      document.getElementById("previewInfo").textContent = `Kategori: ${kategori}`;
+      const modal = new bootstrap.Modal(document.getElementById("previewModal"));
+      modal.show();
+    }
 
-    fetchPosts();
+    function populateCategoryFilter() {
+      const categorySet = new Set(posts.map(p => p.Kategori));
+      const container = document.getElementById("categoryButtons");
+      container.innerHTML = "";
+      categorySet.forEach(kat => {
+        const btn = document.createElement("button");
+        btn.className = "btn btn-outline-secondary category-btn";
+        btn.textContent = kat;
+        btn.onclick = () => filterByCategory(kat);
+        container.appendChild(btn);
+      });
+    }
+
+    function filterByCategory(category) {
+      filteredPosts = category === "Semua" ? posts : posts.filter(p => p.Kategori === category);
+      currentPage = 1;
+      paginatePosts(filteredPosts);
+    }
+
+    function checkNewPost() {
+      const lastSeen = localStorage.getItem("lastSeenPost");
+      const latest = posts[0]?.Judul;
+      const alertBox = document.getElementById("newPostAlert");
+      if (latest && latest !== lastSeen) {
+        alertBox.innerHTML = `📢 <strong>Postingan baru:</strong> "${latest}"`;
+        alertBox.classList.remove("d-none");
+        localStorage.setItem("lastSeenPost", latest);
+      }
+    }
   </script>
 </body>
 </html>

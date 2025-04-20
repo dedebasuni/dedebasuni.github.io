@@ -151,13 +151,14 @@
     const postsPerPage = 10;
 
     function paginatePosts(postList) {
+      console.log("Paginating posts:", postList);
       const totalPages = Math.ceil(postList.length / postsPerPage);
       const start = (currentPage - 1) * postsPerPage;
       const end = start + postsPerPage;
       renderPosts(postList.slice(start, end));
       renderPaginationControls(totalPages);
     }
-
+    
     function renderPaginationControls(totalPages) {
       const pagination = document.getElementById('paginationControls');
       pagination.innerHTML = '';
@@ -181,7 +182,9 @@
         posts = await res.json().then(data => data.filter(p => p.Status.toLowerCase() === "publish"));
         filteredPosts = posts;
         currentPage = 1;
+
         paginatePosts(filteredPosts);
+
         populateCategoryFilter();
         checkNewPost();
         document.getElementById("loader").style.display = "none";
@@ -192,7 +195,7 @@
         document.getElementById("loader").style.display = "none";
       }
     }
-
+    
     function populateCategoryFilter() {
       let categories = [...new Set(posts.map(post => post.Kategori))];
       const categorySelect = document.getElementById("categoryFilter");
@@ -283,7 +286,11 @@
       }
     });
 
-    fetchPosts();
+    document.addEventListener("DOMContentLoaded", () => {
+      fetchPosts();
+    });
+
+    document.getElementById("loader").style.display = "none";
   </script>
 </body>
 </html>

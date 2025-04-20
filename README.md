@@ -1,7 +1,5 @@
 # My Notes – Blog Pribadi Dede Basuni
 
-![Preview]([https://via.placeholder.com/800x400?text=My+Notes+Preview](https://lh3.googleusercontent.com/a/AEdFTp5o-M5qkUuK8udmqYnz01dEsVcMwHlzpbEgQmFxng=s230-c))  
-
 ---
 
 ## 📚 Tentang Proyek
@@ -103,10 +101,11 @@ Happy Coding! 🚀✨
 
 ---
 
-Preview Folder Structure
-my-notes/
-├── index.html          # File utama blog
-├── README.md           # Dokumentasi proyek
-└── assets/             # Folder opsional untuk aset tambahan (gambar, font, dll.)
+## Preview Folder Structure
+   ```bash
+   my-notes/
+   ├── index.html          # File utama blog
+   ├── README.md           # Dokumentasi proyek
+   └── assets/             # Folder opsional untuk aset tambahan (gambar, font, dll.)
 
-Simpan kode di atas sebagai file `README.md` di root direktori repositori Anda. Ini akan memberikan gambaran jelas tentang proyek, fitur-fiturnya, dan cara berkontribusi. Anda juga dapat menyesuaikan konten sesuai kebutuhan.
+   ```bash Simpan kode di atas sebagai file `README.md` di root direktori repositori Anda. Ini akan memberikan gambaran jelas tentang proyek, fitur-fiturnya, dan cara berkontribusi. Anda juga dapat menyesuaikan konten sesuai kebutuhan.

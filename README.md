@@ -1,72 +1,112 @@
-<!-- 🌟 Leave a STAR if you like it! 🌟 -->
+# My Notes – Blog Pribadi Dede Basuni
 
-<!-- Title -->
-<h2 align="center">
-  <samp>&lt;/&gt; Hi, I'm <a href="https://dedebasuni.github.io/" target="_blank">Dede Basuni</a> 👋</samp>
-</h2>
-
-<p align="center">
-  <samp>
-    🧑‍💻 Fullstack Developer | ⚡ Tech Explorer | 🇮🇩 Based in Indonesia
-    <br>
-    🚀 Passionate about building intuitive & impactful digital experiences
-  </samp>
-</p>
+![Preview]([https://via.placeholder.com/800x400?text=My+Notes+Preview](https://lh3.googleusercontent.com/a/AEdFTp5o-M5qkUuK8udmqYnz01dEsVcMwHlzpbEgQmFxng=s230-c))  
 
 ---
 
-### 🛠️ Tech Stack & Tools I Use
-<p align="center">
-  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black" />
-  <img src="https://img.shields.io/badge/React-02cdf1?style=flat-square&logo=react&logoColor=white" />
-  <img src="https://img.shields.io/badge/Next.js-black?style=flat-square&logo=next.js&logoColor=white" />
-  <img src="https://img.shields.io/badge/TailwindCSS-0ea5e9?style=flat-square&logo=tailwindcss&logoColor=white" />
-  <img src="https://img.shields.io/badge/Arduino-00979D?style=flat-square&logo=arduino&logoColor=white" />
-</p>
+## 📚 Tentang Proyek
+
+**My Notes** adalah blog pribadi yang dibuat oleh **Dede Basuni**, seorang frontend developer yang fokus pada pengalaman pengguna (UX) dan desain interaktif. Blog ini menyajikan artikel-artikel inspiratif dan informatif seputar:
+
+- **Frontend Development**
+- **Desain Interaktif**
+- **Pengalaman Pengguna (UX)**
+
+Proyek ini dirancang dengan teknologi modern seperti **HTML5**, **CSS3**, **Bootstrap 5**, dan **JavaScript**, serta menggunakan API berbasis Google Sheets untuk manajemen konten.
 
 ---
 
-### 🤝 Let’s Connect
-<p align="center">
-  <a href="mailto:mr.dedebasuni@gmail.com" target="_blank">
-    <img src="https://img.shields.io/badge/Email-EA4335?style=flat-square&logo=gmail&logoColor=white" />
-  </a>
-  <a href="https://twitter.com/dede_basuni" target="_blank">
-    <img src="https://img.shields.io/badge/Twitter-1DA1F2?style=flat-square&logo=twitter&logoColor=white" />
-  </a>
-  <a href="https://www.linkedin.com/in/dedebasuni/" target="_blank">
-    <img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=flat-square&logo=linkedin&logoColor=white" />
-  </a>
-  <a href="https://www.youtube.com/@dedebasuni" target="_blank">
-    <img src="https://img.shields.io/badge/Youtube-FF0000?style=flat-square&logo=youtube&logoColor=white" />
-  </a>
-</p>
+## 🌟 Fitur Utama
+
+1. **Tampilan Responsif**  
+   Blog ini dioptimalkan untuk semua perangkat, mulai dari desktop hingga smartphone.
+
+2. **Mode Gelap (Dark Mode)**  
+   Pengguna dapat beralih ke mode gelap untuk kenyamanan membaca di malam hari.
+
+3. **Filter Kategori**  
+   Artikel dapat difilter berdasarkan kategori tertentu untuk memudahkan navigasi.
+
+4. **Efek Partikel**  
+   Animasi partikel halus di latar belakang memberikan kesan modern dan dinamis.
+
+5. **Interaksi Pengguna**  
+   - **Like & View Counter**: Setiap artikel memiliki sistem "like" dan "view" yang disimpan di browser pengguna.
+   - **Random Post**: Tombol untuk membuka artikel secara acak.
+
+6. **Notifikasi Postingan Baru**  
+   Pengguna akan mendapatkan notifikasi jika ada artikel baru sejak kunjungan terakhir.
+
+7. **Modal Interaktif**  
+   Artikel dibuka dalam modal dengan animasi halus, dilengkapi gambar (jika ada).
+
+8. **Profil Penulis**  
+   Informasi lengkap tentang penulis beserta tautan media sosialnya.
 
 ---
 
-<details>
-  <summary><b>🧩 About Me</b></summary>
-  <br>
-  <ul>
-    <li>🌱 Always learning & tinkering with new tech</li>
-    <li>🎯 Currently deep-diving into <strong>Next.js</strong> and modern front-end architecture</li>
-    <li>📦 I love building side projects and open source tools</li>
-    <li>🎨 Big fan of minimalistic design & clean code</li>
-  </ul>
-</details>
+## 🛠️ Teknologi yang Digunakan
+
+- **HTML5** & **CSS3**: Struktur dasar dan styling.
+- **Bootstrap 5**: Framework CSS untuk desain responsif.
+- **JavaScript**: Logika interaktif dan manipulasi DOM.
+- **Font Awesome**: Ikon-ikon modern.
+- **Google Fonts**: Font "Poppins" untuk tampilan bersih dan profesional.
+- **Particles.js**: Animasi partikel di latar belakang.
+- **Google Sheets API**: Manajemen konten artikel secara dinamis.
 
 ---
 
-<p align="center">
-  <samp>
-    ✨ Thanks for stopping by! Keep learning, keep building.
-    <br><br>
-    <strong>“Code is like humor. When you have to explain it, it’s bad.”</strong> – Cory House
-    <br><br>
-    <i>~ Happy Coding 👨‍💻 ~</i>
-  </samp>
-</p>
+## 🚀 Cara Menggunakan
 
-<p align="center">
-  ════════ ⋆⋅☆⋅⋆ ════════
-</p>
+1. **Clone Repository**  
+   Clone repositori ini ke komputer lokal Anda:
+   ```bash
+   git clone https://github.com/dedebasuni/my-notes.git
+
+2. **Buka File HTML**
+   Buka file index.html di browser favorit Anda.
+
+3. **Tambahkan Konten**
+   Untuk menambahkan artikel baru, edit Google Sheet yang digunakan sebagai sumber data. Pastikan kolom-kolom seperti Judul, Isi, Kategori, Tag, dan Gambar diisi dengan benar.
+   
+5. **Jalankan Lokal**
+   Jika ingin menjalankan proyek secara lokal, gunakan server HTTP sederhana seperti Live Server di Visual Studio Code.
+
+---
+
+## 📝 Lisensi
+Proyek ini dilisensikan di bawah MIT License . Silakan gunakan, modifikasi, dan distribusikan sesuai kebutuhan Anda.
+
+---
+
+## 🤝 Kontribusi
+Kontribusi sangat diterima! Jika Anda ingin berkontribusi, silakan buat pull request atau laporkan masalah melalui Issues.
+
+---
+
+## 🔗 Tautan Penting
+Demo Online : My Notes – Dede Basuni
+Email : mr.dedebasuni@gmail.com
+Media Sosial :
+Facebook: @dede.basuni
+Twitter: @dede_basuni
+Instagram: @dede.basuni
+YouTube: @dedebasuni
+
+---
+
+## 🙏 Ucapan Terima Kasih
+Terima kasih telah melihat proyek ini! Semoga blog ini dapat menjadi sumber inspirasi bagi Anda. Jangan ragu untuk memberikan feedback atau saran melalui email atau media sosial.
+
+Happy Coding! 🚀✨
+
+---
+
+Preview Folder Structure
+my-notes/
+├── index.html          # File utama blog
+├── README.md           # Dokumentasi proyek
+└── assets/             # Folder opsional untuk aset tambahan (gambar, font, dll.)
+
+Simpan kode di atas sebagai file `README.md` di root direktori repositori Anda. Ini akan memberikan gambaran jelas tentang proyek, fitur-fiturnya, dan cara berkontribusi. Anda juga dapat menyesuaikan konten sesuai kebutuhan.

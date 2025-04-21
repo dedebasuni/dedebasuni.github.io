@@ -56,7 +56,7 @@ Proyek ini dirancang dengan teknologi modern seperti **HTML5**, **CSS3**, **Boot
 ---
 
 ## 📁 Struktur File
-
+```bash
 my-notes/
 ├── index.html          # File utama blog
 ├── README.md           # Dokumentasi proyek

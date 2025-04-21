@@ -4,13 +4,6 @@
   <img src="https://readme-typing-svg.demolab.com?font=Poppins&pause=1000&color=0099ff&center=true&width=435&lines=Frontend+Dev+%7C+UX+Enthusiast+%7C+Creative+Thinker" alt="Typing SVG" />
 </p>
 
-<p align="center">
-  <a href="https://github.com/dedebasuni/dede.basuni.github.io/stargazers"><img src="https://img.shields.io/github/stars/dedebasuni/my-notes?style=flat-square&color=yellow" alt="Stars"/></a>
-  <a href="https://github.com/dedebasuni/dede.basuni.github.ios/network"><img src="https://img.shields.io/github/forks/dedebasuni/my-notes?style=flat-square&color=lightgreen" alt="Forks"/></a>
-  <a href="https://github.com/dedebasuni/dede.basuni.github.io/issues"><img src="https://img.shields.io/github/issues/dedebasuni/my-notes?style=flat-square&color=orange" alt="Issues"/></a>
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/dedebasuni/dede.basuni.github.io?style=flat-square&color=blue" alt="License"/></a>
-</p>
-
 ---
 
 ## 📚 Tentang Proyek
@@ -60,3 +53,50 @@ my-notes/
 ├── index.html          # Halaman utama
 ├── README.md           # Dokumentasi ini
 └── assets/             # Gambar, font, dsb
+
+## 🚀 Cara Menjalankan
+
+1. **Clone Repositori**  
+   Clone repositori ini ke komputer lokal kamu:
+   ```bash
+   git clone https://github.com/dedebasuni/my-notes.git
+2. **Buka index.html**
+   Cukup buka file index.html di browser kamu untuk melihat tampilan blog.
+3. **Tambah Konten**
+   Untuk menambahkan artikel baru, kamu bisa langsung edit Google Sheets yang terhubung. Pastikan kolom-kolom berikut terisi dengan benar:
+   - Judul
+   - Isi
+   - Kategori
+   - Tag
+   - Gambar
+4. **Jalankan Lokal (Opsional)**
+    Jika ingin menjalankan proyek ini secara lokal, kamu bisa gunakan Live Server di VS Code atau server HTTP lainnya untuk testing.
+
+---
+
+## 📝 Lisensi
+Proyek ini berlisensi MIT License. Kamu bebas menggunakan, memodifikasi, dan mendistribusikan proyek ini sesuai kebutuhan. Cek LICENSE untuk info lebih lanjut.
+
+---
+
+## 🤝 Kontribusi
+   Kontribusi sangat terbuka!
+   Buka Pull Request, fork repo ini, atau laporkan masalah melalui Issues.
+
+---
+
+## 🙋‍♂️ Kontak & Sosmed
+
+- 📧 Email: [dede.basuni@gmail.com](mailto:dede.basuni@gmail.com)
+- 🌐 Website: [https://dedebasuni.github.io](https://dedebasuni.github.io/)
+- 🐙 GitHub: [@username](https://github.com/username)
+
+---
+
+## 🙏 Ucapan Terima Kasih
+   Terima kasih sudah mampir ke proyek ini!
+   Jika kamu suka, jangan lupa kasih ⭐ di atas untuk mendukung proyek ini!
+
+> Made with ❤️ by [Dede Basuni](https://github.com/dedebasuni)
+
+<p align="center"> <img src="https://capsule-render.vercel.app/api?type=rect&color=gradient&height=2"/> </p> ```

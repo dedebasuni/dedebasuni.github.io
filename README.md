@@ -4,6 +4,12 @@
   <img src="https://readme-typing-svg.demolab.com?font=Poppins&pause=1000&color=0099ff&center=true&width=435&lines=Frontend+Dev+%7C+UX+Enthusiast+%7C+Creative+Thinker" alt="Typing SVG" />
 </p>
 
+<p align="center">
+  <img src="assets/screenshot.png" alt="My Notes Screenshot" width="80%" />
+</p>
+
+---
+
 ## 📚 Tentang Proyek
 
 **My Notes** adalah blog pribadi milik **Dede Basuni**, seorang *Frontend Developer* yang fokus pada **UX** dan **Desain Interaktif**. Blog ini membahas:
@@ -12,7 +18,9 @@
 - 🎨 **Desain Interaktif**
 - 👨‍💻 **Pengalaman Pengguna (UX)**
 
-Dibangun menggunakan teknologi modern seperti **HTML5**, **CSS3**, **Bootstrap 5**, dan **JavaScript**, serta memanfaatkan **Google Sheets API** sebagai CMS dinamis.
+Dibangun menggunakan teknologi modern seperti **HTML5**, **CSS3**, **Bootstrap 5**, dan **JavaScript**, serta memanfaatkan **Google Sheets API** sebagai *headless CMS* dinamis untuk mengelola konten artikel.
+
+---
 
 ## ✨ Fitur Utama
 
@@ -28,6 +36,8 @@ Dibangun menggunakan teknologi modern seperti **HTML5**, **CSS3**, **Bootstrap 5
 | 📰 **Modal Interaktif** | Buka artikel dalam modal |
 | 👨‍🎨 **Profil Penulis** | Info lengkap & sosial media |
 
+---
+
 ## ⚙️ Teknologi yang Digunakan
 
 - **HTML5** / **CSS3**
@@ -38,11 +48,13 @@ Dibangun menggunakan teknologi modern seperti **HTML5**, **CSS3**, **Bootstrap 5
 - **Particles.js**
 - **Google Sheets API**
 
+---
+
 ## 🚀 Cara Menjalankan
 
 1. **Clone Repositori**  
    Clone repositori ini ke komputer lokal kamu:
-   ```markdown
+   ```bash
    git clone https://github.com/dedebasuni/my-notes.git
 2. **Buka index.html**
    Cukup buka file index.html di browser kamu untuk melihat tampilan blog.
@@ -56,23 +68,7 @@ Dibangun menggunakan teknologi modern seperti **HTML5**, **CSS3**, **Bootstrap 5
 4. **Jalankan Lokal (Opsional)**
    Jika ingin menjalankan proyek ini secara lokal, kamu bisa gunakan Live Server di VS Code atau server HTTP lainnya untuk testing.
 
-## 📝 Lisensi
-   Proyek ini berlisensi MIT License. Kamu bebas menggunakan, memodifikasi, dan mendistribusikan proyek ini sesuai kebutuhan. Cek LICENSE untuk info lebih lanjut.
-
-## 🤝 Kontribusi
-   Kontribusi sangat terbuka!
-   Buka Pull Request, fork repo ini, atau laporkan masalah melalui Issues.
-
-## 🙋‍♂️ Kontak
-
-- 📧 Email: [dede.basuni@gmail.com](mailto:dede.basuni@gmail.com)
-- 🌐 Website: [https://dedebasuni.github.io](https://dedebasuni.github.io/)
-- 🐙 GitHub: [@dedebasuni](https://github.com/dedebasuni)
-
-## 🙏 Ucapan Terima Kasih
-   Terima kasih sudah mampir, jika kamu suka jangan lupa kasih ⭐ di atas untuk mendukung proyek ini!
-
-> Made with ❤️ by [Dede Basuni](https://github.com/dedebasuni)
+---
 
 ## 📁 Struktur Folder
 
@@ -80,4 +76,30 @@ Dibangun menggunakan teknologi modern seperti **HTML5**, **CSS3**, **Bootstrap 5
 my-notes/
 ├── index.html          # Halaman utama
 ├── README.md           # Dokumentasi ini
-└── assets/             # Gambar, font, dsb
+└── assets/             # Gambar, font, dsb```
+
+---
+
+## 📝 Lisensi
+   Proyek ini berlisensi MIT License. Kamu bebas menggunakan, memodifikasi, dan mendistribusikan proyek ini sesuai kebutuhan. Cek LICENSE untuk info lebih lanjut.
+
+---
+
+## 🤝 Kontribusi
+   Kontribusi sangat terbuka!
+   Buka Pull Request, fork repo ini, atau laporkan masalah melalui Issues.
+
+---
+
+## 🙋‍♂️ Kontak
+
+- 📧 Email: [dede.basuni@gmail.com](mailto:dede.basuni@gmail.com)
+- 🌐 Website: [https://dedebasuni.github.io](https://dedebasuni.github.io/)
+- 🐙 GitHub: [@dedebasuni](https://github.com/dedebasuni)
+
+---
+
+## 🙏 Ucapan Terima Kasih
+   Terima kasih sudah mampir, jika kamu suka jangan lupa kasih ⭐ di atas untuk mendukung proyek ini!
+
+> Made with ❤️ by [Dede Basuni](https://github.com/dedebasuni)

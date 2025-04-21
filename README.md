@@ -70,16 +70,6 @@ Dibangun menggunakan teknologi modern seperti **HTML5**, **CSS3**, **Bootstrap 5
 
 ---
 
-## 📁 Struktur Folder
-
-```bash
-my-notes/
-├── index.html          # Halaman utama
-├── README.md           # Dokumentasi ini
-└── assets/             # Gambar, font, dsb```
-
----
-
 ## 📝 Lisensi
    Proyek ini berlisensi MIT License. Kamu bebas menggunakan, memodifikasi, dan mendistribusikan proyek ini sesuai kebutuhan. Cek LICENSE untuk info lebih lanjut.
 
@@ -103,3 +93,11 @@ my-notes/
    Terima kasih sudah mampir, jika kamu suka jangan lupa kasih ⭐ di atas untuk mendukung proyek ini!
 
 > Made with ❤️ by [Dede Basuni](https://github.com/dedebasuni)
+
+## 📁 Struktur Folder
+
+```bash
+my-notes/
+├── index.html          # Halaman utama
+├── README.md           # Dokumentasi ini
+└── assets/             # Gambar, font, dsb

@@ -1,4 +1,4 @@
-<h1 align="center">📝 My Notes – Blog Pribadi Dede Basuni</h1>
+<h1 align="center">📝 My Notes – Blog Pribadi</h1>
 <p align="center">
   <img src="https://readme-typing-svg.demolab.com?font=Poppins&pause=1000&color=0099ff&center=true&width=512&lines=Frontend+Dev+%7C+UX+Enthusiast+%7C+Creative+Thinker" alt="Typing SVG" />
 </p>
@@ -10,13 +10,7 @@
 
 ## 📚 Tentang Proyek
 
-**My Notes** adalah blog pribadi milik **Dede Basuni**, seorang *Frontend Developer* yang fokus pada **UX** dan **Desain Interaktif**. Blog ini membahas:
-
-- 🔧 **Frontend Development**
-- 🎨 **Desain Interaktif**
-- 👨‍💻 **Pengalaman Pengguna (UX)**
-
-Dibangun menggunakan teknologi modern seperti **HTML5**, **CSS3**, **Bootstrap 5**, dan **JavaScript**, serta memanfaatkan **Google Sheets API** sebagai *headless CMS* dinamis untuk mengelola konten artikel.
+**My Notes** adalah blog pribadi, dibangun menggunakan teknologi modern seperti **HTML5**, **CSS3**, **Bootstrap 5**, dan **JavaScript**, serta memanfaatkan **Google Sheets API** sebagai *headless CMS* dinamis untuk mengelola konten artikel.
 
 ---
 

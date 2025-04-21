@@ -14,7 +14,7 @@ Proyek ini dirancang dengan teknologi modern seperti **HTML5**, **CSS3**, **Boot
 
 ---
 
-## 🌟 Fitur Utama
+## 🎯 Fitur Utama
 
 1. **Tampilan Responsif**  
    Blog ini dioptimalkan untuk semua perangkat, mulai dari desktop hingga smartphone.
@@ -43,7 +43,7 @@ Proyek ini dirancang dengan teknologi modern seperti **HTML5**, **CSS3**, **Boot
 
 ---
 
-## 🛠️ Teknologi yang Digunakan
+## ⚙️ Teknologi yang Digunakan
 
 - **HTML5** & **CSS3**: Struktur dasar dan styling.
 - **Bootstrap 5**: Framework CSS untuk desain responsif.
@@ -55,6 +55,15 @@ Proyek ini dirancang dengan teknologi modern seperti **HTML5**, **CSS3**, **Boot
 
 ---
 
+## 📁 Struktur File
+   ```
+   my-notes/
+   ├── index.html          # File utama blog
+   ├── README.md           # Dokumentasi proyek
+   └── assets/             # Folder opsional untuk aset tambahan (gambar, font, dll.)
+
+---
+
 ## 🚀 Cara Menggunakan
 
 1. **Clone Repository**  
@@ -63,7 +72,7 @@ Proyek ini dirancang dengan teknologi modern seperti **HTML5**, **CSS3**, **Boot
    git clone https://github.com/dedebasuni/my-notes.git
 
 2. **Buka File HTML**
-   Buka file index.html di browser favorit Anda.
+   Buka file index.html di browser favorit Kamu.
 
 3. **Tambahkan Konten**
    Untuk menambahkan artikel baru, edit Google Sheet yang digunakan sebagai sumber data. Pastikan kolom-kolom seperti Judul, Isi, Kategori, Tag, dan Gambar diisi dengan benar.
@@ -83,14 +92,11 @@ Kontribusi sangat diterima! Jika Anda ingin berkontribusi, silakan buat pull req
 
 ---
 
-## 🔗 Tautan Penting
-- **Demo Online** : My Notes – Dede Basuni
-- **Email** : dedebasuni@gmail.com
-- **Media Sosial** :
-  **Facebook**: @dede.basuni
-  **Twitter**: @dede_basuni
-  **Instagram**: @dede.basuni
-  **YouTube**: @dedebasuni
+## 🙋‍♂️ Kontak & Sosmed
+
+- 📧 Email: [dede.basuni@gmail.com](mailto:dede.basuni@gmail.com)
+- 🌐 Website: [https://dedebasuni.github.io](https://dedebasuni.github.io/)
+- 🐙 GitHub: [@username](https://github.com/username)
 
 ---
 
@@ -99,11 +105,5 @@ Terima kasih telah melihat proyek ini! Semoga blog ini dapat menjadi sumber insp
 
 Happy Coding! 🚀✨
 
+> Made with ❤️ by [Dede Basuni](https://github.com/dedebasuni)
 ---
-
-## 📝 Preview Folder Structure
-   ```bash
-   my-notes/
-   ├── index.html          # File utama blog
-   ├── README.md           # Dokumentasi proyek
-   └── assets/             # Folder opsional untuk aset tambahan (gambar, font, dll.)

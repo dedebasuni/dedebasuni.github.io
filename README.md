@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <img src="assets/screenshot.png" alt="My Notes Screenshot" width="80%" />
+  <img src="screenshot.png" alt="My Notes Screenshot" width="80%" />
 </p>
 
 ---

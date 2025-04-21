@@ -42,7 +42,7 @@ Dibangun menggunakan teknologi modern seperti **HTML5**, **CSS3**, **Bootstrap 5
 
 1. **Clone Repositori**  
    Clone repositori ini ke komputer lokal kamu:
-   ```bash
+   ```markdown
    git clone https://github.com/dedebasuni/my-notes.git
 2. **Buka index.html**
    Cukup buka file index.html di browser kamu untuk melihat tampilan blog.
@@ -57,21 +57,20 @@ Dibangun menggunakan teknologi modern seperti **HTML5**, **CSS3**, **Bootstrap 5
    Jika ingin menjalankan proyek ini secara lokal, kamu bisa gunakan Live Server di VS Code atau server HTTP lainnya untuk testing.
 
 ## 📝 Lisensi
-Proyek ini berlisensi MIT License. Kamu bebas menggunakan, memodifikasi, dan mendistribusikan proyek ini sesuai kebutuhan. Cek LICENSE untuk info lebih lanjut.
+   Proyek ini berlisensi MIT License. Kamu bebas menggunakan, memodifikasi, dan mendistribusikan proyek ini sesuai kebutuhan. Cek LICENSE untuk info lebih lanjut.
 
 ## 🤝 Kontribusi
    Kontribusi sangat terbuka!
    Buka Pull Request, fork repo ini, atau laporkan masalah melalui Issues.
 
-## 🙋‍♂️ Kontak & Sosmed
+## 🙋‍♂️ Kontak
 
 - 📧 Email: [dede.basuni@gmail.com](mailto:dede.basuni@gmail.com)
 - 🌐 Website: [https://dedebasuni.github.io](https://dedebasuni.github.io/)
-- 🐙 GitHub: [@username](https://github.com/username)
+- 🐙 GitHub: [@dedebasuni](https://github.com/dedebasuni)
 
 ## 🙏 Ucapan Terima Kasih
-   Terima kasih sudah mampir ke proyek ini!
-   Jika kamu suka, jangan lupa kasih ⭐ di atas untuk mendukung proyek ini!
+   Terima kasih sudah mampir, jika kamu suka jangan lupa kasih ⭐ di atas untuk mendukung proyek ini!
 
 > Made with ❤️ by [Dede Basuni](https://github.com/dedebasuni)
 

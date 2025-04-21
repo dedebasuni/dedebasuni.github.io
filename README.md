@@ -62,7 +62,7 @@ Dibangun menggunakan teknologi modern seperti **HTML5**, **CSS3**, **Bootstrap 5
    - Tag
    - Gambar
 4. **Jalankan Lokal (Opsional)**
-    Jika ingin menjalankan proyek ini secara lokal, kamu bisa gunakan Live Server di VS Code atau server HTTP lainnya untuk testing.
+   Jika ingin menjalankan proyek ini secara lokal, kamu bisa gunakan Live Server di VS Code atau server HTTP lainnya untuk testing.
 
 ---
 
@@ -91,6 +91,8 @@ Proyek ini berlisensi MIT License. Kamu bebas menggunakan, memodifikasi, dan men
 
 > Made with ❤️ by [Dede Basuni](https://github.com/dedebasuni)
 
+---
+
 ## 📁 Struktur Folder
 
 ```bash
@@ -98,5 +100,3 @@ my-notes/
 ├── index.html          # Halaman utama
 ├── README.md           # Dokumentasi ini
 └── assets/             # Gambar, font, dsb
-
-<p align="center"> <img src="https://capsule-render.vercel.app/api?type=rect&color=gradient&height=2"/> </p> ```

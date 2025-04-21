@@ -5,10 +5,10 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/dedebasuni/my-notes/stargazers"><img src="https://img.shields.io/github/stars/dedebasuni/my-notes?style=flat-square&color=yellow" alt="Stars"/></a>
-  <a href="https://github.com/dedebasuni/my-notes/network"><img src="https://img.shields.io/github/forks/dedebasuni/my-notes?style=flat-square&color=lightgreen" alt="Forks"/></a>
-  <a href="https://github.com/dedebasuni/my-notes/issues"><img src="https://img.shields.io/github/issues/dedebasuni/my-notes?style=flat-square&color=orange" alt="Issues"/></a>
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/dedebasuni/my-notes?style=flat-square&color=blue" alt="License"/></a>
+  <a href="https://github.com/dedebasuni/dede.basuni.github.io/stargazers"><img src="https://img.shields.io/github/stars/dedebasuni/my-notes?style=flat-square&color=yellow" alt="Stars"/></a>
+  <a href="https://github.com/dedebasuni/dede.basuni.github.ios/network"><img src="https://img.shields.io/github/forks/dedebasuni/my-notes?style=flat-square&color=lightgreen" alt="Forks"/></a>
+  <a href="https://github.com/dedebasuni/dede.basuni.github.io/issues"><img src="https://img.shields.io/github/issues/dedebasuni/my-notes?style=flat-square&color=orange" alt="Issues"/></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/dedebasuni/dede.basuni.github.io?style=flat-square&color=blue" alt="License"/></a>
 </p>
 
 ---

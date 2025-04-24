@@ -1,9 +1,12 @@
-<h1 align="center">📝 My Notes – Blog Pribadi</h1>
+<h1 align="center">📝 My Notes</h1>
 <p align="center">
   <img src="https://readme-typing-svg.demolab.com?font=Poppins&pause=1000&color=0099ff&center=true&width=512&lines=Frontend+Dev+%7C+UX+Enthusiast+%7C+Creative+Thinker" alt="Typing SVG" />
 </p>
 <p align="center">
-  <img src="screenshot.png" alt="My Notes Screenshot" width="80%" />
+  <img src="Screenshot_1.png" alt="My Notes Screenshot" width="80%" />
+</p>
+<p align="center">
+  <img src="Screenshot_2.png" alt="My Notes Screenshot" width="80%" />
 </p>
 
 ---

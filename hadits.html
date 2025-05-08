@@ -256,7 +256,7 @@
             elements.noResults.innerHTML = `
                 <i class="far fa-frown text-3xl text-blue-400 mb-3"></i>
                 <h3 class="text-lg font-semibold text-blue-700 mb-2">Gagal Memuat</h3>
-                <p class="text-gray-600 mb-3">${errorMessage}</p>
+                <p class="text-gray-600 mb-3">${errorMessage} <a href="https://api.hadith.gading.dev/books" target="_blank" class="underline text-blue-600 hover:text-blue-800">Cek status API</a>.</p>
                 <button id="retryButton" class="bg-blue-700 text-white py-2 px-4 rounded hover:bg-blue-800" aria-label="Coba lagi">
                     Coba Lagi
                 </button>
@@ -302,12 +302,22 @@
                 if (!response.ok) {
                     throw new Error(`HTTP error ${response.status}: ${response.statusText}`);
                 }
-                const contentType = response.headers.get('content-type');
-                if (!contentType || !contentType.includes('application/json')) {
-                    throw new Error('Response is not JSON');
+                const text = await response.text();
+                let data;
+                try {
+                    data = JSON.parse(text);
+                } catch (e) {
+                    console.error('Failed to parse JSON for books:', {
+                        url: `${API_BASE_URL}/books`,
+                        status: response.status,
+                        statusText: response.statusText,
+                        headers: Object.fromEntries(response.headers.entries()),
+                        body: text.length > 200 ? text.slice(0, 200) + '...' : text
+                    });
+                    throw new Error('Response is not valid JSON');
                 }
-                const data = await response.json();
                 if (!data || !Array.isArray(data.books)) {
+                    console.error('Invalid data format for books:', data);
                     throw new Error('Invalid data format: books array missing');
                 }
                 if (data.books.length === 0) {
@@ -317,13 +327,18 @@
                 displayBookList(data.books);
                 return data;
             } catch (error) {
-                let errorMessage = 'Gagal memuat daftar kitab. Silakan coba lagi.';
+                let errorMessage = 'Gagal memuat daftar kitab dari API. Silakan coba lagi.';
                 if (error.message.includes('Failed to fetch')) {
-                    errorMessage = 'Tidak dapat terhubung ke server API. Periksa koneksi internet Anda.';
-                } else if (error.message.includes('not JSON')) {
-                    errorMessage = 'Data dari server tidak valid.';
+                    errorMessage = 'Tidak dapat terhubung ke server API. Periksa koneksi internet atau CORS settings.';
+                } else if (error.message.includes('not valid JSON')) {
+                    errorMessage = 'Data dari API tidak valid. Server mungkin sedang bermasalah.';
+                } else if (error.message.includes('Invalid data format')) {
+                    errorMessage = 'Format data dari API tidak sesuai. Silakan coba lagi nanti.';
                 }
-                console.error('Error fetching books:', error);
+                console.error('Error fetching books:', error, {
+                    url: `${API_BASE_URL}/books`,
+                    errorDetails: error.message
+                });
                 showNotification(errorMessage);
                 showErrorWithRetry(fetchBookList, errorMessage);
             } finally {
@@ -363,7 +378,20 @@
             try {
                 const response = await fetch(`${API_BASE_URL}/books/${bookId}?range=${start}-${end}`, { mode: 'cors' });
                 if (!response.ok) throw new Error(`HTTP error ${response.status}`);
-                const data = await response.json();
+                const text = await response.text();
+                let data;
+                try {
+                    data = JSON.parse(text);
+                } catch (e) {
+                    console.error('Failed to parse JSON for hadith range:', {
+                        url: `${API_BASE_URL}/books/${bookId}?range=${start}-${end}`,
+                        status: response.status,
+                        statusText: response.statusText,
+                        headers: Object.fromEntries(response.headers.entries()),
+                        body: text.length > 200 ? text.slice(0, 200) + '...' : text
+                    });
+                    throw new Error('Response is not valid JSON');
+                }
                 if (!data || !Array.isArray(data.data)) throw new Error('Invalid data format');
                 if (data.data.length === 0) {
                     showError('Tidak ada hadits dalam rentang ini');
@@ -426,7 +454,20 @@
             try {
                 const response = await fetch(`${API_BASE_URL}/books/${bookId}/${hadithNumber}`, { mode: 'cors' });
                 if (!response.ok) throw new Error(`HTTP error ${response.status}`);
-                const data = await response.json();
+                const text = await response.text();
+                let data;
+                try {
+                    data = JSON.parse(text);
+                } catch (e) {
+                    console.error('Failed to parse JSON for hadith detail:', {
+                        url: `${API_BASE_URL}/books/${bookId}/${hadithNumber}`,
+                        status: response.status,
+                        statusText: response.statusText,
+                        headers: Object.fromEntries(response.headers.entries()),
+                        body: text.length > 200 ? text.slice(0, 200) + '...' : text
+                    });
+                    throw new Error('Response is not valid JSON');
+                }
                 if (!data || !data.data) throw new Error('Invalid data format');
                 displayHadithDetail(data.data, bookId);
             } catch (error) {
@@ -459,7 +500,20 @@
                 try {
                     const response = await fetch(`${API_BASE_URL}/books/${bookmark.bookName}/${bookmark.hadithNumber}`, { mode: 'cors' });
                     if (!response.ok) throw new Error(`HTTP error ${response.status}`);
-                    const data = await response.json();
+                    const text = await response.text();
+                    let data;
+                    try {
+                        data = JSON.parse(text);
+                    } catch (e) {
+                        console.error('Failed to parse JSON for bookmark:', {
+                            url: `${API_BASE_URL}/books/${bookmark.bookName}/${bookmark.hadithNumber}`,
+                            status: response.status,
+                            statusText: response.statusText,
+                            headers: Object.fromEntries(response.headers.entries()),
+                            body: text.length > 200 ? text.slice(0, 200) + '...' : text
+                        });
+                        return null;
+                    }
                     if (data && data.data) return { hadith: data.data, bookmark };
                     return null;
                 } catch (error) {
@@ -591,7 +645,20 @@
             try {
                 const response = await fetch(`${API_BASE_URL}/books`, { mode: 'cors' });
                 if (!response.ok) throw new Error(`HTTP error ${response.status}`);
-                const data = await response.json();
+                const text = await response.text();
+                let data;
+                try {
+                    data = JSON.parse(text);
+                } catch (e) {
+                    console.error('Failed to parse JSON in search:', {
+                        url: `${API_BASE_URL}/books`,
+                        status: response.status,
+                        statusText: response.statusText,
+                        headers: Object.fromEntries(response.headers.entries()),
+                        body: text.length > 200 ? text.slice(0, 200) + '...' : text
+                    });
+                    throw new Error('Response is not valid JSON');
+                }
                 if (!data || !Array.isArray(data.books)) throw new Error('Invalid data format');
                 const filteredBooks = data.books.filter(book => book.name.toLowerCase().includes(query));
                 if (filteredBooks.length > 0) {

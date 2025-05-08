@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hadits Digital</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f3f4f6;
+        }
+        .arabic {
+            font-size: 1.8rem;
+            line-height: 3rem;
+            direction: rtl;
+            text-align: right;
+            font-family: 'Amiri', serif;
+            color: #1e3a8a;
+        }
+        .arabic-numeric {
+            font-family: 'Amiri', serif;
+        }
+        .loading {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(59, 130, 246, 0.2);
+            border-radius: 50%;
+            border-top-color: #3b82f6;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: #3b82f6;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            animation: slideIn 0.3s ease-out, slideOut 0.3s ease-in 2.5s forwards;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+        @keyframes slideOut {
+            from { transform: translateX(0); }
+            to { transform: translateX(100%); }
+        }
+        #detailModal {
+            backdrop-filter: blur(3px);
+        }
+        #detailModal .bg-white {
+            max-height: 80vh;
+            overflow-y: auto;
+            border-radius: 8px;
+        }
+        .dark {
+            background: #1e3a8a;
+        }
+        .dark .bg-gray-50 { background: #1e1b4b; }
+        .dark .bg-white { background: #1e3a8a; }
+        .dark .text-gray-800 { color: #e0e7ff; }
+        .dark .text-gray-600 { color: #93c5fd; }
+        .dark .text-blue-700 { color: #60a5fa; }
+        .dark .bg-blue-700 { background: #2563eb; }
+        @media (max-width: 640px) {
+            .arabic { font-size: 1.5rem; line-height: 2.5rem; }
+            .grid-cols-2, .grid-cols-3 { grid-template-columns: 1fr; }
+            .search-bar { flex-direction: column; }
+            .search-bar input { width: 100%; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+    <div id="notificationContainer"></div>
+    <header class="bg-blue-700 text-white sticky top-0 z-50 shadow">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-book text-xl"></i>
+                <h1 class="text-lg font-bold">Hadits Digital</h1>
+            </div>
+            <nav class="flex items-center space-x-4">
+                <button id="showBookmarks" class="hover:text-blue-200" aria-label="Lihat Bookmark">
+                    <i class="fas fa-bookmark"></i>
+                </button>
+                <button id="toggleTheme" class="hover:text-blue-200" aria-label="Toggle dark mode">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button id="home" class="hover:text-blue-200" aria-label="Back to home">
+                    <i class="fas fa-home"></i>
+                </button>
+            </nav>
+        </div>
+    </header>
+    <main class="container mx-auto px-4 py-6">
+        <section class="mb-6">
+            <div class="flex items-center bg-white rounded-lg shadow p-3 search-bar">
+                <i class="fas fa-search text-blue-500 mr-2"></i>
+                <input id="searchInput" type="text" class="w-full outline-none text-gray-800 placeholder-gray-400" placeholder="Cari Kitab atau Hadits (contoh: Bukhari, 5)" aria-label="Cari Hadits">
+                <button id="voiceSearch" class="ml-2 text-blue-500 hover:text-blue-700" aria-label="Pencarian suara">
+                    <i class="fas fa-microphone"></i>
+                </button>
+            </div>
+        </section>
+        <div id="loadingIndicator" class="hidden flex justify-center items-center my-8">
+            <div class="loading"></div>
+            <p class="ml-3 text-blue-700">Memuat...</p>
+        </div>
+        <section id="bookListSection">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-semibold text-blue-700">Daftar Kitab Hadits</h3>
+                <button id="sortBooks" class="text-blue-600 hover:text-blue-800 text-sm" aria-label="Urutkan Kitab">
+                    <i class="fas fa-sort mr-1"></i> Urutkan
+                </button>
+            </div>
+            <div id="bookGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
+        </section>
+        <section id="hadithListSection" class="hidden mb-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="hadithListTitle" class="text-xl font-semibold text-blue-700"></h3>
+                <button id="closeHadithList" class="text-gray-600 hover:text-blue-700" aria-label="Kembali ke Kitab">
+                    <i class="fas fa-times text-lg"></i>
+                </button>
+            </div>
+            <div class="flex mb-4">
+                <input id="rangeStart" type="number" min="1" class="w-24 p-2 border rounded mr-2" placeholder="Mulai" aria-label="Nomor mulai">
+                <input id="rangeEnd" type="number" min="1" class="w-24 p-2 border rounded mr-2" placeholder="Akhir" aria-label="Nomor akhir">
+                <button id="fetchRange" class="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800" aria-label="Ambil Hadits">Ambil</button>
+            </div>
+            <div id="hadithGrid" class="grid grid-cols-1 gap-4"></div>
+        </section>
+        <section id="bookmarkSection" class="hidden mb-6">
+            <h3 class="text-xl font-semibold text-blue-700 mb-4">Hadits yang Dibookmark</h3>
+            <div id="bookmarkGrid" class="grid grid-cols-1 gap-4"></div>
+        </section>
+        <section id="noResults" class="hidden text-center bg-white rounded-lg shadow p-6 mb-6">
+            <i class="far fa-frown text-3xl text-blue-400 mb-3"></i>
+            <h3 class="text-lg font-semibold text-blue-700 mb-2">Tidak Ada Hasil</h3>
+            <p class="text-gray-600">Coba kata kunci lain atau periksa kembali ejaan.</p>
+        </section>
+    </main>
+    <div id="detailModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-2xl w-full mx-4 relative">
+            <button id="closeDetailModal" class="absolute top-4 right-4 text-gray-600 hover:text-blue-700" aria-label="Tutup Detail">
+                <i class="fas fa-times text-lg"></i>
+            </button>
+            <h3 id="detailModalTitle" class="text-lg font-semibold text-blue-700 mb-4"></h3>
+            <div id="detailModalContent" class="text-gray-800"></div>
+        </div>
+    </div>
+    <button id="scrollToTop" class="fixed bottom-6 right-6 bg-blue-700 text-white p-3 rounded-full shadow hover:bg-blue-800 hidden" aria-label="Kembali ke atas">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+    <footer class="bg-blue-700 text-white py-4">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-sm">© 2025 Hadits Digital - Data dari <a href="https://api.hadith.gading.dev" class="underline hover:text-blue-200">api.hadith.gading.dev</a></p>
+            <div class="mt-2 flex justify-center space-x-4">
+                <a href="#" class="hover:text-blue-200"><i class="fab fa-github"></i></a>
+                <a href="#" class="hover:text-blue-200"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="hover:text-blue-200"><i class="fab fa-linkedin"></i></a>
+            </div>
+        </div>
+    </footer>
+    <script>
+        const API_BASE_URL = 'https://api.hadith.gading.dev';
+
+        function toArabicNumerals(number) {
+            const arabicDigits = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+            return String(number).split('').map(digit => arabicDigits[digit]).join('');
+        }
+
+        const elements = {
+            notificationContainer: document.getElementById('notificationContainer'),
+            loadingIndicator: document.getElementById('loadingIndicator'),
+            bookListSection: document.getElementById('bookListSection'),
+            bookGrid: document.getElementById('bookGrid'),
+            hadithListSection: document.getElementById('hadithListSection'),
+            hadithListTitle: document.getElementById('hadithListTitle'),
+            hadithGrid: document.getElementById('hadithGrid'),
+            closeHadithList: document.getElementById('closeHadithList'),
+            rangeStart: document.getElementById('rangeStart'),
+            rangeEnd: document.getElementById('rangeEnd'),
+            fetchRange: document.getElementById('fetchRange'),
+            bookmarkSection: document.getElementById('bookmarkSection'),
+            bookmarkGrid: document.getElementById('bookmarkGrid'),
+            noResults: document.getElementById('noResults'),
+            toggleThemeButton: document.getElementById('toggleTheme'),
+            homeButton: document.getElementById('home'),
+            showBookmarksButton: document.getElementById('showBookmarks'),
+            searchInput: document.getElementById('searchInput'),
+            voiceSearchButton: document.getElementById('voiceSearch'),
+            sortBooksButton: document.getElementById('sortBooks'),
+            detailModal: document.getElementById('detailModal'),
+            detailModalTitle: document.getElementById('detailModalTitle'),
+            detailModalContent: document.getElementById('detailModalContent'),
+            closeDetailModal: document.getElementById('closeDetailModal'),
+            scrollToTopButton: document.getElementById('scrollToTop')
+        };
+
+        let darkMode = localStorage.getItem('darkMode') === 'true';
+        let sortAscending = true;
+        let currentBook = null;
+
+        function updateTheme() {
+            document.body.classList.toggle('dark', darkMode);
+            elements.toggleThemeButton.innerHTML = darkMode ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            elements.notificationContainer.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+
+        function showLoading() {
+            elements.loadingIndicator.classList.remove('hidden');
+        }
+
+        function hideLoading() {
+            elements.loadingIndicator.classList.add('hidden');
+        }
+
+        function hideAllSections() {
+            elements.bookListSection.classList.add('hidden');
+            elements.hadithListSection.classList.add('hidden');
+            elements.bookmarkSection.classList.add('hidden');
+            elements.noResults.classList.add('hidden');
+            elements.detailModal.classList.add('hidden');
+        }
+
+        function showError(message = 'Coba kata kunci lain atau periksa kembali ejaan.') {
+            hideAllSections();
+            elements.noResults.classList.remove('hidden');
+            elements.noResults.innerHTML = `
+                <i class="far fa-frown text-3xl text-blue-400 mb-3"></i>
+                <h3 class="text-lg font-semibold text-blue-700 mb-2">Tidak Ada Hasil</h3>
+                <p class="text-gray-600">${message}</p>
+            `;
+        }
+
+        function showErrorWithRetry(retryCallback, errorMessage = 'Terjadi kesalahan saat memuat data.') {
+            hideAllSections();
+            elements.noResults.classList.remove('hidden');
+            elements.noResults.innerHTML = `
+                <i class="far fa-frown text-3xl text-blue-400 mb-3"></i>
+                <h3 class="text-lg font-semibold text-blue-700 mb-2">Gagal Memuat</h3>
+                <p class="text-gray-600 mb-3">${errorMessage}</p>
+                <button id="retryButton" class="bg-blue-700 text-white py-2 px-4 rounded hover:bg-blue-800" aria-label="Coba lagi">
+                    Coba Lagi
+                </button>
+            `;
+            const retryButton = elements.noResults.querySelector('#retryButton');
+            retryButton.addEventListener('click', retryCallback);
+        }
+
+        function getBookmarks() {
+            try {
+                return JSON.parse(localStorage.getItem('hadithBookmarks') || '[]');
+            } catch (e) {
+                console.error('Error parsing bookmarks:', e);
+                return [];
+            }
+        }
+
+        function saveBookmark(bookName, hadithNumber, bookTitle) {
+            const bookmarks = getBookmarks();
+            const key = `${bookName}-${hadithNumber}`;
+            if (!bookmarks.some(b => b.key === key)) {
+                bookmarks.push({ key, bookName, hadithNumber, bookTitle });
+                localStorage.setItem('hadithBookmarks', JSON.stringify(bookmarks));
+                showNotification(`Hadits ${bookTitle} #${hadithNumber} ditambahkan ke bookmark`);
+                if (!elements.bookmarkSection.classList.contains('hidden')) displayBookmarks();
+            }
+        }
+
+        function removeBookmark(bookName, hadithNumber) {
+            const bookmarks = getBookmarks();
+            const key = `${bookName}-${hadithNumber}`;
+            const bookmark = bookmarks.find(b => b.key === key);
+            const updatedBookmarks = bookmarks.filter(b => b.key !== key);
+            localStorage.setItem('hadithBookmarks', JSON.stringify(updatedBookmarks));
+            showNotification(`Hadits ${bookmark ? bookmark.bookTitle : ''} #${hadithNumber} dihapus dari bookmark`);
+            if (!elements.bookmarkSection.classList.contains('hidden')) displayBookmarks();
+        }
+
+        async function fetchBookList() {
+            showLoading();
+            try {
+                const response = await fetch(`${API_BASE_URL}/books`, { mode: 'cors' });
+                if (!response.ok) {
+                    throw new Error(`HTTP error ${response.status}: ${response.statusText}`);
+                }
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new Error('Response is not JSON');
+                }
+                const data = await response.json();
+                if (!data || !Array.isArray(data.books)) {
+                    throw new Error('Invalid data format: books array missing');
+                }
+                if (data.books.length === 0) {
+                    showError('Tidak ada kitab hadits tersedia');
+                    return;
+                }
+                displayBookList(data.books);
+                return data;
+            } catch (error) {
+                let errorMessage = 'Gagal memuat daftar kitab. Silakan coba lagi.';
+                if (error.message.includes('Failed to fetch')) {
+                    errorMessage = 'Tidak dapat terhubung ke server API. Periksa koneksi internet Anda.';
+                } else if (error.message.includes('not JSON')) {
+                    errorMessage = 'Data dari server tidak valid.';
+                }
+                console.error('Error fetching books:', error);
+                showNotification(errorMessage);
+                showErrorWithRetry(fetchBookList, errorMessage);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function displayBookList(books) {
+            elements.bookGrid.innerHTML = '';
+            const fragment = document.createDocumentFragment();
+            books.forEach(book => {
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-lg p-4 shadow';
+                card.innerHTML = `
+                    <h4 class="font-semibold text-blue-700">${book.name}</h4>
+                    <p class="text-xs text-gray-600">${book.total} hadits</p>
+                    <button class="mt-3 text-xs text-blue-700 hover:text-blue-800 view-hadith" data-book="${book.id}" data-name="${book.name}" aria-label="Lihat Hadits ${book.name}">
+                        <i class="fas fa-book-open mr-1"></i> Lihat Hadits
+                    </button>
+                `;
+                card.querySelector('.view-hadith').addEventListener('click', () => {
+                    currentBook = { id: book.id, name: book.name };
+                    hideAllSections();
+                    elements.hadithListSection.classList.remove('hidden');
+                    elements.hadithListTitle.textContent = `Hadits ${book.name}`;
+                    elements.hadithGrid.innerHTML = '';
+                    elements.rangeStart.value = '';
+                    elements.rangeEnd.value = '';
+                });
+                fragment.appendChild(card);
+            });
+            elements.bookGrid.appendChild(fragment);
+        }
+
+        async function fetchHadithRange(bookId, start, end) {
+            showLoading();
+            try {
+                const response = await fetch(`${API_BASE_URL}/books/${bookId}?range=${start}-${end}`, { mode: 'cors' });
+                if (!response.ok) throw new Error(`HTTP error ${response.status}`);
+                const data = await response.json();
+                if (!data || !Array.isArray(data.data)) throw new Error('Invalid data format');
+                if (data.data.length === 0) {
+                    showError('Tidak ada hadits dalam rentang ini');
+                    return;
+                }
+                displayHadithList(data.data, bookId, currentBook.name);
+            } catch (error) {
+                console.error('Error fetching hadith range:', error);
+                showNotification('Gagal memuat daftar hadits');
+                showError('Gagal memuat hadits dalam rentang ini');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function displayHadithList(hadiths, bookId, bookName) {
+            elements.hadithGrid.innerHTML = '';
+            const fragment = document.createDocumentFragment();
+            hadiths.forEach(hadith => {
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-lg p-4 shadow';
+                const isBookmarked = getBookmarks().some(b => b.key === `${bookId}-${hadith.number}`);
+                card.innerHTML = `
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="bg-blue-700 text-white rounded-full w-7 h-7 flex items-center justify-center text-xs arabic-numeric">${toArabicNumerals(hadith.number)}</span>
+                        <div class="flex items-center space-x-2">
+                            <button class="bookmark-btn" data-book="${bookId}" data-number="${hadith.number}" data-name="${bookName}" aria-label="${isBookmarked ? 'Hapus' : 'Tambah'} bookmark">
+                                <i class="fas fa-bookmark ${isBookmarked ? 'text-yellow-500' : 'text-gray-400'}"></i>
+                            </button>
+                            <button class="share-hadith" data-book="${bookId}" data-number="${hadith.number}" data-name="${bookName}" aria-label="Bagikan Hadits">
+                                <i class="fas fa-share-alt text-blue-700"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <p class="arabic text-sm mb-2">${hadith.arab}</p>
+                    <p class="text-gray-800 text-sm">${hadith.id}</p>
+                    <button class="mt-3 text-xs text-blue-700 hover:text-blue-800 view-detail" data-book="${bookId}" data-number="${hadith.number}" aria-label="Lihat Detail Hadits ${hadith.number}">
+                        <i class="fas fa-book-open mr-1"></i> Lihat Detail
+                    </button>
+                `;
+                card.querySelector('.view-detail').addEventListener('click', () => fetchHadithDetail(bookId, hadith.number));
+                card.querySelector('.bookmark-btn').addEventListener('click', () => {
+                    const hadithNumber = parseInt(hadith.number);
+                    if (isBookmarked) {
+                        removeBookmark(bookId, hadithNumber);
+                        card.querySelector('.bookmark-btn i').classList.replace('text-yellow-500', 'text-gray-400');
+                    } else {
+                        saveBookmark(bookId, hadithNumber, bookName);
+                        card.querySelector('.bookmark-btn i').classList.replace('text-gray-400', 'text-yellow-500');
+                    }
+                });
+                card.querySelector('.share-hadith').addEventListener('click', () => shareHadith(bookId, hadith.number, bookName));
+                fragment.appendChild(card);
+            });
+            elements.hadithGrid.appendChild(fragment);
+        }
+
+        async function fetchHadithDetail(bookId, hadithNumber) {
+            showLoading();
+            try {
+                const response = await fetch(`${API_BASE_URL}/books/${bookId}/${hadithNumber}`, { mode: 'cors' });
+                if (!response.ok) throw new Error(`HTTP error ${response.status}`);
+                const data = await response.json();
+                if (!data || !data.data) throw new Error('Invalid data format');
+                displayHadithDetail(data.data, bookId);
+            } catch (error) {
+                console.error('Error fetching hadith detail:', error);
+                showNotification('Gagal memuat detail hadits');
+                showError('Hadits tidak ditemukan');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function displayHadithDetail(hadith, bookId) {
+            elements.detailModalTitle.textContent = `Hadits ${hadith.book} #${toArabicNumerals(hadith.number)}`;
+            elements.detailModalContent.innerHTML = `
+                <p class="arabic mb-2">${hadith.arab}</p>
+                <p class="text-gray-800 text-sm mb-2">${hadith.id}</p>
+            `;
+            elements.detailModal.classList.remove('hidden');
+        }
+
+        async function displayBookmarks() {
+            elements.bookmarkGrid.innerHTML = '<p class="text-gray-600">Memuat bookmark...</p>';
+            const bookmarks = getBookmarks();
+            if (bookmarks.length === 0) {
+                elements.bookmarkGrid.innerHTML = '<p class="text-gray-600">Belum ada bookmark.</p>';
+                return;
+            }
+            const fragment = document.createDocumentFragment();
+            const fetchPromises = bookmarks.map(async bookmark => {
+                try {
+                    const response = await fetch(`${API_BASE_URL}/books/${bookmark.bookName}/${bookmark.hadithNumber}`, { mode: 'cors' });
+                    if (!response.ok) throw new Error(`HTTP error ${response.status}`);
+                    const data = await response.json();
+                    if (data && data.data) return { hadith: data.data, bookmark };
+                    return null;
+                } catch (error) {
+                    console.error('Error fetching bookmark:', error);
+                    return null;
+                }
+            });
+            const results = await Promise.all(fetchPromises);
+            if (results.every(result => !result)) {
+                elements.bookmarkGrid.innerHTML = '<p class="text-gray-600">Gagal memuat bookmark.</p>';
+                return;
+            }
+            results.filter(result => result).forEach(({ hadith, bookmark }) => {
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-lg p-4 shadow';
+                card.innerHTML = `
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="bg-blue-700 text-white rounded-full w-7 h-7 flex items-center justify-center text-xs arabic-numeric">${toArabicNumerals(hadith.number)}</span>
+                        <div class="flex items-center space-x-2">
+                            <button class="bookmark-btn" data-book="${bookmark.bookName}" data-number="${hadith.number}" data-name="${bookmark.bookTitle}" aria-label="Hapus bookmark">
+                                <i class="fas fa-bookmark text-yellow-500"></i>
+                            </button>
+                            <button class="share-hadith" data-book="${bookmark.bookName}" data-number="${hadith.number}" data-name="${bookmark.bookTitle}" aria-label="Bagikan Hadits">
+                                <i class="fas fa-share-alt text-blue-700"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <p class="arabic text-sm mb-2">${hadith.arab}</p>
+                    <p class="text-gray-800 text-sm">${hadith.id}</p>
+                    <button class="mt-3 text-xs text-blue-700 hover:text-blue-800 view-detail" data-book="${bookmark.bookName}" data-number="${hadith.number}" aria-label="Lihat Detail Hadits ${hadith.number}">
+                        <i class="fas fa-book-open mr-1"></i> Lihat Detail
+                    </button>
+                `;
+                card.querySelector('.view-detail').addEventListener('click', () => fetchHadithDetail(bookmark.bookName, hadith.number));
+                card.querySelector('.bookmark-btn').addEventListener('click', () => {
+                    removeBookmark(bookmark.bookName, hadith.number);
+                    displayBookmarks();
+                });
+                card.querySelector('.share-hadith').addEventListener('click', () => shareHadith(bookmark.bookName, hadith.number, bookmark.bookTitle));
+                fragment.appendChild(card);
+            });
+            elements.bookmarkGrid.innerHTML = '';
+            elements.bookmarkGrid.appendChild(fragment);
+        }
+
+        function shareHadith(bookId, hadithNumber, bookName) {
+            const url = `${window.location.origin}/#hadith-${bookId}-${hadithNumber}`;
+            if (navigator.share) {
+                navigator.share({
+                    title: `Hadits ${bookName} #${hadithNumber}`,
+                    text: `Baca Hadits ${bookName} #${hadithNumber} di Hadits Digital`,
+                    url
+                }).catch(() => showNotification('Gagal membagikan hadits'));
+            } else {
+                navigator.clipboard.writeText(url)
+                    .then(() => showNotification('Link hadits disalin ke clipboard'))
+                    .catch(() => showNotification('Gagal menyalin link hadits'));
+            }
+        }
+
+        elements.toggleThemeButton.addEventListener('click', () => {
+            darkMode = !darkMode;
+            localStorage.setItem('darkMode', darkMode);
+            updateTheme();
+        });
+
+        elements.homeButton.addEventListener('click', () => {
+            hideAllSections();
+            elements.bookListSection.classList.remove('hidden');
+            elements.searchInput.value = '';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        elements.showBookmarksButton.addEventListener('click', () => {
+            hideAllSections();
+            elements.bookmarkSection.classList.remove('hidden');
+            displayBookmarks();
+        });
+
+        elements.voiceSearchButton.addEventListener('click', () => {
+            if ('webkitSpeechRecognition' in window) {
+                const recognition = new webkitSpeechRecognition();
+                recognition.lang = 'id-ID';
+                recognition.onresult = event => {
+                    elements.searchInput.value = event.results[0][0].transcript;
+                    elements.searchInput.dispatchEvent(new Event('input'));
+                };
+                recognition.onerror = () => showNotification('Gagal menggunakan pencarian suara');
+                recognition.start();
+            } else {
+                showNotification('Pencarian suara tidak didukung');
+            }
+        });
+
+        elements.sortBooksButton.addEventListener('click', () => {
+            sortAscending = !sortAscending;
+            fetchBookList().then(data => {
+                if (data && data.books) {
+                    const sortedBooks = data.books.sort((a, b) => sortAscending ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name));
+                    displayBookList(sortedBooks);
+                    elements.sortBooksButton.innerHTML = `<i class="fas fa-sort mr-1"></i> ${sortAscending ? 'Urutkan Z-A' : 'Urutkan A-Z'}`;
+                }
+            });
+        });
+
+        elements.fetchRange.addEventListener('click', () => {
+            const start = parseInt(elements.rangeStart.value);
+            const end = parseInt(elements.rangeEnd.value);
+            if (!currentBook) {
+                showNotification('Pilih kitab terlebih dahulu');
+                return;
+            }
+            if (!start || !end || start > end || end - start > 300 || start < 1) {
+                showNotification('Masukkan rentang valid (maks 300 hadits, mulai dari 1)');
+                return;
+            }
+            fetchHadithRange(currentBook.id, start, end);
+        });
+
+        elements.searchInput.addEventListener('input', async () => {
+            const query = elements.searchInput.value.trim().toLowerCase();
+            if (!query) {
+                hideAllSections();
+                elements.bookListSection.classList.remove('hidden');
+                fetchBookList();
+                return;
+            }
+            showLoading();
+            try {
+                const response = await fetch(`${API_BASE_URL}/books`, { mode: 'cors' });
+                if (!response.ok) throw new Error(`HTTP error ${response.status}`);
+                const data = await response.json();
+                if (!data || !Array.isArray(data.books)) throw new Error('Invalid data format');
+                const filteredBooks = data.books.filter(book => book.name.toLowerCase().includes(query));
+                if (filteredBooks.length > 0) {
+                    hideAllSections();
+                    elements.bookListSection.classList.remove('hidden');
+                    displayBookList(filteredBooks);
+                } else if (!isNaN(query) && currentBook) {
+                    fetchHadithDetail(currentBook.id, parseInt(query));
+                } else {
+                    showError('Kitab atau nomor hadits tidak ditemukan');
+                }
+            } catch (error) {
+                console.error('Error searching:', error);
+                showNotification('Gagal mencari hadits');
+                showError();
+            } finally {
+                hideLoading();
+            }
+        });
+
+        window.addEventListener('scroll', () => {
+            elements.scrollToTopButton.classList.toggle('hidden', window.scrollY < 300);
+        });
+
+        elements.scrollToTopButton.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        elements.closeHadithList.addEventListener('click', () => {
+            hideAllSections();
+            elements.bookListSection.classList.remove('hidden');
+        });
+
+        elements.closeDetailModal.addEventListener('click', () => {
+            elements.detailModal.classList.add('hidden');
+        });
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') {
+                if (!elements.detailModal.classList.contains('hidden')) {
+                    elements.closeDetailModal.click();
+                } else if (!elements.hadithListSection.classList.contains('hidden')) {
+                    elements.closeHadithList.click();
+                }
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateTheme();
+            fetchBookList();
+        });
+    </script>
+</body>
+</html>

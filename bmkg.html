@@ -233,11 +233,11 @@
             weather: 'https://data.bmkg.go.id/DataMKG/MEWS/DigitalForecast/DigitalForecast-',
             earthquake: 'https://data.bmkg.go.id/DataMKG/TEWS/autogempa.xml',
             historicalQuake: 'https://data.bmkg.go.id/DataMKG/TEWS/gempaterkini.xml',
-            aqi: 'https://api.openweathermap.org/data/2.5/air_pollution', // Requires API key
-            warning: 'https://data.bmkg.go.id/DataMKG/TEWS/warning.xml' // Hypothetical API
+            aqi: 'https://api.openweathermap.org/data/2.5/air_pollution',
+            warning: 'https://data.bmkg.go.id/DataMKG/TEWS/warning.xml'
         };
 
-        const AQI_API_KEY = 'cbcab758aee23a1bdc7a3dd27631f133'; // Ganti dengan API key OpenWeatherMap
+        const AQI_API_KEY = 'cbcab758aee23a1bdc7a3dd27631f133';
 
         // Daftar Provinsi untuk Pencarian
         const provinces = [
@@ -279,7 +279,8 @@
 
         let quakes = [], logs = JSON.parse(localStorage.getItem('activityLogs') || '[]');
         let currentWeatherData = null, currentEarthquakeData = null, currentLocation = '';
-        let currentLat = null, currentLon = null;
+        let currentLat = -6.2088, currentLon = 106.8456; // Default to Jakarta
+
         const getColor = m => m >= 5 ? '#ef4444' : m >= 4 ? '#f97316' : m >= 3 ? '#eab308' : '#22c55e';
 
         // Weather Icon Mapping
@@ -318,10 +319,10 @@
                                 icon: L.divIcon({ className: 'location-marker', html: '📍', iconSize: [30, 30] })
                             }).addTo(map).bindPopup('Lokasi Anda').openPopup();
                         }
-                        showNotification('Lokasi Anda ditemukan', 'success');
                         currentLat = latitude;
                         currentLon = longitude;
                         fetchAQI(latitude, longitude);
+                        showNotification('Lokasi Anda ditemukan', 'success');
                     },
                     () => showNotification('Gagal mendapatkan lokasi. Pastikan izin lokasi diaktifkan.')
                 );
@@ -350,7 +351,7 @@
             const aqiDiv = document.getElementById('aqi-data');
             try {
                 const response = await fetch(`${APIs.aqi}?lat=${lat}&lon=${lon}&appid=${AQI_API_KEY}`);
-                if (!response.ok) throw new Error('Gagal mengambil data AQI');
+                if (!response.ok) throw new Error(`Gagal fetch AQI: ${response.statusText}`);
                 const data = await response.json();
                 const aqi = data.list[0].main.aqi;
                 const aqiLevel = getAQILevel(aqi);
@@ -365,10 +366,10 @@
                     <div class="aqi-meter mb-2"></div>
                     <p class="text-sm">${aqiRecommendation}</p>
                 `;
-                logActivity('Pencarian', `Mengambil data AQI untuk ${currentLocation}`);
+                logActivity('Pencarian', `Mengambil data AQI untuk koordinat ${lat}, ${lon}`);
             } catch (e) {
                 console.error('AQI fetch error:', e);
-                aqiDiv.innerHTML = '<p class="text-center text-gray-500 py-2">Data AQI tidak tersedia.</p>';
+                aqiDiv.innerHTML = `<p class="text-center text-gray-500 py-2">Data AQI tidak tersedia: ${e.message}</p>`;
             }
         }
 
@@ -794,9 +795,11 @@
             }, 10800000); // Update setiap 3 jam (10800000 ms)
         }
 
-        // Initial Fetch
+        // Initial Fetch (Default to Jakarta)
         document.addEventListener('DOMContentLoaded', () => {
             fetchQuakes();
+            fetchWeather('DKI Jakarta'); // Default to Jakarta
+            fetchAQI(-6.2088, 106.8456); // Default AQI for Jakarta
             updateLogs();
             startAutoUpdate();
             document.getElementById('weather-time').textContent = `Memuat data cuaca...`;

@@ -6,7 +6,7 @@
     <title>Cuaca & Gempa BMKG</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
     <meta name="theme-color" content="#1f2937">
@@ -212,11 +212,22 @@
         let mapLoaded = false;
         function initMap() {
             if (mapLoaded) return;
-            map = L.map('map').setView([-2.5489, 118.0149], 5);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© <a href="https://osm.org/copyright">OSM</a>'
-            }).addTo(map);
-            mapLoaded = true;
+            // Safety check for Leaflet
+            if (typeof L === 'undefined') {
+                console.error('Leaflet library not loaded.');
+                showNotification('Gagal memuat peta: Leaflet tidak tersedia.', 'error');
+                return;
+            }
+            try {
+                map = L.map('map').setView([-2.5489, 118.0149], 5);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© <a href="https://osm.org/copyright">OSM</a>'
+                }).addTo(map);
+                mapLoaded = true;
+            } catch (e) {
+                console.error('Failed to initialize map:', e);
+                showNotification('Gagal memuat peta. Silakan coba lagi nanti.', 'error');
+            }
         }
 
         const mapSection = document.querySelector('#map');
@@ -357,15 +368,18 @@
                 const aqiLevel = getAQILevel(aqi);
                 const aqiRecommendation = getAQIRecommendation(aqi);
 
-                aqiDiv.innerHTML = `
-                    <h3 class="text-lg font-medium mb-2">Kualitas Udara</h3>
-                    <div class="flex items-center gap-2 mb-2">
-                        <span class="font-medium">AQI: ${aqi}</span>
-                        <span class="${aqiLevel.color} px-2 py-1 rounded-full text-xs font-bold">${aqiLevel.text}</span>
-                    </div>
-                    <div class="aqi-meter mb-2"></div>
-                    <p class="text-sm">${aqiRecommendation}</p>
-                `;
+                // Ensure DOM is ready before updating
+                setTimeout(() => {
+                    aqiDiv.innerHTML = `
+                        <h3 class="text-lg font-medium mb-2">Kualitas Udara</h3>
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="font-medium">AQI: ${aqi}</span>
+                            <span class="${aqiLevel.color} px-2 py-1 rounded-full text-xs font-bold">${aqiLevel.text}</span>
+                        </div>
+                        <div class="aqi-meter mb-2"></div>
+                        <p class="text-sm">${aqiRecommendation}</p>
+                    `;
+                }, 100); // Small delay to ensure DOM is ready
                 logActivity('Pencarian', `Mengambil data AQI untuk koordinat ${lat}, ${lon}`);
             } catch (e) {
                 console.error('AQI fetch error:', e);
@@ -799,7 +813,16 @@
         document.addEventListener('DOMContentLoaded', () => {
             fetchQuakes();
             fetchWeather('DKI Jakarta'); // Default to Jakarta
-            fetchAQI(-6.2088, 106.8456); // Default AQI for Jakarta
+            // Retry AQI fetch if it fails initially
+            async function tryFetchAQI() {
+                try {
+                    await fetchAQI(-6.2088, 106.8456); // Default AQI for Jakarta
+                } catch (e) {
+                    console.error('Initial AQI fetch failed, retrying in 5 seconds:', e);
+                    setTimeout(tryFetchAQI, 5000); // Retry after 5 seconds
+                }
+            }
+            tryFetchAQI();
             updateLogs();
             startAutoUpdate();
             document.getElementById('weather-time').textContent = `Memuat data cuaca...`;

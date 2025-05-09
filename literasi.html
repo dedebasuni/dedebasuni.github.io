@@ -8,12 +8,12 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Poppins Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Poppins', sans-serif;
-            background: #f3f4f6;
+            font-family: 'Inter', sans-serif;
+            background: #F9FAFB;
         }
         .loading {
             display: inline-block;
@@ -62,6 +62,13 @@
             from { transform: translateX(0); }
             to { transform: translateX(100%); }
         }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
         #previewModal {
             backdrop-filter: blur(3px);
         }
@@ -71,14 +78,14 @@
             border-radius: 8px;
         }
         .dark {
-            background: #1e3a8a;
+            background: #1E3A8A;
         }
-        .dark .bg-gray-50 { background: #1e1b4b; }
-        .dark .bg-white { background: #1e3a8a; }
-        .dark .text-gray-800 { color: #e0e7ff; }
-        .dark .text-gray-600 { color: #93c5fd; }
-        .dark .text-blue-700 { color: #60a5fa; }
-        .dark .bg-blue-700 { background: #2563eb; }
+        .dark .bg-gray-50 { background: #1E1B4B; }
+        .dark .bg-white { background: #1E3A8A; }
+        .dark .text-gray-800 { color: #E0E7FF; }
+        .dark .text-gray-600 { color: #93C5FD; }
+        .dark .text-blue-700 { color: #60A5FA; }
+        .dark .bg-blue-700 { background: #2563EB; }
         @media (max-width: 640px) {
             .grid-cols-2, .grid-cols-3 { grid-template-columns: 1fr; }
             .search-bar { flex-direction: column; }
@@ -133,7 +140,7 @@
 <body class="bg-gray-50 text-gray-800">
     <div id="notificationContainer"></div>
 
-    <header class="bg-blue-700 text-white sticky top-0 z-50 shadow">
+    <header class="bg-blue-900 text-white sticky top-0 z-50 shadow">
         <div class="container mx-auto px-4 py-4 flex justify-between items-center">
             <div class="flex items-center space-x-2">
                 <i class="fas fa-book text-xl"></i>
@@ -149,7 +156,7 @@
 
     <main class="container mx-auto px-4 py-6">
         <section class="mb-6">
-            <div class="flex items-center bg-white rounded-lg shadow p-3 search-bar">
+            <div class="flex items-center bg-white rounded-lg shadow-lg p-3 search-bar">
                 <i class="fas fa-search text-blue-500 mr-2"></i>
                 <input id="search-input" type="text" class="w-full outline-none text-gray-800 placeholder-gray-400" placeholder="Cari buku atau materi pelajaran..." value="literasi digital" aria-label="Cari Buku">
                 <select id="category-filter" class="ml-2 p-2 border rounded-lg text-gray-800" aria-label="Filter berdasarkan kategori">
@@ -179,38 +186,38 @@
         </div>
 
         <section id="resultsSection">
-            <h3 class="text-xl font-semibold text-blue-700 mb-4">Hasil Pencarian</h3>
+            <h3 class="text-xl font-semibold text-blue-900 mb-4">Hasil Pencarian</h3>
             <div id="results" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"></div>
         </section>
 
         <div class="pagination flex justify-center gap-4 my-6" id="pagination" style="display: none;">
-            <button id="prev-page" class="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-800 disabled:bg-gray-400" aria-label="Halaman sebelumnya">Sebelumnya</button>
-            <span id="page-info" class="text-blue-700 font-semibold" aria-live="polite"></span>
-            <button id="next-page" class="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-800 disabled:bg-gray-400" aria-label="Halaman berikutnya">Selanjutnya</button>
+            <button id="prev-page" class="bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-800 disabled:bg-gray-400" aria-label="Halaman sebelumnya">Sebelumnya</button>
+            <span id="page-info" class="text-blue-900 font-semibold" aria-live="polite"></span>
+            <button id="next-page" class="bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-800 disabled:bg-gray-400" aria-label="Halaman berikutnya">Selanjutnya</button>
         </div>
 
         <section id="noResults" class="hidden text-center bg-white rounded-lg shadow p-6 mb-6">
             <i class="far fa-frown text-3xl text-blue-400 mb-3"></i>
-            <h3 class="text-lg font-semibold text-blue-700 mb-2">Tidak Ada Hasil</h3>
+            <h3 class="text-lg font-semibold text-blue-900 mb-2">Tidak Ada Hasil</h3>
             <p class="text-gray-600">Coba kata kunci lain atau periksa kembali ejaan.</p>
         </section>
     </main>
 
     <div id="previewModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
         <div class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-2xl w-full mx-4 relative">
-            <button class="close-btn absolute top-4 right-4 text-gray-600 hover:text-blue-700" aria-label="Tutup Preview">
+            <button class="close-btn absolute top-4 right-4 text-gray-600 hover:text-blue-900" aria-label="Tutup Preview">
                 <i class="fas fa-times text-lg"></i>
             </button>
-            <h3 id="book-preview-title" class="text-lg font-semibold text-blue-700 mb-4"></h3>
+            <h3 id="book-preview-title" class="text-lg font-semibold text-blue-900 mb-4"></h3>
             <div id="bookPreviewContent" class="text-gray-800"></div>
         </div>
     </div>
 
-    <button id="scrollToTop" class="fixed bottom-6 right-6 bg-blue-700 text-white p-3 rounded-full shadow hover:bg-blue-800 hidden" aria-label="Kembali ke atas">
+    <button id="scrollToTop" class="fixed bottom-6 right-6 bg-blue-900 text-white p-3 rounded-full shadow hover:bg-blue-800 hidden" aria-label="Kembali ke atas">
         <i class="fas fa-arrow-up"></i>
     </button>
 
-    <footer class="bg-blue-700 text-white py-4">
+    <footer class="bg-blue-900 text-white py-4">
         <div class="container mx-auto px-4 text-center">
             <p class="text-sm">© 2025 Perpustakaan Digital Literasi - Data dari <a href="https://developers.google.com/books" class="underline hover:text-blue-200">Google Books API</a></p>
             <div class="mt-2 flex justify-center space-x-4">
@@ -389,9 +396,9 @@
                     .catch(error => {
                         noResults.classList.remove('hidden');
                         noResults.innerHTML = `<i class="far fa-frown text-3xl text-blue-400 mb-3"></i>
-                            <h3 class="text-lg font-semibold text-blue-700 mb-2">Terjadi Kesalahan</h3>
+                            <h3 class="text-lg font-semibold text-blue-900 mb-2">Terjadi Kesalahan</h3>
                             <p class="text-gray-600">${sanitizeInput(error.message)}</p>
-                            <button class="retry-btn bg-blue-700 text-white px-4 py-2 rounded-lg mt-4 hover:bg-blue-800">Coba Lagi</button>`;
+                            <button class="retry-btn bg-blue-900 text-white px-4 py-2 rounded-lg mt-4 hover:bg-blue-800">Coba Lagi</button>`;
                         showNotification(error.message, 'error');
                         document.querySelector('.retry-btn')?.addEventListener('click', () => loadBooks(query, category, jurusan));
                     })
@@ -423,15 +430,15 @@
                     const bookId = book.id || 'unknown';
                     
                     html += `
-                        <div class="book-card bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm hover:shadow-lg transition h-[500px] flex flex-col">
+                        <div class="book-card bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm hover:shadow-lg transition h-[500px] flex flex-col fade-in">
                             <img loading="lazy" src="${sanitizeInput(thumbnail)}" alt="${sanitizeInput(title)}" class="book-image w-full h-48 object-cover rounded aspect-[3/4] mb-4" onerror="this.src='https://via.placeholder.com/150x200?text=No+Cover';">
                             <div class="book-content flex-1">
-                                <h4 class="book-title text-lg font-semibold text-blue-700 dark:text-blue-400">${sanitizeInput(title)}</h4>
+                                <h4 class="book-title text-lg font-semibold text-blue-900 dark:text-blue-400">${sanitizeInput(title)}</h4>
                                 <p class="text-gray-600 dark:text-gray-300 text-sm mt-1">${sanitizeInput(authors)}</p>
                                 <p class="text-gray-600 dark:text-gray-300 text-sm mt-2">${sanitizeInput(description)}</p>
                                 <div class="book-buttons flex gap-2 mt-4">
-                                    <a href="${sanitizeInput(infoLink)}" target="_blank" class="book-button bg-gradient-to-r from-blue-500 to-blue-700 text-white px-4 py-2 rounded-lg hover:from-blue-600 hover:to-blue-800 flex-1 text-center" aria-label="Lihat detail ${sanitizeInput(title)}">Detail</a>
-                                    <button class="preview-btn book-button bg-gradient-to-r from-yellow-400 to-yellow-600 text-white px-4 py-2 rounded-lg hover:from-yellow-500 hover:to-yellow-700 flex-1" data-book-id="${sanitizeInput(bookId)}" aria-label="Preview ${sanitizeInput(title)}">Preview</button>
+                                    <a href="${sanitizeInput(infoLink)}" target="_blank" class="book-button bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex-1 text-center" aria-label="Lihat detail ${sanitizeInput(title)}">Detail</a>
+                                    <button class="preview-btn book-button bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex-1" data-book-id="${sanitizeInput(bookId)}" aria-label="Preview ${sanitizeInput(title)}">Preview</button>
                                 </div>
                             </div>
                         </div>
@@ -498,7 +505,7 @@
                     })
                     .catch(error => {
                         bookPreviewContent.innerHTML = `<p class="text-red-600">${sanitizeInput(error.message)}</p>
-                            <button class="retry-btn bg-blue-700 text-white px-4 py-2 rounded-lg mt-4 hover:bg-blue-800">Coba Lagi</button>`;
+                            <button class="retry-btn bg-blue-900 text-white px-4 py-2 rounded-lg mt-4 hover:bg-blue-800">Coba Lagi</button>`;
                         showNotification(error.message, 'error');
                         document.querySelector('.retry-btn')?.addEventListener('click', () => showBookPreview(bookId, button));
                     })
@@ -538,15 +545,15 @@
                             </div>
                         </div>
                         <div class="mb-6">
-                            <h4 class="text-lg font-semibold text-blue-700 dark:text-blue-400">Deskripsi</h4>
+                            <h4 class="text-lg font-semibold text-blue-900 dark:text-blue-400">Deskripsi</h4>
                             <p class="text-gray-600 dark:text-gray-300">${sanitizeInput(description)}</p>
                         </div>
                         <div class="mb-6">
-                            <h4 class="text-lg font-semibold text-blue-700 dark:text-blue-400">Preview Konten</h4>
+                            <h4 class="text-lg font-semibold text-blue-900 dark:text-blue-400">Preview Konten</h4>
                             <p class="text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 p-4 rounded">${sanitizeInput(previewText)}</p>
                         </div>
                         <div class="flex gap-3">
-                            <a href="${sanitizeInput(webReaderLink)}" target="_blank" class="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-800">Baca Preview</a>
+                            <a href="${sanitizeInput(webReaderLink)}" target="_blank" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Baca Preview</a>
                     `;
                     
                     if (pdfDownloadLink) {

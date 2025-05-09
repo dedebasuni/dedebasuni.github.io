@@ -24,6 +24,21 @@
             border-top-color: #3b82f6;
             animation: spin 1s linear infinite;
         }
+        .btn-loading {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+        }
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
@@ -250,9 +265,9 @@
                 return div.innerHTML;
             }
             
-            function showNotification(message) {
+            function showNotification(message, type = 'info') {
                 const notification = document.createElement('div');
-                notification.className = 'notification';
+                notification.className = `notification ${type === 'error' ? 'bg-red-600' : 'bg-blue-600'}`;
                 notification.textContent = message;
                 notificationContainer.appendChild(notification);
                 setTimeout(() => notification.remove(), 3000);
@@ -325,6 +340,17 @@
             }
             
             function loadBooks(query, category = '', jurusan = '') {
+                const cacheKey = `books-${query}-${category}-${jurusan}-${currentPage}`;
+                const cachedData = localStorage.getItem(cacheKey);
+                
+                if (cachedData) {
+                    const data = JSON.parse(cachedData);
+                    displayBooks(data.items);
+                    totalResults = data.totalItems || 0;
+                    updatePagination();
+                    return;
+                }
+
                 resultsContainer.innerHTML = '';
                 loadingIndicator.classList.remove('hidden');
                 noResults.classList.add('hidden');
@@ -345,11 +371,15 @@
                 fetch(apiUrl)
                     .then(response => {
                         if (!response.ok) {
+                            if (response.status === 403) {
+                                throw new Error('API key tidak valid. Silakan periksa di Google Cloud Console.');
+                            }
                             throw new Error('Gagal mengambil data dari Google Books API');
                         }
                         return response.json();
                     })
                     .then(data => {
+                        localStorage.setItem(cacheKey, JSON.stringify({ items: data.items || [], totalItems: data.totalItems || 0 }));
                         const books = data.items || [];
                         totalResults = data.totalItems || 0;
 
@@ -362,6 +392,7 @@
                             <h3 class="text-lg font-semibold text-blue-700 mb-2">Terjadi Kesalahan</h3>
                             <p class="text-gray-600">${sanitizeInput(error.message)}</p>
                             <button class="retry-btn bg-blue-700 text-white px-4 py-2 rounded-lg mt-4 hover:bg-blue-800">Coba Lagi</button>`;
+                        showNotification(error.message, 'error');
                         document.querySelector('.retry-btn')?.addEventListener('click', () => loadBooks(query, category, jurusan));
                     })
                     .finally(() => {
@@ -381,13 +412,11 @@
                     let title = volumeInfo.title || 'Judul tidak tersedia';
                     const authors = Array.isArray(volumeInfo.authors) ? volumeInfo.authors.join(', ') : 'Penulis tidak diketahui';
                     let description = volumeInfo.description || 'Deskripsi tidak tersedia.';
-                    // Batasi judul hingga 75 karakter
-                    if (title.length > 75) {
-                        title = title.slice(0, 75) + '...';
+                    if (title.length > 25) {
+                        title = title.slice(0, 25) + '...';
                     }
-                    // Batasi deskripsi hingga 200 karakter
-                    if (description.length > 200) {
-                        description = description.slice(0, 200) + '...';
+                    if (description.length > 175) {
+                        description = description.slice(0, 175) + '...';
                     }
                     const thumbnail = volumeInfo.imageLinks?.thumbnail?.replace('http://', 'https://') || 'https://via.placeholder.com/150x200?text=No+Cover';
                     const infoLink = volumeInfo.infoLink || '#';
@@ -414,7 +443,7 @@
                 document.querySelectorAll('.preview-btn').forEach(button => {
                     button.addEventListener('click', function() {
                         const bookId = this.getAttribute('data-book-id');
-                        showBookPreview(bookId);
+                        showBookPreview(bookId, this);
                     });
                 });
 
@@ -442,19 +471,24 @@
                 nextPageBtn.disabled = currentPage === Math.ceil(totalResults / resultsPerPage);
             }
             
-            function showBookPreview(bookId) {
+            function showBookPreview(bookId, button) {
                 if (!bookId) {
                     bookPreviewContent.innerHTML = `<p class="text-red-600">ID buku tidak valid.</p>`;
                     modal.classList.remove('hidden');
                     return;
                 }
 
+                button.innerHTML = `<span class="btn-spinner"></span>Memuat...`;
+                button.disabled = true;
                 bookPreviewContent.innerHTML = `<div class="flex items-center justify-center"><div class="loading"></div><p class="ml-3 text-blue-700">Memuat preview...</p></div>`;
                 modal.classList.remove('hidden');
 
                 fetch(`https://www.googleapis.com/books/v1/volumes/${bookId}?key=AIzaSyBoku643p22p_QkGVUMN8JtmQJQbzNACmg`)
                     .then(response => {
                         if (!response.ok) {
+                            if (response.status === 403) {
+                                throw new Error('API key tidak valid. Silakan periksa di Google Cloud Console.');
+                            }
                             throw new Error('Gagal mengambil detail buku dari Google Books API');
                         }
                         return response.json();
@@ -465,7 +499,12 @@
                     .catch(error => {
                         bookPreviewContent.innerHTML = `<p class="text-red-600">${sanitizeInput(error.message)}</p>
                             <button class="retry-btn bg-blue-700 text-white px-4 py-2 rounded-lg mt-4 hover:bg-blue-800">Coba Lagi</button>`;
-                        document.querySelector('.retry-btn')?.addEventListener('click', () => showBookPreview(bookId));
+                        showNotification(error.message, 'error');
+                        document.querySelector('.retry-btn')?.addEventListener('click', () => showBookPreview(bookId, button));
+                    })
+                    .finally(() => {
+                        button.innerHTML = 'Preview';
+                        button.disabled = false;
                     });
 
                 function displayPreview(book) {
@@ -516,7 +555,7 @@
                         `;
                     } else {
                         previewHtml += `
-                            <p class="text-gray-600 dark:text-gray-300">PDF tidak tersedia untuk diunduh.</p>
+                            <p class="text-yellow-600 dark:text-yellow-400 bg-yellow-100 dark:bg-yellow-900 p-2 rounded-lg">PDF belum tersedia, coba buku lain!</p>
                         `;
                     }
                     

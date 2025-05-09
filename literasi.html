@@ -381,13 +381,13 @@
                     let title = volumeInfo.title || 'Judul tidak tersedia';
                     const authors = Array.isArray(volumeInfo.authors) ? volumeInfo.authors.join(', ') : 'Penulis tidak diketahui';
                     let description = volumeInfo.description || 'Deskripsi tidak tersedia.';
-                    // Batasi judul hingga 25 karakter
-                    if (title.length > 25) {
-                        title = title.slice(0, 25) + '...';
+                    // Batasi judul hingga 75 karakter
+                    if (title.length > 75) {
+                        title = title.slice(0, 75) + '...';
                     }
-                    // Batasi deskripsi hingga 175 karakter
-                    if (description.length > 175) {
-                        description = description.slice(0, 175) + '...';
+                    // Batasi deskripsi hingga 200 karakter
+                    if (description.length > 200) {
+                        description = description.slice(0, 200) + '...';
                     }
                     const thumbnail = volumeInfo.imageLinks?.thumbnail?.replace('http://', 'https://') || 'https://via.placeholder.com/150x200?text=No+Cover';
                     const infoLink = volumeInfo.infoLink || '#';

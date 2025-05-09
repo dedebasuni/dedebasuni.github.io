@@ -6,9 +6,8 @@
     <title>Cuaca & Gempa BMKG</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Tambah Font Inter dan Amiri -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
     <meta name="theme-color" content="#1f2937">
     <style>
@@ -41,16 +40,64 @@
         h1, h2, h3, h4, h5, h6 {
             font-family: 'Amiri', serif;
         }
+        .weather-bg {
+            position: relative;
+            overflow: hidden;
+        }
+        .weather-bg.rain::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(transparent, rgba(255,255,255,0.2));
+            animation: rainAnimation 2s linear infinite;
+            pointer-events: none;
+        }
+        @keyframes rainAnimation {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+        .weather-bg.sunny::before {
+            content: '☀️';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 2rem;
+            animation: sunnyAnimation 5s ease-in-out infinite;
+            pointer-events: none;
+        }
+        @keyframes sunnyAnimation {
+            0% { transform: scale(1); opacity: 0.7; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.7; }
+        }
+        .mini-widget {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255,255,255,0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+        }
+        .aqi-meter {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: linear-gradient(to right, #22c55e 0%, #eab308 50%, #ef4444 100%);
+        }
     </style>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 font-sans text-gray-900 dark:text-gray-100">
     <div class="container mx-auto p-4 sm:p-6">
         <!-- Header -->
-        <header class="flex justify-between items-center mb-6">
+        <header class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-3">
             <div>
                 <h1 class="text-2xl sm:text-3xl font-bold">Cuaca & Gempa BMKG</h1>
                 <p class="text-sm text-gray-500 dark:text-gray-400">Data terbaru dari BMKG Indonesia</p>
             </div>
+            <div id="mini-weather-widget" class="mini-widget hidden text-sm text-gray-500 dark:text-gray-400"></div>
             <div class="flex gap-2">
                 <button id="toggle-theme" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors" aria-label="Toggle theme">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -79,7 +126,7 @@
         <div id="notification" class="hidden fixed top-4 right-4 bg-red-500 text-white p-3 rounded-lg shadow-lg notification z-50"></div>
 
         <!-- Weather -->
-        <section class="mb-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 fade-in">
+        <section id="weather-section" class="mb-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 fade-in weather-bg">
             <div class="flex justify-between items-center mb-3">
                 <h2 class="text-xl font-semibold">Prakiraan Cuaca</h2>
                 <div id="weather-time" class="text-sm text-gray-500 dark:text-gray-400"></div>
@@ -92,9 +139,22 @@
                 <div class="loading-spinner"></div>
             </div>
             <div id="weather-data" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+            <div id="aqi-data" class="mt-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg"></div>
             <div class="mt-4">
                 <canvas id="weather-chart"></canvas>
             </div>
+        </section>
+
+        <!-- Warning Section -->
+        <section id="warning-section" class="mb-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 fade-in hidden">
+            <div class="flex justify-between items-center mb-3">
+                <h2 class="text-xl font-semibold">Peringatan Dini</h2>
+                <div id="warning-time" class="text-sm text-gray-500 dark:text-gray-400"></div>
+            </div>
+            <div id="warning-loading" class="hidden flex justify-center py-4">
+                <div class="loading-spinner"></div>
+            </div>
+            <div id="warning-data" class="grid grid-cols-1 gap-3"></div>
         </section>
 
         <!-- Earthquake -->
@@ -105,12 +165,15 @@
             </div>
             <div class="flex flex-col sm:flex-row gap-3 mb-3">
                 <div class="w-full sm:w-1/3 space-y-3">
-                    <select id="magnitude-filter" class="w-full rounded-md border dark:border-gray-700 bg-gray-50 dark:bg-gray-700 focus:ring-indigo-500">
-                        <option value="0">Semua Magnitudo</option>
-                        <option value="3">≥ 3.0</option>
-                        <option value="4">≥ 4.0</option>
-                        <option value="5">≥ 5.0</option>
-                    </select>
+                    <div class="flex gap-2">
+                        <select id="magnitude-filter" class="w-full rounded-md border dark:border-gray-700 bg-gray-50 dark:bg-gray-700 focus:ring-indigo-500">
+                            <option value="0">Semua Magnitudo</option>
+                            <option value="3">≥ 3.0</option>
+                            <option value="4">≥ 4.0</option>
+                            <option value="5">≥ 5.0</option>
+                        </select>
+                        <input type="date" id="quake-date" class="w-full rounded-md border dark:border-gray-700 bg-gray-50 dark:bg-gray-700 focus:ring-indigo-500" value="2025-05-10">
+                    </div>
                     <div id="quake-info" class="bg-gray-100 dark:bg-gray-700 p-3 rounded-md">
                         <p class="text-sm">Total gempa: <span id="quake-count" class="font-medium">0</span></p>
                         <p class="text-sm">Terkuat: <span id="quake-strongest" class="font-medium">-</span></p>
@@ -144,58 +207,79 @@
     </div>
 
     <script>
-        // Map Initialization
-        const map = L.map('map').setView([-2.5489, 118.0149], 5);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© <a href="https://osm.org/copyright">OSM</a>'
-        }).addTo(map);
+        // Lazy Load Map
+        let map = null;
+        let mapLoaded = false;
+        function initMap() {
+            if (mapLoaded) return;
+            map = L.map('map').setView([-2.5489, 118.0149], 5);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© <a href="https://osm.org/copyright">OSM</a>'
+            }).addTo(map);
+            mapLoaded = true;
+        }
+
+        const mapSection = document.querySelector('#map');
+        const observer = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting) {
+                initMap();
+                observer.unobserve(mapSection);
+            }
+        }, { threshold: 0.1 });
+        observer.observe(mapSection);
 
         // API Configuration
         const APIs = {
             weather: 'https://data.bmkg.go.id/DataMKG/MEWS/DigitalForecast/DigitalForecast-',
-            earthquake: 'https://data.bmkg.go.id/DataMKG/TEWS/autogempa.xml'
+            earthquake: 'https://data.bmkg.go.id/DataMKG/TEWS/autogempa.xml',
+            historicalQuake: 'https://data.bmkg.go.id/DataMKG/TEWS/gempaterkini.xml',
+            aqi: 'https://api.openweathermap.org/data/2.5/air_pollution', // Requires API key
+            warning: 'https://data.bmkg.go.id/DataMKG/TEWS/warning.xml' // Hypothetical API
         };
+
+        const AQI_API_KEY = 'cbcab758aee23a1bdc7a3dd27631f133'; // Ganti dengan API key OpenWeatherMap
 
         // Daftar Provinsi untuk Pencarian
         const provinces = [
-            { name: "Aceh", file: "Aceh" },
-            { name: "Bali", file: "Bali" },
-            { name: "Banten", file: "Banten" },
-            { name: "Bengkulu", file: "Bengkulu" },
-            { name: "DI Yogyakarta", file: "DIYogyakarta" },
-            { name: "DKI Jakarta", file: "DKIJakarta" },
-            { name: "Gorontalo", file: "Gorontalo" },
-            { name: "Jambi", file: "Jambi" },
-            { name: "Jawa Barat", file: "JawaBarat" },
-            { name: "Jawa Tengah", file: "JawaTengah" },
-            { name: "Jawa Timur", file: "JawaTimur" },
-            { name: "Kalimantan Barat", file: "KalimantanBarat" },
-            { name: "Kalimantan Selatan", file: "KalimantanSelatan" },
-            { name: "Kalimantan Tengah", file: "KalimantanTengah" },
-            { name: "Kalimantan Timur", file: "KalimantanTimur" },
-            { name: "Kalimantan Utara", file: "KalimantanUtara" },
-            { name: "Kepulauan Bangka Belitung", file: "KepulauanBangkaBelitung" },
-            { name: "Kepulauan Riau", file: "KepulauanRiau" },
-            { name: "Lampung", file: "Lampung" },
-            { name: "Maluku", file: "Maluku" },
-            { name: "Maluku Utara", file: "MalukuUtara" },
-            { name: "Nusa Tenggara Barat", file: "NusaTenggaraBarat" },
-            { name: "Nusa Tenggara Timur", file: "NusaTenggaraTimur" },
-            { name: "Papua", file: "Papua" },
-            { name: "Papua Barat", file: "PapuaBarat" },
-            { name: "Riau", file: "Riau" },
-            { name: "Sulawesi Barat", file: "SulawesiBarat" },
-            { name: "Sulawesi Selatan", file: "SulawesiSelatan" },
-            { name: "Sulawesi Tengah", file: "SulawesiTengah" },
-            { name: "Sulawesi Tenggara", file: "SulawesiTenggara" },
-            { name: "Sulawesi Utara", file: "SulawesiUtara" },
-            { name: "Sumatera Barat", file: "SumateraBarat" },
-            { name: "Sumatera Selatan", file: "SumateraSelatan" },
-            { name: "Sumatera Utara", file: "SumateraUtara" }
+            { name: "Aceh", file: "Aceh", lat: 5.5483, lon: 95.3238 },
+            { name: "Bali", file: "Bali", lat: -8.4095, lon: 115.1889 },
+            { name: "Banten", file: "Banten", lat: -6.4058, lon: 106.0640 },
+            { name: "Bengkulu", file: "Bengkulu", lat: -3.8004, lon: 102.2655 },
+            { name: "DI Yogyakarta", file: "DIYogyakarta", lat: -7.7971, lon: 110.3705 },
+            { name: "DKI Jakarta", file: "DKIJakarta", lat: -6.2088, lon: 106.8456 },
+            { name: "Gorontalo", file: "Gorontalo", lat: 0.6999, lon: 122.4467 },
+            { name: "Jambi", file: "Jambi", lat: -1.6101, lon: 103.6131 },
+            { name: "Jawa Barat", file: "JawaBarat", lat: -6.9147, lon: 107.6098 },
+            { name: "Jawa Tengah", file: "JawaTengah", lat: -7.1507, lon: 110.1403 },
+            { name: "Jawa Timur", file: "JawaTimur", lat: -7.5361, lon: 112.2384 },
+            { name: "Kalimantan Barat", file: "KalimantanBarat", lat: -0.1322, lon: 111.4753 },
+            { name: "Kalimantan Selatan", file: "KalimantanSelatan", lat: -3.3167, lon: 114.5901 },
+            { name: "Kalimantan Tengah", file: "KalimantanTengah", lat: -1.6815, lon: 113.3824 },
+            { name: "Kalimantan Timur", file: "KalimantanTimur", lat: 0.5387, lon: 116.4194 },
+            { name: "Kalimantan Utara", file: "KalimantanUtara", lat: 3.0926, lon: 115.2838 },
+            { name: "Kepulauan Bangka Belitung", file: "KepulauanBangkaBelitung", lat: -2.7411, lon: 106.4406 },
+            { name: "Kepulauan Riau", file: "KepulauanRiau", lat: 3.9457, lon: 108.1429 },
+            { name: "Lampung", file: "Lampung", lat: -4.5586, lon: 105.4068 },
+            { name: "Maluku", file: "Maluku", lat: -3.2385, lon: 130.1453 },
+            { name: "Maluku Utara", file: "MalukuUtara", lat: 1.5700, lon: 127.8088 },
+            { name: "Nusa Tenggara Barat", file: "NusaTenggaraBarat", lat: -8.6529, lon: 117.3616 },
+            { name: "Nusa Tenggara Timur", file: "NusaTenggaraTimur", lat: -8.6574, lon: 121.0794 },
+            { name: "Papua", file: "Papua", lat: -4.2699, lon: 138.0804 },
+            { name: "Papua Barat", file: "PapuaBarat", lat: -1.3361, lon: 133.1747 },
+            { name: "Riau", file: "Riau", lat: 0.2933, lon: 101.7068 },
+            { name: "Sulawesi Barat", file: "SulawesiBarat", lat: -2.8440, lon: 119.2321 },
+            { name: "Sulawesi Selatan", file: "SulawesiSelatan", lat: -3.6688, lon: 119.9741 },
+            { name: "Sulawesi Tengah", file: "SulawesiTengah", lat: -1.4300, lon: 121.4453 },
+            { name: "Sulawesi Tenggara", file: "SulawesiTenggara", lat: -4.1449, lon: 122.1746 },
+            { name: "Sulawesi Utara", file: "SulawesiUtara", lat: 1.4931, lon: 124.8413 },
+            { name: "Sumatera Barat", file: "SumateraBarat", lat: -0.7399, lon: 100.8000 },
+            { name: "Sumatera Selatan", file: "SumateraSelatan", lat: -3.3199, lon: 103.9146 },
+            { name: "Sumatera Utara", file: "SumateraUtara", lat: 2.1154, lon: 99.5451 }
         ];
 
         let quakes = [], logs = JSON.parse(localStorage.getItem('activityLogs') || '[]');
         let currentWeatherData = null, currentEarthquakeData = null, currentLocation = '';
+        let currentLat = null, currentLon = null;
         const getColor = m => m >= 5 ? '#ef4444' : m >= 4 ? '#f97316' : m >= 3 ? '#eab308' : '#22c55e';
 
         // Weather Icon Mapping
@@ -228,11 +312,16 @@
                 navigator.geolocation.getCurrentPosition(
                     pos => {
                         const { latitude, longitude } = pos.coords;
-                        map.setView([latitude, longitude], 10);
-                        L.marker([latitude, longitude], {
-                            icon: L.divIcon({ className: 'location-marker', html: '📍', iconSize: [30, 30] })
-                        }).addTo(map).bindPopup('Lokasi Anda').openPopup();
+                        if (mapLoaded) {
+                            map.setView([latitude, longitude], 10);
+                            L.marker([latitude, longitude], {
+                                icon: L.divIcon({ className: 'location-marker', html: '📍', iconSize: [30, 30] })
+                            }).addTo(map).bindPopup('Lokasi Anda').openPopup();
+                        }
                         showNotification('Lokasi Anda ditemukan', 'success');
+                        currentLat = latitude;
+                        currentLon = longitude;
+                        fetchAQI(latitude, longitude);
                     },
                     () => showNotification('Gagal mendapatkan lokasi. Pastikan izin lokasi diaktifkan.')
                 );
@@ -241,16 +330,74 @@
             }
         });
 
+        // Update Mini Weather Widget
+        function updateMiniWeatherWidget() {
+            const widget = document.getElementById('mini-weather-widget');
+            if (currentWeatherData && currentLocation) {
+                const currentWeather = currentWeatherData[0];
+                widget.innerHTML = `
+                    <span class="text-lg">${weatherIcons[currentWeather.weather] || '❓'}</span>
+                    <span>${currentLocation}: ${currentWeather.weather}, ${currentWeather.temp}°C</span>
+                `;
+                widget.classList.remove('hidden');
+            } else {
+                widget.classList.add('hidden');
+            }
+        }
+
+        // Fetch AQI Data
+        async function fetchAQI(lat, lon) {
+            const aqiDiv = document.getElementById('aqi-data');
+            try {
+                const response = await fetch(`${APIs.aqi}?lat=${lat}&lon=${lon}&appid=${AQI_API_KEY}`);
+                if (!response.ok) throw new Error('Gagal mengambil data AQI');
+                const data = await response.json();
+                const aqi = data.list[0].main.aqi;
+                const aqiLevel = getAQILevel(aqi);
+                const aqiRecommendation = getAQIRecommendation(aqi);
+
+                aqiDiv.innerHTML = `
+                    <h3 class="text-lg font-medium mb-2">Kualitas Udara</h3>
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="font-medium">AQI: ${aqi}</span>
+                        <span class="${aqiLevel.color} px-2 py-1 rounded-full text-xs font-bold">${aqiLevel.text}</span>
+                    </div>
+                    <div class="aqi-meter mb-2"></div>
+                    <p class="text-sm">${aqiRecommendation}</p>
+                `;
+                logActivity('Pencarian', `Mengambil data AQI untuk ${currentLocation}`);
+            } catch (e) {
+                console.error('AQI fetch error:', e);
+                aqiDiv.innerHTML = '<p class="text-center text-gray-500 py-2">Data AQI tidak tersedia.</p>';
+            }
+        }
+
+        function getAQILevel(aqi) {
+            if (aqi <= 50) return { text: 'Baik', color: 'text-green-500' };
+            if (aqi <= 100) return { text: 'Sedang', color: 'text-yellow-500' };
+            if (aqi <= 150) return { text: 'Tidak Sehat', color: 'text-orange-500' };
+            return { text: 'Berbahaya', color: 'text-red-500' };
+        }
+
+        function getAQIRecommendation(aqi) {
+            if (aqi <= 50) return 'Kualitas udara baik, cocok untuk aktivitas luar ruangan.';
+            if (aqi <= 100) return 'Kualitas udara sedang, gunakan masker jika sensitif.';
+            if (aqi <= 150) return 'Kualitas udara tidak sehat, hindari aktivitas outdoor lama.';
+            return 'Kualitas udara berbahaya, tetap di dalam ruangan dan gunakan masker.';
+        }
+
         // Weather Fetch
         async function fetchWeather(search = '') {
             const weatherDiv = document.getElementById('weather-data');
             const loading = document.getElementById('weather-loading');
             const chartCanvas = document.getElementById('weather-chart').getContext('2d');
             let weatherChart = Chart.getChart(chartCanvas) || null;
+            const weatherSection = document.getElementById('weather-section');
 
             try {
                 loading.classList.remove('hidden');
                 weatherDiv.innerHTML = '';
+                weatherSection.className = 'mb-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 fade-in weather-bg';
 
                 const province = provinces.find(p => p.name.toLowerCase().includes(search.toLowerCase()));
                 if (!province) throw new Error('Wilayah tidak ditemukan');
@@ -296,6 +443,8 @@
 
                 currentWeatherData = forecasts;
                 currentLocation = search;
+                currentLat = province.lat;
+                currentLon = province.lon;
 
                 weatherDiv.innerHTML = forecasts.map((f, i) => `
                     <div class="card bg-gray-50 dark:bg-gray-700 p-4 rounded-lg shadow hover:shadow-md">
@@ -311,7 +460,6 @@
                     </div>
                 `).join('');
 
-                // Update Weather Chart
                 if (weatherChart) weatherChart.destroy();
                 document.getElementById('weather-chart').style.display = 'block';
                 weatherChart = new Chart(chartCanvas, {
@@ -341,9 +489,19 @@
                     }
                 });
 
+                const currentWeather = forecasts[0].weather.toLowerCase();
+                if (currentWeather.includes('hujan')) {
+                    weatherSection.classList.add('rain');
+                } else if (currentWeather.includes('cerah')) {
+                    weatherSection.classList.add('sunny');
+                }
+
                 document.getElementById('weather-time').textContent = `Terakhir diperbarui: ${new Date().toLocaleTimeString()}`;
                 logActivity('Pencarian', `Mencari cuaca untuk ${search}`);
                 updateWhatsAppButton();
+                updateMiniWeatherWidget();
+                fetchAQI(province.lat, province.lon);
+                fetchWarnings();
 
             } catch (e) {
                 console.error('Weather fetch error:', e);
@@ -377,40 +535,91 @@
             return weatherMap[code] || 'Tidak diketahui';
         }
 
+        // Fetch Warnings (Hypothetical)
+        async function fetchWarnings() {
+            const warningDiv = document.getElementById('warning-data');
+            const loading = document.getElementById('warning-loading');
+            const warningSection = document.getElementById('warning-section');
+
+            try {
+                loading.classList.remove('hidden');
+                warningDiv.innerHTML = '';
+
+                // Simulasi data peringatan (karena API belum ada)
+                const warnings = [
+                    { type: 'Tsunami', location: currentLocation, message: 'Potensi tsunami di wilayah pesisir.', time: new Date().toLocaleString('id-ID') }
+                    // Ganti dengan fetch API jika tersedia
+                ];
+
+                if (warnings.length > 0) {
+                    warningSection.classList.remove('hidden');
+                    warningDiv.innerHTML = warnings.map(w => `
+                        <div class="card bg-red-50 dark:bg-red-900 p-4 rounded-lg shadow hover:shadow-md">
+                            <h3 class="text-lg font-medium text-red-600 dark:text-red-400">${w.type}</h3>
+                            <p class="mt-1">${w.message}</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">${w.time}</p>
+                        </div>
+                    `).join('');
+                    document.getElementById('warning-time').textContent = `Terakhir diperbarui: ${new Date().toLocaleTimeString()}`;
+                    logActivity('Peringatan', `Mengambil peringatan dini untuk ${currentLocation}`);
+                    const audio = new Audio('https://www.soundjay.com/buttons/beep-01a.mp3');
+                    audio.play().catch(() => console.log('Audio playback failed'));
+                    showNotification('Peringatan dini: Periksa section Peringatan Dini!', 'error');
+                } else {
+                    warningSection.classList.add('hidden');
+                }
+            } catch (e) {
+                console.error('Warning fetch error:', e);
+                warningSection.classList.add('hidden');
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
         // Earthquake Fetch
-        async function fetchQuakes() {
+        async function fetchQuakes(date = new Date().toISOString().split('T')[0]) {
             const quakeList = document.getElementById('earthquake-list');
             const loading = document.getElementById('quake-loading');
+            const apiUrl = date === new Date().toISOString().split('T')[0] ? APIs.earthquake : APIs.historicalQuake;
 
             try {
                 loading.classList.remove('hidden');
                 quakeList.innerHTML = '';
 
-                const response = await fetch(APIs.earthquake);
+                const response = await fetch(apiUrl);
                 if (!response.ok) throw new Error('Gagal mengambil data gempa');
 
                 const text = await response.text();
                 const parser = new DOMParser();
                 const xmlDoc = parser.parseFromString(text, 'text/xml');
 
-                const earthquake = xmlDoc.getElementsByTagName('gempa')[0];
-                if (!earthquake) throw new Error('Data gempa tidak ditemukan');
+                const earthquakes = xmlDoc.getElementsByTagName('gempa');
+                if (!earthquakes.length) throw new Error('Data gempa tidak ditemukan');
 
-                const data = {
-                    tanggal: earthquake.getElementsByTagName('Tanggal')[0]?.textContent || 'Tidak tersedia',
-                    jam: earthquake.getElementsByTagName('Jam')[0]?.textContent || 'Tidak tersedia',
-                    lintang: earthquake.getElementsByTagName('Lintang')[0]?.textContent || '0',
-                    bujur: earthquake.getElementsByTagName('Bujur')[0]?.textContent || '0',
-                    wilayah: earthquake.getElementsByTagName('Wilayah')[0]?.textContent || 'Tidak tersedia',
-                    magnitude: earthquake.getElementsByTagName('Magnitude')[0]?.textContent || '0',
-                    kedalaman: earthquake.getElementsByTagName('Kedalaman')[0]?.textContent || 'Tidak tersedia',
-                    potensi: earthquake.getElementsByTagName('Potensi')[0]?.textContent || 'Tidak tersedia'
-                };
+                quakes = [];
+                for (let earthquake of earthquakes) {
+                    const data = {
+                        tanggal: earthquake.getElementsByTagName('Tanggal')[0]?.textContent || 'Tidak tersedia',
+                        jam: earthquake.getElementsByTagName('Jam')[0]?.textContent || 'Tidak tersedia',
+                        lintang: earthquake.getElementsByTagName('Lintang')[0]?.textContent || '0',
+                        bujur: earthquake.getElementsByTagName('Bujur')[0]?.textContent || '0',
+                        wilayah: earthquake.getElementsByTagName('Wilayah')[0]?.textContent || 'Tidak tersedia',
+                        magnitude: earthquake.getElementsByTagName('Magnitude')[0]?.textContent || '0',
+                        kedalaman: earthquake.getElementsByTagName('Kedalaman')[0]?.textContent || 'Tidak tersedia',
+                        potensi: earthquake.getElementsByTagName('Potensi')[0]?.textContent || 'Tidak tersedia'
+                    };
+                    quakes.push(data);
 
-                quakes = [data];
-                currentEarthquakeData = data;
+                    if (+data.magnitude >= 5.0 && date === new Date().toISOString().split('T')[0]) {
+                        const audio = new Audio('https://www.soundjay.com/buttons/beep-01a.mp3');
+                        audio.play().catch(() => console.log('Audio playback failed'));
+                        showNotification(`Peringatan: Gempa ${data.magnitude} SR di ${data.wilayah}!`, 'error');
+                    }
+                }
+
+                currentEarthquakeData = quakes[0];
                 updateQuakes();
-                logActivity('Pencarian', 'Mencari data gempa terkini');
+                logActivity('Pencarian', `Mencari data gempa untuk tanggal ${date}`);
                 document.getElementById('quake-time').textContent = `Terakhir diperbarui: ${new Date().toLocaleTimeString()}`;
                 updateWhatsAppButton();
 
@@ -429,7 +638,9 @@
             const filteredQuakes = quakes.filter(q => minMag === 0 || +q.magnitude >= minMag);
             const quakeList = document.getElementById('earthquake-list');
             quakeList.innerHTML = '';
-            map.eachLayer(l => (l instanceof L.Marker || l instanceof L.CircleMarker) && map.removeLayer(l));
+            if (mapLoaded) {
+                map.eachLayer(l => (l instanceof L.Marker || l instanceof L.CircleMarker) && map.removeLayer(l));
+            }
 
             document.getElementById('quake-count').textContent = filteredQuakes.length;
             const strongest = quakes.reduce((max, q) => Math.max(max, +q.magnitude), 0);
@@ -472,7 +683,7 @@
 
                 const lat = parseFloat(q.lintang);
                 const lon = parseFloat(q.bujur);
-                if (lat && lon) {
+                if (mapLoaded && lat && lon) {
                     L.circleMarker([lat, lon], {
                         radius: Math.min(mag * 2, 15),
                         color: color,
@@ -550,6 +761,10 @@
 
         document.getElementById('magnitude-filter').addEventListener('change', updateQuakes);
 
+        document.getElementById('quake-date').addEventListener('change', (e) => {
+            fetchQuakes(e.target.value);
+        });
+
         document.getElementById('city-search').addEventListener('keypress', e => {
             if (e.key === 'Enter') fetchWeather(e.target.value);
         });
@@ -560,7 +775,9 @@
 
         document.getElementById('refresh-data').addEventListener('click', () => {
             fetchWeather(currentLocation);
-            fetchQuakes();
+            fetchQuakes(document.getElementById('quake-date').value);
+            fetchWarnings();
+            if (currentLat && currentLon) fetchAQI(currentLat, currentLon);
             showNotification('Data diperbarui', 'success');
         });
 
@@ -569,7 +786,9 @@
             setInterval(() => {
                 if (document.visibilityState === 'visible' && currentLocation) {
                     fetchWeather(currentLocation);
-                    fetchQuakes();
+                    fetchQuakes(document.getElementById('quake-date').value);
+                    fetchWarnings();
+                    if (currentLat && currentLon) fetchAQI(currentLat, currentLon);
                     showNotification('Data diperbarui otomatis', 'success');
                 }
             }, 10800000); // Update setiap 3 jam (10800000 ms)

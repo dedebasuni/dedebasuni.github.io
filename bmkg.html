@@ -141,9 +141,9 @@
 
         // API Configuration
         const APIs = {
-            weather: 'https://api.allorigins.win/raw?url=https://api.bmkg.go.id/publik/prakiraan-cuaca?adm4=31.71.01.1001',
-            earthquake: 'https://api.allorigins.win/raw?url=https://data.bmkg.go.id/DataMKG/TEWS/autogempa.json',
-            earthquakeList: 'https://api.allorigins.win/raw?url=https://data.bmkg.go.id/DataMKG/TEWS/gempaterkini.json'
+            weather: 'https://api.bmkg.go.id/publik/prakiraan-cuaca?adm4=31.71.01.1001',
+            earthquake: 'https://data.bmkg.go.id/DataMKG/TEWS/autogempa.json',
+            earthquakeList: 'https://data.bmkg.go.id/DataMKG/TEWS/gempaterkini.json'
         };
 
         let quakes = [], history = JSON.parse(localStorage.getItem('earthquakeHistory')) || [];

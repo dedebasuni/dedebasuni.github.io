@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Tambah Font Inter dan Amiri -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
     <meta name="theme-color" content="#1f2937">
     <style>
         #map { height: 350px; border-radius: 0.5rem; }
@@ -32,6 +34,13 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        #log-section { max-height: 300px; overflow-y: auto; }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Amiri', serif;
+        }
     </style>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 font-sans text-gray-900 dark:text-gray-100">
@@ -53,6 +62,11 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                     </svg>
                 </button>
+                <button id="whatsapp-btn" class="p-2 rounded-full bg-green-500 text-white hover:bg-green-600 transition-colors hidden" aria-label="Kirim ke WhatsApp">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26 9.87 9.87 0 019.865-9.867 9.867 9.867 0 016.986 2.986 9.867 9.867 0 012.985 6.982 9.874 9.874 0 01-9.897 9.892m7.393-18.077A11.85 11.85 0 0012.06 0 11.85 11.85 0 001.67 19.192l-2.14 7.811 8.048-2.11A11.86 11.86 0 0012.06 24c6.54 0 11.86-5.32 11.86-11.859 0-3.164-1.226-6.132-3.453-8.37z"/>
+                    </svg>
+                </button>
                 <button id="refresh-data" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors" aria-label="Refresh data">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -71,7 +85,7 @@
                 <div id="weather-time" class="text-sm text-gray-500 dark:text-gray-400"></div>
             </div>
             <div class="flex gap-3 mb-3">
-                <input id="city-search" type="text" placeholder="Cari kota..." class="flex-1 p-2 rounded-md border dark:border-gray-700 bg-gray-50 dark:bg-gray-700 focus:ring-indigo-500">
+                <input id="city-search" type="text" placeholder="Cari wilayah (Kota/Provinsi)..." class="flex-1 p-2 rounded-md border dark:border-gray-700 bg-gray-50 dark:bg-gray-700 focus:ring-indigo-500">
                 <button id="search-btn" class="bg-indigo-500 text-white px-4 py-2 rounded-md hover:bg-indigo-600 transition-colors">Cari</button>
             </div>
             <div id="weather-loading" class="hidden flex justify-center py-4">
@@ -110,19 +124,16 @@
             <div id="earthquake-list" class="grid grid-cols-1 gap-3"></div>
         </section>
 
-        <!-- History -->
-        <section class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 fade-in">
+        <!-- Log Section -->
+        <section class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 fade-in" id="log-section">
             <div class="flex justify-between items-center mb-3">
-                <h2 class="text-xl font-semibold">Riwayat Gempa</h2>
-                <div class="flex gap-2">
-                    <button id="clear-history" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition-colors">Hapus</button>
-                    <button id="refresh-history" class="bg-indigo-500 text-white px-3 py-1 rounded hover:bg-indigo-600 transition-colors">Refresh</button>
-                </div>
+                <h2 class="text-xl font-semibold">Log Pencarian & Notifikasi</h2>
+                <button id="clear-log" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition-colors">Hapus</button>
             </div>
-            <div id="history-loading" class="hidden flex justify-center py-4">
+            <div id="log-loading" class="hidden flex justify-center py-4">
                 <div class="loading-spinner"></div>
             </div>
-            <div id="earthquake-history" class="grid grid-cols-1 gap-3"></div>
+            <div id="log-list" class="grid grid-cols-1 gap-3"></div>
         </section>
 
         <!-- Footer -->
@@ -141,18 +152,57 @@
 
         // API Configuration
         const APIs = {
-            weather: 'https://api.bmkg.go.id/publik/prakiraan-cuaca?adm4=31.71.01.1001',
-            earthquake: 'https://data.bmkg.go.id/DataMKG/TEWS/autogempa.json',
-            earthquakeList: 'https://data.bmkg.go.id/DataMKG/TEWS/gempaterkini.json'
+            weather: 'https://data.bmkg.go.id/DataMKG/MEWS/DigitalForecast/DigitalForecast-',
+            earthquake: 'https://data.bmkg.go.id/DataMKG/TEWS/autogempa.xml'
         };
 
-        let quakes = [], history = JSON.parse(localStorage.getItem('earthquakeHistory')) || [];
+        // Daftar Provinsi untuk Pencarian
+        const provinces = [
+            { name: "Aceh", file: "Aceh" },
+            { name: "Bali", file: "Bali" },
+            { name: "Banten", file: "Banten" },
+            { name: "Bengkulu", file: "Bengkulu" },
+            { name: "DI Yogyakarta", file: "DIYogyakarta" },
+            { name: "DKI Jakarta", file: "DKIJakarta" },
+            { name: "Gorontalo", file: "Gorontalo" },
+            { name: "Jambi", file: "Jambi" },
+            { name: "Jawa Barat", file: "JawaBarat" },
+            { name: "Jawa Tengah", file: "JawaTengah" },
+            { name: "Jawa Timur", file: "JawaTimur" },
+            { name: "Kalimantan Barat", file: "KalimantanBarat" },
+            { name: "Kalimantan Selatan", file: "KalimantanSelatan" },
+            { name: "Kalimantan Tengah", file: "KalimantanTengah" },
+            { name: "Kalimantan Timur", file: "KalimantanTimur" },
+            { name: "Kalimantan Utara", file: "KalimantanUtara" },
+            { name: "Kepulauan Bangka Belitung", file: "KepulauanBangkaBelitung" },
+            { name: "Kepulauan Riau", file: "KepulauanRiau" },
+            { name: "Lampung", file: "Lampung" },
+            { name: "Maluku", file: "Maluku" },
+            { name: "Maluku Utara", file: "MalukuUtara" },
+            { name: "Nusa Tenggara Barat", file: "NusaTenggaraBarat" },
+            { name: "Nusa Tenggara Timur", file: "NusaTenggaraTimur" },
+            { name: "Papua", file: "Papua" },
+            { name: "Papua Barat", file: "PapuaBarat" },
+            { name: "Riau", file: "Riau" },
+            { name: "Sulawesi Barat", file: "SulawesiBarat" },
+            { name: "Sulawesi Selatan", file: "SulawesiSelatan" },
+            { name: "Sulawesi Tengah", file: "SulawesiTengah" },
+            { name: "Sulawesi Tenggara", file: "SulawesiTenggara" },
+            { name: "Sulawesi Utara", file: "SulawesiUtara" },
+            { name: "Sumatera Barat", file: "SumateraBarat" },
+            { name: "Sumatera Selatan", file: "SumateraSelatan" },
+            { name: "Sumatera Utara", file: "SumateraUtara" }
+        ];
+
+        let quakes = [], logs = JSON.parse(localStorage.getItem('activityLogs') || '[]');
+        let currentWeatherData = null, currentEarthquakeData = null, currentLocation = '';
         const getColor = m => m >= 5 ? '#ef4444' : m >= 4 ? '#f97316' : m >= 3 ? '#eab308' : '#22c55e';
 
         // Weather Icon Mapping
         const weatherIcons = {
-            'Cerah': '☀️', 'Berawan': '☁️', 'Hujan': '🌧️', 'Hujan Ringan': '🌦️', 
-            'Hujan Lebat': '⛈️', 'Kabut': '🌫️', 'Petir': '⚡', 'Salju': '❄️'
+            'Cerah': '☀️', 'Cerah Berawan': '🌤️', 'Berawan': '☁️', 'Berawan Tebal': '🌥️',
+            'Hujan Ringan': '🌦️', 'Hujan Sedang': '🌧️', 'Hujan Lebat': '⛈️', 'Hujan Petir': '🌩️',
+            'Kabut': '🌫️', 'Asap': '🌫️', 'Udara Kabur': '🌫️'
         };
 
         // Theme Toggle
@@ -167,15 +217,7 @@
             const notif = document.getElementById('notification');
             notif.textContent = message;
             notif.className = `hidden fixed top-4 right-4 text-white p-3 rounded-lg shadow-lg notification z-50`;
-            
-            if (type === 'error') {
-                notif.classList.add('bg-red-500');
-            } else if (type === 'success') {
-                notif.classList.add('bg-green-500');
-            } else {
-                notif.classList.add('bg-blue-500');
-            }
-            
+            notif.classList.add(type === 'error' ? 'bg-red-500' : type === 'success' ? 'bg-green-500' : 'bg-blue-500');
             notif.classList.remove('hidden');
             setTimeout(() => notif.classList.add('hidden'), 5000);
         }
@@ -188,11 +230,7 @@
                         const { latitude, longitude } = pos.coords;
                         map.setView([latitude, longitude], 10);
                         L.marker([latitude, longitude], {
-                            icon: L.divIcon({
-                                className: 'location-marker',
-                                html: '📍',
-                                iconSize: [30, 30]
-                            })
+                            icon: L.divIcon({ className: 'location-marker', html: '📍', iconSize: [30, 30] })
                         }).addTo(map).bindPopup('Lokasi Anda').openPopup();
                         showNotification('Lokasi Anda ditemukan', 'success');
                     },
@@ -207,182 +245,175 @@
         async function fetchWeather(search = '') {
             const weatherDiv = document.getElementById('weather-data');
             const loading = document.getElementById('weather-loading');
-            
+            const chartCanvas = document.getElementById('weather-chart').getContext('2d');
+            let weatherChart = Chart.getChart(chartCanvas) || null;
+
             try {
                 loading.classList.remove('hidden');
                 weatherDiv.innerHTML = '';
-                
-                const res = await fetch(APIs.weather);
-                if (!res.ok) throw new Error('API Weather gagal');
-                
-                const xml = await (new DOMParser()).parseFromString(await res.text(), 'text/xml');
-                const areas = Array.from(xml.getElementsByTagName('area')).filter(area => 
-                    area.getAttribute('description').toLowerCase().includes(search.toLowerCase())
-                ).slice(0, 6);
-                
-                const weatherData = areas.map(area => {
-                    const weatherNode = area.getElementsByTagName('parameter')[0]?.getElementsByTagName('value')[0];
-                    const tempNode = area.getElementsByTagName('parameter')[6]?.getElementsByTagName('value')[0];
-                    const humidityNode = area.getElementsByTagName('parameter')[3]?.getElementsByTagName('value')[0];
-                    return {
-                        city: area.getAttribute('description') || 'Unknown',
-                        weather: weatherNode?.textContent || 'Tidak diketahui',
-                        temp: tempNode?.textContent || 'N/A',
-                        humidity: humidityNode?.textContent || 'N/A'
-                    };
-                });
-                
-                if (!weatherData.length) {
-                    throw new Error('Tidak ada data cuaca untuk kota yang dicari');
+
+                const province = provinces.find(p => p.name.toLowerCase().includes(search.toLowerCase()));
+                if (!province) throw new Error('Wilayah tidak ditemukan');
+
+                const response = await fetch(`${APIs.weather}${province.file}.xml`);
+                if (!response.ok) throw new Error('Gagal mengambil data cuaca');
+
+                const text = await response.text();
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(text, 'text/xml');
+
+                const areas = xmlDoc.getElementsByTagName('area');
+                let forecasts = [];
+                let found = false;
+
+                for (let area of areas) {
+                    const areaName = area.getElementsByTagName('name')[0]?.textContent.toLowerCase();
+                    if (areaName.includes(search.toLowerCase())) {
+                        found = true;
+                        const weatherParams = area.getElementsByTagName('parameter');
+                        for (let param of weatherParams) {
+                            if (param.getAttribute('id') === 'weather') {
+                                const times = param.getElementsByTagName('timerange');
+                                for (let i = 0; i < Math.min(3, times.length); i++) {
+                                    const time = times[i];
+                                    const datetime = time.getAttribute('datetime');
+                                    const date = datetime.slice(0, 4) + '-' + datetime.slice(4, 6) + '-' + datetime.slice(6, 8);
+                                    const weatherCode = time.getElementsByTagName('value')[0]?.textContent;
+                                    const weatherDesc = getWeatherDescription(weatherCode);
+                                    const tempParam = Array.from(weatherParams).find(p => p.getAttribute('id') === 't');
+                                    const tempValues = tempParam?.getElementsByTagName('timerange')[i]?.getElementsByTagName('value');
+                                    const temp = tempValues?.[0]?.textContent || 'N/A';
+                                    forecasts.push({ date, weather: weatherDesc, temp });
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                    }
                 }
-                
-                weatherDiv.innerHTML = weatherData.map(({ city, weather, temp, humidity }) => `
+
+                if (!found || forecasts.length === 0) throw new Error('Data cuaca tidak ditemukan untuk wilayah ini');
+
+                currentWeatherData = forecasts;
+                currentLocation = search;
+
+                weatherDiv.innerHTML = forecasts.map((f, i) => `
                     <div class="card bg-gray-50 dark:bg-gray-700 p-4 rounded-lg shadow hover:shadow-md">
-                        <h3 class="text-lg font-medium mb-2">${city}</h3>
+                        <h3 class="text-lg font-medium mb-2">${new Date(f.date).toLocaleDateString('id-ID')}</h3>
                         <div class="flex items-center gap-2 mb-1">
-                            <span class="text-2xl">${weatherIcons[weather] || '❓'}</span>
-                            <span>${weather}</span>
+                            <span class="text-2xl">${weatherIcons[f.weather] || '❓'}</span>
+                            <span>${f.weather}</span>
                         </div>
-                        <div class="grid grid-cols-2 gap-2 mt-2">
-                            <div class="bg-gray-200 dark:bg-gray-600 p-2 rounded">
-                                <p class="text-xs text-gray-500 dark:text-gray-300">Suhu</p>
-                                <p class="font-medium">${temp}°C</p>
-                            </div>
-                            <div class="bg-gray-200 dark:bg-gray-600 p-2 rounded">
-                                <p class="text-xs text-gray-500 dark:text-gray-300">Kelembapan</p>
-                                <p class="font-medium">${humidity}%</p>
-                            </div>
+                        <div class="bg-gray-200 dark:bg-gray-600 p-2 rounded">
+                            <p class="text-xs text-gray-500 dark:text-gray-300">Suhu</p>
+                            <p class="font-medium">${f.temp}°C</p>
                         </div>
                     </div>
                 `).join('');
-                
-                updateWeatherChart(weatherData);
+
+                // Update Weather Chart
+                if (weatherChart) weatherChart.destroy();
+                document.getElementById('weather-chart').style.display = 'block';
+                weatherChart = new Chart(chartCanvas, {
+                    type: 'line',
+                    data: {
+                        labels: forecasts.map(f => new Date(f.date).toLocaleDateString('id-ID')),
+                        datasets: [{
+                            label: 'Suhu (°C)',
+                            data: forecasts.map(f => f.temp),
+                            backgroundColor: 'rgba(99, 102, 241, 0.7)',
+                            borderColor: 'rgba(99, 102, 241, 1)',
+                            borderWidth: 1,
+                            fill: false
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: { beginAtZero: true, grid: { color: 'rgba(0, 0, 0, 0.1)' } },
+                            x: { grid: { display: false } }
+                        },
+                        plugins: {
+                            legend: { position: 'top', labels: { boxWidth: 12 } },
+                            tooltip: { mode: 'index', intersect: false }
+                        },
+                        maintainAspectRatio: false
+                    }
+                });
+
                 document.getElementById('weather-time').textContent = `Terakhir diperbarui: ${new Date().toLocaleTimeString()}`;
-                
+                logActivity('Pencarian', `Mencari cuaca untuk ${search}`);
+                updateWhatsAppButton();
+
             } catch (e) {
                 console.error('Weather fetch error:', e);
                 showNotification('Gagal memuat data cuaca. Silakan coba lagi nanti.');
                 weatherDiv.innerHTML = '<p class="text-center text-gray-500 col-span-3 py-4">Tidak ada data cuaca tersedia.</p>';
-                updateWeatherChart([]);
+                if (weatherChart) weatherChart.destroy();
+                document.getElementById('weather-chart').style.display = 'none';
             } finally {
                 loading.classList.add('hidden');
             }
         }
 
-        // Weather Chart
-        let weatherChart;
-        function updateWeatherChart(data) {
-            const ctx = document.getElementById('weather-chart').getContext('2d');
-            if (weatherChart) weatherChart.destroy();
-            
-            if (data.length === 0) {
-                document.getElementById('weather-chart').style.display = 'none';
-                return;
-            }
-            
-            document.getElementById('weather-chart').style.display = 'block';
-            weatherChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: data.map(d => d.city),
-                    datasets: [
-                        { 
-                            label: 'Suhu (°C)', 
-                            data: data.map(d => d.temp), 
-                            backgroundColor: 'rgba(99, 102, 241, 0.7)',
-                            borderColor: 'rgba(99, 102, 241, 1)',
-                            borderWidth: 1
-                        },
-                        { 
-                            label: 'Kelembapan (%)', 
-                            data: data.map(d => d.humidity), 
-                            backgroundColor: 'rgba(16, 185, 129, 0.7)',
-                            borderColor: 'rgba(16, 185, 129, 1)',
-                            borderWidth: 1
-                        }
-                    ]
-                },
-                options: { 
-                    responsive: true,
-                    scales: { 
-                        y: { 
-                            beginAtZero: true,
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.1)'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false
-                            }
-                        }
-                    }, 
-                    plugins: { 
-                        legend: { 
-                            position: 'top',
-                            labels: {
-                                boxWidth: 12
-                            }
-                        },
-                        tooltip: {
-                            mode: 'index',
-                            intersect: false
-                        }
-                    },
-                    maintainAspectRatio: false
-                }
-            });
+        // Weather Description Mapping
+        function getWeatherDescription(code) {
+            const weatherMap = {
+                '0': 'Cerah',
+                '1': 'Cerah Berawan',
+                '2': 'Cerah Berawan',
+                '3': 'Berawan',
+                '4': 'Berawan Tebal',
+                '5': 'Udara Kabur',
+                '10': 'Asap',
+                '45': 'Kabut',
+                '60': 'Hujan Ringan',
+                '61': 'Hujan Sedang',
+                '63': 'Hujan Lebat',
+                '80': 'Hujan Lokal',
+                '95': 'Hujan Petir',
+                '97': 'Hujan Petir'
+            };
+            return weatherMap[code] || 'Tidak diketahui';
         }
 
         // Earthquake Fetch
         async function fetchQuakes() {
             const quakeList = document.getElementById('earthquake-list');
             const loading = document.getElementById('quake-loading');
-            
+
             try {
                 loading.classList.remove('hidden');
                 quakeList.innerHTML = '';
-                
-                const [autoRes, listRes] = await Promise.all([
-                    fetch(APIs.earthquake),
-                    fetch(APIs.earthquakeList)
-                ]);
-                
-                if (!autoRes.ok || !listRes.ok) throw new Error('API Gempa gagal');
-                
-                const { Infogempa: { gempa: autoGempa } } = await autoRes.json();
-                const { Infogempa: { gempa: listGempa } } = await listRes.json();
-                
-                quakes = Array.isArray(autoGempa) ? autoGempa : [autoGempa];
-                if (Array.isArray(listGempa)) {
-                    quakes = quakes.concat(listGempa);
-                }
-                
-                // Update history with significant earthquakes
-                quakes.forEach(q => {
-                    if (!history.some(h => h.Tanggal === q.Tanggal && h.Jam === q.Jam)) {
-                        history.unshift({
-                            ...q,
-                            timestamp: new Date(`${q.Tanggal} ${q.Jam}`).getTime()
-                        });
-                        
-                        if (+q.Magnitude >= 5) {
-                            showNotification(`Peringatan! Gempa ${q.Magnitude} SR di ${q.Wilayah}`, 'warning');
-                        }
-                    }
-                });
-                
-                // Keep only last 10 history items
-                history = history
-                    .sort((a, b) => b.timestamp - a.timestamp)
-                    .slice(0, 10);
-                
-                localStorage.setItem('earthquakeHistory', JSON.stringify(history));
+
+                const response = await fetch(APIs.earthquake);
+                if (!response.ok) throw new Error('Gagal mengambil data gempa');
+
+                const text = await response.text();
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(text, 'text/xml');
+
+                const earthquake = xmlDoc.getElementsByTagName('gempa')[0];
+                if (!earthquake) throw new Error('Data gempa tidak ditemukan');
+
+                const data = {
+                    tanggal: earthquake.getElementsByTagName('Tanggal')[0]?.textContent || 'Tidak tersedia',
+                    jam: earthquake.getElementsByTagName('Jam')[0]?.textContent || 'Tidak tersedia',
+                    lintang: earthquake.getElementsByTagName('Lintang')[0]?.textContent || '0',
+                    bujur: earthquake.getElementsByTagName('Bujur')[0]?.textContent || '0',
+                    wilayah: earthquake.getElementsByTagName('Wilayah')[0]?.textContent || 'Tidak tersedia',
+                    magnitude: earthquake.getElementsByTagName('Magnitude')[0]?.textContent || '0',
+                    kedalaman: earthquake.getElementsByTagName('Kedalaman')[0]?.textContent || 'Tidak tersedia',
+                    potensi: earthquake.getElementsByTagName('Potensi')[0]?.textContent || 'Tidak tersedia'
+                };
+
+                quakes = [data];
+                currentEarthquakeData = data;
                 updateQuakes();
-                updateHistory();
-                
+                logActivity('Pencarian', 'Mencari data gempa terkini');
                 document.getElementById('quake-time').textContent = `Terakhir diperbarui: ${new Date().toLocaleTimeString()}`;
-                
+                updateWhatsAppButton();
+
             } catch (e) {
                 console.error('Quake fetch error:', e);
                 showNotification('Gagal memuat data gempa. Silakan coba lagi nanti.');
@@ -395,25 +426,23 @@
         // Update Quakes
         function updateQuakes() {
             const minMag = +document.getElementById('magnitude-filter').value;
-            const filteredQuakes = quakes.filter(q => minMag === 0 || +q.Magnitude >= minMag);
-            
+            const filteredQuakes = quakes.filter(q => minMag === 0 || +q.magnitude >= minMag);
             const quakeList = document.getElementById('earthquake-list');
             quakeList.innerHTML = '';
             map.eachLayer(l => (l instanceof L.Marker || l instanceof L.CircleMarker) && map.removeLayer(l));
 
-            // Update quake info
             document.getElementById('quake-count').textContent = filteredQuakes.length;
-            const strongest = quakes.reduce((max, q) => Math.max(max, +q.Magnitude), 0);
+            const strongest = quakes.reduce((max, q) => Math.max(max, +q.magnitude), 0);
             document.getElementById('quake-strongest').textContent = strongest > 0 ? `${strongest} SR` : '-';
 
             filteredQuakes.forEach(q => {
-                const mag = +q.Magnitude;
+                const mag = +q.magnitude;
                 const color = getColor(mag);
-                
+
                 quakeList.innerHTML += `
                     <div class="card bg-gray-50 dark:bg-gray-700 p-4 rounded-lg shadow hover:shadow-md">
                         <div class="flex justify-between items-start">
-                            <h3 class="text-lg font-medium">${q.Wilayah}</h3>
+                            <h3 class="text-lg font-medium">${q.wilayah}</h3>
                             <span class="px-2 py-1 rounded-full text-xs font-bold" style="background-color: ${color}20; color: ${color}">
                                 ${mag} SR
                             </span>
@@ -421,27 +450,28 @@
                         <div class="grid grid-cols-2 gap-2 mt-2">
                             <div>
                                 <p class="text-xs text-gray-500 dark:text-gray-300">Kedalaman</p>
-                                <p>${q.Kedalaman}</p>
+                                <p>${q.kedalaman}</p>
                             </div>
                             <div>
                                 <p class="text-xs text-gray-500 dark:text-gray-300">Waktu</p>
-                                <p>${q.Tanggal} ${q.Jam}</p>
+                                <p>${q.tanggal} ${q.jam}</p>
                             </div>
                         </div>
                         <div class="mt-2">
                             <p class="text-xs text-gray-500 dark:text-gray-300">Lokasi</p>
-                            <p>${q.Lintang}, ${q.Bujur}</p>
+                            <p>${q.lintang}, ${q.bujur}</p>
                         </div>
                         <div class="mt-2">
                             <p class="text-xs text-gray-500 dark:text-gray-300">Potensi</p>
-                            <p class="${q.Potensi.includes('tidak berpotensi') ? 'text-green-500' : 'text-red-500'}">
-                                ${q.Potensi}
+                            <p class="${q.potensi.includes('tidak berpotensi') ? 'text-green-500' : 'text-red-500'}">
+                                ${q.potensi}
                             </p>
                         </div>
                     </div>
                 `;
-                
-                const [lat, lon] = q.Coordinates?.split(',')?.map(Number) || [0, 0];
+
+                const lat = parseFloat(q.lintang);
+                const lon = parseFloat(q.bujur);
                 if (lat && lon) {
                     L.circleMarker([lat, lon], {
                         radius: Math.min(mag * 2, 15),
@@ -451,71 +481,71 @@
                         opacity: 1,
                         fillOpacity: 0.7
                     }).addTo(map).bindPopup(`
-                        <b>${q.Wilayah}</b><br>
+                        <b>${q.wilayah}</b><br>
                         Magnitudo: ${mag} SR<br>
-                        Kedalaman: ${q.Kedalaman}<br>
-                        Waktu: ${q.Tanggal} ${q.Jam}<br>
-                        Potensi: ${q.Potensi}
+                        Kedalaman: ${q.kedalaman}<br>
+                        Waktu: ${q.tanggal} ${q.jam}<br>
+                        Potensi: ${q.potensi}
                     `);
                 }
             });
         }
 
-        // Update History
-        function updateHistory() {
-            const historyList = document.getElementById('earthquake-history');
-            const loading = document.getElementById('history-loading');
-            
-            loading.classList.remove('hidden');
-            
-            setTimeout(() => {
-                historyList.innerHTML = history.map(q => {
-                    const mag = +q.Magnitude;
-                    const color = getColor(mag);
-                    
-                    return `
-                        <div class="card bg-gray-50 dark:bg-gray-700 p-4 rounded-lg shadow hover:shadow-md">
-                            <div class="flex justify-between items-start">
-                                <h3 class="text-lg font-medium">${q.Wilayah}</h3>
-                                <span class="px-2 py-1 rounded-full text-xs font-bold" style="background-color: ${color}20; color: ${color}">
-                                    ${mag} SR
-                                </span>
-                            </div>
-                            <div class="grid grid-cols-2 gap-2 mt-2">
-                                <div>
-                                    <p class="text-xs text-gray-500 dark:text-gray-300">Kedalaman</p>
-                                    <p>${q.Kedalaman}</p>
-                                </div>
-                                <div>
-                                    <p class="text-xs text-gray-500 dark:text-gray-300">Waktu</p>
-                                    <p>${q.Tanggal} ${q.Jam}</p>
-                                </div>
-                            </div>
-                            <div class="mt-2">
-                                <p class="text-xs text-gray-500 dark:text-gray-300">Lokasi</p>
-                                <p>${q.Lintang}, ${q.Bujur}</p>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-                
-                loading.classList.add('hidden');
-            }, 300);
+        // Log Activity
+        function logActivity(type, details) {
+            const timestamp = new Date().toLocaleString('id-ID');
+            logs.push({ type, details, timestamp });
+            localStorage.setItem('activityLogs', JSON.stringify(logs));
+            updateLogs();
+        }
+
+        // Update Logs
+        function updateLogs() {
+            const logList = document.getElementById('log-list');
+            logList.innerHTML = logs.map(log => `
+                <div class="card bg-gray-50 dark:bg-gray-700 p-4 rounded-lg shadow hover:shadow-md">
+                    <p class="text-sm">[${log.timestamp}] ${log.type}: ${log.details}</p>
+                </div>
+            `).join('') || '<p class="text-center text-gray-500 py-4">Belum ada aktivitas.</p>';
+        }
+
+        // WhatsApp Notification
+        function updateWhatsAppButton() {
+            const whatsappBtn = document.getElementById('whatsapp-btn');
+            if (currentWeatherData && currentEarthquakeData && currentLocation) {
+                whatsappBtn.classList.remove('hidden');
+                whatsappBtn.onclick = () => {
+                    let message = `*Prakiraan Cuaca & Gempa untuk ${currentLocation}*\n\n`;
+                    message += `*Cuaca 3 Hari Ke Depan:*\n`;
+                    currentWeatherData.forEach(forecast => {
+                        message += `${new Date(forecast.date).toLocaleDateString('id-ID')}\n`;
+                        message += `Cuaca: ${forecast.weather}\n`;
+                        message += `Suhu: ${forecast.temp} °C\n\n`;
+                    });
+                    message += `*Gempa Terkini:*\n`;
+                    message += `Tanggal: ${currentEarthquakeData.tanggal} ${currentEarthquakeData.jam}\n`;
+                    message += `Lokasi: ${currentEarthquakeData.lintang}, ${currentEarthquakeData.bujur} - ${currentEarthquakeData.wilayah}\n`;
+                    message += `Magnitudo: ${currentEarthquakeData.magnitude}\n`;
+                    message += `Kedalaman: ${currentEarthquakeData.kedalaman}\n`;
+                    message += `Potensi: ${currentEarthquakeData.potensi}\n`;
+                    const encodedMessage = encodeURIComponent(message);
+                    const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
+                    window.open(whatsappUrl, '_blank');
+                    logActivity('Notifikasi', `Mengirim notifikasi WhatsApp untuk ${currentLocation}`);
+                };
+            } else {
+                whatsappBtn.classList.add('hidden');
+            }
         }
 
         // Event Listeners
-        document.getElementById('clear-history').addEventListener('click', () => {
-            if (confirm('Apakah Anda yakin ingin menghapus semua riwayat gempa?')) {
-                history = [];
-                localStorage.removeItem('earthquakeHistory');
-                updateHistory();
-                showNotification('Riwayat gempa telah dihapus', 'success');
+        document.getElementById('clear-log').addEventListener('click', () => {
+            if (confirm('Apakah Anda yakin ingin menghapus semua log?')) {
+                logs = [];
+                localStorage.removeItem('activityLogs');
+                updateLogs();
+                showNotification('Log telah dihapus', 'success');
             }
-        });
-
-        document.getElementById('refresh-history').addEventListener('click', () => {
-            updateHistory();
-            showNotification('Riwayat gempa diperbarui', 'success');
         });
 
         document.getElementById('magnitude-filter').addEventListener('change', updateQuakes);
@@ -529,31 +559,27 @@
         });
 
         document.getElementById('refresh-data').addEventListener('click', () => {
-            fetchWeather();
+            fetchWeather(currentLocation);
             fetchQuakes();
             showNotification('Data diperbarui', 'success');
         });
 
         // Auto Update
         function startAutoUpdate() {
-            const weatherInterval = setInterval(() => {
-                if (document.visibilityState === 'visible') fetchWeather();
-            }, 10 * 60 * 1000); // Update cuaca setiap 10 menit
-            
-            const quakeInterval = setInterval(() => {
-                if (document.visibilityState === 'visible') fetchQuakes();
-            }, 2 * 60 * 1000); // Update gempa setiap 2 menit
-            
-            return { weatherInterval, quakeInterval };
+            setInterval(() => {
+                if (document.visibilityState === 'visible' && currentLocation) {
+                    fetchWeather(currentLocation);
+                    fetchQuakes();
+                    showNotification('Data diperbarui otomatis', 'success');
+                }
+            }, 10800000); // Update setiap 3 jam (10800000 ms)
         }
 
         // Initial Fetch
         document.addEventListener('DOMContentLoaded', () => {
-            fetchWeather();
             fetchQuakes();
+            updateLogs();
             startAutoUpdate();
-            
-            // Set initial timestamps
             document.getElementById('weather-time').textContent = `Memuat data cuaca...`;
             document.getElementById('quake-time').textContent = `Memuat data gempa...`;
         });

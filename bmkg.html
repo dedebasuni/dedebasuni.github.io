@@ -248,7 +248,7 @@
             warning: 'https://data.bmkg.go.id/DataMKG/TEWS/warning.xml'
         };
 
-        const AQI_API_KEY = 'cbcab758aee23a1bdc7a3dd27631f133';
+        const AQI_API_KEY = 'e98de5f3705f63f8923b88904e99af9f';
 
         // Daftar Provinsi untuk Pencarian
         const provinces = [
@@ -290,7 +290,7 @@
 
         let quakes = [], logs = JSON.parse(localStorage.getItem('activityLogs') || '[]');
         let currentWeatherData = null, currentEarthquakeData = null, currentLocation = '';
-        let currentLat = -6.2088, currentLon = 106.8456; // Default to Jakarta
+        let currentLat = -6.9147, currentLon = 107.6098; // Default to Jawa Barat
 
         const getColor = m => m >= 5 ? '#ef4444' : m >= 4 ? '#f97316' : m >= 3 ? '#eab308' : '#22c55e';
 

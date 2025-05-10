@@ -402,7 +402,6 @@
         }
 
         // Weather Fetch
-// Weather Fetch
 async function fetchWeather(search = '') {
     const weatherDiv = document.getElementById('weather-data');
     const loading = document.getElementById('weather-loading');
@@ -422,7 +421,7 @@ async function fetchWeather(search = '') {
         if (!response.ok) throw new Error(`Gagal mengambil data cuaca: ${response.statusText}`);
 
         const data = await response.json();
-        console.log('API Response:', data); // Debugging: Lihat struktur data
+        console.log('API Response for', province.name, ':', data); // Debugging: Lihat struktur data
 
         if (!data || !data.lokasi || !data.data) throw new Error('Data cuaca tidak valid');
 
@@ -434,15 +433,21 @@ async function fetchWeather(search = '') {
         // Group by day (Hari ke-1, Hari ke-2, dst)
         const forecasts = [];
         const days = {};
-        dailyForecasts.forEach(prakiraan => {
+        dailyForecasts.forEach((prakiraan, index) => {
             // Validasi local_datetime
-            const localDateTime = prakiraan.local_datetime;
-            if (!localDateTime || typeof localDateTime !== 'string') {
-                console.warn('Prakiraan tanpa local_datetime yang valid:', prakiraan);
-                return; // Skip prakiraan ini
+            let date;
+            if (prakiraan.local_datetime && typeof prakiraan.local_datetime === 'string') {
+                date = prakiraan.local_datetime.split(' ')[0]; // Ambil tanggal (format: YYYY-MM-DD)
+            } else {
+                // Fallback: Asumsikan data diberikan setiap 3 jam, 8 prakiraan per hari
+                console.warn('Prakiraan tanpa local_datetime, menggunakan fallback:', prakiraan);
+                const today = new Date();
+                const dayOffset = Math.floor(index / 8); // 8 prakiraan per hari
+                const forecastDate = new Date(today);
+                forecastDate.setDate(today.getDate() + dayOffset);
+                date = forecastDate.toISOString().split('T')[0]; // Format: YYYY-MM-DD
             }
 
-            const date = localDateTime.split(' ')[0]; // Ambil tanggal (format: YYYY-MM-DD)
             if (!days[date]) days[date] = [];
             days[date].push(prakiraan);
         });

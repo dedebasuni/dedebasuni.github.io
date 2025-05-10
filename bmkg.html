@@ -295,11 +295,11 @@
         const getColor = m => m >= 5 ? '#ef4444' : m >= 4 ? '#f97316' : m >= 3 ? '#eab308' : '#22c55e';
 
         // Weather Icon Mapping
-        const weatherIcons = {
-            'Cerah': '☀️', 'Cerah Berawan': '🌤️', 'Berawan': '☁️', 'Berawan Tebal': '🌥️',
-            'Hujan Ringan': '🌦️', 'Hujan Sedang': '🌧️', 'Hujan Lebat': '⛈️', 'Hujan Petir': '🌩️',
-            'Kabut': '🌫️', 'Asap': '🌫️', 'Udara Kabur': '🌫️'
-        };
+const weatherIcons = {
+    'Cerah': '☀️', 'Cerah Berawan': '🌤️', 'Berawan': '☁️', 'Berawan Tebal': '🌥️',
+    'Hujan Ringan': '🌦️', 'Hujan Sedang': '🌧️', 'Hujan Lebat': '⛈️', 'Hujan Petir': '🌩️',
+    'Kabut': '🌫️', 'Asap': '🌫️', 'Udara Kabur': '🌫️'
+};
 
         // Theme Toggle
         document.getElementById('toggle-theme').addEventListener('click', () => {
@@ -430,35 +430,16 @@ async function fetchWeather(search = '') {
             throw new Error(`Data prakiraan cuaca tidak ditemukan atau kosong untuk ${province.name}`);
         }
 
-        // Group by day (Hari ke-1, Hari ke-2, dst)
+        // Ambil 3 hari pertama dari array dua dimensi
         const forecasts = [];
-        const days = {};
-        dailyForecasts.forEach((prakiraan, index) => {
-            let date;
-            if (prakiraan.local_datetime && typeof prakiraan.local_datetime === 'string') {
-                date = prakiraan.local_datetime.split(' ')[0]; // Ambil tanggal (format: YYYY-MM-DD)
-            } else {
-                console.warn('Prakiraan tanpa local_datetime, menggunakan fallback:', prakiraan);
-                const today = new Date();
-                const dayOffset = Math.floor(index / 8); // 8 prakiraan per hari
-                const forecastDate = new Date(today);
-                forecastDate.setDate(today.getDate() + dayOffset);
-                date = forecastDate.toISOString().split('T')[0]; // Format: YYYY-MM-DD
-            }
+        for (let i = 0; i < Math.min(3, dailyForecasts.length); i++) {
+            const dayForecasts = dailyForecasts[i]; // Array prakiraan untuk satu hari
+            if (!Array.isArray(dayForecasts) || dayForecasts.length === 0) continue;
 
-            if (!days[date]) days[date] = [];
-            days[date].push(prakiraan);
-        });
+            const firstPrakiraan = dayForecasts[0]; // Ambil prakiraan pertama untuk hari itu
+            console.log('First Prakiraan for day', i + 1, ':', firstPrakiraan); // Debugging
 
-        // Ambil 3 hari ke depan
-        const dates = Object.keys(days).slice(0, 3);
-        if (dates.length === 0) throw new Error('Tidak ada data tanggal yang valid untuk prakiraan cuaca');
-
-        dates.forEach(date => {
-            const prakiraanHarian = days[date];
-            const firstPrakiraan = prakiraanHarian[0]; // Ambil data pertama untuk representasi hari itu
-            console.log('First Prakiraan for', date, ':', firstPrakiraan); // Debugging: Lihat data prakiraan
-
+            const date = firstPrakiraan.local_datetime.split(' ')[0]; // Ambil tanggal (YYYY-MM-DD)
             const weatherDesc = firstPrakiraan.weather_desc || 'Tidak diketahui';
             const temp = firstPrakiraan.t !== undefined ? `${firstPrakiraan.t}°C` : 'N/A';
             const humidity = firstPrakiraan.hu !== undefined ? `${firstPrakiraan.hu}%` : 'N/A';
@@ -475,7 +456,7 @@ async function fetchWeather(search = '') {
                 windDir,
                 visibility
             });
-        });
+        }
 
         if (forecasts.length === 0) throw new Error('Data cuaca tidak ditemukan untuk wilayah ini');
 

@@ -417,7 +417,7 @@
                 const province = provinces.find(p => p.name.toLowerCase().includes(search.toLowerCase()));
                 if (!province) throw new Error('Wilayah tidak ditemukan');
 
-                const response = await fetch(`${APIs.weather}.xml`);
+                const response = await fetch(`${APIs.weather}`);
                 if (!response.ok) throw new Error('Gagal mengambil data cuaca');
 
                 const text = await response.text();
@@ -456,7 +456,7 @@
 
                 if (!found || forecasts.length === 0) {
                     console.warn('Data cuaca tidak ditemukan, mencoba ulang...');
-                    const retryResponse = await fetch(`${APIs.weather}.xml`);
+                    const retryResponse = await fetch(`${APIs.weather}`);
                     const retryText = await retryResponse.text();
                     const retryXmlDoc = parser.parseFromString(retryText, 'text/xml');
                     const retryAreas = retryXmlDoc.getElementsByTagName('area');

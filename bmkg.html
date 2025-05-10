@@ -454,15 +454,7 @@
                     }
                 }
 
-                if (!found || forecasts.length === 0) {
-                    console.warn('Data cuaca tidak ditemukan, mencoba ulang...');
-                    const retryResponse = await fetch(`${APIs.weather}`);
-                    const retryText = await retryResponse.text();
-                    const retryXmlDoc = parser.parseFromString(retryText, 'text/xml');
-                    const retryAreas = retryXmlDoc.getElementsByTagName('area');
-                    // Logika parsing ulang di sini
-                    if (!found || forecasts.length === 0) throw new Error('Data cuaca tidak ditemukan untuk wilayah ini');
-                }
+                if (!found || forecasts.length === 0) throw new Error('Data cuaca tidak ditemukan untuk wilayah ini');
 
                 currentWeatherData = forecasts;
                 currentLocation = search;

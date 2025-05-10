@@ -145,19 +145,6 @@
             </div>
         </section>
 
-        <!-- Warning Section
-        <section id="warning-section" class="mb-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 fade-in hidden">
-            <div class="flex justify-between items-center mb-3">
-                <h2 class="text-xl font-semibold">Peringatan Dini</h2>
-                <div id="warning-time" class="text-sm text-gray-500 dark:text-gray-400"></div>
-            </div>
-            <div id="warning-loading" class="hidden flex justify-center py-4">
-                <div class="loading-spinner"></div>
-            </div>
-            <div id="warning-data" class="grid grid-cols-1 gap-3"></div>
-        </section>
-        -->
-
         <!-- Earthquake -->
         <section class="mb-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 fade-in">
             <div class="flex justify-between items-center mb-3">
@@ -351,7 +338,7 @@
                 const currentWeather = currentWeatherData[0];
                 widget.innerHTML = `
                     <span class="text-lg">${weatherIcons[currentWeather.weather] || '❓'}</span>
-                    <span>${currentLocation}: ${currentWeather.weather}, ${currentWeather.temp}°C, ${currentWeather.humidity}%</span>
+                    <span>${currentLocation}: ${currentWeather.weather}, ${currentWeather.temp}, ${currentWeather.humidity}</span>
                 `;
                 widget.classList.remove('hidden');
             } else {
@@ -555,47 +542,6 @@
             }
         }
         
-        // Fetch Warnings (Hypothetical)
-        async function fetchWarnings() {
-            const warningDiv = document.getElementById('warning-data');
-            const loading = document.getElementById('warning-loading');
-            const warningSection = document.getElementById('warning-section');
-
-            try {
-                loading.classList.remove('hidden');
-                warningDiv.innerHTML = '';
-
-                // Simulasi data peringatan (karena API belum ada)
-                const warnings = [
-                    { type: 'Tsunami', location: currentLocation, message: 'Potensi tsunami di wilayah pesisir.', time: new Date().toLocaleString('id-ID') }
-                    // Ganti dengan fetch API jika tersedia
-                ];
-
-                if (warnings.length > 0) {
-                    warningSection.classList.remove('hidden');
-                    warningDiv.innerHTML = warnings.map(w => `
-                        <div class="card bg-red-50 dark:bg-red-900 p-4 rounded-lg shadow hover:shadow-md">
-                            <h3 class="text-lg font-medium text-red-600 dark:text-red-400">${w.type}</h3>
-                            <p class="mt-1">${w.message}</p>
-                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">${w.time}</p>
-                        </div>
-                    `).join('');
-                    document.getElementById('warning-time').textContent = `Terakhir diperbarui: ${new Date().toLocaleTimeString()}`;
-                    logActivity('Peringatan', `Mengambil peringatan dini untuk ${currentLocation}`);
-                    const audio = new Audio('https://www.soundjay.com/buttons/beep-01a.mp3');
-                    audio.play().catch(() => console.log('Audio playback failed'));
-                    showNotification('Peringatan dini: Periksa section Peringatan Dini!', 'error');
-                } else {
-                    warningSection.classList.add('hidden');
-                }
-            } catch (e) {
-                console.error('Warning fetch error:', e);
-                warningSection.classList.add('hidden');
-            } finally {
-                loading.classList.add('hidden');
-            }
-        }
-
         // Earthquake Fetch
         async function fetchQuakes(date = new Date().toISOString().split('T')[0]) {
             const quakeList = document.getElementById('earthquake-list');

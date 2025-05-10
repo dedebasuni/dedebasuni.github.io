@@ -6,6 +6,7 @@
     <title>Wikipedia Search SPA</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         :root {
             --bg-color: #fff;
@@ -15,6 +16,7 @@
             --button-text: #fff;
             --card-bg: #fff;
             --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --sidebar-bg: #f8f9fa;
         }
         [data-theme="dark"] {
             --bg-color: #222;
@@ -24,10 +26,11 @@
             --button-text: #ddd;
             --card-bg: #333;
             --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            --sidebar-bg: #2c2c2c;
         }
         body {
             font-family: 'Inter', 'Noto Serif', Arial, sans-serif;
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
             line-height: 1.6;
@@ -38,9 +41,102 @@
         [lang="su"] {
             font-family: 'Noto Serif', Arial, sans-serif;
         }
-        .container {
+        .main-container {
             display: flex;
             gap: 20px;
+        }
+        .sidebar-left {
+            width: 200px;
+            background: var(--sidebar-bg);
+            padding: 15px;
+            border-radius: 8px;
+            position: sticky;
+            top: 20px;
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
+        }
+        .sidebar-left.collapsed {
+            display: none;
+        }
+        .sidebar-left h3 {
+            margin: 0 0 10px;
+            font-size: 16px;
+        }
+        .sidebar-left ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .sidebar-left li {
+            margin: 5px 0;
+        }
+        .sidebar-left a, .sidebar-left select, .sidebar-left button {
+            color: #007bff;
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 14px;
+            background: none;
+            border: none;
+            padding: 0;
+            width: 100%;
+            text-align: left;
+        }
+        .sidebar-left a:hover, .sidebar-left button:hover {
+            text-decoration: underline;
+        }
+        .hamburger {
+            display: none;
+            font-size: 24px;
+            cursor: pointer;
+            background: var(--button-bg);
+            color: var(--button-text);
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+        .content-container {
+            flex: 3;
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar-right {
+            width: 200px;
+            background: var(--sidebar-bg);
+            padding: 15px;
+            border-radius: 8px;
+            position: sticky;
+            top: 20px;
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
+        }
+        .sidebar-right h3 {
+            margin: 0 0 10px;
+            font-size: 16px;
+        }
+        .sidebar-right ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .sidebar-right li {
+            margin: 5px 0;
+        }
+        .sidebar-right a {
+            color: #007bff;
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .sidebar-right a:hover {
+            text-decoration: underline;
+        }
+        .welcome-guide {
+            background: var(--input-bg);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            position: sticky;
+            top: 60px;
+            z-index: 10;
         }
         .search-container {
             margin-bottom: 20px;
@@ -74,7 +170,6 @@
             opacity: 0;
             transform: translateY(20px);
             animation: slideIn 0.3s forwards;
-            flex: 3;
         }
         @keyframes slideIn {
             to { opacity: 1; transform: translateY(0); }
@@ -157,26 +252,31 @@
             gap: 10px;
             margin: 20px 0;
         }
-        .gallery img {
+        .gallery img, .gallery audio, .gallery video {
             max-width: 150px;
             border-radius: 4px;
             cursor: pointer;
             opacity: 0;
             transition: opacity 0.5s, transform 0.2s;
         }
-        .gallery img.loaded {
+        .gallery img.loaded, .gallery audio.loaded, .gallery video.loaded {
             opacity: 1;
         }
-        .gallery img:hover {
+        .gallery img:hover, .gallery video:hover {
             transform: scale(1.1);
         }
-        .gallery img:nth-child(1) { animation: fadeInGallery 0.3s forwards; animation-delay: 0.1s; }
-        .gallery img:nth-child(2) { animation: fadeInGallery 0.3s forwards; animation-delay: 0.2s; }
-        .gallery img:nth-child(3) { animation: fadeInGallery 0.3s forwards; animation-delay: 0.3s; }
-        .gallery img:nth-child(4) { animation: fadeInGallery 0.3s forwards; animation-delay: 0.4s; }
-        .gallery img:nth-child(5) { animation: fadeInGallery 0.3s forwards; animation-delay: 0.5s; }
+        .gallery img:nth-child(1), .gallery audio:nth-child(1), .gallery video:nth-child(1) { animation: fadeInGallery 0.3s forwards; animation-delay: 0.1s; }
+        .gallery img:nth-child(2), .gallery audio:nth-child(2), .gallery video:nth-child(2) { animation: fadeInGallery 0.3s forwards; animation-delay: 0.2s; }
+        .gallery img:nth-child(3), .gallery audio:nth-child(3), .gallery video:nth-child(3) { animation: fadeInGallery 0.3s forwards; animation-delay: 0.3s; }
+        .gallery img:nth-child(4), .gallery audio:nth-child(4), .gallery video:nth-child(4) { animation: fadeInGallery 0.3s forwards; animation-delay: 0.4s; }
+        .gallery img:nth-child(5), .gallery audio:nth-child(5), .gallery video:nth-child(5) { animation: fadeInGallery 0.3s forwards; animation-delay: 0.5s; }
         @keyframes fadeInGallery {
             to { opacity: 1; }
+        }
+        .attribution {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
         }
         .offline {
             color: #888;
@@ -229,7 +329,7 @@
         }
         .result-card-actions {
             display: flex;
-            gap: 10px;
+            gap: var(--space-sm);
         }
         .result-card-actions button {
             display: flex;
@@ -238,70 +338,45 @@
             font-size: 14px;
             padding: 6px 12px;
         }
-        .guide {
+        .categories {
+            margin: 20px 0;
+            padding: 10px;
             background: var(--input-bg);
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-        .guide h2 {
-            margin-top: 0;
-        }
-        .guide ul {
-            padding-left: 20px;
-        }
-        .guide .try-now, .guide .suggestion, .guide .trending {
-            display: inline-block;
-            margin: 5px;
-            padding: 6px 12px;
-            background: var(--button-bg);
-            color: var(--button-text);
             border-radius: 4px;
+        }
+        .categories a {
+            color: #007bff;
             text-decoration: none;
-            transition: transform 0.2s;
+            margin-right: 10px;
         }
-        .guide .try-now:hover, .guide .suggestion:hover, .guide .trending:hover {
-            transform: scale(1.05);
+        .categories a:hover {
+            text-decoration: underline;
         }
-        .article-content {
-            margin-top: 20px;
-        }
-        .article-content p {
-            margin: 10px 0;
-        }
-        .article-content h2, .article-content h3 {
-            margin: 15px 0 10px;
-            scroll-margin-top: 20px;
-        }
-        .toc {
-            flex: 1;
+        .infobox {
+            float: right;
+            width: 250px;
             background: var(--input-bg);
             padding: 15px;
             border-radius: 8px;
-            position: sticky;
-            top: 20px;
-            max-height: calc(100vh - 40px);
-            overflow-y: auto;
+            margin: 0 0 10px 10px;
+            font-size: 14px;
         }
-        .toc h3 {
-            margin: 0 0 10px;
-            font-size: 16px;
+        .infobox table {
+            width: 100%;
+            border-collapse: collapse;
         }
-        .toc ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
+        .infobox th, .infobox td {
+            padding: 5px;
+            border: 1px solid #ccc;
         }
-        .toc li {
-            margin: 5px 0;
+        .infobox th {
+            background: var(--button-bg);
+            color: var(--button-text);
         }
-        .toc a {
-            color: #007bff;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .toc a:hover {
-            text-decoration: underline;
+        #map {
+            height: 200px;
+            margin: 10px 0;
+            border-radius: 4px;
         }
         .modal {
             display: none;
@@ -367,14 +442,40 @@
         .modal-toc a:hover {
             text-decoration: underline;
         }
-        @media (max-width: 768px) {
-            .container {
+        @media (max-width: 1024px) {
+            .main-container {
                 flex-direction: column;
             }
-            .toc {
+            .sidebar-left {
+                width: 100%;
                 position: static;
                 max-height: none;
-                margin-bottom: 20px;
+            }
+            .sidebar-right {
+                width: 100%;
+                position: static;
+                max-height: none;
+            }
+            .hamburger {
+                display: block;
+            }
+            .sidebar-left {
+                display: none;
+            }
+            .sidebar-left.active {
+                display: block;
+            }
+            .welcome-guide {
+                top: 80px;
+            }
+        }
+        @media (max-width: 768px) {
+            .infobox {
+                width: 100%;
+                float: none;
+            }
+            .thumbnail {
+                max-width: 100%;
             }
             .result-card {
                 flex-direction: column;
@@ -382,39 +483,110 @@
             .result-card img {
                 max-width: 100%;
             }
-            .thumbnail {
-                max-width: 100%;
-            }
         }
+.welcome-guide {
+    background: var(--input-bg);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    position: sticky;
+    top: 60px;
+    z-index: 10;
+}
+
+.search-container {
+    margin-top: 20px; /* Tambah jarak dari panduan */
+    padding: 15px;
+    background: var(--input-bg);
+    border-radius: 8px;
+}
+
+.try-now {
+    margin-bottom: 10px; /* Jarak antara tombol dan input pencarian */
+}
+
+.search-container div {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+    .search-container {
+        padding: 10px;
+    }
+    .try-now {
+        width: 100%;
+    }
+}
     </style>
 </head>
 <body>
     <button class="theme-toggle" onclick="toggleTheme()">🌙 Dark Mode</button>
-    <div class="search-container">
-        <select id="languageSelect">
-            <option value="id">Indonesia</option>
-            <option value="su">Sunda</option>
-            <option value="en">English</option>
-        </select>
-        <select id="filterSelect">
-            <option value="all">Semua</option>
-            <option value="main">Artikel Utama</option>
-            <option value="category">Kategori</option>
-            <option value="popular">Terpopuler</option>
-            <option value="recent">Terbaru</option>
-        </select>
-        <input type="text" id="searchInput" placeholder="Cari artikel Wikipedia...">
-        <button onclick="searchWikipedia()">Cari</button>
-        <div id="autocompleteSuggestions" class="autocomplete-suggestions" style="display: none;"></div>
+    <button class="hamburger" onclick="toggleSidebar()">☰</button>
+    <div class="main-container">
+        <div class="sidebar-left" id="sidebarLeft">
+            <h3>Navigasi</h3>
+            <ul>
+                <li><a onclick="goToHome()">Halaman Utama</a></li>
+                <li><a onclick="showRecentChanges()">Perubahan Terbaru</a></li>
+                <li><a onclick="showFeaturedArticles()">Artikel Pilihan</a></li>
+                <li><a onclick="showRandomArticle()">Acak</a></li>
+                <li>
+                    <select id="languageSelectNav" onchange="changeLanguage(this.value)">
+                        <option value="id">Indonesia</option>
+                        <option value="su">Sunda</option>
+                        <option value="en">English</option>
+                    </select>
+                </li>
+                <li><a href="https://www.wiktionary.org" target="_blank">Wiktionary</a></li>
+                <li><a href="https://www.wikidata.org" target="_blank">Wikidata</a></li>
+                <li><a href="https://commons.wikimedia.org" target="_blank">Commons</a></li>
+            </ul>
+            <h3 id="tocTitle" style="display: none;">Daftar Isi</h3>
+            <ul id="tocList" style="display: none;"></ul>
+        </div>
+        <div class="content-container">
+            <div class="welcome-guide">
+                <h2>Wikipedia Search!</h2>
+                <p>Cari artikel Wikipedia mudah dan cepat.</p>
+            </div>
+            <div class="search-container" style="margin-top: 20px;">
+                <button class="try-now" onclick="searchWikipedia('Indonesia')" style="margin-bottom: 10px;">Mulai Jelajah</button>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <select id="languageSelect">
+                        <option value="id">Indonesia</option>
+                        <option value="su">Sunda</option>
+                        <option value="en">English</option>
+                    </select>
+                    <select id="filterSelect">
+                        <option value="all">Semua</option>
+                        <option value="main">Artikel Utama</option>
+                        <option value="category">Kategori</option>
+                        <option value="popular">Terpopuler</option>
+                        <option value="recent">Terbaru</option>
+                    </select>
+                    <input type="text" id="searchInput" placeholder="Cari artikel Wikipedia...">
+                    <select id="searchMode">
+                        <option value="full">Pencarian Penuh</option>
+                        <option value="direct">Langsung ke Artikel</option>
+                    </select>
+                    <button onclick="searchWikipedia()">Cari</button>
+                    <div id="autocompleteSuggestions" class="autocomplete-suggestions" style="display: none;"></div>
+                </div>
+            </div>
+            <div id="history" class="history"></div>
+            <div id="bookmarks" class="bookmarks"></div>
+            <div id="content"></div>
+            <div id="categories" class="categories"></div>
+            <div id="actions" class="actions"></div>
+            <div id="pagination" class="pagination"></div>
+        </div>
+        <div class="sidebar-right" id="sidebarRight">
+            <h3>Bahasa Lain</h3>
+            <ul id="langLinks"></ul>
+        </div>
     </div>
-    <div id="history" class="history"></div>
-    <div id="bookmarks" class="bookmarks"></div>
-    <div class="container">
-        <div id="toc" class="toc"></div>
-        <div id="content"></div>
-    </div>
-    <div id="actions" class="actions"></div>
-    <div id="pagination" class="pagination"></div>
     <div id="previewModal" class="modal">
         <div class="modal-content">
             <button class="modal-close" onclick="closePreview()">X</button>
@@ -422,6 +594,8 @@
         </div>
     </div>
 
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script>
         // State management
         let state = {
@@ -440,7 +614,12 @@
             theme: localStorage.getItem('theme') || 'light',
             selectedSuggestionIndex: -1,
             isFetching: false,
-            trendingTopics: []
+            trendingTopics: [],
+            searchMode: 'full',
+            langLinks: [],
+            categories: [],
+            infobox: null,
+            coordinates: null
         };
 
         // DOM elements
@@ -452,12 +631,20 @@
             pagination: document.getElementById('pagination'),
             languageSelect: document.getElementById('languageSelect'),
             filterSelect: document.getElementById('filterSelect'),
+            searchMode: document.getElementById('searchMode'),
             autocomplete: document.getElementById('autocompleteSuggestions'),
             actions: document.getElementById('actions'),
-            toc: document.getElementById('toc'),
+            tocTitle: document.getElementById('tocTitle'),
+            tocList: document.getElementById('tocList'),
+            categories: document.getElementById('categories'),
+            sidebarLeft: document.getElementById('sidebarLeft'),
+            sidebarRight: document.getElementById('sidebarRight'),
+            langLinks: document.getElementById('langLinks'),
             previewModal: document.getElementById('previewModal'),
             previewContent: document.getElementById('previewContent')
         };
+
+        let map = null;
 
         // Initialize theme and language
         document.body.dataset.theme = state.theme;
@@ -483,6 +670,88 @@
             document.body.dataset.theme = state.theme;
             document.querySelector('.theme-toggle').textContent = 
                 state.theme === 'light' ? '🌙 Dark Mode' : '☀️ Light Mode';
+        }
+
+        // Toggle sidebar
+        function toggleSidebar() {
+            elements.sidebarLeft.classList.toggle('active');
+        }
+
+        // Navigation functions
+        function goToHome() {
+            state.selectedArticle = null;
+            state.results = [];
+            updateView();
+        }
+
+        async function showRecentChanges() {
+            state.isLoading = true;
+            updateView();
+            const apiUrl = `https://${state.language}.wikipedia.org/w/api.php?action=query&list=recentchanges&rcnamespace=0&rclimit=10&format=json&origin=*`;
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                state.results = data.query.recentchanges.map(item => ({
+                    title: item.title,
+                    snippet: `Diperbarui pada ${new Date(item.timestamp).toLocaleString()}`,
+                    thumbnail: null
+                }));
+                state.totalHits = state.results.length;
+            } catch (error) {
+                state.error = 'Gagal memuat perubahan terbaru';
+            }
+            state.isLoading = false;
+            updateView();
+        }
+
+        async function showFeaturedArticles() {
+            state.isLoading = true;
+            updateView();
+            const apiUrl = `https://${state.language}.wikipedia.org/w/api.php?action=query&list=categorymembers&cmtitle=Category:Artikel_pilihan&cmnamespace=0&cmlimit=10&format=json&origin=*`;
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                state.results = data.query.categorymembers.map(item => ({
+                    title: item.title,
+                    snippet: 'Artikel unggulan Wikipedia',
+                    thumbnail: null
+                }));
+                state.totalHits = state.results.length;
+            } catch (error) {
+                state.error = 'Gagal memuat artikel pilihan';
+            }
+            state.isLoading = false;
+            updateView();
+        }
+
+        async function showRandomArticle() {
+            state.isLoading = true;
+            updateView();
+            const apiUrl = `https://${state.language}.wikipedia.org/w/api.php?action=query&list=random&rnnamespace=0&rnlimit=1&format=json&origin=*`;
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                const title = data.query.random[0].title;
+                selectArticle(title);
+            } catch (error) {
+                state.error = 'Gagal memuat artikel acak';
+                state.isLoading = false;
+                updateView();
+            }
+        }
+
+        async function changeLanguage(lang) {
+            state.language = lang;
+            document.body.setAttribute('lang', state.language);
+            elements.languageSelect.value = lang;
+            document.getElementById('languageSelectNav').value = lang;
+            state.trendingTopics = await fetchTrendingTopics();
+            if (state.selectedArticle) {
+                selectArticle(state.selectedArticle.title);
+            } else if (elements.searchInput.value) {
+                searchWikipedia();
+            }
+            updateView();
         }
 
         // Fetch Wikipedia search results
@@ -561,7 +830,7 @@
             const date = new Date();
             const year = date.getFullYear();
             const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate() - 1).padStart(2, '0'); // Yesterday
+            const day = String(date.getDate() - 1).padStart(2, '0');
             const apiUrl = `https://wikimedia.org/api/rest_v1/metrics/pageviews/top/${state.language}.wikipedia/all-access/${year}/${month}/${day}`;
 
             try {
@@ -591,7 +860,7 @@
             if (!title.trim()) return null;
             if (state.isOffline) return getOfflineData(title);
 
-            const apiUrl = `https://${state.language}.wikipedia.org/w/api.php?action=query&prop=extracts|pageimages|sections|images&titles=${encodeURIComponent(title)}&format=json&origin=*&explaintext&piprop=thumbnail&pithumbsize=300&imlimit=5`;
+            const apiUrl = `https://${state.language}.wikipedia.org/w/api.php?action=query&prop=extracts|pageimages|sections|images|langlinks|categories|coordinates|revisions&titles=${encodeURIComponent(title)}&format=json&origin=*&explaintext&piprop=thumbnail&pithumbsize=300&imlimit=5&lllimit=50&cllimit=10&rvprop=content&rvsection=0`;
 
             try {
                 const response = await fetch(apiUrl);
@@ -599,18 +868,32 @@
                 const page = Object.values(data.query.pages)[0];
                 if (page.missing) return null;
 
-                const images = page.images?.filter(img => img.title.match(/\.(jpg|jpeg|png|gif)$/i))
+                const images = page.images?.filter(img => img.title.match(/\.(jpg|jpeg|png|gif|ogg|mp3|mp4)$/i))
                     .map(img => ({
                         title: img.title,
-                        url: null // Will be fetched later
+                        url: null,
+                        type: img.title.match(/\.(ogg|mp3)$/i) ? 'audio' : img.title.match(/\.mp4$/i) ? 'video' : 'image'
                     })) || [];
+
+                const langLinks = page.langlinks?.map(link => ({
+                    lang: link.lang,
+                    title: link['*']
+                })) || [];
+
+                const categories = page.categories?.map(cat => cat.title.replace('Category:', '')) || [];
+
+                const infobox = parseInfobox(page.revisions?.[0]?.['*'] || '');
 
                 const result = {
                     title: page.title,
                     extract: page.extract || 'Tidak ada isi tersedia',
                     thumbnail: page.thumbnail?.source || null,
                     sections: page.sections || [],
-                    images
+                    images,
+                    langLinks,
+                    categories,
+                    infobox,
+                    coordinates: page.coordinates?.[0] || null
                 };
 
                 cacheResult(title, result);
@@ -618,6 +901,21 @@
             } catch (error) {
                 return getOfflineData(title);
             }
+        }
+
+        // Parse infobox from wikitext
+        function parseInfobox(wikitext) {
+            const infoboxRegex = /\{\{Infobox[^}]*?\n((?:\|[^}]*?\n)*)\}\}/i;
+            const match = wikitext.match(infoboxRegex);
+            if (!match) return null;
+
+            const lines = match[1].split('\n').filter(line => line.startsWith('|'));
+            const infobox = {};
+            lines.forEach(line => {
+                const [key, value] = line.slice(1).split('=').map(s => s.trim());
+                if (key && value) infobox[key] = value.replace(/\[|\]/g, '');
+            });
+            return infobox;
         }
 
         // Fetch article preview (intro only)
@@ -644,39 +942,43 @@
             }
         }
 
-        // Fetch image URLs
+        // Fetch image/audio/video URLs and attribution
         async function fetchImageUrls(titles) {
             if (!titles.length) return [];
 
             const cache = JSON.parse(localStorage.getItem('imageCache')) || {};
-            const cachedImages = titles
+            const cachedItems = titles
                 .map(title => cache[title])
-                .filter(img => img && (Date.now() - img.timestamp) < 7 * 24 * 60 * 60 * 1000);
-            if (cachedImages.length === titles.length) {
-                return cachedImages;
+                .filter(item => item && (Date.now() - item.timestamp) < 7 * 24 * 60 * 60 * 1000);
+            if (cachedItems.length === titles.length) {
+                return cachedItems;
             }
 
             const uncachedTitles = titles.filter(title => !cache[title]);
-            const apiUrl = `https://${state.language}.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(uncachedTitles.join('|'))}&prop=imageinfo&iiprop=url&format=json&origin=*&iiurlwidth=150`;
+            const apiUrl = `https://${state.language}.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(uncachedTitles.join('|'))}&prop=imageinfo&iiprop=url|extmetadata&format=json&origin=*&iiurlwidth=150`;
 
             try {
                 const response = await fetch(apiUrl);
                 const data = await response.json();
                 const pages = Object.values(data.query.pages);
-                const newImages = pages.map(page => ({
+                const newItems = pages.map(page => ({
                     title: page.title,
-                    url: page.imageinfo?.[0]?.thumburl || null
-                })).filter(img => img.url);
+                    url: page.imageinfo?.[0]?.thumburl || page.imageinfo?.[0]?.url || null,
+                    type: page.title.match(/\.(ogg|mp3)$/i) ? 'audio' : page.title.match(/\.mp4$/i) ? 'video' : 'image',
+                    attribution: page.imageinfo?.[0]?.extmetadata
+                        ? `© ${page.imageinfo[0].extmetadata.Artist?.value || 'Unknown'}, ${page.imageinfo[0].extmetadata.LicenseShortName?.value || 'Unknown License'}`
+                        : null
+                })).filter(item => item.url);
 
-                newImages.forEach(img => {
-                    cache[img.title] = { ...img, timestamp: Date.now() };
+                newItems.forEach(item => {
+                    cache[item.title] = { ...item, timestamp: Date.now() };
                 });
                 localStorage.setItem('imageCache', JSON.stringify(cache));
 
-                return titles.map(title => cache[title] || newImages.find(img => img.title === title) || { title, url: null });
+                return titles.map(title => cache[title] || newItems.find(item => item.title === title) || { title, url: null, type: 'image', attribution: null });
             } catch (error) {
-                console.error('Error fetching image URLs:', error);
-                return titles.map(title => ({ title, url: null }));
+                console.error('Error fetching media URLs:', error);
+                return titles.map(title => ({ title, url: null, type: 'image', attribution: null }));
             }
         }
 
@@ -712,12 +1014,22 @@
             return null;
         }
 
-        // Lazy load images
-        function lazyLoadImages() {
-            const images = document.querySelectorAll('.thumbnail, .gallery img');
-            images.forEach(img => {
-                img.addEventListener('load', () => img.classList.add('loaded'));
+        // Lazy load media
+        function lazyLoadMedia() {
+            const media = document.querySelectorAll('.thumbnail, .gallery img, .gallery audio, .gallery video');
+            media.forEach(item => {
+                item.addEventListener('load', () => item.classList.add('loaded'));
             });
+        }
+
+        // Initialize map
+        function initMap(lat, lon) {
+            if (map) map.remove();
+            map = L.map('map').setView([lat, lon], 10);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+            L.marker([lat, lon]).addTo(map);
         }
 
         // Generate table of contents
@@ -750,7 +1062,11 @@
         // Update view
         async function updateView() {
             elements.content.innerHTML = '';
-            elements.toc.innerHTML = '';
+            elements.tocTitle.style.display = state.selectedArticle && state.selectedArticle.sections.length ? 'block' : 'none';
+            elements.tocList.style.display = state.selectedArticle && state.selectedArticle.sections.length ? 'block' : 'none';
+            elements.tocList.innerHTML = '';
+            elements.categories.innerHTML = '';
+            elements.langLinks.innerHTML = '';
 
             if (state.isLoading) {
                 elements.content.innerHTML = '<div class="loading">Memuat...</div>';
@@ -764,43 +1080,86 @@
                     extract = extract.replace(headingRegex, `<h${section.level} id="${section.anchor}">${section.title}</h${section.level}>`);
                 });
 
-                // Fetch image URLs for gallery (debounced)
-                const debouncedFetchImages = debounce(async () => {
-                    const imageUrls = await fetchImageUrls(state.selectedArticle.images.map(img => img.title));
-                    state.selectedArticle.images.forEach(img => {
-                        const match = imageUrls.find(url => url.title === img.title);
-                        img.url = match?.url || null;
+                // Fetch media URLs
+                const debouncedFetchMedia = debounce(async () => {
+                    const mediaUrls = await fetchImageUrls(state.selectedArticle.images.map(item => item.title));
+                    state.selectedArticle.images.forEach(item => {
+                        const match = mediaUrls.find(url => url.title === item.title);
+                        item.url = match?.url || null;
+                        item.attribution = match?.attribution || null;
                     });
                     const galleryHtml = state.selectedArticle.images.length ? `
                         <div class="gallery">
                             ${state.selectedArticle.images
-                                .filter(img => img.url)
-                                .map(img => `<img src="${img.url}" alt="${img.title}" onclick="window.open('${img.url}', '_blank')">`)
+                                .filter(item => item.url)
+                                .map(item => `
+                                    ${item.type === 'audio' ? `<audio src="${item.url}" controls></audio>` :
+                                      item.type === 'video' ? `<video src="${item.url}" controls></video>` :
+                                      `<img src="${item.url}" alt="${item.title}" onclick="window.open('${item.url}', '_blank')">`}
+                                    ${item.attribution ? `<div class="attribution">${item.attribution}</div>` : ''}
+                                `)
                                 .join('')}
                         </div>
                     ` : '';
+
+                    // Render infobox
+                    const infoboxHtml = state.selectedArticle.infobox ? `
+                        <div class="infobox">
+                            <table>
+                                ${Object.entries(state.selectedArticle.infobox).map(([key, value]) => `
+                                    <tr>
+                                        <th>${key}</th>
+                                        <td>${value}</td>
+                                    </tr>
+                                `).join('')}
+                            </table>
+                        </div>
+                    ` : '';
+
+                    // Render map
+                    const mapHtml = state.selectedArticle.coordinates ? `
+                        <div id="map"></div>
+                    ` : '';
+
                     elements.content.innerHTML = `
+                        ${infoboxHtml}
                         ${state.selectedArticle.thumbnail ? `<img src="${state.selectedArticle.thumbnail}" class="thumbnail" alt="${state.selectedArticle.title}">` : ''}
                         <h2>${state.selectedArticle.title}</h2>
                         <div class="article-content">${extract.split('\n').map(paragraph => paragraph.trim() ? `<p>${paragraph}</p>` : '').join('')}</div>
+                        ${mapHtml}
                         ${galleryHtml}
                         ${state.selectedArticle.offline ? '<p class="offline">Data dari cache (offline)</p>' : ''}
                     `;
-                    lazyLoadImages();
+                    lazyLoadMedia();
+
+                    if (state.selectedArticle.coordinates) {
+                        initMap(state.selectedArticle.coordinates.lat, state.selectedArticle.coordinates.lon);
+                    }
                 }, 300);
-                debouncedFetchImages();
+                debouncedFetchMedia();
 
                 if (sections.length) {
-                    elements.toc.innerHTML = `
-                        <h3>Daftar Isi</h3>
-                        <ul>
-                            ${sections.map(section => `
-                                <li style="margin-left: ${(section.level - 1) * 15}px">
-                                    <a onclick="scrollToSection('${section.anchor}')">${section.title}</a>
-                                </li>
-                            `).join('')}
-                        </ul>
+                    elements.tocList.innerHTML = `
+                        ${sections.map(section => `
+                            <li style="margin-left: ${(section.level - 1) * 15}px">
+                                <a onclick="scrollToSection('${section.anchor}')">${section.title}</a>
+                            </li>
+                        `).join('')}
                     `;
+                }
+
+                if (state.selectedArticle.categories.length) {
+                    elements.categories.innerHTML = `
+                        Kategori: ${state.selectedArticle.categories
+                            .map(cat => `<a onclick="searchWikipedia('Category:${cat}')">${cat}</a>`)
+                            .join(', ')}
+                    `;
+                }
+
+                if (state.selectedArticle.langLinks.length) {
+                    elements.langLinks.innerHTML = state.selectedArticle.langLinks
+                        .map(link => `<li><a onclick="switchLanguageArticle('${link.lang}', '${link.title}')">${link.lang}</a></li>`)
+                        .join('');
                 }
             } else if (state.results.length) {
                 elements.content.innerHTML = state.results.map(item => {
@@ -813,7 +1172,7 @@
                                 <p>${item.snippet}...</p>
                                 <div class="result-card-actions">
                                     <button onclick="event.stopPropagation(); toggleCardBookmark('${item.title}')">
-                                        ${isBookmarked ? 'Hapus Bookmark' : 'Bookmark'} �-bookmark
+                                        ${isBookmarked ? 'Hapus Bookmark' : 'Bookmark'} 📑
                                     </button>
                                     <button onclick="event.stopPropagation(); showPreview('${item.title}')">Pratinjau 👀</button>
                                     <button onclick="event.stopPropagation(); shareCard('${item.title}')">Bagikan 📤</button>
@@ -830,34 +1189,7 @@
                 if (!state.trendingTopics.length) {
                     state.trendingTopics = await fetchTrendingTopics();
                 }
-                elements.content.innerHTML = `
-                    <div class="guide">
-                        <h2>Selamat Datang di Wikipedia Search!</h2>
-                        <p>Cari artikel Wikipedia dengan mudah dan cepat. Berikut panduan penggunaan:</p>
-                        <ul>
-                            <li><strong>Pencarian</strong>: Ketik kata kunci, gunakan tombol panah untuk memilih saran.</li>
-                            <li><strong>Bahasa</strong>: Pilih Indonesia, Sunda, atau Inggris.</li>
-                            <li><strong>Filter</strong>: Urutkan berdasarkan relevansi, popularitas, atau terbaru.</li>
-                            <li><strong>Bookmark</strong>: Simpan artikel favorit untuk akses cepat.</li>
-                            <li><strong>Bagikan/Unduh</strong>: Bagikan artikel atau unduh sebagai teks.</li>
-                            <li><strong>Mode Gelap</strong>: Aktifkan dari tombol kanan atas.</li>
-                            <li><strong>Offline</strong>: Data tersimpan ditampilkan saat offline.</li>
-                        </ul>
-                        <p>Coba sekarang: 
-                            <button class="try-now" onclick="searchWikipedia('Indonesia')">Coba Sekarang</button>
-                        </p>
-                        <p>Saran pencarian: 
-                            <button class="suggestion" onclick="searchWikipedia('Sunda')">Sunda</button>
-                            <button class="suggestion" onclick="searchWikipedia('Jakarta')">Jakarta</button>
-                            <button class="suggestion" onclick="searchWikipedia('Teknologi')">Teknologi</button>
-                        </p>
-                        <p>Topik populer: 
-                            ${state.trendingTopics.map(topic => `
-                                <button class="trending" onclick="searchWikipedia('${topic}')">${topic}</button>
-                            `).join('')}
-                        </p>
-                    </div>
-                `;
+                // No additional welcome guide here, already in sticky header
             }
 
             elements.history.innerHTML = state.history.length ? 
@@ -879,6 +1211,16 @@
             if (element) {
                 element.scrollIntoView({ behavior: 'smooth' });
             }
+        }
+
+        // Switch article language
+        async function switchLanguageArticle(lang, title) {
+            state.language = lang;
+            document.body.setAttribute('lang', lang);
+            elements.languageSelect.value = lang;
+            document.getElementById('languageSelectNav').value = lang;
+            state.trendingTopics = await fetchTrendingTopics();
+            selectArticle(title);
         }
 
         // Toggle bookmark from card
@@ -939,7 +1281,7 @@
                     <h2>${preview.title}</h2>
                     <p>${extract}</p>
                 `;
-                lazyLoadImages();
+                lazyLoadMedia();
             }
             elements.previewModal.style.display = 'flex';
         }
@@ -957,7 +1299,7 @@
                 <button onclick="shareResult()">Bagikan 📤</button>
                 <button onclick="openInWikipedia()">Buka di Wikipedia 🌐</button>
                 <button onclick="exportResult()">Unduh 📥</button>
-                <button onclick="toggleBookmark()">${isBookmarked ? 'Hapus Bookmark 🗑️' : 'Tambah Bookmark �-bookmark'}</button>
+                <button onclick="toggleBookmark()">${isBookmarked ? 'Hapus Bookmark 🗑️' : 'Tambah Bookmark 📑'}</button>
             ` : '';
         }
 
@@ -990,14 +1332,26 @@
                 localStorage.setItem('searchHistory', JSON.stringify(state.history));
             }
 
-            state.selectedArticle = null;
-            state.currentPage = 1;
-            state.results = [];
-            const result = await fetchWikipediaSearch(query, state.currentPage);
-            state.isLoading = false;
-            state.error = result.error || null;
-            state.results = result.error ? [] : result.results;
-            state.totalHits = result.error ? 0 : result.totalHits;
+            state.searchMode = elements.searchMode.value;
+            if (state.searchMode === 'direct') {
+                state.isLoading = true;
+                updateView();
+                state.selectedArticle = await fetchWikipediaArticle(query);
+                state.isLoading = false;
+                if (!state.selectedArticle) {
+                    state.error = 'Artikel tidak ditemukan, coba pencarian penuh';
+                    state.results = [];
+                }
+            } else {
+                state.selectedArticle = null;
+                state.currentPage = 1;
+                state.results = [];
+                const result = await fetchWikipediaSearch(query, state.currentPage);
+                state.isLoading = false;
+                state.error = result.error || null;
+                state.results = result.error ? [] : result.results;
+                state.totalHits = result.error ? 0 : result.totalHits;
+            }
             updateView();
         }
 
@@ -1111,17 +1465,17 @@
         });
 
         elements.languageSelect.addEventListener('change', async (e) => {
-            state.language = e.target.value;
-            document.body.setAttribute('lang', state.language);
-            state.trendingTopics = await fetchTrendingTopics();
-            if (elements.searchInput.value) searchWikipedia();
-            updateView();
+            changeLanguage(e.target.value);
         });
 
         elements.filterSelect.addEventListener('change', (e) => {
             state.filter = e.target.value;
             state.currentPage = 1;
             if (elements.searchInput.value) searchWikipedia();
+        });
+
+        elements.searchMode.addEventListener('change', (e) => {
+            state.searchMode = e.target.value;
         });
 
         window.addEventListener('online', () => {

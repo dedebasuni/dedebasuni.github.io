@@ -219,7 +219,7 @@
                 return;
             }
             try {
-                map = L.map('map').setView([-6.9147, 107.6098], 5);
+                map = L.map('map').setView([-2.5489, 118.0149], 5);
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     attribution: '© <a href="https://osm.org/copyright">OSM</a>'
                 }).addTo(map);
@@ -250,47 +250,47 @@
 
         const AQI_API_KEY = 'e98de5f3705f63f8923b88904e99af9f';
 
-        // Daftar Provinsi untuk Pencarian
+        // Daftar Provinsi untuk Pencarian (dengan kode adm4)
         const provinces = [
-            { name: "Aceh", file: "Aceh", lat: 5.5483, lon: 95.3238 },
-            { name: "Bali", file: "Bali", lat: -8.4095, lon: 115.1889 },
-            { name: "Banten", file: "Banten", lat: -6.4058, lon: 106.0640 },
-            { name: "Bengkulu", file: "Bengkulu", lat: -3.8004, lon: 102.2655 },
-            { name: "DI Yogyakarta", file: "DIYogyakarta", lat: -7.7971, lon: 110.3705 },
-            { name: "DKI Jakarta", file: "DKIJakarta", lat: -6.2088, lon: 106.8456 },
-            { name: "Gorontalo", file: "Gorontalo", lat: 0.6999, lon: 122.4467 },
-            { name: "Jambi", file: "Jambi", lat: -1.6101, lon: 103.6131 },
-            { name: "Jawa Barat", file: "JawaBarat", lat: -6.9147, lon: 107.6098 },
-            { name: "Jawa Tengah", file: "JawaTengah", lat: -7.1507, lon: 110.1403 },
-            { name: "Jawa Timur", file: "JawaTimur", lat: -7.5361, lon: 112.2384 },
-            { name: "Kalimantan Barat", file: "KalimantanBarat", lat: -0.1322, lon: 111.4753 },
-            { name: "Kalimantan Selatan", file: "KalimantanSelatan", lat: -3.3167, lon: 114.5901 },
-            { name: "Kalimantan Tengah", file: "KalimantanTengah", lat: -1.6815, lon: 113.3824 },
-            { name: "Kalimantan Timur", file: "KalimantanTimur", lat: 0.5387, lon: 116.4194 },
-            { name: "Kalimantan Utara", file: "KalimantanUtara", lat: 3.0926, lon: 115.2838 },
-            { name: "Kepulauan Bangka Belitung", file: "KepulauanBangkaBelitung", lat: -2.7411, lon: 106.4406 },
-            { name: "Kepulauan Riau", file: "KepulauanRiau", lat: 3.9457, lon: 108.1429 },
-            { name: "Lampung", file: "Lampung", lat: -4.5586, lon: 105.4068 },
-            { name: "Maluku", file: "Maluku", lat: -3.2385, lon: 130.1453 },
-            { name: "Maluku Utara", file: "MalukuUtara", lat: 1.5700, lon: 127.8088 },
-            { name: "Nusa Tenggara Barat", file: "NusaTenggaraBarat", lat: -8.6529, lon: 117.3616 },
-            { name: "Nusa Tenggara Timur", file: "NusaTenggaraTimur", lat: -8.6574, lon: 121.0794 },
-            { name: "Papua", file: "Papua", lat: -4.2699, lon: 138.0804 },
-            { name: "Papua Barat", file: "PapuaBarat", lat: -1.3361, lon: 133.1747 },
-            { name: "Riau", file: "Riau", lat: 0.2933, lon: 101.7068 },
-            { name: "Sulawesi Barat", file: "SulawesiBarat", lat: -2.8440, lon: 119.2321 },
-            { name: "Sulawesi Selatan", file: "SulawesiSelatan", lat: -3.6688, lon: 119.9741 },
-            { name: "Sulawesi Tengah", file: "SulawesiTengah", lat: -1.4300, lon: 121.4453 },
-            { name: "Sulawesi Tenggara", file: "SulawesiTenggara", lat: -4.1449, lon: 122.1746 },
-            { name: "Sulawesi Utara", file: "SulawesiUtara", lat: 1.4931, lon: 124.8413 },
-            { name: "Sumatera Barat", file: "SumateraBarat", lat: -0.7399, lon: 100.8000 },
-            { name: "Sumatera Selatan", file: "SumateraSelatan", lat: -3.3199, lon: 103.9146 },
-            { name: "Sumatera Utara", file: "SumateraUtara", lat: 2.1154, lon: 99.5451 }
+            { name: "Aceh", adm4: "11.01.01.2001", lat: 5.5483, lon: 95.3238 },
+            { name: "Bali", adm4: "51.01.01.1001", lat: -8.4095, lon: 115.1889 },
+            { name: "Banten", adm4: "36.03.01.1001", lat: -6.4058, lon: 106.0640 },
+            { name: "Bengkulu", adm4: "17.01.01.1001", lat: -3.8004, lon: 102.2655 },
+            { name: "DI Yogyakarta", adm4: "34.01.01.1001", lat: -7.7971, lon: 110.3705 },
+            { name: "DKI Jakarta", adm4: "31.71.01.1001", lat: -6.2088, lon: 106.8456 },
+            { name: "Gorontalo", adm4: "75.01.01.1001", lat: 0.6999, lon: 122.4467 },
+            { name: "Jambi", adm4: "15.01.01.1001", lat: -1.6101, lon: 103.6131 },
+            { name: "Jawa Barat", adm4: "32.03.16.2007", lat: -6.9147, lon: 107.6098 },
+            { name: "Jawa Tengah", adm4: "33.01.01.1001", lat: -7.1507, lon: 110.1403 },
+            { name: "Jawa Timur", adm4: "35.01.01.1001", lat: -7.5361, lon: 112.2384 },
+            { name: "Kalimantan Barat", adm4: "61.01.01.1001", lat: -0.1322, lon: 111.4753 },
+            { name: "Kalimantan Selatan", adm4: "63.01.01.1001", lat: -3.3167, lon: 114.5901 },
+            { name: "Kalimantan Tengah", adm4: "62.01.01.1001", lat: -1.6815, lon: 113.3824 },
+            { name: "Kalimantan Timur", adm4: "64.01.01.1001", lat: 0.5387, lon: 116.4194 },
+            { name: "Kalimantan Utara", adm4: "65.01.01.1001", lat: 3.0926, lon: 115.2838 },
+            { name: "Kepulauan Bangka Belitung", adm4: "19.01.01.1001", lat: -2.7411, lon: 106.4406 },
+            { name: "Kepulauan Riau", adm4: "21.01.01.1001", lat: 3.9457, lon: 108.1429 },
+            { name: "Lampung", adm4: "18.01.01.1001", lat: -4.5586, lon: 105.4068 },
+            { name: "Maluku", adm4: "81.01.01.1001", lat: -3.2385, lon: 130.1453 },
+            { name: "Maluku Utara", adm4: "82.01.01.1001", lat: 1.5700, lon: 127.8088 },
+            { name: "Nusa Tenggara Barat", adm4: "52.01.01.1001", lat: -8.6529, lon: 117.3616 },
+            { name: "Nusa Tenggara Timur", adm4: "53.01.01.1001", lat: -8.6574, lon: 121.0794 },
+            { name: "Papua", adm4: "91.01.01.1001", lat: -4.2699, lon: 138.0804 },
+            { name: "Papua Barat", adm4: "92.01.01.1001", lat: -1.3361, lon: 133.1747 },
+            { name: "Riau", adm4: "14.01.01.1001", lat: 0.2933, lon: 101.7068 },
+            { name: "Sulawesi Barat", adm4: "76.01.01.1001", lat: -2.8440, lon: 119.2321 },
+            { name: "Sulawesi Selatan", adm4: "73.01.01.1001", lat: -3.6688, lon: 119.9741 },
+            { name: "Sulawesi Tengah", adm4: "72.01.01.1001", lat: -1.4300, lon: 121.4453 },
+            { name: "Sulawesi Tenggara", adm4: "74.01.01.1001", lat: -4.1449, lon: 122.1746 },
+            { name: "Sulawesi Utara", adm4: "71.01.01.1001", lat: 1.4931, lon: 124.8413 },
+            { name: "Sumatera Barat", adm4: "13.01.01.1001", lat: -0.7399, lon: 100.8000 },
+            { name: "Sumatera Selatan", adm4: "16.01.01.1001", lat: -3.3199, lon: 103.9146 },
+            { name: "Sumatera Utara", adm4: "12.01.01.1001", lat: 2.1154, lon: 99.5451 }
         ];
 
         let quakes = [], logs = JSON.parse(localStorage.getItem('activityLogs') || '[]');
         let currentWeatherData = null, currentEarthquakeData = null, currentLocation = '';
-        let currentLat = -6.9147, currentLon = 107.6098; // Default to Jawa Barat
+        let currentLat = -6.2088, currentLon = 106.8456; // Default to Jakarta
 
         const getColor = m => m >= 5 ? '#ef4444' : m >= 4 ? '#f97316' : m >= 3 ? '#eab308' : '#22c55e';
 
@@ -349,7 +349,7 @@
                 const currentWeather = currentWeatherData[0];
                 widget.innerHTML = `
                     <span class="text-lg">${weatherIcons[currentWeather.weather] || '❓'}</span>
-                    <span>${currentLocation}: ${currentWeather.weather}, ${currentWeather.temp}°C</span>
+                    <span>${currentLocation}: ${currentWeather.weather}, ${currentWeather.temp}°C, ${currentWeather.humidity}%</span>
                 `;
                 widget.classList.remove('hidden');
             } else {
@@ -417,50 +417,56 @@
                 const province = provinces.find(p => p.name.toLowerCase().includes(search.toLowerCase()));
                 if (!province) throw new Error('Wilayah tidak ditemukan');
 
-                const response = await fetch(`${APIs.weather}`);
+                const response = await fetch(`${APIs.weather.replace('adm4=32.03.16.2007', `adm4=${province.adm4}`)}`);
                 if (!response.ok) throw new Error('Gagal mengambil data cuaca');
 
-                const text = await response.text();
-                const parser = new DOMParser();
-                const xmlDoc = parser.parseFromString(text, 'text/xml');
+                const data = await response.json();
+                if (!data || !data.lokasi || !data.data) throw new Error('Data cuaca tidak valid');
 
-                const areas = xmlDoc.getElementsByTagName('area');
-                let forecasts = [];
-                let found = false;
+                const forecasts = [];
+                const dailyForecasts = data.data[0]?.cuaca;
+                if (!dailyForecasts || !Array.isArray(dailyForecasts)) throw new Error('Data prakiraan cuaca tidak ditemukan');
 
-                for (let area of areas) {
-                    const areaName = area.getElementsByTagName('name')[0]?.textContent.toLowerCase();
-                    if (areaName.includes(search.toLowerCase())) {
-                        found = true;
-                        const weatherParams = area.getElementsByTagName('parameter');
-                        for (let param of weatherParams) {
-                            if (param.getAttribute('id') === 'weather') {
-                                const times = param.getElementsByTagName('timerange');
-                                for (let i = 0; i < Math.min(3, times.length); i++) {
-                                    const time = times[i];
-                                    const datetime = time.getAttribute('datetime');
-                                    const date = datetime.slice(0, 4) + '-' + datetime.slice(4, 6) + '-' + datetime.slice(6, 8);
-                                    const weatherCode = time.getElementsByTagName('value')[0]?.textContent;
-                                    const weatherDesc = getWeatherDescription(weatherCode);
-                                    const tempParam = Array.from(weatherParams).find(p => p.getAttribute('id') === 't');
-                                    const tempValues = tempParam?.getElementsByTagName('timerange')[i]?.getElementsByTagName('value');
-                                    const temp = tempValues?.[0]?.textContent || 'N/A';
-                                    forecasts.push({ date, weather: weatherDesc, temp });
-                                }
-                                break;
-                            }
-                        }
-                        break;
-                    }
-                }
+                // Group by day (Hari ke-1, Hari ke-2, dst)
+                const days = {};
+                dailyForecasts.forEach(prakiraan => {
+                    const localDateTime = prakiraan.local_datetime;
+                    const date = localDateTime.split(' ')[0]; // Ambil tanggal (format: YYYY-MM-DD)
+                    if (!days[date]) days[date] = [];
+                    days[date].push(prakiraan);
+                });
 
-                if (!found || forecasts.length === 0) throw new Error('Data cuaca tidak ditemukan untuk wilayah ini');
+                // Ambil 3 hari ke depan
+                const dates = Object.keys(days).slice(0, 3);
+                dates.forEach(date => {
+                    const prakiraanHarian = days[date];
+                    const firstPrakiraan = prakiraanHarian[0]; // Ambil data pertama untuk representasi hari itu
+                    const weatherDesc = firstPrakiraan.weather_desc || 'Tidak diketahui';
+                    const temp = firstPrakiraan.t || 'N/A';
+                    const humidity = firstPrakiraan.hu || 'N/A';
+                    const windSpeed = firstPrakiraan.ws || 'N/A';
+                    const windDir = firstPrakiraan.wd || 'N/A';
+                    const visibility = firstPrakiraan.vs_text || 'N/A';
+
+                    forecasts.push({
+                        date,
+                        weather: weatherDesc,
+                        temp,
+                        humidity,
+                        windSpeed,
+                        windDir,
+                        visibility
+                    });
+                });
+
+                if (forecasts.length === 0) throw new Error('Data cuaca tidak ditemukan untuk wilayah ini');
 
                 currentWeatherData = forecasts;
-                currentLocation = search;
+                currentLocation = province.name;
                 currentLat = province.lat;
                 currentLon = province.lon;
 
+                // Tampilkan prakiraan cuaca dalam kartu
                 weatherDiv.innerHTML = forecasts.map((f, i) => `
                     <div class="card bg-gray-50 dark:bg-gray-700 p-4 rounded-lg shadow hover:shadow-md">
                         <h3 class="text-lg font-medium mb-2">${new Date(f.date).toLocaleDateString('id-ID')}</h3>
@@ -468,13 +474,32 @@
                             <span class="text-2xl">${weatherIcons[f.weather] || '❓'}</span>
                             <span>${f.weather}</span>
                         </div>
-                        <div class="bg-gray-200 dark:bg-gray-600 p-2 rounded">
-                            <p class="text-xs text-gray-500 dark:text-gray-300">Suhu</p>
-                            <p class="font-medium">${f.temp}°C</p>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="bg-gray-200 dark:bg-gray-600 p-2 rounded">
+                                <p class="text-xs text-gray-500 dark:text-gray-300">Suhu</p>
+                                <p class="font-medium">${f.temp}°C</p>
+                            </div>
+                            <div class="bg-gray-200 dark:bg-gray-600 p-2 rounded">
+                                <p class="text-xs text-gray-500 dark:text-gray-300">Kelembapan</p>
+                                <p class="font-medium">${f.humidity}%</p>
+                            </div>
+                            <div class="bg-gray-200 dark:bg-gray-600 p-2 rounded">
+                                <p class="text-xs text-gray-500 dark:text-gray-300">Kecepatan Angin</p>
+                                <p class="font-medium">${f.windSpeed} km/j</p>
+                            </div>
+                            <div class="bg-gray-200 dark:bg-gray-600 p-2 rounded">
+                                <p class="text-xs text-gray-500 dark:text-gray-300">Arah Angin</p>
+                                <p class="font-medium">${f.windDir}</p>
+                            </div>
+                            <div class="bg-gray-200 dark:bg-gray-600 p-2 rounded">
+                                <p class="text-xs text-gray-500 dark:text-gray-300">Jarak Pandang</p>
+                                <p class="font-medium">${f.visibility}</p>
+                            </div>
                         </div>
                     </div>
                 `).join('');
 
+                // Perbarui chart suhu
                 if (weatherChart) weatherChart.destroy();
                 document.getElementById('weather-chart').style.display = 'block';
                 weatherChart = new Chart(chartCanvas, {
@@ -483,7 +508,7 @@
                         labels: forecasts.map(f => new Date(f.date).toLocaleDateString('id-ID')),
                         datasets: [{
                             label: 'Suhu (°C)',
-                            data: forecasts.map(f => f.temp),
+                            data: forecasts.map(f => parseFloat(f.temp) || 0),
                             backgroundColor: 'rgba(99, 102, 241, 0.7)',
                             borderColor: 'rgba(99, 102, 241, 1)',
                             borderWidth: 1,
@@ -527,27 +552,6 @@
             } finally {
                 loading.classList.add('hidden');
             }
-        }
-
-        // Weather Description Mapping
-        function getWeatherDescription(code) {
-            const weatherMap = {
-                '0': 'Cerah',
-                '1': 'Cerah Berawan',
-                '2': 'Cerah Berawan',
-                '3': 'Berawan',
-                '4': 'Berawan Tebal',
-                '5': 'Udara Kabur',
-                '10': 'Asap',
-                '45': 'Kabut',
-                '60': 'Hujan Ringan',
-                '61': 'Hujan Sedang',
-                '63': 'Hujan Lebat',
-                '80': 'Hujan Lokal',
-                '95': 'Hujan Petir',
-                '97': 'Hujan Petir'
-            };
-            return weatherMap[code] || 'Tidak diketahui';
         }
 
         // Fetch Warnings (Hypothetical)
@@ -746,7 +750,11 @@
                     currentWeatherData.forEach(forecast => {
                         message += `${new Date(forecast.date).toLocaleDateString('id-ID')}\n`;
                         message += `Cuaca: ${forecast.weather}\n`;
-                        message += `Suhu: ${forecast.temp} °C\n\n`;
+                        message += `Suhu: ${forecast.temp} °C\n`;
+                        message += `Kelembapan: ${forecast.humidity}%\n`;
+                        message += `Kecepatan Angin: ${forecast.windSpeed} km/j\n`;
+                        message += `Arah Angin: ${forecast.windDir}\n`;
+                        message += `Jarak Pandang: ${forecast.visibility}\n\n`;
                     });
                     message += `*Gempa Terkini:*\n`;
                     message += `Tanggal: ${currentEarthquakeData.tanggal} ${currentEarthquakeData.jam}\n`;
@@ -816,7 +824,7 @@
             // Retry AQI fetch if it fails initially
             async function tryFetchAQI() {
                 try {
-                    await fetchAQI(-6.9147, 107.6098); // Default AQI for Jawa Barat
+                    await fetchAQI(-6.2088, 106.8456); // Default AQI for Jakarta
                 } catch (e) {
                     console.error('Initial AQI fetch failed, retrying in 5 seconds:', e);
                     setTimeout(tryFetchAQI, 5000); // Retry after 5 seconds

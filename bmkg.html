@@ -401,7 +401,7 @@
             return 'Kualitas udara berbahaya, tetap di dalam ruangan dan gunakan masker.';
         }
 
-        // Weather Fetch
+// Weather Fetch
 async function fetchWeather(search = '') {
     const weatherDiv = document.getElementById('weather-data');
     const loading = document.getElementById('weather-loading');
@@ -427,19 +427,17 @@ async function fetchWeather(search = '') {
 
         const dailyForecasts = data.data[0]?.cuaca;
         if (!dailyForecasts || !Array.isArray(dailyForecasts) || dailyForecasts.length === 0) {
-            throw new Error('Data prakiraan cuaca tidak ditemukan atau kosong');
+            throw new Error(`Data prakiraan cuaca tidak ditemukan atau kosong untuk ${province.name}`);
         }
 
         // Group by day (Hari ke-1, Hari ke-2, dst)
         const forecasts = [];
         const days = {};
         dailyForecasts.forEach((prakiraan, index) => {
-            // Validasi local_datetime
             let date;
             if (prakiraan.local_datetime && typeof prakiraan.local_datetime === 'string') {
                 date = prakiraan.local_datetime.split(' ')[0]; // Ambil tanggal (format: YYYY-MM-DD)
             } else {
-                // Fallback: Asumsikan data diberikan setiap 3 jam, 8 prakiraan per hari
                 console.warn('Prakiraan tanpa local_datetime, menggunakan fallback:', prakiraan);
                 const today = new Date();
                 const dayOffset = Math.floor(index / 8); // 8 prakiraan per hari
@@ -459,10 +457,12 @@ async function fetchWeather(search = '') {
         dates.forEach(date => {
             const prakiraanHarian = days[date];
             const firstPrakiraan = prakiraanHarian[0]; // Ambil data pertama untuk representasi hari itu
+            console.log('First Prakiraan for', date, ':', firstPrakiraan); // Debugging: Lihat data prakiraan
+
             const weatherDesc = firstPrakiraan.weather_desc || 'Tidak diketahui';
-            const temp = firstPrakiraan.t || 'N/A';
-            const humidity = firstPrakiraan.hu || 'N/A';
-            const windSpeed = firstPrakiraan.ws || 'N/A';
+            const temp = firstPrakiraan.t !== undefined ? `${firstPrakiraan.t}°C` : 'N/A';
+            const humidity = firstPrakiraan.hu !== undefined ? `${firstPrakiraan.hu}%` : 'N/A';
+            const windSpeed = firstPrakiraan.ws !== undefined ? `${firstPrakiraan.ws} km/j` : 'N/A';
             const windDir = firstPrakiraan.wd || 'N/A';
             const visibility = firstPrakiraan.vs_text || 'N/A';
 
@@ -495,15 +495,15 @@ async function fetchWeather(search = '') {
                 <div class="grid grid-cols-2 gap-2">
                     <div class="bg-gray-200 dark:bg-gray-600 p-2 rounded">
                         <p class="text-xs text-gray-500 dark:text-gray-300">Suhu</p>
-                        <p class="font-medium">${f.temp}°C</p>
+                        <p class="font-medium">${f.temp}</p>
                     </div>
                     <div class="bg-gray-200 dark:bg-gray-600 p-2 rounded">
                         <p class="text-xs text-gray-500 dark:text-gray-300">Kelembapan</p>
-                        <p class="font-medium">${f.humidity}%</p>
+                        <p class="font-medium">${f.humidity}</p>
                     </div>
                     <div class="bg-gray-200 dark:bg-gray-600 p-2 rounded">
                         <p class="text-xs text-gray-500 dark:text-gray-300">Kecepatan Angin</p>
-                        <p class="font-medium">${f.windSpeed} km/j</p>
+                        <p class="font-medium">${f.windSpeed}</p>
                     </div>
                     <div class="bg-gray-200 dark:bg-gray-600 p-2 rounded">
                         <p class="text-xs text-gray-500 dark:text-gray-300">Arah Angin</p>
@@ -526,7 +526,7 @@ async function fetchWeather(search = '') {
                 labels: forecasts.map(f => new Date(f.date).toLocaleDateString('id-ID')),
                 datasets: [{
                     label: 'Suhu (°C)',
-                    data: forecasts.map(f => parseFloat(f.temp) || 0),
+                    data: forecasts.map(f => parseFloat(f.temp.replace('°C', '')) || 0),
                     backgroundColor: 'rgba(99, 102, 241, 0.7)',
                     borderColor: 'rgba(99, 102, 241, 1)',
                     borderWidth: 1,

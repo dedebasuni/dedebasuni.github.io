@@ -261,7 +261,7 @@
             { name: "Gorontalo", adm4: "75.01.01.1001", lat: 0.6999, lon: 122.4467 },
             { name: "Jambi", adm4: "15.71.01.1001", lat: -1.6101, lon: 103.6131 },
             { name: "Jawa Barat", adm4: "32.03.16.2007", lat: -6.9147, lon: 107.6098 },
-            { name: "Desa Cisujen, Kecamatan Takokak, Kabupaten Cianjur", adm4: "32.03.16.2007", lat: -7.098191543, lon: 107.0186981657 },
+            { name: "Desa Cisujen, Kabupaten Cianjur", adm4: "32.03.16.2007", lat: -7.098191543, lon: 107.0186981657 },
             { name: "Jawa Tengah", adm4: "33.74.01.1001", lat: -7.1507, lon: 110.1403 },
             { name: "Jawa Timur", adm4: "35.78.01.1001", lat: -7.5361, lon: 112.2384 },
             { name: "Kalimantan Barat", adm4: "61.71.05.1001", lat: -0.1322, lon: 111.4753 },
@@ -291,7 +291,7 @@
 
         let quakes = [], logs = JSON.parse(localStorage.getItem('activityLogs') || '[]');
         let currentWeatherData = null, currentEarthquakeData = null, currentLocation = '';
-        let currentLat = -7.098191543, currentLon = 107.0186981657; // Default to Desa Cisujen, Kecamatan Takokak, Kabupaten Cianjur
+        let currentLat = -7.098191543, currentLon = 107.0186981657; // Default to Desa Cisujen, Kabupaten Cianjur
 
         const getColor = m => m >= 5 ? '#ef4444' : m >= 4 ? '#f97316' : m >= 3 ? '#eab308' : '#22c55e';
 
@@ -348,9 +348,11 @@
             const widget = document.getElementById('mini-weather-widget');
             if (currentWeatherData && currentLocation) {
                 const currentWeather = currentWeatherData[0];
+                const temp = currentWeather.temp !== 'N/A' ? currentWeather.temp : 'N/A';
+                const humidity = currentWeather.humidity !== 'N/A' ? currentWeather.humidity : 'N/A';
                 widget.innerHTML = `
                     <span class="text-lg">${weatherIcons[currentWeather.weather] || '❓'}</span>
-                    <span>${currentLocation}: ${currentWeather.weather}, ${currentWeather.temp}°C, ${currentWeather.humidity}%</span>
+                    <span>${currentLocation}: ${currentWeather.weather}, ${temp}${temp !== 'N/A' ? '°C' : ''}, ${humidity}${humidity !== 'N/A' ? '%' : ''}</span>
                 `;
                 widget.classList.remove('hidden');
             } else {
@@ -442,15 +444,15 @@
 
                     const date = firstPrakiraan.local_datetime.split(' ')[0]; // Ambil tanggal (YYYY-MM-DD)
                     const weatherDesc = firstPrakiraan.weather_desc || 'Tidak diketahui';
-                    const temp = firstPrakiraan.t !== undefined ? `${firstPrakiraan.t}°C` : 'N/A';
-                    const humidity = firstPrakiraan.hu !== undefined ? `${firstPrakiraan.hu}%` : 'N/A';
-                    const windSpeed = firstPrakiraan.ws !== undefined ? `${firstPrakiraan.ws} km/j` : 'N/A';
+                    const temp = firstPrakiraan.t !== undefined ? firstPrakiraan.t : 'N/A'; // Hanya nilai numerik
+                    const humidity = firstPrakiraan.hu !== undefined ? firstPrakiraan.hu : 'N/A'; // Hanya nilai numerik
+                    const windSpeed = firstPrakiraan.ws !== undefined ? firstPrakiraan.ws : 'N/A';
                     const windDir = firstPrakiraan.wd || 'N/A';
                     const visibility = firstPrakiraan.vs_text || 'N/A';
 
                     forecasts.push({
                         date,
-                        weather: weatherDesc,
+                        weather,
                         temp,
                         humidity,
                         windSpeed,
@@ -477,15 +479,15 @@
                         <div class="grid grid-cols-2 gap-2">
                             <div class="bg-gray-200 dark:bg-gray-600 p-2 rounded">
                                 <p class="text-xs text-gray-500 dark:text-gray-300">Suhu</p>
-                                <p class="font-medium">${f.temp}</p>
+                                <p class="font-medium">${f.temp !== 'N/A' ? `${f.temp}°C` : 'N/A'}</p>
                             </div>
                             <div class="bg-gray-200 dark:bg-gray-600 p-2 rounded">
                                 <p class="text-xs text-gray-500 dark:text-gray-300">Kelembapan</p>
-                                <p class="font-medium">${f.humidity}</p>
+                                <p class="font-medium">${f.humidity !== 'N/A' ? `${f.humidity}%` : 'N/A'}</p>
                             </div>
                             <div class="bg-gray-200 dark:bg-gray-600 p-2 rounded">
                                 <p class="text-xs text-gray-500 dark:text-gray-300">Kecepatan Angin</p>
-                                <p class="font-medium">${f.windSpeed}</p>
+                                <p class="font-medium">${f.windSpeed !== 'N/A' ? `${f.windSpeed} km/j` : 'N/A'}</p>
                             </div>
                             <div class="bg-gray-200 dark:bg-gray-600 p-2 rounded">
                                 <p class="text-xs text-gray-500 dark:text-gray-300">Arah Angin</p>
@@ -508,7 +510,7 @@
                         labels: forecasts.map(f => new Date(f.date).toLocaleDateString('id-ID')),
                         datasets: [{
                             label: 'Suhu (°C)',
-                            data: forecasts.map(f => parseFloat(f.temp.replace('°C', '')) || 0),
+                            data: forecasts.map(f => parseFloat(f.temp) || 0),
                             backgroundColor: 'rgba(99, 102, 241, 0.7)',
                             borderColor: 'rgba(99, 102, 241, 1)',
                             borderWidth: 1,
@@ -549,103 +551,6 @@
                 weatherDiv.innerHTML = '<p class="text-center text-gray-500 col-span-3 py-4">Tidak ada data cuaca tersedia.</p>';
                 if (weatherChart) weatherChart.destroy();
                 document.getElementById('weather-chart').style.display = 'none';
-            } finally {
-                loading.classList.add('hidden');
-            }
-        }
-        
-        // Fetch Warnings (Hypothetical)
-        async function fetchWarnings() {
-            const warningDiv = document.getElementById('warning-data');
-            const loading = document.getElementById('warning-loading');
-            const warningSection = document.getElementById('warning-section');
-
-            try {
-                loading.classList.remove('hidden');
-                warningDiv.innerHTML = '';
-
-                // Simulasi data peringatan (karena API belum ada)
-                const warnings = [
-                    { type: 'Tsunami', location: currentLocation, message: 'Potensi tsunami di wilayah pesisir.', time: new Date().toLocaleString('id-ID') }
-                    // Ganti dengan fetch API jika tersedia
-                ];
-
-                if (warnings.length > 0) {
-                    warningSection.classList.remove('hidden');
-                    warningDiv.innerHTML = warnings.map(w => `
-                        <div class="card bg-red-50 dark:bg-red-900 p-4 rounded-lg shadow hover:shadow-md">
-                            <h3 class="text-lg font-medium text-red-600 dark:text-red-400">${w.type}</h3>
-                            <p class="mt-1">${w.message}</p>
-                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">${w.time}</p>
-                        </div>
-                    `).join('');
-                    document.getElementById('warning-time').textContent = `Terakhir diperbarui: ${new Date().toLocaleTimeString()}`;
-                    logActivity('Peringatan', `Mengambil peringatan dini untuk ${currentLocation}`);
-                    const audio = new Audio('https://www.soundjay.com/buttons/beep-01a.mp3');
-                    audio.play().catch(() => console.log('Audio playback failed'));
-                    showNotification('Peringatan dini: Periksa section Peringatan Dini!', 'error');
-                } else {
-                    warningSection.classList.add('hidden');
-                }
-            } catch (e) {
-                console.error('Warning fetch error:', e);
-                warningSection.classList.add('hidden');
-            } finally {
-                loading.classList.add('hidden');
-            }
-        }
-
-        // Earthquake Fetch
-        async function fetchQuakes(date = new Date().toISOString().split('T')[0]) {
-            const quakeList = document.getElementById('earthquake-list');
-            const loading = document.getElementById('quake-loading');
-            const apiUrl = date === new Date().toISOString().split('T')[0] ? APIs.earthquake : APIs.historicalQuake;
-
-            try {
-                loading.classList.remove('hidden');
-                quakeList.innerHTML = '';
-
-                const response = await fetch(apiUrl);
-                if (!response.ok) throw new Error('Gagal mengambil data gempa');
-
-                const text = await response.text();
-                const parser = new DOMParser();
-                const xmlDoc = parser.parseFromString(text, 'text/xml');
-
-                const earthquakes = xmlDoc.getElementsByTagName('gempa');
-                if (!earthquakes.length) throw new Error('Data gempa tidak ditemukan');
-
-                quakes = [];
-                for (let earthquake of earthquakes) {
-                    const data = {
-                        tanggal: earthquake.getElementsByTagName('Tanggal')[0]?.textContent || 'Tidak tersedia',
-                        jam: earthquake.getElementsByTagName('Jam')[0]?.textContent || 'Tidak tersedia',
-                        lintang: earthquake.getElementsByTagName('Lintang')[0]?.textContent || '0',
-                        bujur: earthquake.getElementsByTagName('Bujur')[0]?.textContent || '0',
-                        wilayah: earthquake.getElementsByTagName('Wilayah')[0]?.textContent || 'Tidak tersedia',
-                        magnitude: earthquake.getElementsByTagName('Magnitude')[0]?.textContent || '0',
-                        kedalaman: earthquake.getElementsByTagName('Kedalaman')[0]?.textContent || 'Tidak tersedia',
-                        potensi: earthquake.getElementsByTagName('Potensi')[0]?.textContent || 'Tidak tersedia'
-                    };
-                    quakes.push(data);
-
-                    if (+data.magnitude >= 5.0 && date === new Date().toISOString().split('T')[0]) {
-                        const audio = new Audio('https://www.soundjay.com/buttons/beep-01a.mp3');
-                        audio.play().catch(() => console.log('Audio playback failed'));
-                        showNotification(`Peringatan: Gempa ${data.magnitude} SR di ${data.wilayah}!`, 'error');
-                    }
-                }
-
-                currentEarthquakeData = quakes[0];
-                updateQuakes();
-                logActivity('Pencarian', `Mencari data gempa untuk tanggal ${date}`);
-                document.getElementById('quake-time').textContent = `Terakhir diperbarui: ${new Date().toLocaleTimeString()}`;
-                updateWhatsAppButton();
-
-            } catch (e) {
-                console.error('Quake fetch error:', e);
-                showNotification('Gagal memuat data gempa. Silakan coba lagi nanti.');
-                quakeList.innerHTML = '<p class="text-center text-gray-500 py-4">Tidak ada data gempa tersedia.</p>';
             } finally {
                 loading.classList.add('hidden');
             }
@@ -817,14 +722,14 @@
             }, 10800000); // Update setiap 3 jam (10800000 ms)
         }
 
-        // Initial Fetch (Default to Desa Cisujen, Kecamatan Takokak, Kabupaten Cianjur)
+        // Initial Fetch (Default to Desa Cisujen, Kabupaten Cianjur)
         document.addEventListener('DOMContentLoaded', () => {
             fetchQuakes();
-            fetchWeather('Desa Cisujen, Kecamatan Takokak, Kabupaten Cianjur'); // Default to Desa Cisujen, Kecamatan Takokak, Kabupaten Cianjur
+            fetchWeather('Desa Cisujen, Kabupaten Cianjur'); // Default to Desa Cisujen, Kabupaten Cianjur
             // Retry AQI fetch if it fails initially
             async function tryFetchAQI() {
                 try {
-                    await fetchAQI(-7.098191543, 107.0186981657); // Default AQI for Desa Cisujen, Kecamatan Takokak, Kabupaten Cianjur
+                    await fetchAQI(-7.098191543, 107.0186981657); // Default AQI for Desa Cisujen, Kabupaten Cianjur
                 } catch (e) {
                     console.error('Initial AQI fetch failed, retrying in 5 seconds:', e);
                     setTimeout(tryFetchAQI, 5000); // Retry after 5 seconds

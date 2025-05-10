@@ -241,11 +241,11 @@
 
         // API Configuration
         const APIs = {
-            weather: 'https://data.bmkg.go.id/DataMKG/MEWS/DigitalForecast/DigitalForecast-',
+            weather: 'https://api.bmkg.go.id/publik/prakiraan-cuaca?adm4={32.03.16.2007}',
             earthquake: 'https://data.bmkg.go.id/DataMKG/TEWS/autogempa.xml',
             historicalQuake: 'https://data.bmkg.go.id/DataMKG/TEWS/gempaterkini.xml',
-            aqi: 'https://api.openweathermap.org/data/2.5/air_pollution',
-            warning: 'https://data.bmkg.go.id/DataMKG/TEWS/warning.xml'
+            aqi: 'https://api.openweathermap.org/data/2.5/weather?lat=-6.9147&lon=107.6098&appid={e98de5f3705f63f8923b88904e99af9f',
+            warning: 'https://data.bmkg.go.id/DataMKG/TEWS/gempadirasakan.xml'
         };
 
         const AQI_API_KEY = 'e98de5f3705f63f8923b88904e99af9f';
@@ -824,7 +824,7 @@
             // Retry AQI fetch if it fails initially
             async function tryFetchAQI() {
                 try {
-                    await fetchAQI(-6.2088, 106.8456); // Default AQI for Jakarta
+                    await fetchAQI(-6.9147, 107.6098); // Default AQI for Jawa Barat
                 } catch (e) {
                     console.error('Initial AQI fetch failed, retrying in 5 seconds:', e);
                     setTimeout(tryFetchAQI, 5000); // Retry after 5 seconds

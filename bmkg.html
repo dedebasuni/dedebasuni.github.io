@@ -290,7 +290,7 @@
 
         let quakes = [], logs = JSON.parse(localStorage.getItem('activityLogs') || '[]');
         let currentWeatherData = null, currentEarthquakeData = null, currentLocation = '';
-        let currentLat = -6.2088, currentLon = 106.8456; // Default to Jakarta
+        let currentLat = -6.9147, currentLon = 107.6098; // Default to Jawa Barat
 
         const getColor = m => m >= 5 ? '#ef4444' : m >= 4 ? '#f97316' : m >= 3 ? '#eab308' : '#22c55e';
 
@@ -842,7 +842,7 @@ async function fetchWeather(search = '') {
             // Retry AQI fetch if it fails initially
             async function tryFetchAQI() {
                 try {
-                    await fetchAQI(-6.2088, 106.8456); // Default AQI for Jakarta
+                    await fetchAQI(-6.9147, 107.6098); // Default AQI for Jawa Barat
                 } catch (e) {
                     console.error('Initial AQI fetch failed, retrying in 5 seconds:', e);
                     setTimeout(tryFetchAQI, 5000); // Retry after 5 seconds

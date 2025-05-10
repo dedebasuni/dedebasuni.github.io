@@ -529,7 +529,6 @@
                 updateWhatsAppButton();
                 updateMiniWeatherWidget();
                 fetchAQI(province.lat, province.lon);
-                fetchWarnings();
 
             } catch (e) {
                 console.error('Weather fetch error:', e);
@@ -746,7 +745,6 @@
         document.getElementById('refresh-data').addEventListener('click', () => {
             fetchWeather(currentLocation);
             fetchQuakes(document.getElementById('quake-date').value);
-            fetchWarnings();
             if (currentLat && currentLon) fetchAQI(currentLat, currentLon);
             showNotification('Data diperbarui', 'success');
         });
@@ -757,7 +755,6 @@
                 if (document.visibilityState === 'visible' && currentLocation) {
                     fetchWeather(currentLocation);
                     fetchQuakes(document.getElementById('quake-date').value);
-                    fetchWarnings();
                     if (currentLat && currentLon) fetchAQI(currentLat, currentLon);
                     showNotification('Data diperbarui otomatis', 'success');
                 }

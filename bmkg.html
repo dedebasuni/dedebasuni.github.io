@@ -290,7 +290,7 @@
 
         let quakes = [], logs = JSON.parse(localStorage.getItem('activityLogs') || '[]');
         let currentWeatherData = null, currentEarthquakeData = null, currentLocation = '';
-        let currentLat = -7.1149, currentLon = 106.9079; // Default to Cianjur
+        let currentLat = -7.0986, currentLon = 107.0205; // Default to Cianjur
 
         const getColor = m => m >= 5 ? '#ef4444' : m >= 4 ? '#f97316' : m >= 3 ? '#eab308' : '#22c55e';
 
@@ -823,7 +823,7 @@
             // Retry AQI fetch if it fails initially
             async function tryFetchAQI() {
                 try {
-                    await fetchAQI(-7.1149, 106.9079); // Default AQI for Cianjur
+                    await fetchAQI(-7.0986, 107.0205); // Default AQI for Cianjur
                 } catch (e) {
                     console.error('Initial AQI fetch failed, retrying in 5 seconds:', e);
                     setTimeout(tryFetchAQI, 5000); // Retry after 5 seconds

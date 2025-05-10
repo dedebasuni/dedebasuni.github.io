@@ -219,7 +219,7 @@
                 return;
             }
             try {
-                map = L.map('map').setView([-2.5489, 118.0149], 5);
+                map = L.map('map').setView([-6.9147, 107.6098], 5);
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     attribution: '© <a href="https://osm.org/copyright">OSM</a>'
                 }).addTo(map);
@@ -244,7 +244,7 @@
             weather: 'https://api.bmkg.go.id/publik/prakiraan-cuaca?adm4={32.03.16.2007}',
             earthquake: 'https://data.bmkg.go.id/DataMKG/TEWS/autogempa.xml',
             historicalQuake: 'https://data.bmkg.go.id/DataMKG/TEWS/gempaterkini.xml',
-            aqi: 'https://api.openweathermap.org/data/2.5/weather?lat=-6.9147&lon=107.6098&appid={e98de5f3705f63f8923b88904e99af9f',
+            aqi: 'https://api.openweathermap.org/data/2.5/air_pollution',
             warning: 'https://data.bmkg.go.id/DataMKG/TEWS/gempadirasakan.xml'
         };
 

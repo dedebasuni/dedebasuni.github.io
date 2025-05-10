@@ -402,158 +402,171 @@
         }
 
         // Weather Fetch
-        async function fetchWeather(search = '') {
-            const weatherDiv = document.getElementById('weather-data');
-            const loading = document.getElementById('weather-loading');
-            const chartCanvas = document.getElementById('weather-chart').getContext('2d');
-            let weatherChart = Chart.getChart(chartCanvas) || null;
-            const weatherSection = document.getElementById('weather-section');
+// Weather Fetch
+async function fetchWeather(search = '') {
+    const weatherDiv = document.getElementById('weather-data');
+    const loading = document.getElementById('weather-loading');
+    const chartCanvas = document.getElementById('weather-chart').getContext('2d');
+    let weatherChart = Chart.getChart(chartCanvas) || null;
+    const weatherSection = document.getElementById('weather-section');
 
-            try {
-                loading.classList.remove('hidden');
-                weatherDiv.innerHTML = '';
-                weatherSection.className = 'mb-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 fade-in weather-bg';
+    try {
+        loading.classList.remove('hidden');
+        weatherDiv.innerHTML = '';
+        weatherSection.className = 'mb-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 fade-in weather-bg';
 
-                const province = provinces.find(p => p.name.toLowerCase().includes(search.toLowerCase()));
-                if (!province) throw new Error('Wilayah tidak ditemukan');
+        const province = provinces.find(p => p.name.toLowerCase().includes(search.toLowerCase()));
+        if (!province) throw new Error('Wilayah tidak ditemukan');
 
-                const response = await fetch(`${APIs.weather.replace('adm4=32.03.16.2007', `adm4=${province.adm4}`)}`);
-                if (!response.ok) throw new Error('Gagal mengambil data cuaca');
+        const response = await fetch(`${APIs.weather.replace('adm4=32.03.16.2007', `adm4=${province.adm4}`)}`);
+        if (!response.ok) throw new Error(`Gagal mengambil data cuaca: ${response.statusText}`);
 
-                const data = await response.json();
-                if (!data || !data.lokasi || !data.data) throw new Error('Data cuaca tidak valid');
+        const data = await response.json();
+        console.log('API Response:', data); // Debugging: Lihat struktur data
 
-                const forecasts = [];
-                const dailyForecasts = data.data[0]?.cuaca;
-                if (!dailyForecasts || !Array.isArray(dailyForecasts)) throw new Error('Data prakiraan cuaca tidak ditemukan');
+        if (!data || !data.lokasi || !data.data) throw new Error('Data cuaca tidak valid');
 
-                // Group by day (Hari ke-1, Hari ke-2, dst)
-                const days = {};
-                dailyForecasts.forEach(prakiraan => {
-                    const localDateTime = prakiraan.local_datetime;
-                    const date = localDateTime.split(' ')[0]; // Ambil tanggal (format: YYYY-MM-DD)
-                    if (!days[date]) days[date] = [];
-                    days[date].push(prakiraan);
-                });
-
-                // Ambil 3 hari ke depan
-                const dates = Object.keys(days).slice(0, 3);
-                dates.forEach(date => {
-                    const prakiraanHarian = days[date];
-                    const firstPrakiraan = prakiraanHarian[0]; // Ambil data pertama untuk representasi hari itu
-                    const weatherDesc = firstPrakiraan.weather_desc || 'Tidak diketahui';
-                    const temp = firstPrakiraan.t || 'N/A';
-                    const humidity = firstPrakiraan.hu || 'N/A';
-                    const windSpeed = firstPrakiraan.ws || 'N/A';
-                    const windDir = firstPrakiraan.wd || 'N/A';
-                    const visibility = firstPrakiraan.vs_text || 'N/A';
-
-                    forecasts.push({
-                        date,
-                        weather: weatherDesc,
-                        temp,
-                        humidity,
-                        windSpeed,
-                        windDir,
-                        visibility
-                    });
-                });
-
-                if (forecasts.length === 0) throw new Error('Data cuaca tidak ditemukan untuk wilayah ini');
-
-                currentWeatherData = forecasts;
-                currentLocation = province.name;
-                currentLat = province.lat;
-                currentLon = province.lon;
-
-                // Tampilkan prakiraan cuaca dalam kartu
-                weatherDiv.innerHTML = forecasts.map((f, i) => `
-                    <div class="card bg-gray-50 dark:bg-gray-700 p-4 rounded-lg shadow hover:shadow-md">
-                        <h3 class="text-lg font-medium mb-2">${new Date(f.date).toLocaleDateString('id-ID')}</h3>
-                        <div class="flex items-center gap-2 mb-1">
-                            <span class="text-2xl">${weatherIcons[f.weather] || '❓'}</span>
-                            <span>${f.weather}</span>
-                        </div>
-                        <div class="grid grid-cols-2 gap-2">
-                            <div class="bg-gray-200 dark:bg-gray-600 p-2 rounded">
-                                <p class="text-xs text-gray-500 dark:text-gray-300">Suhu</p>
-                                <p class="font-medium">${f.temp}°C</p>
-                            </div>
-                            <div class="bg-gray-200 dark:bg-gray-600 p-2 rounded">
-                                <p class="text-xs text-gray-500 dark:text-gray-300">Kelembapan</p>
-                                <p class="font-medium">${f.humidity}%</p>
-                            </div>
-                            <div class="bg-gray-200 dark:bg-gray-600 p-2 rounded">
-                                <p class="text-xs text-gray-500 dark:text-gray-300">Kecepatan Angin</p>
-                                <p class="font-medium">${f.windSpeed} km/j</p>
-                            </div>
-                            <div class="bg-gray-200 dark:bg-gray-600 p-2 rounded">
-                                <p class="text-xs text-gray-500 dark:text-gray-300">Arah Angin</p>
-                                <p class="font-medium">${f.windDir}</p>
-                            </div>
-                            <div class="bg-gray-200 dark:bg-gray-600 p-2 rounded">
-                                <p class="text-xs text-gray-500 dark:text-gray-300">Jarak Pandang</p>
-                                <p class="font-medium">${f.visibility}</p>
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-
-                // Perbarui chart suhu
-                if (weatherChart) weatherChart.destroy();
-                document.getElementById('weather-chart').style.display = 'block';
-                weatherChart = new Chart(chartCanvas, {
-                    type: 'line',
-                    data: {
-                        labels: forecasts.map(f => new Date(f.date).toLocaleDateString('id-ID')),
-                        datasets: [{
-                            label: 'Suhu (°C)',
-                            data: forecasts.map(f => parseFloat(f.temp) || 0),
-                            backgroundColor: 'rgba(99, 102, 241, 0.7)',
-                            borderColor: 'rgba(99, 102, 241, 1)',
-                            borderWidth: 1,
-                            fill: false
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        scales: {
-                            y: { beginAtZero: true, grid: { color: 'rgba(0, 0, 0, 0.1)' } },
-                            x: { grid: { display: false } }
-                        },
-                        plugins: {
-                            legend: { position: 'top', labels: { boxWidth: 12 } },
-                            tooltip: { mode: 'index', intersect: false }
-                        },
-                        maintainAspectRatio: false
-                    }
-                });
-
-                const currentWeather = forecasts[0].weather.toLowerCase();
-                if (currentWeather.includes('hujan')) {
-                    weatherSection.classList.add('rain');
-                } else if (currentWeather.includes('cerah')) {
-                    weatherSection.classList.add('sunny');
-                }
-
-                document.getElementById('weather-time').textContent = `Terakhir diperbarui: ${new Date().toLocaleTimeString()}`;
-                logActivity('Pencarian', `Mencari cuaca untuk ${search}`);
-                updateWhatsAppButton();
-                updateMiniWeatherWidget();
-                fetchAQI(province.lat, province.lon);
-                fetchWarnings();
-
-            } catch (e) {
-                console.error('Weather fetch error:', e);
-                showNotification('Gagal memuat data cuaca. Silakan coba lagi nanti.');
-                weatherDiv.innerHTML = '<p class="text-center text-gray-500 col-span-3 py-4">Tidak ada data cuaca tersedia.</p>';
-                if (weatherChart) weatherChart.destroy();
-                document.getElementById('weather-chart').style.display = 'none';
-            } finally {
-                loading.classList.add('hidden');
-            }
+        const dailyForecasts = data.data[0]?.cuaca;
+        if (!dailyForecasts || !Array.isArray(dailyForecasts) || dailyForecasts.length === 0) {
+            throw new Error('Data prakiraan cuaca tidak ditemukan atau kosong');
         }
 
+        // Group by day (Hari ke-1, Hari ke-2, dst)
+        const forecasts = [];
+        const days = {};
+        dailyForecasts.forEach(prakiraan => {
+            // Validasi local_datetime
+            const localDateTime = prakiraan.local_datetime;
+            if (!localDateTime || typeof localDateTime !== 'string') {
+                console.warn('Prakiraan tanpa local_datetime yang valid:', prakiraan);
+                return; // Skip prakiraan ini
+            }
+
+            const date = localDateTime.split(' ')[0]; // Ambil tanggal (format: YYYY-MM-DD)
+            if (!days[date]) days[date] = [];
+            days[date].push(prakiraan);
+        });
+
+        // Ambil 3 hari ke depan
+        const dates = Object.keys(days).slice(0, 3);
+        if (dates.length === 0) throw new Error('Tidak ada data tanggal yang valid untuk prakiraan cuaca');
+
+        dates.forEach(date => {
+            const prakiraanHarian = days[date];
+            const firstPrakiraan = prakiraanHarian[0]; // Ambil data pertama untuk representasi hari itu
+            const weatherDesc = firstPrakiraan.weather_desc || 'Tidak diketahui';
+            const temp = firstPrakiraan.t || 'N/A';
+            const humidity = firstPrakiraan.hu || 'N/A';
+            const windSpeed = firstPrakiraan.ws || 'N/A';
+            const windDir = firstPrakiraan.wd || 'N/A';
+            const visibility = firstPrakiraan.vs_text || 'N/A';
+
+            forecasts.push({
+                date,
+                weather: weatherDesc,
+                temp,
+                humidity,
+                windSpeed,
+                windDir,
+                visibility
+            });
+        });
+
+        if (forecasts.length === 0) throw new Error('Data cuaca tidak ditemukan untuk wilayah ini');
+
+        currentWeatherData = forecasts;
+        currentLocation = province.name;
+        currentLat = province.lat;
+        currentLon = province.lon;
+
+        // Tampilkan prakiraan cuaca dalam kartu
+        weatherDiv.innerHTML = forecasts.map((f, i) => `
+            <div class="card bg-gray-50 dark:bg-gray-700 p-4 rounded-lg shadow hover:shadow-md">
+                <h3 class="text-lg font-medium mb-2">${new Date(f.date).toLocaleDateString('id-ID')}</h3>
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="text-2xl">${weatherIcons[f.weather] || '❓'}</span>
+                    <span>${f.weather}</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="bg-gray-200 dark:bg-gray-600 p-2 rounded">
+                        <p class="text-xs text-gray-500 dark:text-gray-300">Suhu</p>
+                        <p class="font-medium">${f.temp}°C</p>
+                    </div>
+                    <div class="bg-gray-200 dark:bg-gray-600 p-2 rounded">
+                        <p class="text-xs text-gray-500 dark:text-gray-300">Kelembapan</p>
+                        <p class="font-medium">${f.humidity}%</p>
+                    </div>
+                    <div class="bg-gray-200 dark:bg-gray-600 p-2 rounded">
+                        <p class="text-xs text-gray-500 dark:text-gray-300">Kecepatan Angin</p>
+                        <p class="font-medium">${f.windSpeed} km/j</p>
+                    </div>
+                    <div class="bg-gray-200 dark:bg-gray-600 p-2 rounded">
+                        <p class="text-xs text-gray-500 dark:text-gray-300">Arah Angin</p>
+                        <p class="font-medium">${f.windDir}</p>
+                    </div>
+                    <div class="bg-gray-200 dark:bg-gray-600 p-2 rounded">
+                        <p class="text-xs text-gray-500 dark:text-gray-300">Jarak Pandang</p>
+                        <p class="font-medium">${f.visibility}</p>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+        // Perbarui chart suhu
+        if (weatherChart) weatherChart.destroy();
+        document.getElementById('weather-chart').style.display = 'block';
+        weatherChart = new Chart(chartCanvas, {
+            type: 'line',
+            data: {
+                labels: forecasts.map(f => new Date(f.date).toLocaleDateString('id-ID')),
+                datasets: [{
+                    label: 'Suhu (°C)',
+                    data: forecasts.map(f => parseFloat(f.temp) || 0),
+                    backgroundColor: 'rgba(99, 102, 241, 0.7)',
+                    borderColor: 'rgba(99, 102, 241, 1)',
+                    borderWidth: 1,
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { beginAtZero: true, grid: { color: 'rgba(0, 0, 0, 0.1)' } },
+                    x: { grid: { display: false } }
+                },
+                plugins: {
+                    legend: { position: 'top', labels: { boxWidth: 12 } },
+                    tooltip: { mode: 'index', intersect: false }
+                },
+                maintainAspectRatio: false
+            }
+        });
+
+        const currentWeather = forecasts[0].weather.toLowerCase();
+        if (currentWeather.includes('hujan')) {
+            weatherSection.classList.add('rain');
+        } else if (currentWeather.includes('cerah')) {
+            weatherSection.classList.add('sunny');
+        }
+
+        document.getElementById('weather-time').textContent = `Terakhir diperbarui: ${new Date().toLocaleTimeString()}`;
+        logActivity('Pencarian', `Mencari cuaca untuk ${search}`);
+        updateWhatsAppButton();
+        updateMiniWeatherWidget();
+        fetchAQI(province.lat, province.lon);
+        fetchWarnings();
+
+    } catch (e) {
+        console.error('Weather fetch error:', e);
+        showNotification('Gagal memuat data cuaca. Silakan coba lagi nanti.');
+        weatherDiv.innerHTML = '<p class="text-center text-gray-500 col-span-3 py-4">Tidak ada data cuaca tersedia.</p>';
+        if (weatherChart) weatherChart.destroy();
+        document.getElementById('weather-chart').style.display = 'none';
+    } finally {
+        loading.classList.add('hidden');
+    }
+}
+        
         // Fetch Warnings (Hypothetical)
         async function fetchWarnings() {
             const warningDiv = document.getElementById('warning-data');

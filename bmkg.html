@@ -260,7 +260,7 @@
             { name: "DKI Jakarta", adm4: "31.71.01.1001", lat: -6.2088, lon: 106.8456 },
             { name: "Gorontalo", adm4: "75.01.01.1001", lat: 0.6999, lon: 122.4467 },
             { name: "Jambi", adm4: "15.71.01.1001", lat: -1.6101, lon: 103.6131 },
-            { name: "Jawa Barat", adm4: "32.03.16.2007", lat: -7.0986, lon: 107.0205 },
+            { name: "Jawa Barat", adm4: "32.03.16.2007", lat: -6.8213, lon: 107.1423 },
             { name: "Jawa Tengah", adm4: "33.74.01.1001", lat: -7.1507, lon: 110.1403 },
             { name: "Jawa Timur", adm4: "35.78.01.1001", lat: -7.5361, lon: 112.2384 },
             { name: "Kalimantan Barat", adm4: "61.71.05.1001", lat: -0.1322, lon: 111.4753 },
@@ -290,7 +290,7 @@
 
         let quakes = [], logs = JSON.parse(localStorage.getItem('activityLogs') || '[]');
         let currentWeatherData = null, currentEarthquakeData = null, currentLocation = '';
-        let currentLat = -7.0986, currentLon = 107.0205; // Default to Cianjur
+        let currentLat = -6.8213, currentLon = 107.1423; // Default to Cianjur
 
         const getColor = m => m >= 5 ? '#ef4444' : m >= 4 ? '#f97316' : m >= 3 ? '#eab308' : '#22c55e';
 
@@ -823,7 +823,7 @@
             // Retry AQI fetch if it fails initially
             async function tryFetchAQI() {
                 try {
-                    await fetchAQI(-7.0986, 107.0205); // Default AQI for Cianjur
+                    await fetchAQI(-6.8213, 107.1423); // Default AQI for Cianjur
                 } catch (e) {
                     console.error('Initial AQI fetch failed, retrying in 5 seconds:', e);
                     setTimeout(tryFetchAQI, 5000); // Retry after 5 seconds

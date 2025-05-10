@@ -9,42 +9,126 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         :root {
-            --bg-color: #fff;
-            --text-color: #333;
+            --primary: #3366cc;
+            --primary-light: #e6f0ff;
+            --primary-dark: #2a56b7;
+            --bg-color: #ffffff;
+            --text-color: #222222;
+            --text-secondary: #555555;
+            --card-bg: #ffffff;
+            --card-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
             --input-bg: #f5f5f5;
-            --button-bg: #007bff;
-            --button-text: #fff;
-            --card-bg: #fff;
-            --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --input-border: #e0e0e0;
             --sidebar-bg: #f8f9fa;
+            --divider: #eaeaea;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --space-xs: 4px;
+            --space-sm: 8px;
+            --space-md: 16px;
+            --space-lg: 24px;
+            --space-xl: 32px;
+            --header-height: 60px;
+            --sidebar-width: 240px;
+            --max-content-width: 1200px;
+            --transition: all 0.2s ease;
         }
+
         [data-theme="dark"] {
-            --bg-color: #222;
-            --text-color: #ddd;
-            --input-bg: #333;
-            --button-bg: #555;
-            --button-text: #ddd;
-            --card-bg: #333;
-            --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-            --sidebar-bg: #2c2c2c;
+            --primary: #4285f4;
+            --primary-light: #2d3748;
+            --primary-dark: #3367d6;
+            --bg-color: #121212;
+            --text-color: #e0e0e0;
+            --text-secondary: #aaaaaa;
+            --card-bg: #1e1e1e;
+            --card-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+            --input-bg: #2d2d2d;
+            --input-border: #444444;
+            --sidebar-bg: #1a1a1a;
+            --divider: #333333;
         }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
-            font-family: 'Inter', 'Noto Serif', Arial, sans-serif;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            line-height: 1.6;
-            background: var(--bg-color);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-color);
             color: var(--text-color);
-            transition: background 0.3s, color 0.3s;
-        }
-        [lang="su"] {
-            font-family: 'Noto Serif', Arial, sans-serif;
-        }
-        .main-container {
+            line-height: 1.6;
+            transition: var(--transition);
+            min-height: 100vh;
             display: flex;
-            gap: 20px;
+            flex-direction: column;
         }
+
+        [lang="su"] {
+            font-family: 'Noto Serif', serif;
+        }
+
+        a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        button {
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        /* Layout */
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            max-width: var(--max-content-width);
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-sm) var(--space-md);
+            height: var(--header-height);
+            background-color: var(--bg-color);
+            border-bottom: 1px solid var(--divider);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+
+        .main-content {
+            display: flex;
+            flex: 1;
+            padding: var(--space-md);
+            gap: var(--space-md);
+        }
+
         .sidebar-left {
             width: 200px;
             background: var(--sidebar-bg);
@@ -84,20 +168,7 @@
         .sidebar-left a:hover, .sidebar-left button:hover {
             text-decoration: underline;
         }
-        .hamburger {
-            display: none;
-            font-size: 24px;
-            cursor: pointer;
-            background: var(--button-bg);
-            color: var(--button-text);
-            padding: 5px 10px;
-            border-radius: 4px;
-        }
-        .content-container {
-            flex: 3;
-            display: flex;
-            flex-direction: column;
-        }
+
         .sidebar-right {
             width: 200px;
             background: var(--sidebar-bg);
@@ -129,6 +200,42 @@
         .sidebar-right a:hover {
             text-decoration: underline;
         }
+
+        .content-area {
+            flex: 1;
+            min-width: 0;
+        }
+
+        /* Mobile sidebar */
+        .sidebar-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-color);
+            cursor: pointer;
+        }
+
+        .sidebar-mobile-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 90;
+        }
+
+        /* Components */
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius-md);
+            box-shadow: var(--card-shadow);
+            padding: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+
         .welcome-guide {
             background: var(--input-bg);
             padding: 15px;
@@ -138,199 +245,227 @@
             top: 60px;
             z-index: 10;
         }
+
         .search-container {
-            margin-bottom: 20px;
+            margin-bottom: var(--space-md);
+        }
+
+        .search-bar {
             display: flex;
-            gap: 10px;
+            gap: var(--space-sm);
             flex-wrap: wrap;
         }
-        input[type="text"] {
-            padding: 8px;
-            width: 50%;
-            font-size: 16px;
-            background: var(--input-bg);
+
+        .search-input {
+            flex: 1;
+            min-width: 200px;
+            padding: var(--space-sm) var(--space-md);
+            font-size: 1rem;
+            border: 1px solid var(--input-border);
+            border-radius: var(--radius-sm);
+            background-color: var(--input-bg);
             color: var(--text-color);
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            transition: var(--transition);
         }
-        select, button {
-            padding: 8px;
-            font-size: 16px;
-            background: var(--button-bg);
-            color: var(--button-text);
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(51, 102, 204, 0.2);
+        }
+
+        .btn {
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-sm);
             border: none;
-            cursor: pointer;
-            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            white-space: nowrap;
         }
-        button:hover {
-            opacity: 0.9;
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
         }
-        #content {
-            min-height: 200px;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: slideIn 0.3s forwards;
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
         }
-        @keyframes slideIn {
-            to { opacity: 1; transform: translateY(0); }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
         }
-        .error {
-            color: #ff4444;
+
+        .btn-outline:hover {
+            background-color: var(--primary-light);
         }
-        .loading {
-            color: #555;
-            font-style: italic;
-            text-align: center;
-            margin: 20px 0;
-        }
-        .loading::after {
-            content: '';
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid #555;
+
+        .btn-icon {
+            padding: var(--space-xs);
+            background: none;
+            border: none;
+            color: var(--text-color);
             border-radius: 50%;
-            border-top-color: transparent;
-            animation: spin 1s linear infinite;
-            margin-left: 10px;
         }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+
+        .btn-icon:hover {
+            background-color: rgba(0, 0, 0, 0.05);
         }
-        .history, .bookmarks {
-            margin: 10px 0;
-            padding: 10px;
-            background: var(--input-bg);
-            border-radius: 4px;
+
+        .dropdown {
+            position: relative;
         }
-        .history-item, .bookmark-item {
+
+        .dropdown-toggle {
+            padding: var(--space-sm) var(--space-md);
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: var(--radius-sm);
+            color: var(--text-color);
+            font-size: 1rem;
             cursor: pointer;
-            color: #007bff;
-            text-decoration: underline;
-            margin-right: 10px;
         }
-        .autocomplete-suggestions {
+
+        .dropdown-menu {
             position: absolute;
-            background: var(--bg-color);
-            border: 1px solid #ccc;
-            width: 50%;
-            max-height: 200px;
-            overflow-y: auto;
-            z-index: 1000;
-        }
-        .autocomplete-suggestion {
-            padding: 8px;
-            cursor: pointer;
-        }
-        .autocomplete-suggestion:hover, .autocomplete-suggestion.selected {
-            background: var(--input-bg);
-        }
-        .actions {
-            margin: 10px 0;
-            display: flex;
-            gap: 10px;
-        }
-        .theme-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-        }
-        .thumbnail {
-            max-width: 300px;
-            float: right;
-            margin: 0 0 10px 10px;
-            border-radius: 4px;
-            opacity: 0;
-            transition: opacity 0.5s;
-        }
-        .thumbnail.loaded {
-            opacity: 1;
-        }
-        .gallery {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin: 20px 0;
-        }
-        .gallery img, .gallery audio, .gallery video {
-            max-width: 150px;
-            border-radius: 4px;
-            cursor: pointer;
-            opacity: 0;
-            transition: opacity 0.5s, transform 0.2s;
-        }
-        .gallery img.loaded, .gallery audio.loaded, .gallery video.loaded {
-            opacity: 1;
-        }
-        .gallery img:hover, .gallery video:hover {
-            transform: scale(1.1);
-        }
-        .gallery img:nth-child(1), .gallery audio:nth-child(1), .gallery video:nth-child(1) { animation: fadeInGallery 0.3s forwards; animation-delay: 0.1s; }
-        .gallery img:nth-child(2), .gallery audio:nth-child(2), .gallery video:nth-child(2) { animation: fadeInGallery 0.3s forwards; animation-delay: 0.2s; }
-        .gallery img:nth-child(3), .gallery audio:nth-child(3), .gallery video:nth-child(3) { animation: fadeInGallery 0.3s forwards; animation-delay: 0.3s; }
-        .gallery img:nth-child(4), .gallery audio:nth-child(4), .gallery video:nth-child(4) { animation: fadeInGallery 0.3s forwards; animation-delay: 0.4s; }
-        .gallery img:nth-child(5), .gallery audio:nth-child(5), .gallery video:nth-child(5) { animation: fadeInGallery 0.3s forwards; animation-delay: 0.5s; }
-        @keyframes fadeInGallery {
-            to { opacity: 1; }
-        }
-        .attribution {
-            font-size: 12px;
-            color: #666;
-            margin-top: 5px;
-        }
-        .offline {
-            color: #888;
-            font-style: italic;
-        }
-        .result-card {
-            display: flex;
-            gap: 15px;
-            background: var(--card-bg);
-            border-radius: 10px;
-            padding: 15px;
-            margin: 10px 0;
-            box-shadow: var(--card-shadow);
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            opacity: 0;
-            animation: fadeIn 0.3s forwards;
-        }
-        .result-card:nth-child(1) { animation-delay: 0.1s; }
-        .result-card:nth-child(2) { animation-delay: 0.2s; }
-        .result-card:nth-child(3) { animation-delay: 0.3s; }
-        .result-card:nth-child(4) { animation-delay: 0.4s; }
-        .result-card:nth-child(5) { animation-delay: 0.5s; }
-        .result-card:hover {
-            transform: translateY(-3px);
+            top: 100%;
+            left: 0;
+            background-color: var(--card-bg);
+            border-radius: var(--radius-sm);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            background: linear-gradient(145deg, var(--card-bg), #e6f0ff);
+            min-width: 200px;
+            z-index: 10;
+            display: none;
         }
-        [data-theme="dark"] .result-card:hover {
-            background: linear-gradient(145deg, var(--card-bg), #444);
+
+        .dropdown-menu.show {
+            display: block;
         }
-        @keyframes fadeIn {
-            to { opacity: 1; }
+
+        .dropdown-item {
+            padding: var(--space-sm) var(--space-md);
+            display: block;
+            color: var(--text-color);
+            cursor: pointer;
         }
+
+        .dropdown-item:hover {
+            background-color: var(--primary-light);
+        }
+
+        /* Autocomplete */
+        .autocomplete-suggestion {
+            padding: var(--space-sm) var(--space-md);
+            cursor: pointer;
+        }
+
+        .autocomplete-suggestion:hover, .autocomplete-suggestion.selected {
+            background-color: var(--primary-light);
+        }
+
+        /* Article styles */
+        .article-title {
+            font-size: 2rem;
+            margin-bottom: var(--space-md);
+            line-height: 1.2;
+        }
+
+        .article-content {
+            line-height: 1.7;
+        }
+
+        .article-content p {
+            margin-bottom: var(--space-md);
+        }
+
+        .article-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: var(--radius-sm);
+        }
+
+        .thumbnail {
+            float: right;
+            margin: 0 0 var(--space-md) var(--space-md);
+            max-width: 300px;
+            border-radius: var(--radius-sm);
+        }
+
+        .infobox {
+            float: right;
+            width: 250px;
+            margin: 0 0 var(--space-md) var(--space-md);
+            background-color: var(--input-bg);
+            border-radius: var(--radius-sm);
+            padding: var(--space-md);
+            font-size: 0.9rem;
+        }
+
+        .infobox table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .infobox th, .infobox td {
+            padding: var(--space-xs) var(--space-sm);
+            border: 1px solid var(--divider);
+        }
+
+        .infobox th {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        /* Search results */
+        .search-results {
+            display: grid;
+            gap: var(--space-md);
+        }
+
+        .result-card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius-md);
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .result-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-card-content {
+            padding: var(--space-md);
+        }
+
         .result-card img {
             max-width: 100px;
-            border-radius: 4px;
+            border-radius: var(--radius-sm);
         }
-        .result-card-content {
-            flex: 1;
+
+        .result-card-title {
+            font-size: 1.1rem;
+            margin-bottom: var(--space-sm);
+            color: var(--primary);
         }
-        .result-card-content h3 {
-            margin: 0 0 5px;
-            font-size: 18px;
+
+        .result-card-snippet {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: var(--space-md);
         }
-        .result-card-content p {
-            margin: 0 0 10px;
-            font-size: 14px;
-            color: var(--text-color);
-        }
+
         .result-card-actions {
             display: flex;
             gap: var(--space-sm);
         }
+        
         .result-card-actions button {
             display: flex;
             align-items: center;
@@ -338,264 +473,441 @@
             font-size: 14px;
             padding: 6px 12px;
         }
-        .categories {
-            margin: 20px 0;
-            padding: 10px;
-            background: var(--input-bg);
-            border-radius: 4px;
+
+        /* Gallery */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: var(--space-md);
+            margin: var(--space-md) 0;
         }
-        .categories a {
-            color: #007bff;
-            text-decoration: none;
-            margin-right: 10px;
-        }
-        .categories a:hover {
-            text-decoration: underline;
-        }
-        .infobox {
-            float: right;
-            width: 250px;
-            background: var(--input-bg);
-            padding: 15px;
-            border-radius: 8px;
-            margin: 0 0 10px 10px;
-            font-size: 14px;
-        }
-        .infobox table {
+
+        .gallery img, .gallery video {
             width: 100%;
-            border-collapse: collapse;
+            height: auto;
+            display: block;
+            border-radius: var(--radius-sm);
         }
-        .infobox th, .infobox td {
-            padding: 5px;
-            border: 1px solid #ccc;
+
+        .gallery audio {
+            width: 100%;
         }
-        .infobox th {
-            background: var(--button-bg);
-            color: var(--button-text);
+
+        .attribution {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: var(--space-xs);
         }
+
+        /* Offline */
+        .offline {
+            color: var(--warning);
+            font-style: italic;
+            font-size: 0.9rem;
+        }
+
+        /* Utility classes */
+        .text-center {
+            text-align: center;
+        }
+
+        .text-muted {
+            color: var(--text-secondary);
+        }
+
+        .mt-1 { margin-top: var(--space-sm); }
+        .mt-2 { margin-top: var(--space-md); }
+        .mt-3 { margin-top: var(--space-lg); }
+        .mb-1 { margin-bottom: var(--space-sm); }
+        .mb-2 { margin-bottom: var(--space-md); }
+        .mb-3 { margin-bottom: var(--space-lg); }
+
+        .d-flex {
+            display: flex;
+        }
+
+        .align-items-center {
+            align-items: center;
+        }
+
+        .justify-content-between {
+            justify-content: space-between;
+        }
+
+        /* Responsive adjustments */
+        @media (min-width: 992px) {
+            .search-results {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 991px) {
+            .sidebar-left, .sidebar-right {
+                position: fixed;
+                top: 0;
+                height: 100vh;
+                z-index: 100;
+                width: 280px;
+                transition: left 0.3s ease, right 0.3s ease;
+            }
+
+            .sidebar-left {
+                left: -100%;
+            }
+
+            .sidebar-right {
+                right: -100%;
+            }
+
+            .sidebar-left.active {
+                left: 0;
+            }
+
+            .sidebar-right.active {
+                right: 0;
+            }
+
+            .sidebar-toggle {
+                display: block;
+            }
+
+            .sidebar-mobile-overlay.active {
+                display: block;
+            }
+
+            .main-content {
+                flex-direction: column;
+                padding: var(--space-sm);
+            }
+
+            .content-area {
+                width: 100%;
+            }
+
+            .infobox {
+                float: none;
+                width: 100%;
+                margin: 0 0 var(--space-md) 0;
+            }
+
+            .thumbnail {
+                float: none;
+                max-width: 100%;
+                margin: 0 0 var(--space-md) 0;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .search-bar {
+                flex-direction: column;
+            }
+
+            .search-input, .btn, .dropdown-toggle {
+                width: 100%;
+            }
+
+            .btn {
+                justify-content: center;
+            }
+
+            .result-card-actions {
+                flex-direction: column;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        /* Loading spinner */
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Map container */
         #map {
-            height: 200px;
-            margin: 10px 0;
-            border-radius: 4px;
+            height: 300px;
+            width: 100%;
+            border-radius: var(--radius-sm);
+            margin: var(--space-md) 0;
         }
+
+        /* Modal */
         .modal {
-            display: none;
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 2000;
-            justify-content: center;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
             align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
         }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
         .modal-content {
-            background: var(--bg-color);
-            padding: 20px;
-            border-radius: 8px;
-            max-width: 600px;
+            background-color: var(--card-bg);
+            border-radius: var(--radius-md);
             width: 90%;
-            max-height: 80vh;
+            max-width: 800px;
+            max-height: 90vh;
             overflow-y: auto;
+            padding: var(--space-md);
             position: relative;
-            animation: slideInModal 0.3s;
+            transform: translateY(20px);
+            transition: var(--transition);
         }
-        @keyframes slideInModal {
-            from { transform: translateY(50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+
+        .modal.active .modal-content {
+            transform: translateY(0);
         }
+
         .modal-close {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            background: var(--button-bg);
-            color: var(--button-text);
+            top: var(--space-sm);
+            right: var(--space-sm);
+            background: none;
             border: none;
-            padding: 5px 10px;
+            font-size: 1.5rem;
             cursor: pointer;
-            border-radius: 4px;
+            color: var(--text-secondary);
         }
+
         .modal-toc {
             background: var(--input-bg);
             padding: 10px;
             border-radius: 4px;
             margin-bottom: 10px;
         }
+
         .modal-toc h4 {
             margin: 0 0 5px;
             font-size: 14px;
         }
+
         .modal-toc ul {
             list-style: none;
             padding: 0;
             margin: 0;
         }
+
         .modal-toc li {
             margin: 3px 0;
         }
+
         .modal-toc a {
             color: #007bff;
             text-decoration: none;
             font-size: 13px;
         }
+
         .modal-toc a:hover {
             text-decoration: underline;
         }
-        @media (max-width: 1024px) {
-            .main-container {
-                flex-direction: column;
-            }
-            .sidebar-left {
-                width: 100%;
-                position: static;
-                max-height: none;
-            }
-            .sidebar-right {
-                width: 100%;
-                position: static;
-                max-height: none;
-            }
-            .hamburger {
-                display: block;
-            }
-            .sidebar-left {
-                display: none;
-            }
-            .sidebar-left.active {
-                display: block;
-            }
-            .welcome-guide {
-                top: 80px;
-            }
+
+        /* Table of contents */
+        .toc {
+            background-color: var(--input-bg);
+            border-radius: var(--radius-sm);
+            padding: var(--space-md);
+            margin-bottom: var(--space-md);
         }
-        @media (max-width: 768px) {
-            .infobox {
-                width: 100%;
-                float: none;
-            }
-            .thumbnail {
-                max-width: 100%;
-            }
-            .result-card {
-                flex-direction: column;
-            }
-            .result-card img {
-                max-width: 100%;
-            }
+
+        .toc-title {
+            font-size: 1rem;
+            margin-bottom: var(--space-sm);
         }
-.welcome-guide {
-    background: var(--input-bg);
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    position: sticky;
-    top: 60px;
-    z-index: 10;
-}
 
-.search-container {
-    margin-top: 20px; /* Tambah jarak dari panduan */
-    padding: 15px;
-    background: var(--input-bg);
-    border-radius: 8px;
-}
+        .toc-list {
+            list-style: none;
+        }
 
-.try-now {
-    margin-bottom: 10px; /* Jarak antara tombol dan input pencarian */
-}
+        .toc-item {
+            margin-bottom: var(--space-xs);
+        }
 
-.search-container div {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-}
+        .toc-link {
+            display: block;
+            padding: var(--space-xs) 0;
+            color: var(--primary);
+        }
 
-@media (max-width: 768px) {
-    .search-container {
-        padding: 10px;
-    }
-    .try-now {
-        width: 100%;
-    }
-}
+        /* History & Bookmarks */
+        .history-list, .bookmarks-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-sm);
+            margin-top: var(--space-sm);
+        }
+
+        .history-item, .bookmark-item {
+            background-color: var(--input-bg);
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .history-item:hover, .bookmark-item:hover {
+            background-color: var(--primary-light);
+        }
+
+        /* Tambahan untuk sembunyiin elemen kosong */
+        .sidebar-right:empty {
+            display: none;
+        }
     </style>
 </head>
 <body>
-    <button class="theme-toggle" onclick="toggleTheme()">🌙 Dark Mode</button>
-    <button class="hamburger" onclick="toggleSidebar()">☰</button>
-    <div class="main-container">
-        <div class="sidebar-left" id="sidebarLeft">
-            <h3>Navigasi</h3>
-            <ul>
-                <li><a onclick="goToHome()">Halaman Utama</a></li>
-                <li><a onclick="showRecentChanges()">Perubahan Terbaru</a></li>
-                <li><a onclick="showFeaturedArticles()">Artikel Pilihan</a></li>
-                <li><a onclick="showRandomArticle()">Acak</a></li>
-                <li>
-                    <select id="languageSelectNav" onchange="changeLanguage(this.value)">
-                        <option value="id">Indonesia</option>
-                        <option value="su">Sunda</option>
-                        <option value="en">English</option>
-                    </select>
-                </li>
-                <li><a href="https://www.wiktionary.org" target="_blank">Wiktionary</a></li>
-                <li><a href="https://www.wikidata.org" target="_blank">Wikidata</a></li>
-                <li><a href="https://commons.wikimedia.org" target="_blank">Commons</a></li>
-            </ul>
-            <h3 id="tocTitle" style="display: none;">Daftar Isi</h3>
-            <ul id="tocList" style="display: none;"></ul>
-        </div>
-        <div class="content-container">
-            <div class="welcome-guide">
-                <h2>Wikipedia Search!</h2>
-                <p>Cari artikel Wikipedia mudah dan cepat.</p>
-            </div>
-            <div class="search-container" style="margin-top: 20px;">
-                <button class="try-now" onclick="searchWikipedia('Indonesia')" style="margin-bottom: 10px;">Mulai Jelajah</button>
-                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                    <select id="languageSelect">
-                        <option value="id">Indonesia</option>
-                        <option value="su">Sunda</option>
-                        <option value="en">English</option>
-                    </select>
-                    <select id="filterSelect">
-                        <option value="all">Semua</option>
-                        <option value="main">Artikel Utama</option>
-                        <option value="category">Kategori</option>
-                        <option value="popular">Terpopuler</option>
-                        <option value="recent">Terbaru</option>
-                    </select>
-                    <input type="text" id="searchInput" placeholder="Cari artikel Wikipedia...">
-                    <select id="searchMode">
-                        <option value="full">Pencarian Penuh</option>
-                        <option value="direct">Langsung ke Artikel</option>
-                    </select>
-                    <button onclick="searchWikipedia()">Cari</button>
-                    <div id="autocompleteSuggestions" class="autocomplete-suggestions" style="display: none;"></div>
+    <div class="app-container">
+        <header class="header">
+            <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+            <div class="logo">Wikipedia Search</div>
+            <button class="btn-icon" onclick="toggleTheme()">
+                <span id="theme-icon">🌙</span>
+            </button>
+        </header>
+
+        <div class="sidebar-mobile-overlay" onclick="toggleSidebar()"></div>
+
+        <div class="main-content">
+            <aside class="sidebar-left" id="sidebar">
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">Navigasi</h3>
+                    <ul class="sidebar-menu">
+                        <li><a href="#" onclick="goToHome()">Halaman Utama</a></li>
+                        <li><a href="#" onclick="showRecentChanges()">Perubahan Terbaru</a></li>
+                        <li><a href="#" onclick="showFeaturedArticles()">Artikel Pilihan</a></li>
+                        <li><a href="#" onclick="showRandomArticle()">Artikel Acak</a></li>
+                    </ul>
                 </div>
-            </div>
-            <div id="history" class="history"></div>
-            <div id="bookmarks" class="bookmarks"></div>
-            <div id="content"></div>
-            <div id="categories" class="categories"></div>
-            <div id="actions" class="actions"></div>
-            <div id="pagination" class="pagination"></div>
-        </div>
-        <div class="sidebar-right" id="sidebarRight">
-            <h3>Bahasa Lain</h3>
-            <ul id="langLinks"></ul>
+
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">Bahasa</h3>
+                    <select class="sidebar-select" id="languageSelectNav" onchange="changeLanguage(this.value)">
+                        <option value="id">Indonesia</option>
+                        <option value="su">Sunda</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">Proyek Wikimedia</h3>
+                    <ul class="sidebar-menu">
+                        <li><a href="https://www.wiktionary.org" target="_blank">Wiktionary</a></li>
+                        <li><a href="https://www.wikidata.org" target="_blank">Wikidata</a></li>
+                        <li><a href="https://commons.wikimedia.org" target="_blank">Commons</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section" id="tocSection" style="display: none;">
+                    <h3 class="sidebar-title">Daftar Isi</h3>
+                    <ul class="sidebar-menu" id="tocList"></ul>
+                </div>
+            </aside>
+
+            <main class="content-area">
+                <div class="welcome-guide">
+                    <h2>Wikipedia Search!</h2>
+                    <p>Cari artikel Wikipedia mudah dan cepat</p>
+                </div>
+
+                <div class="search-container card">
+                    <div class="search-bar">
+                        <input type="text" id="searchInput" class="search-input" placeholder="Cari di Wikipedia..." 
+                               oninput="handleSearchInput()" onkeydown="handleSearchKeydown(event)">
+                        <select id="languageSelect" class="dropdown-toggle">
+                            <option value="id">Indonesia</option>
+                            <option value="su">Sunda</option>
+                            <option value="en">English</option>
+                        </select>
+                        <select id="filterSelect" class="dropdown-toggle">
+                            <option value="all">Semua</option>
+                            <option value="main">Artikel Utama</option>
+                            <option value="category">Kategori</option>
+                            <option value="popular">Terpopuler</option>
+                            <option value="recent">Terbaru</option>
+                        </select>
+                        <select id="searchMode" class="dropdown-toggle">
+                            <option value="full">Pencarian Penuh</option>
+                            <option value="direct">Langsung ke Artikel</option>
+                        </select>
+                        <button id="searchButton" class="btn btn-primary" onclick="searchWikipedia()">
+                            <span id="searchButtonText">Cari</span>
+                        </button>
+                    </div>
+                    <div id="autocompleteSuggestions" class="card" style="display: none; margin-top: 8px;"></div>
+                </div>
+
+                <div id="history" class="card" style="display: none;">
+                    <h4>Riwayat Pencarian</h4>
+                    <div class="history-list" id="historyList"></div>
+                </div>
+
+                <div id="bookmarks" class="card" style="display: none;">
+                    <h4>Bookmark</h4>
+                    <div class="bookmarks-list" id="bookmarksList"></div>
+                </div>
+
+                <div id="content" class="fade-in"></div>
+
+                <div id="categories" class="card" style="display: none;"></div>
+
+                <div id="actions" class="card d-flex justify-content-between" style="display: none;"></div>
+
+                <div id="loadingIndicator" class="card text-center" style="display: none;">
+                    <div class="spinner"></div>
+                    <p class="mt-1">Memuat...</p>
+                </div>
+
+                <div id="errorMessage" class="card text-center" style="display: none;">
+                    <p id="errorText"></p>
+                </div>
+            </main>
+
+            <aside class="sidebar-right" id="sidebarRight">
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">Bahasa Lain</h3>
+                    <ul class="sidebar-menu" id="langLinks"></ul>
+                </div>
+            </aside>
         </div>
     </div>
+
     <div id="previewModal" class="modal">
         <div class="modal-content">
-            <button class="modal-close" onclick="closePreview()">X</button>
+            <button class="modal-close" onclick="closePreview()">×</button>
             <div id="previewContent"></div>
         </div>
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script>
         // State management
         let state = {
@@ -624,24 +936,33 @@
 
         // DOM elements
         const elements = {
+            sidebar: document.getElementById('sidebar'),
+            sidebarRight: document.getElementById('sidebarRight'),
+            sidebarOverlay: document.querySelector('.sidebar-mobile-overlay'),
             content: document.getElementById('content'),
             searchInput: document.getElementById('searchInput'),
+            searchButton: document.getElementById('searchButton'),
+            searchButtonText: document.getElementById('searchButtonText'),
             history: document.getElementById('history'),
+            historyList: document.getElementById('historyList'),
             bookmarks: document.getElementById('bookmarks'),
-            pagination: document.getElementById('pagination'),
+            bookmarksList: document.getElementById('bookmarksList'),
             languageSelect: document.getElementById('languageSelect'),
+            languageSelectNav: document.getElementById('languageSelectNav'),
             filterSelect: document.getElementById('filterSelect'),
             searchMode: document.getElementById('searchMode'),
             autocomplete: document.getElementById('autocompleteSuggestions'),
-            actions: document.getElementById('actions'),
-            tocTitle: document.getElementById('tocTitle'),
+            loadingIndicator: document.getElementById('loadingIndicator'),
+            errorMessage: document.getElementById('errorMessage'),
+            errorText: document.getElementById('errorText'),
+            tocSection: document.getElementById('tocSection'),
             tocList: document.getElementById('tocList'),
             categories: document.getElementById('categories'),
-            sidebarLeft: document.getElementById('sidebarLeft'),
-            sidebarRight: document.getElementById('sidebarRight'),
             langLinks: document.getElementById('langLinks'),
+            actions: document.getElementById('actions'),
             previewModal: document.getElementById('previewModal'),
-            previewContent: document.getElementById('previewContent')
+            previewContent: document.getElementById('previewContent'),
+            themeIcon: document.getElementById('theme-icon')
         };
 
         let map = null;
@@ -650,8 +971,33 @@
         document.body.dataset.theme = state.theme;
         document.body.setAttribute('lang', state.language);
         elements.languageSelect.value = state.language;
-        if (state.theme === 'dark') {
-            document.querySelector('.theme-toggle').textContent = '☀️ Light Mode';
+        elements.languageSelectNav.value = state.language;
+        updateThemeIcon();
+
+        // Toggle sidebar (mobile)
+        function toggleSidebar() {
+            elements.sidebar.classList.toggle('active');
+            elements.sidebarRight.classList.toggle('active');
+            elements.sidebarOverlay.classList.toggle('active');
+        }
+
+        // Theme toggle
+        function toggleTheme() {
+            state.theme = state.theme === 'light' ? 'dark' : 'light';
+            localStorage.setItem('theme', state.theme);
+            document.body.dataset.theme = state.theme;
+            updateThemeIcon();
+        }
+
+        function updateThemeIcon() {
+            elements.themeIcon.textContent = state.theme === 'light' ? '🌙' : '☀️';
+        }
+
+        // Navigation functions
+        function goToHome() {
+            state.selectedArticle = null;
+            state.results = [];
+            updateView();
         }
 
         // Debounce utility
@@ -662,28 +1008,7 @@
                 timeout = setTimeout(() => func(...args), wait);
             };
         }
-
-        // Theme toggle
-        function toggleTheme() {
-            state.theme = state.theme === 'light' ? 'dark' : 'light';
-            localStorage.setItem('theme', state.theme);
-            document.body.dataset.theme = state.theme;
-            document.querySelector('.theme-toggle').textContent = 
-                state.theme === 'light' ? '🌙 Dark Mode' : '☀️ Light Mode';
-        }
-
-        // Toggle sidebar
-        function toggleSidebar() {
-            elements.sidebarLeft.classList.toggle('active');
-        }
-
-        // Navigation functions
-        function goToHome() {
-            state.selectedArticle = null;
-            state.results = [];
-            updateView();
-        }
-
+        
         async function showRecentChanges() {
             state.isLoading = true;
             updateView();
@@ -744,7 +1069,7 @@
             state.language = lang;
             document.body.setAttribute('lang', state.language);
             elements.languageSelect.value = lang;
-            document.getElementById('languageSelectNav').value = lang;
+            elements.languageSelectNav.value = lang;
             state.trendingTopics = await fetchTrendingTopics();
             if (state.selectedArticle) {
                 selectArticle(state.selectedArticle.title);
@@ -1062,23 +1387,31 @@
         // Update view
         async function updateView() {
             elements.content.innerHTML = '';
-            elements.tocTitle.style.display = state.selectedArticle && state.selectedArticle.sections.length ? 'block' : 'none';
-            elements.tocList.style.display = state.selectedArticle && state.selectedArticle.sections.length ? 'block' : 'none';
-            elements.tocList.innerHTML = '';
+            elements.tocSection.style.display = state.selectedArticle && state.selectedArticle.sections.length ? 'block' : 'none';
+            elements.tocList.innerHTML = ''; // Reset dulu
             elements.categories.innerHTML = '';
+            elements.categories.style.display = 'none';
             elements.langLinks.innerHTML = '';
+            elements.actions.style.display = 'none';
+            elements.history.style.display = state.history.length ? 'block' : 'none';
+            elements.bookmarks.style.display = state.bookmarks.length ? 'block' : 'none';
+            elements.loadingIndicator.style.display = state.isLoading ? 'block' : 'none';
+            elements.errorMessage.style.display = state.error ? 'block' : 'none';
 
-            if (state.isLoading) {
-                elements.content.innerHTML = '<div class="loading">Memuat...</div>';
-            } else if (state.error) {
-                elements.content.innerHTML = `<div class="error">${state.error}</div>`;
+            if (state.error) {
+                elements.errorText.textContent = state.error;
             } else if (state.selectedArticle) {
                 let extract = state.selectedArticle.extract;
                 const sections = generateTOC(state.selectedArticle.sections, extract);
-                sections.forEach((section, index) => {
-                    const headingRegex = new RegExp(`^(={${section.level}})\\s*${section.title}\\s*\\1$`, 'm');
-                    extract = extract.replace(headingRegex, `<h${section.level} id="${section.anchor}">${section.title}</h${section.level}>`);
-                });
+                if (sections.length) {
+                    elements.tocList.innerHTML = `
+                        ${sections.map(section => `
+                            <li class="toc-item" style="margin-left: ${(section.level - 1) * 15}px">
+                                <a class="toc-link" onclick="scrollToSection('${section.anchor}')">${section.title}</a>
+                            </li>
+                        `).join('')}
+                    `;
+                }
 
                 // Fetch media URLs
                 const debouncedFetchMedia = debounce(async () => {
@@ -1124,7 +1457,7 @@
                     elements.content.innerHTML = `
                         ${infoboxHtml}
                         ${state.selectedArticle.thumbnail ? `<img src="${state.selectedArticle.thumbnail}" class="thumbnail" alt="${state.selectedArticle.title}">` : ''}
-                        <h2>${state.selectedArticle.title}</h2>
+                        <h2 class="article-title">${state.selectedArticle.title}</h2>
                         <div class="article-content">${extract.split('\n').map(paragraph => paragraph.trim() ? `<p>${paragraph}</p>` : '').join('')}</div>
                         ${mapHtml}
                         ${galleryHtml}
@@ -1138,69 +1471,76 @@
                 }, 300);
                 debouncedFetchMedia();
 
-                if (sections.length) {
-                    elements.tocList.innerHTML = `
-                        ${sections.map(section => `
-                            <li style="margin-left: ${(section.level - 1) * 15}px">
-                                <a onclick="scrollToSection('${section.anchor}')">${section.title}</a>
-                            </li>
-                        `).join('')}
-                    `;
-                }
-
                 if (state.selectedArticle.categories.length) {
                     elements.categories.innerHTML = `
-                        Kategori: ${state.selectedArticle.categories
+                        <h4>Kategori</h4>
+                        ${state.selectedArticle.categories
                             .map(cat => `<a onclick="searchWikipedia('Category:${cat}')">${cat}</a>`)
                             .join(', ')}
                     `;
+                    elements.categories.style.display = 'block';
                 }
 
                 if (state.selectedArticle.langLinks.length) {
                     elements.langLinks.innerHTML = state.selectedArticle.langLinks
                         .map(link => `<li><a onclick="switchLanguageArticle('${link.lang}', '${link.title}')">${link.lang}</a></li>`)
                         .join('');
+                } else {
+                    elements.sidebarRight.style.display = 'none';
                 }
+
+                elements.actions.style.display = 'block';
             } else if (state.results.length) {
-                elements.content.innerHTML = state.results.map(item => {
-                    const isBookmarked = state.bookmarks.some(b => b.title === item.title);
-                    return `
-                        <div class="result-card" onclick="selectArticle('${item.title}')">
-                            ${item.thumbnail ? `<img src="${item.thumbnail}" alt="${item.title}">` : ''}
-                            <div class="result-card-content">
-                                <h3>${item.title}</h3>
-                                <p>${item.snippet}...</p>
-                                <div class="result-card-actions">
-                                    <button onclick="event.stopPropagation(); toggleCardBookmark('${item.title}')">
-                                        ${isBookmarked ? 'Hapus Bookmark' : 'Bookmark'} 📑
-                                    </button>
-                                    <button onclick="event.stopPropagation(); showPreview('${item.title}')">Pratinjau 👀</button>
-                                    <button onclick="event.stopPropagation(); shareCard('${item.title}')">Bagikan 📤</button>
+                elements.content.innerHTML = `
+                    <div class="search-results">
+                        ${state.results.map(item => {
+                            const isBookmarked = state.bookmarks.some(b => b.title === item.title);
+                            return `
+                                <div class="result-card">
+                                    <div class="result-card-content" onclick="selectArticle('${item.title}')">
+                                        ${item.thumbnail ? `<img src="${item.thumbnail}" alt="${item.title}">` : ''}
+                                        <h3 class="result-card-title">${item.title}</h3>
+                                        <p class="result-card-snippet">${item.snippet}...</p>
+                                    </div>
+                                    <div class="result-card-actions">
+                                        <button class="btn btn-outline" onclick="event.stopPropagation(); toggleCardBookmark('${item.title}')">
+                                            ${isBookmarked ? 'Hapus Bookmark 🗑️' : 'Bookmark 📑'}
+                                        </button>
+                                        <button class="btn btn-outline" onclick="event.stopPropagation(); showPreview('${item.title}')">Pratinjau 👀</button>
+                                        <button class="btn btn-outline" onclick="event.stopPropagation(); shareCard('${item.title}')">Bagikan 📤</button>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
+                            `;
+                        }).join('')}
+                    </div>
+                `;
                 if (state.results.length < state.totalHits) {
-                    elements.content.innerHTML += '<div id="loadMore" class="loading">Memuat lebih banyak...</div>';
+                    elements.content.innerHTML += '<div id="loadMore" class="text-center mt-3"><div class="spinner"></div></div>';
                     setupInfiniteScroll();
                 }
             } else {
                 if (!state.trendingTopics.length) {
                     state.trendingTopics = await fetchTrendingTopics();
                 }
-                // No additional welcome guide here, already in sticky header
+                elements.content.innerHTML = `
+                    <div class="card">
+                        <h3>Topik Populer</h3>
+                        <div class="d-flex flex-wrap gap-2 mt-2">
+                            ${state.trendingTopics.map(topic => `
+                                <a class="history-item" onclick="searchWikipedia('${topic}')">${topic}</a>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
             }
 
-            elements.history.innerHTML = state.history.length ? 
-                'Riwayat Pencarian: ' + state.history.map(item => 
-                    `<span class="history-item" onclick="searchWikipedia('${item}')">${item}</span>`
-                ).join('') : '';
+            elements.historyList.innerHTML = state.history.map(item => 
+                `<a class="history-item" onclick="searchWikipedia('${item}')">${item}</a>`
+            ).join('');
 
-            elements.bookmarks.innerHTML = state.bookmarks.length ? 
-                'Bookmark: ' + state.bookmarks.map(item => 
-                    `<span class="bookmark-item" onclick="searchWikipedia('${item.title}')">${item.title}</span>`
-                ).join('') : '';
+            elements.bookmarksList.innerHTML = state.bookmarks.map(item => 
+                `<a class="bookmark-item" onclick="searchWikipedia('${item.title}')">${item.title}</a>`
+            ).join('');
 
             updateActions();
         }
@@ -1218,7 +1558,7 @@
             state.language = lang;
             document.body.setAttribute('lang', lang);
             elements.languageSelect.value = lang;
-            document.getElementById('languageSelectNav').value = lang;
+            elements.languageSelectNav.value = lang;
             state.trendingTopics = await fetchTrendingTopics();
             selectArticle(title);
         }
@@ -1278,17 +1618,17 @@
                 elements.previewContent.innerHTML = `
                     ${tocHtml}
                     ${preview.thumbnail ? `<img src="${preview.thumbnail}" class="thumbnail" alt="${preview.title}">` : ''}
-                    <h2>${preview.title}</h2>
-                    <p>${extract}</p>
+                    <h2 class="article-title">${preview.title}</h2>
+                    <div class="article-content">${extract.split('\n').map(paragraph => paragraph.trim() ? `<p>${paragraph}</p>` : '').join('')}</div>
                 `;
                 lazyLoadMedia();
             }
-            elements.previewModal.style.display = 'flex';
+            elements.previewModal.classList.add('active');
         }
 
         // Close preview modal
         function closePreview() {
-            elements.previewModal.style.display = 'none';
+            elements.previewModal.classList.remove('active');
             elements.previewContent.innerHTML = '';
         }
 
@@ -1296,10 +1636,10 @@
         function updateActions() {
             const isBookmarked = state.selectedArticle && state.bookmarks.some(b => b.title === state.selectedArticle.title);
             elements.actions.innerHTML = state.selectedArticle ? `
-                <button onclick="shareResult()">Bagikan 📤</button>
-                <button onclick="openInWikipedia()">Buka di Wikipedia 🌐</button>
-                <button onclick="exportResult()">Unduh 📥</button>
-                <button onclick="toggleBookmark()">${isBookmarked ? 'Hapus Bookmark 🗑️' : 'Tambah Bookmark 📑'}</button>
+                <button class="btn btn-outline" onclick="shareResult()">Bagikan 📤</button>
+                <button class="btn btn-outline" onclick="openInWikipedia()">Buka di Wikipedia 🌐</button>
+                <button class="btn btn-outline" onclick="exportResult()">Unduh 📥</button>
+                <button class="btn btn-outline" onclick="toggleBookmark()">${isBookmarked ? 'Hapus Bookmark 🗑️' : 'Tambah Bookmark 📑'}</button>
             ` : '';
         }
 
@@ -1333,6 +1673,7 @@
             }
 
             state.searchMode = elements.searchMode.value;
+            state.filter = elements.filterSelect.value;
             if (state.searchMode === 'direct') {
                 state.isLoading = true;
                 updateView();
@@ -1426,13 +1767,12 @@
             elements.autocomplete.style.display = suggestions.length ? 'block' : 'none';
         }, 300);
 
-        // Event listeners
-        elements.searchInput.addEventListener('input', (e) => {
+        function handleSearchInput() {
             state.selectedSuggestionIndex = -1;
-            debouncedFetchSuggestions(e.target.value);
-        });
+            debouncedFetchSuggestions(elements.searchInput.value);
+        }
 
-        elements.searchInput.addEventListener('keydown', (e) => {
+        function handleSearchKeydown(e) {
             const suggestions = Array.from(elements.autocomplete.children);
             if (!suggestions.length) return;
 
@@ -1453,7 +1793,11 @@
             suggestions.forEach((suggestion, index) => {
                 suggestion.classList.toggle('selected', index === state.selectedSuggestionIndex);
             });
-        });
+        }
+
+        // Event listeners
+        elements.searchInput.addEventListener('input', handleSearchInput);
+        elements.searchInput.addEventListener('keydown', handleSearchKeydown);
 
         elements.autocomplete.addEventListener('click', (e) => {
             const suggestion = e.target.closest('.autocomplete-suggestion');

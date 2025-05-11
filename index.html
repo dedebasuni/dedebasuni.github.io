@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+:root {
+    --primary-color: #e0f7ff;
+    --accent-color: #7ad0ff;
+    --accent-dark: #0066cc;
+    --bg-dark: #0a0f2d;
+    --bg-darker: #05081a;
+    --card-bg: rgba(10, 15, 45, 0.85);
+    --neon-glow: 0 0 10px var(--accent-color);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Space Grotesk', sans-serif;
+    background: radial-gradient(circle at center, var(--bg-dark), var(--bg-darker));
+    color: var(--primary-color);
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    position: relative;
+    overflow-x: hidden;
+    line-height: 1.5;
+    padding: 1rem;
+}
+
+body::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: 
+        radial-gradient(circle at 20% 30%, rgba(122, 208, 255, 0.15), transparent 30%),
+        radial-gradient(circle at 80% 70%, rgba(122, 208, 255, 0.15), transparent 30%),
+        url('https://www.transparenttextures.com/patterns/stardust.png');
+    opacity: 0.3;
+    z-index: 0;
+    animation: pulse 20s infinite alternate;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.3; }
+    100% { opacity: 0.5; }
+}
+
+.container {
+    max-width: 600px; /* Reduced from 800px */
+    width: 100%;
+    padding: 1.5rem 1.2rem; /* Reduced padding */
+    background: var(--card-bg);
+    border-radius: 16px; /* Subtler curve */
+    box-shadow: 0 0 20px rgba(0, 60, 150, 0.3);
+    backdrop-filter: blur(10px);
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    animation: fadeIn 0.8s ease-out; /* Smoother animation */
+    border: 1px solid rgba(122, 208, 255, 0.2);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); } /* Reduced translate */
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.profile-img-container {
+    position: relative;
+    width: clamp(80px, 20vw, 120px); /* Smaller image */
+    height: clamp(80px, 20vw, 120px);
+    margin: 0 auto 1rem;
+}
+
+.profile-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--accent-color); /* Thinner border */
+    box-shadow: var(--neon-glow);
+    transition: all 0.3s ease; /* Smoother transition */
+    position: relative;
+    z-index: 2;
+}
+
+.profile-img-container::before {
+    content: '';
+    position: absolute;
+    width: 110%;
+    height: 110%;
+    top: -5%;
+    left: -5%;
+    border-radius: 50%;
+    background: linear-gradient(45deg, var(--accent-color), transparent 70%);
+    animation: rotate 12s linear infinite; /* Faster rotation */
+    z-index: 1;
+    opacity: 0.6;
+}
+
+@keyframes rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.profile-img:hover {
+    transform: scale(1.03); /* Subtler scale */
+    box-shadow: 0 0 20px var(--accent-color);
+}
+
+h1 {
+    font-size: clamp(1.5rem, 5vw, 2.2rem); /* Smaller font */
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+    background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    letter-spacing: 0.5px;
+    position: relative;
+    display: inline-block;
+}
+
+h1::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50%;
+    height: 1.5px;
+    background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
+}
+
+.bio {
+    font-size: clamp(0.9rem, 3vw, 1.1rem); /* Smaller bio */
+    margin-bottom: 1.5rem;
+    color: #b3e0ff;
+    font-weight: 300;
+    letter-spacing: 0.3px;
+}
+
+.section-title {
+    font-size: clamp(1.1rem, 4vw, 1.5rem); /* Smaller title */
+    margin: 1.5rem 0 0.8rem;
+    background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    position: relative;
+    display: inline-block;
+}
+
+.section-title::after {
+    content: '✦';
+    position: absolute;
+    right: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--accent-color);
+    font-size: 0.6em;
+}
+
+.section-title::before {
+    content: '✦';
+    position: absolute;
+    left: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--accent-color);
+    font-size: 0.6em;
+}
+
+.links, .projects {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Smaller min width */
+    gap: 0.8rem; /* Tighter gap */
+}
+
+.link, .project {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.8rem; /* Reduced padding */
+    background: rgba(30, 50, 100, 0.4);
+    border-radius: 12px; /* Smaller radius */
+    text-decoration: none;
+    color: var(--primary-color);
+    transition: all 0.25s ease; /* Smoother transition */
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(122, 208, 255, 0.1);
+}
+
+.link::after, .project::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(122, 208, 255, 0.1), transparent);
+    z-index: -1;
+}
+
+.link:hover, .project:hover {
+    background: rgba(50, 80, 150, 0.6);
+    transform: translateY(-3px); /* Subtler lift */
+    box-shadow: 0 6px 15px rgba(122, 208, 255, 0.3);
+    border-color: rgba(122, 208, 255, 0.3);
+}
+
+.link img, .project img {
+    width: clamp(20px, 5vw, 28px); /* Smaller icons */
+    height: clamp(20px, 5vw, 28px);
+    filter: drop-shadow(0 0 4px rgba(122, 208, 255, 0.5));
+    transition: transform 0.25s ease;
+}
+
+.link:hover img, .project:hover img {
+    transform: scale(1.15) rotate(5deg);
+}
+
+.link-content, .project-content {
+    flex: 1;
+    text-align: left;
+}
+
+.link-title, .project-title {
+    font-size: clamp(0.9rem, 3vw, 1.1rem); /* Smaller title */
+    font-weight: 600;
+    margin-bottom: 0.15rem;
+    color: var(--accent-color);
+}
+
+.link-desc, .project-desc {
+    font-size: clamp(0.75rem, 2.5vw, 0.85rem); /* Smaller description */
+    color: #b3e0ff;
+    opacity: 0.9;
+    font-weight: 300;
+}
+
+/* Floating stars decoration */
+.star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle var(--duration, 5s) infinite ease-in-out;
+    opacity: 0;
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0; transform: scale(0.5); }
+    50% { opacity: var(--opacity, 0.8); transform: scale(1); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding: 1.2rem 1rem;
+        border-radius: 14px;
+    }
+
+    .profile-img-container {
+        margin-bottom: 0.8rem;
+    }
+
+    .section-title::before,
+    .section-title::after {
+        font-size: 0.5em;
+        right: -15px;
+        left: -15px;
+    }
+
+    .links, .projects {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 1rem 0.8rem;
+        border-radius: 12px;
+    }
+
+    .profile-img-container {
+        width: clamp(70px, 25vw, 100px);
+        height: clamp(70px, 25vw, 100px);
+    }
+
+    .section-title {
+        margin: 1.2rem 0 0.6rem;
+    }
+
+    .section-title::before,
+    .section-title::after {
+        display: none;
+    }
+
+    .link, .project {
+        padding: 0.6rem;
+        border-radius: 10px;
+    }
+}
+
+@media (max-width: 360px) {
+    .container {
+        padding: 0.8rem 0.6rem;
+    }
+
+    .bio {
+        margin-bottom: 1rem;
+    }
+}
+    </style>
+</head>
+<body>
+    <!-- Floating stars -->
+    <div class="star" style="--opacity: 0.6; --duration: 4s; width: 2px; height: 2px; top: 20%; left: 15%;"></div>
+    <div class="star" style="--opacity: 0.8; --duration: 7s; width: 3px; height: 3px; top: 30%; left: 80%;"></div>
+    <div class="star" style="--opacity: 0.5; --duration: 6s; width: 1.5px; height: 1.5px; top: 70%; left: 10%;"></div>
+    <div class="star" style="--opacity: 0.7; --duration: 5s; width: 2px; height: 2px; top: 80%; left: 70%;"></div>
+
+    <div class="container">
+        <div class="profile-img-container">
+            <img src="https://avatars.githubusercontent.com/u/12972124?v=4?w=500&auto=format&fit=crop" alt="Profile Picture" class="profile-img">
+        </div>
+        <h1>Dede Basuni</h1>
+        <p class="bio">Cosmic Explorer | Interstellar Developer | Dreamer of Galaxies</p>
+
+        <h2 class="section-title">Connect</h2>
+        <div class="links">
+            <a href="https://github.com" target="_blank" class="link">
+                <img src="https://cdn-icons-png.flaticon.com/24/2111/2111432.png" alt="GitHub Icon">
+                <div class="link-content">
+                    <div class="link-title">GitHub</div>
+                    <div class="link-desc">Orbit my code constellations</div>
+                </div>
+            </a>
+            <a href="https://facebook.com" target="_blank" class="link">
+                <img src="https://cdn-icons-png.flaticon.com/128/733/733547.png" alt="Facebook Icon">
+                <div class="link-content">
+                    <div class="link-title">Facebook</div>
+                    <div class="link-desc">Connect across the cosmos</div>
+                </div>
+            </a>
+            <a href="https://twitter.com" target="_blank" class="link">
+                <img src="https://cdn-icons-png.flaticon.com/24/733/733579.png" alt="Twitter Icon">
+                <div class="link-content">
+                    <div class="link-title">Twitter</div>
+                    <div class="link-desc">Catch my cosmic tweets</div>
+                </div>
+            </a>
+            <a href="https://instagram.com" target="_blank" class="link">
+                <img src="https://cdn-icons-png.flaticon.com/24/2111/2111463.png" alt="Instagram Icon">
+                <div class="link-content">
+                    <div class="link-title">Instagram</div>
+                    <div class="link-desc">Glimpse my starry life</div>
+                </div>
+            </a>
+        </div>
+
+        <h2 class="section-title">Projects</h2>
+        <div class="projects">
+            <a href="https://example.com/project1" target="_blank" class="project">
+                <img src="https://cdn-icons-png.flaticon.com/512/2906/2906274.png" alt="Project Icon">
+                <div class="project-content">
+                    <div class="project-title">Galactic Explorer</div>
+                    <div class="project-desc">Interactive 3D visualization of star systems</div>
+                </div>
+            </a>
+            <a href="https://example.com/project2" target="_blank" class="project">
+                <img src="https://cdn-icons-png.flaticon.com/512/2906/2906274.png" alt="Project Icon">
+                <div class="project-content">
+                    <div class="project-title">Nebula Notes</div>
+                    <div class="project-desc">Cosmic-themed markdown note-taking app</div>
+                </div>
+            </a>
+            <a href="https://example.com/project3" target="_blank" class="project">
+                <img src="https://cdn-icons-png.flaticon.com/512/2906/2906274.png" alt="Project Icon">
+                <div class="project-content">
+                    <div class="project-title">Orbit Simulator</div>
+                    <div class="project-desc">Physics-based planetary orbit simulation</div>
+                </div>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

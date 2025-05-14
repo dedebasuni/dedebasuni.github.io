@@ -2015,398 +2015,156 @@
     }
     
     // Fungsi untuk mengedit user
-
+    function editUser(username, name, role) {
+      const modalHtml = `
+        <div id="user-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+          background-color: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000;">
+          <div style="background-color: white; padding: 2rem; border-radius: var(--radius-md); width: 100%; max-width: 500px;">
+            <h3 style="margin-bottom: 1.5rem; color: var(--primary-dark);">
+              <i class="fas fa-user-edit"></i> Edit User
+            </h3>
+            
+            <div class="form-group">
+              <label>Username</label>
+              <input type="text" value="${username}" class="form-control" disabled>
+            </div>
+            
+            <div class="form-group">
+              <label for="edit-password">Password Baru (kosongkan jika tidak diubah)</label>
+              <input type="password" id="edit-password" class="form-control">
+            </div>
+            
+            <div class="form-group">
+              <label for="edit-name">Nama Lengkap</label>
+              <input type="text" id="edit-name" value="${name}" class="form-control">
+            </div>
+            
+            <div class="form-group">
+              <label for="edit-role">Role</label>
+              <select id="edit-role" class="form-control">
+                <option value="admin" ${role === 'admin' ? 'selected' : ''}>Admin</option>
+                <option value="superadmin" ${role === 'superadmin' ? 'selected' : ''}>Super Admin</option>
+              </select>
+            </div>
+            
+            <div class="action-buttons" style="margin-top: 1.5rem;">
+              <button onclick="saveUserChanges('${username}')" class="btn btn-primary">
+                <i class="fas fa-save"></i> Simpan Perubahan
+              </button>
+              <button onclick="closeModal()" class="btn btn-danger">
+                <i class="fas fa-times"></i> Batal
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      document.body.insertAdjacentHTML('beforeend', modalHtml);
+    }
     
-    // Fungsi Submit Form ke Backend
-    function submitForm() {
-      const submitBtn = document.getElementById('submit-btn');
-      const originalText = submitBtn.innerHTML;
-      submitBtn.innerHTML = '<span class="spinner"></span> Memproses...';
-      submitBtn.disabled = true;
+    // Fungsi untuk menyimpan perubahan user
+    function saveUserChanges(username) {
+      const password = document.getElementById('edit-password').value;
+      const name = document.getElementById('edit-name').value;
+      const role = document.getElementById('edit-role').value;
       
-      const form = document.getElementById('registration-form');
-      const formData = new FormData(form);
+      const token = document.querySelector('#admin-content [onclick*="exportToExcel"]')
+        .getAttribute('onclick')
+        .match(/'([^']+)'/)[1];
       
-      // Konversi FormData ke objek JSON
-      const data = {};
-      formData.forEach((value, key) => {
-        if (key !== 'dokumen') {
-          data[key] = value;
-        }
-      });
-      
-      // Tambahkan nama file dokumen
-      const fileInput = document.getElementById('dokumen');
-      data.dokumen = [];
-      for (let i = 0; i < fileInput.files.length; i++) {
-        data.dokumen.push(fileInput.files[i].name);
-      }
-      
-      // Kirim data ke backend
-      fetch(`${BACKEND_URL}?action=submit_form`, {
+      fetch(`${BACKEND_URL}?action=save_admin&token=${encodeURIComponent(token)}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: new URLSearchParams(data).toString()
+        body: new URLSearchParams({
+          username: username,
+          password: password,
+          name: name,
+          role: role
+        }).toString()
       })
       .then(response => response.json())
       .then(result => {
         if (result.success) {
-          // Tampilkan pesan sukses
-          const successHtml = `
-            <div class="alert alert-success">
-              <h4 style="margin-bottom: 0.5rem;">
-                <i class="fas fa-check-circle"></i> Pendaftaran Berhasil!
-              </h4>
-              <p>Nomor Pendaftaran Anda: <strong>${result.nomor_pendaftaran}</strong></p>
-              <p class="mt-2">Silakan simpan nomor pendaftaran ini untuk mengecek status pendaftaran.</p>
-            </div>
-            <div class="action-buttons mt-3">
-              <button onclick="window.print()" class="btn btn-secondary">
-                <i class="fas fa-print"></i> Cetak Bukti
-              </button>
-              <button onclick="showCheckStatus('${result.nomor_pendaftaran}')" class="btn btn-primary">
-                <i class="fas fa-search"></i> Cek Status
-              </button>
-              <button onclick="showSection('landing')" class="btn btn-success">
-                <i class="fas fa-home"></i> Kembali ke Beranda
-              </button>
-            </div>
-          `;
-          
-          document.getElementById('preview-section').innerHTML = successHtml;
-          
-          // Reset form
-          form.reset();
+          alert('Perubahan berhasil disimpan');
+          closeModal();
+          loadUsers(token);
         } else {
-          throw new Error(result.message || 'Terjadi kesalahan saat submit');
+          throw new Error(result.message || 'Gagal menyimpan perubahan');
         }
       })
       .catch(error => {
-        alert(`Gagal submit: ${error.message}`);
-        submitBtn.innerHTML = originalText;
-        submitBtn.disabled = false;
+        alert(`Gagal menyimpan perubahan: ${error.message}`);
       });
     }
     
-    // Fungsi untuk langsung ke cek status dengan nomor tertentu
-    function showCheckStatus(nomor) {
-      showSection('check');
-      document.getElementById('check-nomor').value = nomor;
-      checkStatus();
-    }
-    
-    // Fungsi Cek Status Pendaftaran
-    function checkStatus() {
-      const checkBtn = document.getElementById('check-btn');
-      const originalText = checkBtn.innerHTML;
-      checkBtn.innerHTML = '<span class="spinner"></span> Mencari...';
-      checkBtn.disabled = true;
-      
-      const nomor = document.getElementById('check-nomor').value.trim();
-      const nisn = document.getElementById('check-nisn').value.trim();
-      
-      if (!nomor || !nisn) {
-        alert('Harap isi nomor pendaftaran dan NISN!');
-        checkBtn.innerHTML = originalText;
-        checkBtn.disabled = false;
+    // Fungsi untuk menghapus user
+    function deleteUser(username, token) {
+      if (!confirm(`Apakah Anda yakin ingin menghapus user ${username}?`)) {
         return;
       }
       
-      // Kirim permintaan ke backend
-      fetch(`${BACKEND_URL}?action=check_status&nomor=${encodeURIComponent(nomor)}&nisn=${encodeURIComponent(nisn)}`)
-        .then(response => response.json())
-        .then(result => {
-          const resultDiv = document.getElementById('check-result');
-          
-          if (result.success) {
-            const data = result.data;
-            let statusClass = '';
-            if (data.Status === 'Diverifikasi') {
-              statusClass = 'status-verified';
-            } else if (data.Status === 'Ditolak') {
-              statusClass = 'status-rejected';
-            } else {
-              statusClass = 'status-pending';
-            }
-            
-            resultDiv.innerHTML = `
-              <div class="card">
-                <h4 style="margin-bottom: 1rem; color: var(--primary-dark);">
-                  <i class="fas fa-user-graduate"></i> Status Pendaftaran
-                </h4>
-                
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
-                  <div>
-                    <strong style="font-size: 0.85rem; color: var(--gray);">Nomor Pendaftaran:</strong>
-                    <p style="margin-top: 0.25rem;">${data['Nomor Pendaftaran']}</p>
-                  </div>
-                  <div>
-                    <strong style="font-size: 0.85rem; color: var(--gray);">Nama:</strong>
-                    <p style="margin-top: 0.25rem;">${data.Nama}</p>
-                  </div>
-                  <div>
-                    <strong style="font-size: 0.85rem; color: var(--gray);">Asal Sekolah:</strong>
-                    <p style="margin-top: 0.25rem;">${data['Asal Sekolah']}</p>
-                  </div>
-                  <div>
-                    <strong style="font-size: 0.85rem; color: var(--gray);">Tanggal Daftar:</strong>
-                    <p style="margin-top: 0.25rem;">${data['Tanggal Daftar']}</p>
-                  </div>
-                  <div>
-                    <strong style="font-size: 0.85rem; color: var(--gray);">Status:</strong>
-                    <p style="margin-top: 0.25rem;" class="${statusClass}">
-                      <i class="fas fa-${data.Status === 'Diverifikasi' ? 'check-circle' : 
-                        data.Status === 'Ditolak' ? 'times-circle' : 'clock'}"></i>
-                      ${data.Status}
-                    </p>
-                  </div>
-                </div>
-                
-                ${data.Status === 'Diverifikasi' ? `
-                  <div class="alert alert-success mt-3">
-                    <strong><i class="fas fa-check-circle"></i> Selamat!</strong> 
-                    Anda diterima di SMAS PGRI Takokak. Silakan lakukan daftar ulang sesuai jadwal.
-                  </div>
-                ` : data.Status === 'Ditolak' ? `
-                  <div class="alert alert-danger mt-3">
-                    <strong><i class="fas fa-times-circle"></i> Maaf</strong>, 
-                    Anda belum diterima di SMAS PGRI Takokak.
-                  </div>
-                ` : `
-                  <div class="alert alert-info mt-3">
-                    <strong><i class="fas fa-info-circle"></i> Proses Verifikasi</strong> 
-                    Pendaftaran Anda sedang dalam proses verifikasi. Silakan cek kembali beberapa hari lagi.
-                  </div>
-                `}
-                
-                <div class="action-buttons mt-3">
-                  <button onclick="window.print()" class="btn btn-secondary">
-                    <i class="fas fa-print"></i> Cetak
-                  </button>
-                  <button onclick="showSection('landing')" class="btn btn-primary">
-                    <i class="fas fa-home"></i> Kembali
-                  </button>
-                </div>
-              </div>
-            `;
-          } else {
-            resultDiv.innerHTML = `
-              <div class="alert alert-danger">
-                <strong><i class="fas fa-exclamation-triangle"></i> Data tidak ditemukan</strong>
-                <p class="mt-2">Nomor pendaftaran atau NISN yang Anda masukkan tidak valid. Silakan coba lagi.</p>
-              </div>
-            `;
-          }
-          
-          resultDiv.classList.remove('hidden');
-        })
-        .catch(error => {
-          alert(`Gagal memeriksa status: ${error.message}`);
-        })
-        .finally(() => {
-          checkBtn.innerHTML = originalText;
-          checkBtn.disabled = false;
-        });
-    }
-    
-    // Fungsi Login Admin
-    function adminLogin() {
-      const loginBtn = document.getElementById('admin-login-btn');
-      const originalText = loginBtn.innerHTML;
-      loginBtn.innerHTML = '<span class="spinner"></span> Memverifikasi...';
-      loginBtn.disabled = true;
-      
-      const username = document.getElementById('admin-username').value;
-      const password = document.getElementById('admin-password').value;
-      
-      // Kirim permintaan login ke backend
-      fetch(`${BACKEND_URL}?action=admin_login&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`)
+      fetch(`${BACKEND_URL}?action=delete_user&token=${encodeURIComponent(token)}&username=${encodeURIComponent(username)}`)
         .then(response => response.json())
         .then(result => {
           if (result.success) {
-            // Login berhasil, tampilkan dashboard admin
-            loadAdminDashboard(result.token);
+            alert('User berhasil dihapus');
+            loadUsers(token);
           } else {
-            throw new Error(result.message || 'Login gagal');
+            throw new Error(result.message || 'Gagal menghapus user');
           }
         })
         .catch(error => {
-          alert(`Login gagal: ${error.message}`);
-        })
-        .finally(() => {
-          loginBtn.innerHTML = originalText;
-          loginBtn.disabled = false;
+          alert(`Gagal menghapus user: ${error.message}`);
         });
     }
     
-// Fungsi Load Admin Dashboard
-function loadAdminDashboard(token) {
-  const adminContent = document.getElementById('admin-content');
-  adminContent.innerHTML = '<p>Memuat data...</p>';
-  adminContent.classList.remove('hidden');
-
-  // Atur struktur dashboard (tab + area isi)
-  adminContent.innerHTML = `
-    <div class="tabs">
-      <button class="tab-btn active" onclick="showAdminTab('registrations', this)">
-        <i class="fas fa-users"></i> Data Pendaftar
-      </button>
-      <button class="tab-btn" onclick="showAdminTab('logs', this)">
-        <i class="fas fa-history"></i> Log Aktivitas
-      </button>
-    </div>
-    
-    <div id="admin-registrations-tab">
-      <p>Memuat data pendaftar...</p>
-    </div>
-    
-    <div id="admin-logs-tab" class="hidden">
-      <div class="table-responsive">
-        <table id="log-table">
-          <thead>
-            <tr>
-              <th>Waktu</th>
-              <th>Aktivitas</th>
-              <th>Deskripsi</th>
-              <th>User</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Data log akan diisi oleh JavaScript -->
-          </tbody>
-        </table>
-      </div>
-    </div>
-  `;
-
-  // Load data pendaftar
-  fetch(`${BACKEND_URL}?action=get_registrations&token=${encodeURIComponent(token)}`)
-    .then(response => response.json())
-    .then(result => {
-      const regTab = document.getElementById('admin-registrations-tab');
-
-      if (result.success) {
-        let tableHtml = `
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>No. Pendaftaran</th>
-                  <th>Nama</th>
-                  <th>Asal Sekolah</th>
-                  <th>Tanggal Daftar</th>
-                  <th>Status</th>
-                  <th>Aksi</th>
-                </tr>
-              </thead>
-              <tbody>
-        `;
-
-        result.data.forEach(reg => {
-          let statusClass = '';
-          if (reg.Status === 'Diverifikasi') {
-            statusClass = 'status-verified';
-          } else if (reg.Status === 'Ditolak') {
-            statusClass = 'status-rejected';
-          } else {
-            statusClass = 'status-pending';
-          }
-
-          tableHtml += `
-            <tr>
-              <td>${reg['Nomor Pendaftaran']}</td>
-              <td>${reg.Nama}</td>
-              <td>${reg['Asal Sekolah']}</td>
-              <td>${reg['Tanggal Daftar']}</td>
-              <td class="${statusClass}">${reg.Status}</td>
-              <td>
-                <select onchange="updateStatus('${reg['Nomor Pendaftaran']}', this.value, '${token}')"
-                  style="padding: 0.25rem; border-radius: 4px; border: 1px solid var(--light-gray);">
-                  <option value="Belum Diverifikasi" ${reg.Status === 'Belum Diverifikasi' ? 'selected' : ''}>
-                    Belum Diverifikasi
-                  </option>
-                  <option value="Diverifikasi" ${reg.Status === 'Diverifikasi' ? 'selected' : ''}>
-                    Diverifikasi
-                  </option>
-                  <option value="Ditolak" ${reg.Status === 'Ditolak' ? 'selected' : ''}>
-                    Ditolak
-                  </option>
-                </select>
-              </td>
-            </tr>
-          `;
-        });
-
-        tableHtml += `
-              </tbody>
-            </table>
-          </div>
-          <div class="action-buttons mt-3">
-            <button onclick="exportToExcel('${token}')" class="btn btn-success">
-              <i class="fas fa-file-excel"></i> Export ke Excel
-            </button>
-            <button onclick="showSection('landing')" class="btn btn-danger">
-              <i class="fas fa-sign-out-alt"></i> Logout
-            </button>
-          </div>
-        `;
-
-        regTab.innerHTML = tableHtml;
-      } else {
-        regTab.innerHTML = `<div class="alert alert-danger"><strong>Error:</strong> ${result.message}</div>`;
+    // Fungsi untuk menampilkan tab admin
+    function showAdminTab(tabName, button) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      button.classList.add('active');
+      
+      document.getElementById('admin-registrations-tab').classList.add('hidden');
+      document.getElementById('admin-logs-tab').classList.add('hidden');
+      if (document.getElementById('admin-users-tab')) {
+        document.getElementById('admin-users-tab').classList.add('hidden');
       }
-    })
-    .catch(error => {
-      const regTab = document.getElementById('admin-registrations-tab');
-      regTab.innerHTML = `<div class="alert alert-danger"><strong>Gagal memuat data:</strong> ${error.message}</div>`;
-    });
-
-  // Load log aktivitas
-  fetch(`${BACKEND_URL}?action=get_logs&token=${encodeURIComponent(token)}`)
-    .then(response => response.json())
-    .then(result => {
-      if (result.success) {
-        const tableBody = document.querySelector('#log-table tbody');
-        tableBody.innerHTML = '';
-
-        result.data.forEach(log => {
-          const row = document.createElement('tr');
-          row.innerHTML = `
-            <td>${log.Timestamp || '-'}</td>
-            <td>${log.Aktivitas || '-'}</td>
-            <td>${log.Deskripsi || '-'}</td>
-            <td>${log.User || 'System'}</td>
-          `;
-          tableBody.appendChild(row);
-        });
-      }
-    });
-}
-
-// Fungsi untuk menampilkan tab admin
-function showAdminTab(tabName, button) {
-  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-  button.classList.add('active');
-
-  document.getElementById('admin-registrations-tab').classList.add('hidden');
-  document.getElementById('admin-logs-tab').classList.add('hidden');
-
-  document.getElementById(`admin-${tabName}-tab`).classList.remove('hidden');
-}
+      
+      document.getElementById(`admin-${tabName}-tab`).classList.remove('hidden');
+    }
     
-    // Fungsi Update Status Pendaftaran
-    function updateStatus(nomor, status, token) {
+    // Fungsi untuk mencari pendaftar
+    function searchRegistrations() {
+      const search = document.getElementById('reg-search').value;
+      const token = document.querySelector('#admin-content [onclick*="exportToExcel"]')
+        .getAttribute('onclick')
+        .match(/'([^']+)'/)[1];
+      
+      loadRegistrations(token, 1, search);
+    }
+    
+    // Fungsi untuk mencari log
+    function searchLogs() {
+      const search = document.getElementById('log-search').value;
+      const token = document.querySelector('#admin-content [onclick*="exportToExcel"]')
+        .getAttribute('onclick')
+        .match(/'([^']+)'/)[1];
+      
+      loadLogs(token, 1, search);
+    }
+    
+    // Fungsi untuk mengupdate status pendaftaran
+    function updateRegistrationStatus(nomor, status, token) {
       fetch(`${BACKEND_URL}?action=update_status&token=${encodeURIComponent(token)}&nomor=${encodeURIComponent(nomor)}&status=${encodeURIComponent(status)}`)
         .then(response => response.json())
         .then(result => {
           if (result.success) {
-            // Tampilkan notifikasi
+            // Tampilkan notifikasi sukses
             const alertDiv = document.createElement('div');
             alertDiv.className = 'alert alert-success';
-            alertDiv.innerHTML = `<strong><i class="fas fa-check-circle"></i> Status diperbarui!</strong>`;
-            document.getElementById('admin-content').prepend(alertDiv);
+            alertDiv.innerHTML = `<strong><i class="fas fa-check-circle"></i> Status berhasil diperbarui!</strong>`;
+            document.querySelector('#admin-registrations-tab').prepend(alertDiv);
             
             // Hilangkan notifikasi setelah 3 detik
             setTimeout(() => {
@@ -2418,22 +2176,73 @@ function showAdminTab(tabName, button) {
         })
         .catch(error => {
           alert(`Gagal memperbarui status: ${error.message}`);
+          // Reload data untuk mengembalikan tampilan ke state sebelumnya
+          loadRegistrations(token);
         });
     }
     
-    // Fungsi Export ke Excel (simulasi)
+    // Fungsi untuk export data ke Excel
     function exportToExcel(token) {
       fetch(`${BACKEND_URL}?action=export_excel&token=${encodeURIComponent(token)}`)
         .then(response => response.json())
         .then(result => {
           if (result.success) {
-            alert('Data berhasil diexport ke format Excel');
+            // Buka file Excel di tab baru
+            window.open(result.fileUrl, '_blank');
           } else {
             throw new Error(result.message || 'Gagal export data');
           }
         })
         .catch(error => {
-          alert(`Gagal export: ${error.message}`);
+          alert(`Gagal export data: ${error.message}`);
+        });
+    }
+    
+    // Fungsi untuk export log
+    function exportLogs(token) {
+      fetch(`${BACKEND_URL}?action=export_logs&token=${encodeURIComponent(token)}`)
+        .then(response => response.json())
+        .then(result => {
+          if (result.success) {
+            // Buka file log di tab baru
+            window.open(result.fileUrl, '_blank');
+          } else {
+            throw new Error(result.message || 'Gagal export log');
+          }
+        })
+        .catch(error => {
+          alert(`Gagal export log: ${error.message}`);
+        });
+    }
+    
+    // Fungsi untuk logout admin
+    function adminLogout() {
+      document.getElementById('admin-content').classList.add('hidden');
+      document.getElementById('login-form').classList.remove('hidden');
+      document.getElementById('admin-username').value = '';
+      document.getElementById('admin-password').value = '';
+    }
+    
+    // Fungsi pembantu untuk mendapatkan class status
+    function getStatusClass(status) {
+      switch (status) {
+        case 'Diverifikasi': return 'status-verified';
+        case 'Ditolak': return 'status-rejected';
+        default: return 'status-pending';
+      }
+    }
+    
+    // Fungsi pembantu untuk format tanggal dan waktu
+    function formatDateTime(dateString) {
+      if (!dateString) return '-';
+      const date = new Date(dateString);
+      return isNaN(date.getTime()) ? dateString : 
+        date.toLocaleString('id-ID', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
         });
     }
   </script>

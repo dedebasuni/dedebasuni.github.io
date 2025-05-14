@@ -643,8 +643,7 @@
       <div class="logo">
         <i class="fas fa-graduation-cap"></i>
       </div>
-      <h1>SMAS PGRI TAKOKAK</h1>
-      <p class="header-subtitle">Sistem Penerimaan Murid Baru Tahun 2025/2026</p>
+      <h1>Sistem Penerimaan Murid Baru SMAPTA 2025/2026</h1>
       <div class="btn-group" id="main-nav">
         <button onclick="showSection('landing')" class="btn btn-primary">
           <i class="fas fa-home"></i> Beranda
@@ -743,20 +742,16 @@
         </div>
       </section>
 
-       <!-- Informasi Section -->
-       <section id="info-section" class="hidden">
-         <div class="card">
-           <h2 class="card-title">Informasi SPMB</h2>
-       
-           <div class="alert alert-warning">
-             <strong>Perhatian:</strong> Pastikan semua dokumen yang diperlukan sudah disiapkan sebelum mendaftar.
-           </div>
-
-       <!-- Persyaratan -->
-       <div class="info-section mt-4">
-          <h3 class="section-title">
-            <i class="fas fa-clipboard-list"></i> Persyaratan
-          </h3>
+      <!-- Informasi Section -->
+      <section id="info-section" class="hidden">
+        <div class="card">
+          <h2 class="card-title">Informasi SPMB</h2>
+          
+          <div class="alert alert-warning">
+            <strong>Perhatian:</strong> Pastikan semua dokumen yang diperlukan sudah disiapkan sebelum mendaftar.
+          </div>
+          
+          <h3 class="mt-4" style="font-weight: 600; color: var(--primary-dark);">Persyaratan Pendaftaran</h3>
           <ul style="list-style-type: disc; padding-left: 1.5rem; margin-top: 0.5rem;">
             <li>Fotokopi ijazah/SKL SMP/MTs yang telah dilegalisir</li>
             <li>Fotokopi SKHUN yang telah dilegalisir</li>
@@ -766,14 +761,9 @@
             <li>Surat keterangan sehat dari dokter</li>
             <li>Fotokopi rapor kelas 7-9 yang telah dilegalisir</li>
           </ul>
-         </div>
-        
-       <!-- Jadwal Pendaftaran -->
-       <div class="info-section">
-         <h3 class="section-title">
-           <i class="fas fa-calendar-alt"></i> Jadwal Pendaftaran
-         </h3>
-         <div class="table-responsive">
+          
+          <h3 class="mt-4" style="font-weight: 600; color: var(--primary-dark);">Jadwal Pendaftaran</h3>
+          <div class="table-responsive">
             <table id="schedule-table">
               <thead>
                 <tr>
@@ -788,30 +778,23 @@
               </tbody>
             </table>
           </div>
-        </div>
-    
-          <!-- Biaya Pendaftaran -->
-          <div class="info-section mt-4">
-            <h3 class="section-title">
-              <i class="fas fa-money-bill-wave"></i> Biaya Pendaftaran
-            </h3>
-            <div class="table-responsive">
-                <table id="fee-table">
-                  <thead>
-                    <tr>
-                      <th>Jenis Biaya</th>
-                      <th>Nominal</th>
-                      <th>Keterangan</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <!-- Data akan diisi oleh JavaScript -->
-                  </tbody>
-                </table>
-            </div>
+          
+          <h3 class="mt-4" style="font-weight: 600; color: var(--primary-dark);">Biaya Pendaftaran</h3>
+          <div class="table-responsive">
+            <table id="fee-table">
+              <thead>
+                <tr>
+                  <th>Jenis Biaya</th>
+                  <th>Nominal</th>
+                  <th>Keterangan</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Data akan diisi oleh JavaScript -->
+              </tbody>
+            </table>
           </div>
-       </div>
-         
+          
           <div class="action-buttons">
             <button onclick="showSection('landing')" class="btn btn-secondary">
               <i class="fas fa-arrow-left"></i> Kembali
@@ -1008,41 +991,6 @@
               <input type="password" id="admin-password" placeholder="Masukkan password">
             </div>
           </div>
-
-<!-- Di bagian Dashboard Admin -->
-<div id="admin-logs-tab" class="hidden">
-  <div class="admin-toolbar mb-3">
-    <div class="search-box">
-      <input type="text" id="log-search" placeholder="Cari aktivitas...">
-      <button onclick="searchLogs()"><i class="fas fa-search"></i></button>
-    </div>
-    <button onclick="exportLogs()" class="btn btn-sm btn-outline">
-      <i class="fas fa-download"></i> Export
-    </button>
-  </div>
-  
-  <div class="table-responsive">
-    <table id="log-table">
-      <thead>
-        <tr>
-          <th>Waktu</th>
-          <th>Aktivitas</th>
-          <th>Detail</th>
-          <th>User</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Data log akan diisi oleh JavaScript -->
-      </tbody>
-    </table>
-  </div>
-  
-  <div class="pagination mt-3">
-    <button id="prev-log-page" disabled><i class="fas fa-chevron-left"></i></button>
-    <span id="log-page-info">Halaman 1</span>
-    <button id="next-log-page"><i class="fas fa-chevron-right"></i></button>
-  </div>
-</div>
           
           <div class="action-buttons mt-4">
             <button onclick="adminLogin()" class="btn btn-primary" id="admin-login-btn">
@@ -1066,9 +1014,6 @@
         <a href="#" class="footer-link" onclick="showSection('info')">Informasi</a>
         <a href="#" class="footer-link" onclick="showSection('check')">Cek Status</a>
       </div>
-      <p>SMAS PGRI TAKOKAK</p>
-      <p>Jl. Pahlawan No. 5, Takokak, Jawa Barat</p>
-      <p>Email: info@smatakokak.sch.id | Telp: (0266) 6482212</p>
       <p>© 2025 SMPB Online - Hak Cipta Dilindungi</p>
     </footer>
   </div>

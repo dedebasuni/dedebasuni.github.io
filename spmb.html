@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SPMB SMAS PGRI Takokak</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    body { transition: background-color 0.3s, color 0.3s; }
+    .dark { background-color: #1f2937; color: #f3f4f6; }
+    .modal { transition: opacity 0.3s; }
+    .spinner { animation: spin 1s linear infinite; }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; }
+    .error { color: #ef4444; font-size: 0.875rem; }
+    .stat-card { background: #fff; padding: 1rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center; }
+    .dark .stat-card { background: #374151; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 0.75rem; border: 1px solid #e5e7eb; }
+    .dark th, .dark td { border-color: #4b5563; }
+    button { transition: background-color 0.2s; }
+  </style>
+</head>
+<body class="bg-gray-100 font-sans">
+  <nav class="bg-blue-600 text-white p-4 sticky top-0 z-10">
+    <div class="container mx-auto flex justify-between items-center">
+      <h1 class="text-xl font-bold">SPMB SMAS PGRI Takokak</h1>
+      <div class="space-x-4">
+        <button onclick="showSection('home')" class="hover:underline">Beranda</button>
+        <button onclick="showSection('form')" class="hover:underline">Pendaftaran</button>
+        <button onclick="showSection('completeness')" class="hover:underline">Cek Kelengkapan</button>
+        <button onclick="showSection('schedule')" class="hover:underline">Jadwal</button>
+        <button onclick="showSection('fees')" class="hover:underline">Biaya</button>
+        <button id="dashboardNav" onclick="showSection('dashboard')" class="hover:underline hidden">Dashboard</button>
+        <button id="logoutNav" onclick="logout()" class="hover:underline hidden">Logout</button>
+        <button onclick="toggleDarkMode()" class="hover:underline">🌙</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mx-auto p-4">
+    <div id="home" class="section">
+      <h2 class="text-2xl font-bold mb-4">Selamat Datang</h2>
+      <p class="mb-4">Sistem Pendaftaran Mahasiswa Baru (SPMB) SMAS PGRI Takokak. Silakan daftar atau cek status pendaftaran Anda.</p>
+      <div id="publicStats" class="grid gap-4 mb-4"></div>
+    </div>
+
+    <div id="form" class="section hidden">
+      <h2 class="text-2xl font-bold mb-4">Form Pendaftaran</h2>
+      <form id="registrationForm" class="form-grid">
+        <div class="form-group">
+          <label for="jenisPendaftaran">Jenis Pendaftaran</label>
+          <select id="jenisPendaftaran" name="jenis_pendaftaran" required>
+            <option value="">Pilih</option>
+            <option value="Reguler">Reguler</option>
+            <option value="Beasiswa">Beasiswa</option>
+          </select>
+          <div class="error" id="error-jenisPendaftaran"></div>
+        </div>
+        <div class="form-group">
+          <label for="nisn">NISN</label>
+          <input type="text" id="nisn" name="nisn" pattern="\d{10}" required>
+          <div class="error" id="error-nisn"></div>
+        </div>
+        <div class="form-group">
+          <label for="nik">NIK</label>
+          <input type="text" id="nik" name="nik" pattern="\d{16}" required>
+          <div class="error" id="error-nik"></div>
+        </div>
+        <div class="form-group">
+          <label for="nama">Nama Lengkap</label>
+          <input type="text" id="nama" name="nama" required>
+          <div class="error" id="error-nama"></div>
+        </div>
+        <div class="form-group">
+          <label for="jenisKelamin">Jenis Kelamin</label>
+          <select id="jenisKelamin" name="jenis_kelamin" required>
+            <option value="">Pilih</option>
+            <option value="Laki-laki">Laki-laki</option>
+            <option value="Perempuan">Perempuan</option>
+          </select>
+          <div class="error" id="error-jenisKelamin"></div>
+        </div>
+        <div class="form-group">
+          <label for="tempatLahir">Tempat Lahir</label>
+          <input type="text" id="tempatLahir" name="tempat_lahir" required>
+          <div class="error" id="error-tempatLahir"></div>
+        </div>
+        <div class="form-group">
+          <label for="tanggalLahir">Tanggal Lahir</label>
+          <input type="date" id="tanggalLahir" name="tanggal_lahir" required>
+          <div class="error" id="error-tanggalLahir"></div>
+        </div>
+        <div class="form-group">
+          <label for="agama">Agama</label>
+          <select id="agama" name="agama" required>
+            <option value="">Pilih</option>
+            <option value="Islam">Islam</option>
+            <option value="Kristen">Kristen</option>
+            <option value="Katolik">Katolik</option>
+            <option value="Hindu">Hindu</option>
+            <option value="Buddha">Buddha</option>
+            <option value="Konghucu">Konghucu</option>
+          </select>
+          <div class="error" id="error-agama"></div>
+        </div>
+        <div class="form-group">
+          <label for="alamat">Alamat</label>
+          <textarea id="alamat" name="alamat" required></textarea>
+          <div class="error" id="error-alamat"></div>
+        </div>
+        <div class="form-group">
+          <label for="whatsapp">WhatsApp</label>
+          <input type="tel" id="whatsapp" name="whatsapp" pattern="\+?\d{10,13}" required>
+          <div class="error" id="error-whatsapp"></div>
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required>
+          <div class="error" id="error-email"></div>
+        </div>
+        <div class="form-group">
+          <label for="namaAyah">Nama Ayah</label>
+          <input type="text" id="namaAyah" name="nama_ayah" required>
+          <div class="error" id="error-namaAyah"></div>
+        </div>
+        <div class="form-group">
+          <label for="pekerjaanAyah">Pekerjaan Ayah</label>
+          <input type="text" id="pekerjaanAyah" name="pekerjaan_ayah" required>
+          <div class="error" id="error-pekerjaanAyah"></div>
+        </div>
+        <div class="form-group">
+          <label for="namaIbu">Nama Ibu</label>
+          <input type="text" id="namaIbu" name="nama_ibu" required>
+          <div class="error" id="error-namaIbu"></div>
+        </div>
+        <div class="form-group">
+          <label for="pekerjaanIbu">Pekerjaan Ibu</label>
+          <input type="text" id="pekerjaanIbu" name="pekerjaan_ibu" required>
+          <div class="error" id="error-pekerjaanIbu"></div>
+        </div>
+        <div class="form-group">
+          <label for="whatsappOrtu">WhatsApp Orang Tua</label>
+          <input type="tel" id="whatsappOrtu" name="whatsapp_ortu" pattern="\+?\d{10,13}" required>
+          <div class="error" id="error-whatsappOrtu"></div>
+        </div>
+        <div class="form-group">
+          <label for="asalSekolah">Asal Sekolah</label>
+          <input type="text" id="asalSekolah" name="asal_sekolah" required>
+          <div class="error" id="error-asalSekolah"></div>
+        </div>
+        <div class="form-group">
+          <label for="tahunLulus">Tahun Lulus</label>
+          <input type="number" id="tahunLulus" name="tahun_lulus" min="2000" max="2025" required>
+          <div class="error" id="error-tahunLulus"></div>
+        </div>
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Daftar</button>
+      </form>
+    </div>
+
+    <div id="completeness" class="section hidden">
+      <h2 class="text-2xl font-bold mb-4">Cek Kelengkapan Dokumen</h2>
+      <form id="completenessForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="completenessNomor">Nomor Pendaftaran</label>
+            <input type="text" id="completenessNomor" name="nomor" required>
+            <div class="error" id="error-completenessNomor"></div>
+          </div>
+          <div class="form-group">
+            <label for="completenessNisn">NISN</label>
+            <input type="text" id="completenessNisn" name="nisn" pattern="\d{10}" required>
+            <div class="error" id="error-completenessNisn"></div>
+          </div>
+        </div>
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Cek</button>
+      </form>
+      <div id="completenessResult" class="mt-4"></div>
+      <div id="editStudentForm" class="mt-4 hidden">
+        <h3 class="text-xl font-bold mb-2">Edit Data Siswa</h3>
+        <form id="updateStudentForm" class="form-grid">
+          <div class="form-group">
+            <label for="editAlamat">Alamat</label>
+            <textarea id="editAlamat" name="alamat"></textarea>
+            <div class="error" id="error-editAlamat"></div>
+          </div>
+          <div class="form-group">
+            <label for="editWhatsapp">WhatsApp</label>
+            <input type="tel" id="editWhatsapp" name="whatsapp" pattern="\+?\d{10,13}">
+            <div class="error" id="error-editWhatsapp"></div>
+          </div>
+          <div class="form-group">
+            <label for="editEmail">Email</label>
+            <input type="email" id="editEmail" name="email">
+            <div class="error" id="error-editEmail"></div>
+          </div>
+          <div class="form-group">
+            <label for="editWhatsappOrtu">WhatsApp Orang Tua</label>
+            <input type="tel" id="editWhatsappOrtu" name="whatsapp_ortu" pattern="\+?\d{10,13}">
+            <div class="error" id="error-editWhatsappOrtu"></div>
+          </div>
+          <input type="hidden" id="editNomor" name="nomor">
+          <input type="hidden" id="editNisn" name="nisn">
+          <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Simpan</button>
+        </form>
+      </div>
+      <div id="uploadDocuments" class="mt-4 hidden">
+        <h3 class="text-xl font-bold mb-2">Upload Dokumen</h3>
+        <form id="uploadDocumentForm">
+          <div class="form-group">
+            <label for="documentType">Jenis Dokumen</label>
+            <select id="documentType" name="fieldName" required>
+              <option value="">Pilih</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="documentFile">File (PDF/JPG/PNG, max 2MB)</label>
+            <input type="file" id="documentFile" name="file" accept=".pdf,.jpg,.png" required>
+            <div class="error" id="error-documentFile"></div>
+          </div>
+          <input type="hidden" id="uploadNomor" name="nomor">
+          <input type="hidden" id="uploadNisn" name="nisn">
+          <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Upload</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="schedule" class="section hidden">
+      <h2 class="text-2xl font-bold mb-4">Jadwal Pendaftaran</h2>
+      <table id="scheduleTable">
+        <thead>
+          <tr>
+            <th>Kegiatan</th>
+            <th>Tanggal Mulai</th>
+            <th>Tanggal Selesai</th>
+            <th>Keterangan</th>
+            <th>Waktu Pengumuman</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div id="fees" class="section hidden">
+      <h2 class="text-2xl font-bold mb-4">Biaya Pendaftaran</h2>
+      <table id="feesTable">
+        <thead>
+          <tr>
+            <th>Jenis Biaya</th>
+            <th>Nominal</th>
+            <th>Keterangan</th>
+            <th>Wajib</th>
+            <th>Batas Pembayaran</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div id="dashboard" class="section hidden">
+      <h2 class="text-2xl font-bold mb-4">Dashboard Admin</h2>
+      <form id="adminLoginForm" class="mb-4">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="adminUsername">Username</label>
+            <input type="text" id="adminUsername" name="username" required>
+            <div class="error" id="error-adminUsername"></div>
+          </div>
+          <div class="form-group">
+            <label for="adminPassword">Password</label>
+            <input type="password" id="adminPassword" name="password" required>
+            <div class="error" id="error-adminPassword"></div>
+          </div>
+        </div>
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Login</button>
+      </form>
+      <div id="adminStats" class="hidden">
+        <h3 class="text-xl font-bold mb-2">Statistik Admin</h3>
+        <div class="grid gap-4 mb-4" id="adminStatsGrid"></div>
+        <canvas id="statusChart" class="mb-4"></canvas>
+        <h3 class="text-xl font-bold mb-2">Kelola Pendaftaran</h3>
+        <div class="mb-4">
+          <input type="text" id="searchRegistrations" placeholder="Cari berdasarkan nama atau nomor..." class="p-2 border rounded">
+          <select id="filterStatus" class="p-2 border rounded">
+            <option value="">Semua Status</option>
+            <option value="Menunggu">Menunggu</option>
+            <option value="Diterima">Diterima</option>
+            <option value="Ditolak">Ditolak</option>
+          </select>
+        </div>
+        <button onclick="exportExcel()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 mb-4">Export ke Excel</button>
+        <table id="registrationsTable">
+          <thead>
+            <tr>
+              <th>Nomor</th>
+              <th>Nama</th>
+              <th>NISN</th>
+              <th>Status</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <div id="pagination" class="mt-4">
+          <button onclick="changePage(-1)" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Previous</button>
+          <span id="pageInfo"></span>
+          <button onclick="changePage(1)" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Next</button>
+        </div>
+        <h3 class="text-xl font-bold mb-2 mt-4">Log Aktivitas</h3>
+        <table id="logsTable">
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>Aktivitas</th>
+              <th>Detail</th>
+              <th>User</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg max-w-md w-full">
+      <p id="modalMessage" class="mb-4"></p>
+      <button onclick="hideModal()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Tutup</button>
+    </div>
+  </div>
+
+  <div id="editRegistrationModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+      <h3 class="text-xl font-bold mb-4">Edit Pendaftaran</h3>
+      <form id="editRegistrationForm" class="form-grid">
+        <!-- Fields sama seperti registrationForm, diisi via JS -->
+      </form>
+      <div class="mt-4 flex justify-end space-x-2">
+        <button onclick="hideEditRegistrationModal()" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">Batal</button>
+        <button onclick="submitEditRegistration()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Simpan</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxsK0uJlkvc9cSsRKO-79qAaQV0pUlEQuCqWEnpHMZIcwEK8c-B1UU4TbEhTVKCpVH5Yw/exec'; // Ganti dengan URL Web App dari code.gs
+    const { jsPDF } = window.jspdf;
+    let isAdminLoggedIn = false;
+    let adminData = null;
+    let token = localStorage.getItem('adminToken');
+    let statusChart = null;
+    let currentPage = 1;
+    const limit = 10;
+    let currentRegistrations = [];
+    let currentRegData = null;
+
+    function showSection(sectionId) {
+      document.querySelectorAll('.section').forEach(section => section.classList.add('hidden'));
+      document.getElementById(sectionId).classList.remove('hidden');
+      if (sectionId === 'home') fetchStatistics();
+      else if (sectionId === 'schedule') fetchSchedule();
+      else if (sectionId === 'fees') fetchFees();
+      else if (sectionId === 'dashboard' && isAdminLoggedIn) {
+        fetchStatistics();
+        fetchRegistrations();
+        fetchLogs();
+      }
+    }
+
+    function updateNav() {
+      document.getElementById('dashboardNav').classList.toggle('hidden', !isAdminLoggedIn);
+      document.getElementById('logoutNav').classList.toggle('hidden', !isAdminLoggedIn);
+    }
+
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark');
+      localStorage.setItem('darkMode', document.body.classList.contains('dark'));
+    }
+
+    if (localStorage.getItem('darkMode') === 'true') {
+      document.body.classList.add('dark');
+    }
+
+    function showModal(message) {
+      document.getElementById('modalMessage').textContent = message;
+      document.getElementById('modal').classList.remove('hidden');
+    }
+
+    function hideModal() {
+      document.getElementById('modal').classList.add('hidden');
+    }
+
+    function showEditRegistrationModal() {
+      document.getElementById('editRegistrationModal').classList.remove('hidden');
+    }
+
+    function hideEditRegistrationModal() {
+      document.getElementById('editRegistrationModal').classList.add('hidden');
+    }
+
+    async function fetchStatistics() {
+      try {
+        const response = await fetch(`${API_URL}?action=get_statistics`, { method: 'GET' });
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        const result = await response.json();
+
+        if (result.success) {
+          const publicStats = document.getElementById('publicStats');
+          publicStats.innerHTML = `
+            <div class="stat-card">
+              <h3>${result.data.total}</h3>
+              <p>Total Pendaftar</p>
+            </div>
+            <div class="stat-card">
+              <h3>${result.data.accepted}</h3>
+              <p>Diterima</p>
+            </div>
+            <div class="stat-card">
+              <h3>${result.data.complete}</h3>
+              <p>Dokumen Lengkap</p>
+            </div>
+          `;
+
+          if (isAdminLoggedIn) {
+            document.getElementById('adminStats').classList.remove('hidden');
+            const adminStatsGrid = document.getElementById('adminStatsGrid');
+            adminStatsGrid.innerHTML = `
+              <div class="stat-card">
+                <h3>${result.data.pending}</h3>
+                <p>Menunggu Verifikasi</p>
+              </div>
+              <div class="stat-card">
+                <h3>${result.data.rejected}</h3>
+                <p>Ditolak</p>
+              </div>
+              <div class="stat-card">
+                <h3>${result.data.incomplete}</h3>
+                <p>Dokumen Kurang</p>
+              </div>
+            `;
+            if (statusChart) statusChart.destroy();
+            const ctx = document.getElementById('statusChart').getContext('2d');
+            statusChart = new Chart(ctx, {
+              type: 'bar',
+              data: {
+                labels: ['Total', 'Diterima', 'Ditolak', 'Menunggu', 'Dokumen Lengkap', 'Dokumen Kurang'],
+                datasets: [{
+                  label: 'Statistik Pendaftaran',
+                  data: [
+                    result.data.total,
+                    result.data.accepted,
+                    result.data.rejected,
+                    result.data.pending,
+                    result.data.complete,
+                    result.data.incomplete
+                  ],
+                  backgroundColor: ['#3b82f6', '#16a34a', '#dc2626', '#f59e0b', '#10b981', '#ef4444']
+                }]
+              },
+              options: {
+                scales: { y: { beginAtZero: true } }
+              }
+            });
+          }
+        } else {
+          showModal(`Gagal memuat statistik: ${result.message}`);
+        }
+      } catch (err) {
+        console.error('Error fetching statistics:', err);
+        document.getElementById('publicStats').innerHTML = `<div class="error">Gagal memuat statistik. Silakan coba lagi.</div>`;
+      }
+    }
+
+    async function fetchSchedule() {
+      try {
+        const response = await fetch(`${API_URL}?action=get_schedule`, { method: 'GET' });
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        const result = await response.json();
+
+        if (result.success) {
+          const tbody = document.querySelector('#scheduleTable tbody');
+          tbody.innerHTML = result.data.map(row => `
+            <tr>
+              <td>${row.Kegiatan}</td>
+              <td>${row['Tanggal Mulai']}</td>
+              <td>${row['Tanggal Selesai']}</td>
+              <td>${row.Keterangan}</td>
+              <td>${row['Waktu Pengumuman']}</td>
+            </tr>
+          `).join('');
+        } else {
+          showModal(`Gagal memuat jadwal: ${result.message}`);
+        }
+      } catch (err) {
+        console.error('Error fetching schedule:', err);
+        showModal('Terjadi kesalahan. Silakan coba lagi.');
+      }
+    }
+
+    async function fetchFees() {
+      try {
+        const response = await fetch(`${API_URL}?action=get_fees`, { method: 'GET' });
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        const result = await response.json();
+
+        if (result.success) {
+          const tbody = document.querySelector('#feesTable tbody');
+          tbody.innerHTML = result.data.map(row => `
+            <tr>
+              <td>${row['Jenis Biaya']}</td>
+              <td>${row.Nominal}</td>
+              <td>${row.Keterangan}</td>
+              <td>${row.Wajib}</td>
+              <td>${row['Batas Pembayaran']}</td>
+            </tr>
+          `).join('');
+        } else {
+          showModal(`Gagal memuat biaya: ${result.message}`);
+        }
+      } catch (err) {
+        console.error('Error fetching fees:', err);
+        showModal('Terjadi kesalahan. Silakan coba lagi.');
+      }
+    }
+
+    document.getElementById('registrationForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const formData = new FormData(form);
+      const params = new URLSearchParams(formData);
+      params.append('action', 'submit_form');
+
+      // Validasi client-side
+      let valid = true;
+      const nisn = formData.get('nisn');
+      const nik = formData.get('nik');
+      const whatsapp = formData.get('whatsapp');
+      const email = formData.get('email');
+      const whatsappOrtu = formData.get('whatsapp_ortu');
+      const tahunLulus = formData.get('tahun_lulus');
+
+      if (!/^\d{10}$/.test(nisn)) {
+        document.getElementById('error-nisn').textContent = 'NISN harus 10 digit angka';
+        valid = false;
+      } else {
+        document.getElementById('error-nisn').textContent = '';
+      }
+
+      if (!/^\d{16}$/.test(nik)) {
+        document.getElementById('error-nik').textContent = 'NIK harus 16 digit angka';
+        valid = false;
+      } else {
+        document.getElementById('error-nik').textContent = '';
+      }
+
+      if (!/\+?\d{10,13}/.test(whatsapp)) {
+        document.getElementById('error-whatsapp').textContent = 'Nomor WhatsApp tidak valid';
+        valid = false;
+      } else {
+        document.getElementById('error-whatsapp').textContent = '';
+      }
+
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        document.getElementById('error-email').textContent = 'Email tidak valid';
+        valid = false;
+      } else {
+        document.getElementById('error-email').textContent = '';
+      }
+
+      if (!/\+?\d{10,13}/.test(whatsappOrtu)) {
+        document.getElementById('error-whatsappOrtu').textContent = 'Nomor WhatsApp tidak valid';
+        valid = false;
+      } else {
+        document.getElementById('error-whatsappOrtu').textContent = '';
+      }
+
+      if (tahunLulus < 2000 || tahunLulus > 2025) {
+        document.getElementById('error-tahunLulus').textContent = 'Tahun lulus harus antara 2000 dan 2025';
+        valid = false;
+      } else {
+        document.getElementById('error-tahunLulus').textContent = '';
+      }
+
+      if (!valid) return;
+
+      form.querySelector('button').disabled = true;
+      form.querySelector('button').innerHTML = '<svg class="spinner w-5 h-5 inline-block" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="4" /></svg> Memproses...';
+
+      try {
+        const response = await fetch(`${API_URL}?${params.toString()}`, { method: 'GET' });
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        const result = await response.json();
+
+        form.querySelector('button').disabled = false;
+        form.querySelector('button').innerHTML = 'Daftar';
+
+        if (result.success) {
+          showModal(`Pendaftaran berhasil! Nomor pendaftaran: ${result.nomor_pendaftaran}. Silakan cek kelengkapan dokumen.`);
+          form.reset();
+        } else {
+          showModal(`Pendaftaran gagal: ${result.message}`);
+        }
+      } catch (err) {
+        console.error('Error submitting form:', err);
+        showModal('Terjadi kesalahan. Silakan coba lagi.');
+        form.querySelector('button').disabled = false;
+        form.querySelector('button').innerHTML = 'Daftar';
+      }
+    });
+
+    document.getElementById('completenessForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const resultDiv = document.getElementById('completenessResult');
+      const editForm = document.getElementById('editStudentForm');
+      const uploadForm = document.getElementById('uploadDocuments');
+
+      const nomor = document.getElementById('completenessNomor').value;
+      const nisn = document.getElementById('completenessNisn').value;
+
+      if (!nomor) {
+        document.getElementById('error-completenessNomor').textContent = 'Wajib diisi';
+        return;
+      }
+      if (!/^\d{10}$/.test(nisn)) {
+        document.getElementById('error-completenessNisn').textContent = 'NISN harus 10 digit angka';
+        return;
+      }
+
+      document.getElementById('error-completenessNomor').textContent = '';
+      document.getElementById('error-completenessNisn').textContent = '';
+
+      const params = new URLSearchParams({ action: 'student_login', nomor, nisn });
+
+      try {
+        const response = await fetch(`${API_URL}?${params.toString()}`, { method: 'GET' });
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        const result = await response.json();
+
+        if (result.success) {
+          const data = result.data;
+          const docTypesResponse = await fetch(`${API_URL}?action=get_document_types`);
+          const docTypesResult = await docTypesResponse.json();
+          const requiredDocs = docTypesResult.success ? docTypesResult.data : ['Ijazah', 'Akte Kelahiran', 'Kartu Keluarga', 'Foto'];
+          const uploadedDocs = data.Dokumen.map(doc => doc.field);
+          const missingDocs = requiredDocs.filter(doc => !uploadedDocs.includes(doc));
+
+          resultDiv.innerHTML = `
+            <h3 class="text-xl font-bold mb-2">Kelengkapan Data</h3>
+            <p><strong>Nomor:</strong> ${data['Nomor Pendaftaran']}</p>
+            <p><strong>Nama:</strong> ${data.Nama}</p>
+            <p><strong>Status:</strong> ${data.Status}</p>
+            <h4 class="mt-2">Dokumen yang Sudah Diupload:</h4>
+            ${data.Dokumen.length ? `
+              <ul class="list-disc pl-5">${data.Dokumen.map(doc => `<li>${doc.field} (<a href="${doc.url}" target="_blank" class="text-blue-600 hover:underline">${doc.name}</a>)</li>`).join('')}</ul>
+            ` : '<p>Belum ada dokumen diupload.</p>'}
+            <h4 class="mt-2">Dokumen yang Kurang:</h4>
+            ${missingDocs.length ? `
+              <ul class="list-disc pl-5">${missingDocs.map(doc => `<li>${doc}</li>`).join('')}</ul>
+            ` : '<p>Semua dokumen lengkap!</p>'}
+            <button onclick='generatePDF(${JSON.stringify(data)})' class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mt-2">Cetak Bukti Pendaftaran</button>
+            <button onclick="showEditForm('${data['Nomor Pendaftaran']}', '${data.NISN}', '${data.Alamat.replace(/'/g, "\\'")}', '${data.WhatsApp}', '${data.Email}', '${data['WhatsApp Ortu']}')" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mt-2">Edit Data</button>
+          `;
+
+          editForm.classList.remove('hidden');
+          uploadForm.classList.remove('hidden');
+          document.getElementById('uploadNomor').value = data['Nomor Pendaftaran'];
+          document.getElementById('uploadNisn').value = data.NISN;
+          const docSelect = document.getElementById('documentType');
+          docSelect.innerHTML = '<option value="">Pilih</option>' + requiredDocs.map(doc => `<option value="${doc}">${doc}</option>`).join('');
+        } else {
+          resultDiv.innerHTML = `<div class="error">${result.message}</div>`;
+          editForm.classList.add('hidden');
+          uploadForm.classList.add('hidden');
+        }
+      } catch (err) {
+        console.error('Error checking completeness:', err);
+        resultDiv.innerHTML = `<div class="error">Terjadi kesalahan. Silakan coba lagi.</div>`;
+        editForm.classList.add('hidden');
+        uploadForm.classList.add('hidden');
+      }
+    });
+
+    function showEditForm(nomor, nisn, alamat, whatsapp, email, whatsappOrtu) {
+      document.getElementById('editNomor').value = nomor;
+      document.getElementById('editNisn').value = nisn;
+      document.getElementById('editAlamat').value = alamat;
+      document.getElementById('editWhatsapp').value = whatsapp;
+      document.getElementById('editEmail').value = email;
+      document.getElementById('editWhatsappOrtu').value = whatsappOrtu;
+    }
+
+    document.getElementById('updateStudentForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const formData = new FormData(form);
+      const params = new URLSearchParams(formData);
+      params.append('action', 'update_student');
+
+      // Validasi client-side
+      let valid = true;
+      const whatsapp = formData.get('whatsapp');
+      const email = formData.get('email');
+      const whatsappOrtu = formData.get('whatsapp_ortu');
+
+      if (whatsapp && !/\+?\d{10,13}/.test(whatsapp)) {
+        document.getElementById('error-editWhatsapp').textContent = 'Nomor WhatsApp tidak valid';
+        valid = false;
+      } else {
+        document.getElementById('error-editWhatsapp').textContent = '';
+      }
+
+      if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        document.getElementById('error-editEmail').textContent = 'Email tidak valid';
+        valid = false;
+      } else {
+        document.getElementById('error-editEmail').textContent = '';
+      }
+
+      if (whatsappOrtu && !/\+?\d{10,13}/.test(whatsappOrtu)) {
+        document.getElementById('error-editWhatsappOrtu').textContent = 'Nomor WhatsApp tidak valid';
+        valid = false;
+      } else {
+        document.getElementById('error-editWhatsappOrtu').textContent = '';
+      }
+
+      if (!valid) return;
+
+      form.querySelector('button').disabled = true;
+      form.querySelector('button').innerHTML = '<svg class="spinner w-5 h-5 inline-block" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="4" /></svg> Memproses...';
+
+      try {
+        const response = await fetch(`${API_URL}?${params.toString()}`, { method: 'GET' });
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        const result = await response.json();
+
+        form.querySelector('button').disabled = false;
+        form.querySelector('button').innerHTML = 'Simpan';
+
+        if (result.success) {
+          showModal('Data siswa berhasil diperbarui!');
+          document.getElementById('completenessForm').dispatchEvent(new Event('submit'));
+        } else {
+          showModal(`Gagal memperbarui data: ${result.message}`);
+        }
+      } catch (err) {
+        console.error('Error updating student:', err);
+        showModal('Terjadi kesalahan. Silakan coba lagi.');
+        form.querySelector('button').disabled = false;
+        form.querySelector('button').innerHTML = 'Simpan';
+      }
+    });
+
+    document.getElementById('uploadDocumentForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const fileInput = document.getElementById('documentFile');
+      const file = fileInput.files[0];
+
+      if (!file) {
+        document.getElementById('error-documentFile').textContent = 'Pilih file terlebih dahulu';
+        return;
+      }
+
+      if (file.size > 2 * 1024 * 1024) {
+        document.getElementById('error-documentFile').textContent = 'File maksimum 2MB';
+        return;
+      }
+
+      document.getElementById('error-documentFile').textContent = '';
+
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const base64 = reader.result.split(',')[1];
+        const data = {
+          nomor: document.getElementById('uploadNomor').value,
+          nisn: document.getElementById('uploadNisn').value,
+          fieldName: document.getElementById('documentType').value + '.' + file.name.split('.').pop()
+        };
+
+        form.querySelector('button').disabled = true;
+        form.querySelector('button').innerHTML = '<svg class="spinner w-5 h-5 inline-block" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="4" /></svg> Mengunggah...';
+
+        try {
+          const response = await fetch(API_URL, {
+            method: 'POST',
+            body: JSON.stringify({ data, file: base64 })
+          });
+          if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+          const result = await response.json();
+
+          form.querySelector('button').disabled = false;
+          form.querySelector('button').innerHTML = 'Upload';
+
+          if (result.success) {
+            showModal('Dokumen berhasil diunggah!');
+            form.reset();
+            document.getElementById('completenessForm').dispatchEvent(new Event('submit'));
+          } else {
+            showModal(`Gagal mengunggah dokumen: ${result.message}`);
+          }
+        } catch (err) {
+          console.error('Error uploading document:', err);
+          showModal('Terjadi kesalahan. Silakan coba lagi.');
+          form.querySelector('button').disabled = false;
+          form.querySelector('button').innerHTML = 'Upload';
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+
+    function generatePDF(data) {
+      const doc = new jsPDF();
+      doc.setFontSize(16);
+      doc.text('Bukti Pendaftaran SMAS PGRI Takokak', 20, 20);
+      doc.setFontSize(12);
+      doc.text(`Nomor Pendaftaran: ${data['Nomor Pendaftaran']}`, 20, 30);
+      doc.text(`Nama: ${data.Nama}`, 20, 40);
+      doc.text(`NISN: ${data.NISN}`, 20, 50);
+      doc.text(`Status: ${data.Status}`, 20, 60);
+      doc.text(`Tanggal Daftar: ${data['Tanggal Daftar']}`, 20, 70);
+      doc.text('Dokumen:', 20, 80);
+      data.Dokumen.forEach((doc, i) => {
+        doc.text(`- ${doc.field} (${doc.name})`, 30, 90 + i * 10);
+      });
+      doc.save(`Bukti_Pendaftaran_${data['Nomor Pendaftaran']}.pdf`);
+    }
+
+    document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const username = document.getElementById('adminUsername').value;
+      const password = document.getElementById('adminPassword').value;
+
+      if (!username) {
+        document.getElementById('error-adminUsername').textContent = 'Wajib diisi';
+        return;
+      }
+      if (!password) {
+        document.getElementById('error-adminPassword').textContent = 'Wajib diisi';
+        return;
+      }
+
+      document.getElementById('error-adminUsername').textContent = '';
+      document.getElementById('error-adminPassword').textContent = '';
+
+      const params = new URLSearchParams({ action: 'admin_login', username, password });
+
+      form.querySelector('button').disabled = true;
+      form.querySelector('button').innerHTML = '<svg class="spinner w-5 h-5 inline-block" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="4" /></svg> Memproses...';
+
+      try {
+        const response = await fetch(`${API_URL}?${params.toString()}`, { method: 'GET' });
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        const result = await response.json();
+
+        form.querySelector('button').disabled = false;
+        form.querySelector('button').innerHTML = 'Login';
+
+        if (result.success) {
+          isAdminLoggedIn = true;
+          adminData = result.data;
+          token = result.data.token;
+          localStorage.setItem('adminToken', token);
+          updateNav();
+          showModal('Login admin berhasil! Mengarahkan ke dashboard.');
+          setTimeout(() => {
+            showSection('dashboard');
+            fetchRegistrations();
+            fetchLogs();
+          }, 1000);
+        } else {
+          showModal(`Login gagal: ${result.message}`);
+        }
+      } catch (err) {
+        console.error('Error admin login:', err);
+        showModal('Terjadi kesalahan. Silakan coba lagi.');
+        form.querySelector('button').disabled = false;
+        form.querySelector('button').innerHTML = 'Login';
+      }
+    });
+
+    async function fetchRegistrations() {
+      try {
+        const search = document.getElementById('searchRegistrations').value.toLowerCase();
+        const status = document.getElementById('filterStatus').value;
+        const params = new URLSearchParams({
+          action: 'get_registrations',
+          page: currentPage,
+          limit,
+          token
+        });
+
+        const response = await fetch(`${API_URL}?${params.toString()}`, { method: 'GET' });
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        const result = await response.json();
+
+        if (result.success) {
+          currentRegistrations = result.data;
+          const filtered = currentRegistrations.filter(reg => {
+            const matchesSearch = reg['Nomor Pendaftaran'].toLowerCase().includes(search) || reg.Nama.toLowerCase().includes(search);
+            const matchesStatus = !status || reg.Status === status;
+            return matchesSearch && matchesStatus;
+          });
+
+          const tbody = document.querySelector('#registrationsTable tbody');
+          tbody.innerHTML = filtered.map(reg => `
+            <tr>
+              <td>${reg['Nomor Pendaftaran']}</td>
+              <td>${reg.Nama}</td>
+              <td>${reg.NISN}</td>
+              <td>
+                <select onchange="updateStatus('${reg['Nomor Pendaftaran']}', this.value)">
+                  <option value="Menunggu" ${reg.Status === 'Menunggu' ? 'selected' : ''}>Menunggu</option>
+                  <option value="Diterima" ${reg.Status === 'Diterima' ? 'selected' : ''}>Diterima</option>
+                  <option value="Ditolak" ${reg.Status === 'Ditolak' ? 'selected' : ''}>Ditolak</option>
+                </select>
+              </td>
+              <td>
+                <button onclick='editRegistration(${JSON.stringify(reg)})' class="bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700">Edit</button>
+              </td>
+            </tr>
+          `).join('');
+          document.getElementById('pageInfo').textContent = `Page ${result.page} of ${Math.ceil(result.total / limit)}`;
+        } else {
+          showModal(`Gagal memuat data: ${result.message}`);
+        }
+      } catch (err) {
+        console.error('Error fetching registrations:', err);
+        showModal('Terjadi kesalahan. Silakan coba lagi.');
+      }
+    }
+
+    function changePage(delta) {
+      currentPage += delta;
+      if (currentPage < 1) currentPage = 1;
+      fetchRegistrations();
+    }
+
+    async function updateStatus(nomor, status) {
+      const params = new URLSearchParams({
+        action: 'update_status',
+        nomor,
+        status,
+        admin: adminData.username,
+        token
+      });
+
+      try {
+        const response = await fetch(`${API_URL}?${params.toString()}`, { method: 'GET' });
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        const result = await response.json();
+
+        if (result.success) {
+          showModal('Status berhasil diperbarui!');
+          fetchRegistrations();
+        } else {
+          showModal(`Gagal memperbarui status: ${result.message}`);
+        }
+      } catch (err) {
+        console.error('Error updating status:', err);
+        showModal('Terjadi kesalahan. Silakan coba lagi.');
+      }
+    }
+
+    function editRegistration(reg) {
+      currentRegData = reg;
+      const form = document.getElementById('editRegistrationForm');
+      form.innerHTML = `
+        <div class="form-group">
+          <label for="editJenisPendaftaran">Jenis Pendaftaran</label>
+          <select id="editJenisPendaftaran" name="jenis_pendaftaran" required>
+            <option value="Reguler" ${reg['Jenis Pendaftaran'] === 'Reguler' ? 'selected' : ''}>Reguler</option>
+            <option value="Beasiswa" ${reg['Jenis Pendaftaran'] === 'Beasiswa' ? 'selected' : ''}>Beasiswa</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="editNisn">NISN</label>
+          <input type="text" id="editNisn" name="nisn" value="${reg.NISN}" pattern="\d{10}" required>
+          <div class="error" id="error-editNisn"></div>
+        </div>
+        <div class="form-group">
+          <label for="editNik">NIK</label>
+          <input type="text" id="editNik" name="nik" value="${reg.NIK}" pattern="\d{16}" required>
+          <div class="error" id="error-editNik"></div>
+        </div>
+        <div class="form-group">
+          <label for="editNama">Nama Lengkap</label>
+          <input type="text" id="editNama" name="nama" value="${reg.Nama}" required>
+          <div class="error" id="error-editNama"></div>
+        </div>
+        <div class="form-group">
+          <label for="editJenisKelamin">Jenis Kelamin</label>
+          <select id="editJenisKelamin" name="jenis_kelamin" required>
+            <option value="Laki-laki" ${reg['Jenis Kelamin'] === 'Laki-laki' ? 'selected' : ''}>Laki-laki</option>
+            <option value="Perempuan" ${reg['Jenis Kelamin'] === 'Perempuan' ? 'selected' : ''}>Perempuan</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="editTempatLahir">Tempat Lahir</label>
+          <input type="text" id="editTempatLahir" name="tempat_lahir" value="${reg['Tempat Lahir']}" required>
+          <div class="error" id="error-editTempatLahir"></div>
+        </div>
+        <div class="form-group">
+          <label for="editTanggalLahir">Tanggal Lahir</label>
+          <input type="date" id="editTanggalLahir" name="tanggal_lahir" value="${reg['Tanggal Lahir']}" required>
+          <div class="error" id="error-editTanggalLahir"></div>
+        </div>
+        <div class="form-group">
+          <label for="editAgama">Agama</label>
+          <select id="editAgama" name="agama" required>
+            <option value="Islam" ${reg.Agama === 'Islam' ? 'selected' : ''}>Islam</option>
+            <option value="Kristen" ${reg.Agama === 'Kristen' ? 'selected' : ''}>Kristen</option>
+            <option value="Katolik" ${reg.Agama === 'Katolik' ? 'selected' : ''}>Katolik</option>
+            <option value="Hindu" ${reg.Agama === 'Hindu' ? 'selected' : ''}>Hindu</option>
+            <option value="Buddha" ${reg.Agama === 'Buddha' ? 'selected' : ''}>Buddha</option>
+            <option value="Konghucu" ${reg.Agama === 'Konghucu' ? 'selected' : ''}>Konghucu</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="editAlamat">Alamat</label>
+          <textarea id="editAlamat" name="alamat" required>${reg.Alamat}</textarea>
+          <div class="error" id="error-editAlamat"></div>
+        </div>
+        <div class="form-group">
+          <label for="editWhatsapp">WhatsApp</label>
+          <input type="tel" id="editWhatsapp" name="whatsapp" value="${reg.WhatsApp}" pattern="\+?\d{10,13}" required>
+          <div class="error" id="error-editWhatsapp"></div>
+        </div>
+        <div class="form-group">
+          <label for="editEmail">Email</label>
+          <input type="email" id="editEmail" name="email" value="${reg.Email}" required>
+          <div class="error" id="error-editEmail"></div>
+        </div>
+        <div class="form-group">
+          <label for="editNamaAyah">Nama Ayah</label>
+          <input type="text" id="editNamaAyah" name="nama_ayah" value="${reg['Nama Ayah']}" required>
+          <div class="error" id="error-editNamaAyah"></div>
+        </div>
+        <div class="form-group">
+          <label for="editPekerjaanAyah">Pekerjaan Ayah</label>
+          <input type="text" id="editPekerjaanAyah" name="pekerjaan_ayah" value="${reg['Pekerjaan Ayah']}" required>
+          <div class="error" id="error-editPekerjaanAyah"></div>
+        </div>
+        <div class="form-group">
+          <label for="editNamaIbu">Nama Ibu</label>
+          <input type="text" id="editNamaIbu" name="nama_ibu" value="${reg['Nama Ibu']}" required>
+          <div class="error" id="error-editNamaIbu"></div>
+        </div>
+        <div class="form-group">
+          <label for="editPekerjaanIbu">Pekerjaan Ibu</label>
+          <input type="text" id="editPekerjaanIbu" name="pekerjaan_ibu" value="${reg['Pekerjaan Ibu']}" required>
+          <div class="error" id="error-editPekerjaanIbu"></div>
+        </div>
+        <div class="form-group">
+          <label for="editWhatsappOrtu">WhatsApp Orang Tua</label>
+          <input type="tel" id="editWhatsappOrtu" name="whatsapp_ortu" value="${reg['WhatsApp Ortu']}" pattern="\+?\d{10,13}" required>
+          <div class="error" id="error-editWhatsappOrtu"></div>
+        </div>
+        <div class="form-group">
+          <label for="editAsalSekolah">Asal Sekolah</label>
+          <input type="text" id="editAsalSekolah" name="asal_sekolah" value="${reg['Asal Sekolah']}" required>
+          <div class="error" id="error-editAsalSekolah"></div>
+        </div>
+        <div class="form-group">
+          <label for="editTahunLulus">Tahun Lulus</label>
+          <input type="number" id="editTahunLulus" name="tahun_lulus" value="${reg['Tahun Lulus']}" min="2000" max="2025" required>
+          <div class="error" id="error-editTahunLulus"></div>
+        </div>
+        <input type="hidden" name="nomor" value="${reg['Nomor Pendaftaran']}">
+      `;
+      showEditRegistrationModal();
+    }
+
+    async function submitEditRegistration() {
+      const form = document.getElementById('editRegistrationForm');
+      const formData = new FormData(form);
+      const params = new URLSearchParams(formData);
+      params.append('action', 'update_registration');
+      params.append('admin', adminData.username);
+      params.append('token', token);
+
+      // Validasi client-side
+      let valid = true;
+      const nisn = formData.get('nisn');
+      const nik = formData.get('nik');
+      const whatsapp = formData.get('whatsapp');
+      const email = formData.get('email');
+      const whatsappOrtu = formData.get('whatsapp_ortu');
+      const tahunLulus = formData.get('tahun_lulus');
+
+      if (!/^\d{10}$/.test(nisn)) {
+        document.getElementById('error-editNisn').textContent = 'NISN harus 10 digit angka';
+        valid = false;
+      } else {
+        document.getElementById('error-editNisn').textContent = '';
+      }
+
+      if (!/^\d{16}$/.test(nik)) {
+        document.getElementById('error-editNik').textContent = 'NIK harus 16 digit angka';
+        valid = false;
+      } else {
+        document.getElementById('error-editNik').textContent = '';
+      }
+
+      if (!/\+?\d{10,13}/.test(whatsapp)) {
+        document.getElementById('error-editWhatsapp').textContent = 'Nomor WhatsApp tidak valid';
+        valid = false;
+      } else {
+        document.getElementById('error-editWhatsapp').textContent = '';
+      }
+
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        document.getElementById('error-editEmail').textContent = 'Email tidak valid';
+        valid = false;
+      } else {
+        document.getElementById('error-editEmail').textContent = '';
+      }
+
+      if (!/\+?\d{10,13}/.test(whatsappOrtu)) {
+        document.getElementById('error-editWhatsappOrtu').textContent = 'Nomor WhatsApp tidak valid';
+        valid = false;
+      } else {
+        document.getElementById('error-editWhatsappOrtu').textContent = '';
+      }
+
+      if (tahunLulus < 2000 || tahunLulus > 2025) {
+        document.getElementById('error-editTahunLulus').textContent = 'Tahun lulus harus antara 2000 dan 2025';
+        valid = false;
+      } else {
+        document.getElementById('error-editTahunLulus').textContent = '';
+      }
+
+      if (!valid) return;
+
+      const submitButton = form.parentElement.querySelector('button:last-child');
+      submitButton.disabled = true;
+      submitButton.innerHTML = '<svg class="spinner w-5 h-5 inline-block" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="4" /></svg> Memproses...';
+
+      try {
+        const response = await fetch(`${API_URL}?${params.toString()}`, { method: 'GET' });
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        const result = await response.json();
+
+        submitButton.disabled = false;
+        submitButton.innerHTML = 'Simpan';
+
+        if (result.success) {
+          showModal('Data pendaftaran berhasil diperbarui!');
+          hideEditRegistrationModal();
+          fetchRegistrations();
+        } else {
+          showModal(`Gagal memperbarui data: ${result.message}`);
+        }
+      } catch (err) {
+        console.error('Error updating registration:', err);
+        showModal('Terjadi kesalahan. Silakan coba lagi.');
+        submitButton.disabled = false;
+        submitButton.innerHTML = 'Simpan';
+      }
+    }
+
+    async function exportExcel() {
+      try {
+        const response = await fetch(`${API_URL}?action=export_excel&token=${token}`, { method: 'GET' });
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        const result = await response.json();
+
+        if (result.success) {
+          window.open(result.url, '_blank');
+        } else {
+          showModal(`Gagal export: ${result.message}`);
+        }
+      } catch (err) {
+        console.error('Error exporting excel:', err);
+        showModal('Terjadi kesalahan. Silakan coba lagi.');
+      }
+    }
+
+async function fetchLogs() {
+  try {
+    const response = await fetch(`${API_URL}?action=get_logs&token=${token}`, { method: 'GET' });
+    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+    const result = await response.json();
+
+    if (result.success) {
+      const tbody = document.querySelector('#logsTable tbody');
+      tbody.innerHTML = result.data.map(log => `
+        <tr>
+          <td>${log.Timestamp}</td>
+          <td>${log.Activity}</td>
+          <td>${log.Details}</td>
+          <td>${log.User}</td>
+        </tr>
+      `).join('');
+    } else {
+      showModal(`Gagal memuat log: ${result.message}`);
+    }
+  } catch (err) {
+    console.error('Error fetching logs:', err);
+    showModal('Terjadi kesalahan. Silakan coba lagi.');
+  }
+}
+
+    function logout() {
+      isAdminLoggedIn = false;
+      adminData = null;
+      token = null;
+      localStorage.removeItem('adminToken');
+      updateNav();
+      showSection('home');
+      document.getElementById('adminStats').classList.add('hidden');
+      showModal('Logout berhasil!');
+    }
+
+    document.getElementById('searchRegistrations').addEventListener('input', () => {
+      currentPage = 1;
+      fetchRegistrations();
+    });
+
+    document.getElementById('filterStatus').addEventListener('change', () => {
+      currentPage = 1;
+      fetchRegistrations();
+    });
+
+    // Inisialisasi
+    showSection('home');
+    if (token) {
+      isAdminLoggedIn = true;
+      updateNav();
+    }
+  </script>
+</body>
+</html>

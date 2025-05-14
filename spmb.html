@@ -743,68 +743,75 @@
         </div>
       </section>
 
-      <!-- Informasi Section -->
-<section id="info-section" class="hidden">
-  <div class="card">
-    <h2 class="card-title">Informasi PPDB</h2>
+       <!-- Informasi Section -->
+       <section id="info-section" class="hidden">
+         <div class="card">
+           <h2 class="card-title">Informasi SPMB</h2>
+       
+           <div class="alert alert-warning">
+             <strong>Perhatian:</strong> Pastikan semua dokumen yang diperlukan sudah disiapkan sebelum mendaftar.
+           </div>
+
+       <!-- Persyaratan -->
+       <div class="info-section mt-4">
+          <h3 class="section-title">
+            <i class="fas fa-clipboard-list"></i> Persyaratan
+          </h3>
+          <ul style="list-style-type: disc; padding-left: 1.5rem; margin-top: 0.5rem;">
+            <li>Fotokopi ijazah/SKL SMP/MTs yang telah dilegalisir</li>
+            <li>Fotokopi SKHUN yang telah dilegalisir</li>
+            <li>Fotokopi akta kelahiran</li>
+            <li>Fotokopi kartu keluarga</li>
+            <li>Pas foto 3x4 (2 lembar) background merah</li>
+            <li>Surat keterangan sehat dari dokter</li>
+            <li>Fotokopi rapor kelas 7-9 yang telah dilegalisir</li>
+          </ul>
+         </div>
+       </div>
+        
+       <!-- Jadwal Pendaftaran -->
+       <div class="info-section">
+         <h3 class="section-title">
+           <i class="fas fa-calendar-alt"></i> Jadwal Pendaftaran
+         </h3>
+         <div class="table-responsive">
+            <table id="schedule-table">
+              <thead>
+                <tr>
+                  <th>Kegiatan</th>
+                  <th>Tanggal Mulai</th>
+                  <th>Tanggal Selesai</th>
+                  <th>Keterangan</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Data akan diisi oleh JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
     
-    <div class="alert alert-info" id="info-alert">
-      <i class="fas fa-info-circle"></i> Memuat informasi terbaru...
-    </div>
-    
-    <!-- Jadwal Pendaftaran -->
-    <div class="info-section">
-      <h3 class="section-title">
-        <i class="fas fa-calendar-alt"></i> Jadwal Pendaftaran
-      </h3>
-      <div class="table-responsive">
-        <table id="schedule-table" class="info-table">
-          <thead>
-            <tr>
-              <th>Kegiatan</th>
-              <th>Periode</th>
-              <th>Keterangan</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Data akan diisi oleh JavaScript -->
-          </tbody>
-        </table>
-      </div>
-    </div>
-    
-    <!-- Biaya Pendaftaran -->
-    <div class="info-section mt-4">
-      <h3 class="section-title">
-        <i class="fas fa-money-bill-wave"></i> Biaya Pendaftaran
-      </h3>
-      <div class="table-responsive">
-        <table id="fee-table" class="info-table">
-          <thead>
-            <tr>
-              <th>Jenis Biaya</th>
-              <th>Nominal</th>
-              <th>Ketentuan</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Data akan diisi oleh JavaScript -->
-          </tbody>
-        </table>
-      </div>
-    </div>
-    
-    <!-- Persyaratan -->
-    <div class="info-section mt-4">
-      <h3 class="section-title">
-        <i class="fas fa-clipboard-list"></i> Persyaratan
-      </h3>
-      <div id="requirements-list">
-        <!-- Tetap statis atau bisa diambil dari spreadsheet -->
-      </div>
-    </div>
-  </div>
-          
+          <!-- Biaya Pendaftaran -->
+          <div class="info-section mt-4">
+            <h3 class="section-title">
+              <i class="fas fa-money-bill-wave"></i> Biaya Pendaftaran
+            </h3>
+            <div class="table-responsive">
+                <table id="fee-table">
+                  <thead>
+                    <tr>
+                      <th>Jenis Biaya</th>
+                      <th>Nominal</th>
+                      <th>Keterangan</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- Data akan diisi oleh JavaScript -->
+                  </tbody>
+                </table>
+            </div>
+          </div>
+              
           <div class="action-buttons">
             <button onclick="showSection('landing')" class="btn btn-secondary">
               <i class="fas fa-arrow-left"></i> Kembali

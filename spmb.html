@@ -515,6 +515,10 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
+  const scriptUrl = 'https://script.google.com/macros/s/AKfycbxlig1VDqr4kK_wJKlxCxcWvRcVTuAmbfISWiEVGC4B30bXOqy50b__GYLWAf4ohXmnPQ/exec';
+  google.script.url.getLocation(function(location) {
+  });
+    
     // Global variables
     let currentStep = 1;
     let registrationData = {};
@@ -3362,5 +3366,6 @@
       });
     }
   </script>
+<script src="https://apis.google.com/js/api.js"></script>
 </body>
 </html>

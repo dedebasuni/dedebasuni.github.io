@@ -6,8 +6,6 @@
   <title>SPMB | SMAS PGRI TAKOKAK</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-  <style>
-    /* CSS variables for theming */
     :root {
       --primary: #2563eb;
       --primary-dark: #1e40af;
@@ -32,8 +30,7 @@
       --radius-lg: 10px;
       --transition: all 0.3s ease;
     }
-
-    /* Base styles */
+    
     * {
       margin: 0;
       padding: 0;
@@ -48,47 +45,6 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-    }
-
-    /* Improved form validation styles */
-    .form-group {
-      position: relative;
-      margin-bottom: 1.25rem;
-    }
-    
-    .form-group small.error {
-      color: var(--danger);
-      font-size: 0.75rem;
-      display: none;
-      margin-top: 0.25rem;
-    }
-    
-    input:invalid, select:invalid, textarea:invalid {
-      border-color: var(--danger);
-    }
-    
-    input:invalid + small.error, 
-    select:invalid + small.error,
-    textarea:invalid + small.error {
-      display: block;
-    }
-
-    /* Enhanced loading states */
-    .btn.loading {
-      position: relative;
-      pointer-events: none;
-    }
-    
-    .btn.loading::after {
-      content: "";
-      position: absolute;
-      right: 1rem;
-      width: 1rem;
-      height: 1rem;
-      border: 2px solid rgba(255,255,255,0.3);
-      border-top-color: currentColor;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
     }
     
     /* Container */
@@ -209,92 +165,156 @@
       background-color: var(--primary-light);
     }
 
-  /* CSS Tambahan untuk Fitur Baru */
-  .info-section {
-    background-color: var(--light);
-    padding: 1rem;
-    border-radius: var(--radius-md);
-    margin-bottom: 1.5rem;
-  }
+    /* Admin Dashboard Styles */
+    .admin-panel {
+      background-color: var(--white);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .admin-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    
+    .info-section {
+      background-color: var(--light);
+      padding: 1rem;
+      border-radius: var(--radius-md);
+      margin-bottom: 1.5rem;
+    }
   
-  .section-title {
-    color: var(--primary-dark);
-    margin-bottom: 1rem;
-    font-size: 1.1rem;
-  }
+    .section-title {
+      color: var(--primary-dark);
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
   
-  .info-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
+    .info-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
   
-  .info-table th {
-    background-color: var(--primary);
-    color: white;
-    padding: 0.75rem;
-  }
+    .info-table th {
+      background-color: var(--primary);
+      color: white;
+      padding: 0.75rem;
+    }
   
-  .info-table td {
-    padding: 0.5rem 0.75rem;
-    border-bottom: 1px solid var(--light-gray);
-  }
+    .info-table td {
+     padding: 0.5rem 0.75rem;
+     border-bottom: 1px solid var(--light-gray);
+    }
   
-  .active-event {
-    background-color: #e3f2fd !important;
-    font-weight: 500;
-  }
+    .active-event {
+      background-color: #e3f2fd !important;
+      font-weight: 500;
+    }
   
-  .mandatory-fee {
-    background-color: #fff8e1;
-  }
+    .mandatory-fee {
+      background-color: #fff8e1;
+    }
   
-  .required-icon {
-    color: var(--danger);
-    font-size: 0.7rem;
-  }
+    .required-icon {
+      color: var(--danger);
+      font-size: 0.7rem;
+    }
   
-  .error-log {
-    background-color: #ffebee;
-  }
+    .error-log {
+      background-color: #ffebee;
+    }
   
-  .admin-toolbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+    .admin-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
   
-  .search-box {
-    display: flex;
-    align-items: center;
-  }
+    .search-box {
+      display: flex;
+      align-items: center;
+    }
   
-  .search-box input {
-    padding: 0.5rem;
-    border: 1px solid var(--light-gray);
-    border-radius: var(--radius-sm) 0 0 var(--radius-sm);
-    width: 250px;
-  }
+    .search-box input {
+      padding: 0.5rem;
+      border: 1px solid var(--light-gray);
+      border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+      width: 250px;
+    }
   
-  .search-box button {
-    padding: 0.5rem 0.75rem;
-    background-color: var(--primary);
-    color: white;
-    border: none;
-    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-    cursor: pointer;
-  }
+    .search-box button {
+      padding: 0.5rem 0.75rem;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      cursor: pointer;
+    }
   
-  .pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 1rem;
-  }
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+    }
   
-  .pagination button {
-    padding: 0.25rem 0.5rem;
-    min-width: 30px;
-  }
+    .pagination button {
+      padding: 0.25rem 0.5rem;
+      min-width: 30px;
+    }
+
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid var(--light-gray);
+      margin-bottom: 1rem;
+    }
+    
+    .tab-btn {
+      padding: 0.75rem 1.5rem;
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      cursor: pointer;
+      font-weight: 500;
+      color: var(--gray);
+      transition: var(--transition);
+    }
+    
+    .tab-btn:hover {
+      color: var(--primary);
+    }
+    
+    .tab-btn.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+    
+    .status-badge {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+    
+    .status-pending {
+      background-color: #fef3c7;
+      color: var(--warning-dark);
+    }
+    
+    .status-verified {
+      background-color: #d1fae5;
+      color: var(--success-dark);
+    }
+    
+    .status-rejected {
+      background-color: #fee2e2;
+      color: var(--danger-dark);
+    }
 
     /* Main Content */
     .main-content {
@@ -443,44 +463,6 @@
       background-color: var(--light);
     }
     
-    .status-pending {
-      color: var(--warning);
-    }
-    
-    .status-verified {
-      color: var(--success);
-    }
-    
-    .status-rejected {
-      color: var(--danger);
-    }
-    
-  .tabs {
-    display: flex;
-    border-bottom: 1px solid var(--light-gray);
-    margin-bottom: 1rem;
-  }
-  
-  .tab-btn {
-    padding: 0.75rem 1.5rem;
-    background: none;
-    border: none;
-    border-bottom: 3px solid transparent;
-    cursor: pointer;
-    font-weight: 500;
-    color: var(--gray);
-    transition: var(--transition);
-  }
-  
-  .tab-btn:hover {
-    color: var(--primary);
-  }
-  
-  .tab-btn.active {
-    color: var(--primary);
-    border-bottom-color: var(--primary);
-  }
-  
     /* Alert */
     .alert {
       padding: 1rem;
@@ -631,6 +613,20 @@
       .action-buttons .btn {
         width: 100%;
       }
+      
+      .admin-toolbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+      
+      .search-box {
+        width: 100%;
+      }
+      
+      .search-box input {
+        width: 100%;
+      }
     }
     
     @media (max-width: 480px) {
@@ -649,6 +645,12 @@
       .footer-links {
         flex-direction: column;
         gap: 0.5rem;
+      }
+      
+      .tabs {
+        overflow-x: auto;
+        white-space: nowrap;
+        padding-bottom: 0.5rem;
       }
     }
     
@@ -700,6 +702,9 @@
         </button>
         <button onclick="showSection('check')" class="btn btn-outline">
           <i class="fas fa-search"></i> Cek Status
+        </button>
+        <button onclick="showSection('dashboard')" class="btn btn-outline">
+          <i class="fas fa-lock"></i> Admin
         </button>
       </div>
     </header>
@@ -787,75 +792,80 @@
       </section>
 
       <!-- Informasi Section -->
-<section id="info-section" class="hidden">
-  <div class="card">
-    <h2 class="card-title">Informasi PPDB</h2>
-    
-    <div class="alert alert-info" id="info-alert">
-      <i class="fas fa-info-circle"></i> Memuat informasi terbaru...
-    </div>
-    
-    <!-- Jadwal Pendaftaran -->
-    <div class="info-section">
-      <h3 class="section-title">
-        <i class="fas fa-calendar-alt"></i> Jadwal Pendaftaran
-      </h3>
-      <div class="table-responsive">
-        <table id="schedule-table" class="info-table">
-          <thead>
-            <tr>
-              <th>Kegiatan</th>
-              <th>Periode</th>
-              <th>Keterangan</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Data akan diisi oleh JavaScript -->
-          </tbody>
-        </table>
-      </div>
-    </div>
-    
-    <!-- Biaya Pendaftaran -->
-    <div class="info-section mt-4">
-      <h3 class="section-title">
-        <i class="fas fa-money-bill-wave"></i> Biaya Pendaftaran
-      </h3>
-      <div class="table-responsive">
-        <table id="fee-table" class="info-table">
-          <thead>
-            <tr>
-              <th>Jenis Biaya</th>
-              <th>Nominal</th>
-              <th>Ketentuan</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Data akan diisi oleh JavaScript -->
-          </tbody>
-        </table>
-      </div>
-    </div>
-    
-    <!-- Persyaratan -->
-    <div class="info-section mt-4">
-      <h3 class="section-title">
-        <i class="fas fa-clipboard-list"></i> Persyaratan
-      </h3>
-      <div id="requirements-list">
-        <!-- Tetap statis atau bisa diambil dari spreadsheet -->
-      </div>
-    </div>
-  </div>
+      <section id="info-section" class="hidden">
+        <div class="card">
+          <h2 class="card-title">Informasi PPDB</h2>
           
-          <div class="action-buttons">
-            <button onclick="showSection('landing')" class="btn btn-secondary">
-              <i class="fas fa-arrow-left"></i> Kembali
-            </button>
-            <button onclick="window.print()" class="btn btn-outline">
-              <i class="fas fa-print"></i> Cetak Informasi
-            </button>
+          <div class="alert alert-info" id="info-alert">
+            <i class="fas fa-info-circle"></i> Memuat informasi terbaru...
           </div>
+          
+          <!-- Jadwal Pendaftaran -->
+          <div class="info-section">
+            <h3 class="section-title">
+              <i class="fas fa-calendar-alt"></i> Jadwal Pendaftaran
+            </h3>
+            <div class="table-responsive">
+              <table id="schedule-table" class="info-table">
+                <thead>
+                  <tr>
+                    <th>Kegiatan</th>
+                    <th>Tanggal Mulai</th>
+                    <th>Tanggal Selesai</th>
+                    <th>Keterangan</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Data akan diisi oleh JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          <!-- Biaya Pendaftaran -->
+          <div class="info-section mt-4">
+            <h3 class="section-title">
+              <i class="fas fa-money-bill-wave"></i> Biaya Pendaftaran
+            </h3>
+            <div class="table-responsive">
+              <table id="fee-table" class="info-table">
+                <thead>
+                  <tr>
+                    <th>Jenis Biaya</th>
+                    <th>Nominal</th>
+                    <th>Keterangan</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Data akan diisi oleh JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          <!-- Persyaratan -->
+          <div class="info-section mt-4">
+            <h3 class="section-title">
+              <i class="fas fa-clipboard-list"></i> Persyaratan
+            </h3>
+            <div class="table-responsive">
+              <ul>
+                <li>Scan Ijazah/SKL SMP/MTs (format PDF, maks. 2MB)</li>
+                <li>Pas Foto 3x4 berwarna (format JPG, maks. 1MB)</li>
+                <li>Scan Kartu Keluarga (format PDF, maks. 2MB)</li>
+                <li>Scan Akta Kelahiran (format PDF, maks. 2MB)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+                
+        <div class="action-buttons">
+          <button onclick="showSection('landing')" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Kembali
+          </button>
+          <button onclick="window.print()" class="btn btn-outline">
+            <i class="fas fa-print"></i> Cetak Informasi
+          </button>
         </div>
       </section>
 
@@ -867,41 +877,40 @@
           
           <form id="registration-form">
             <div class="form-grid">
+              <!-- Data Pribadi -->
               <div class="form-group">
-              <div class="form-group">
-                <label for="nisn">NISN <span class="text-danger">*</span></label>
+                <label for="nisn">NISN <span class="required-icon">*</span></label>
                 <input type="text" id="nisn" name="nisn" required pattern="[0-9]{10}" 
                   title="NISN harus 10 digit angka">
-                <small class="error">NISN harus 10 digit angka</small>
               </div>
               <div class="form-group">
-                <label for="nik">NIK <span class="text-danger">*</span></label>
+                <label for="nik">NIK <span class="required-icon">*</span></label>
                 <input type="text" id="nik" name="nik" required pattern="[0-9]{16}" 
                   title="NIK harus 16 digit angka">
               </div>
               <div class="form-group">
-                <label for="nama">Nama Lengkap <span class="text-danger">*</span></label>
+                <label for="nama">Nama Lengkap <span class="required-icon">*</span></label>
                 <input type="text" id="nama" name="nama" required>
               </div>
               <div class="form-group">
-                <label for="jenis_kelamin">Jenis Kelamin <span class="text-danger">*</span></label>
+                <label for="jenis_kelamin">Jenis Kelamin <span class="required-icon">*</span></label>
                 <select id="jenis_kelamin" name="jenis_kelamin" required>
                   <option value="">Pilih Jenis Kelamin</option>
-                  <option value="Laki-laki">Laki-laki</option>
-                  <option value="Perempuan">Perempuan</option>
+                  <option value="L">Laki-laki</option>
+                  <option value="P">Perempuan</option>
                 </select>
               </div>
               <div class="form-group">
-                <label for="tempat_lahir">Tempat Lahir <span class="text-danger">*</span></label>
+                <label for="tempat_lahir">Tempat Lahir <span class="required-icon">*</span></label>
                 <input type="text" id="tempat_lahir" name="tempat_lahir" required>
               </div>
               <div class="form-group">
-                <label for="tanggal_lahir">Tanggal Lahir <span class="text-danger">*</span></label>
+                <label for="tanggal_lahir">Tanggal Lahir <span class="required-icon">*</span></label>
                 <input type="date" id="tanggal_lahir" name="tanggal_lahir" required 
                   max="2010-12-31" min="1990-01-01">
               </div>
               <div class="form-group">
-                <label for="agama">Agama <span class="text-danger">*</span></label>
+                <label for="agama">Agama <span class="required-icon">*</span></label>
                 <select id="agama" name="agama" required>
                   <option value="">Pilih Agama</option>
                   <option value="Islam">Islam</option>
@@ -913,43 +922,70 @@
                 </select>
               </div>
               <div class="form-group">
-                <label for="no_hp">No HP (WhatsApp) <span class="text-danger">*</span></label>
+                <label for="no_hp">No HP (WhatsApp) <span class="required-icon">*</span></label>
                 <input type="tel" id="no_hp" name="no_hp" required 
                   pattern="[0-9]{10,13}" title="Nomor HP 10-13 digit angka">
                 <small class="text-gray">Contoh: 081234567890</small>
               </div>
               <div class="form-group">
-                <label for="email">Email <span class="text-danger">*</span></label>
+                <label for="email">Email <span class="required-icon">*</span></label>
                 <input type="email" id="email" name="email" required>
               </div>
               <div class="form-group form-full-width">
-                <label for="alamat">Alamat Lengkap <span class="text-danger">*</span></label>
+                <label for="alamat">Alamat Lengkap <span class="required-icon">*</span></label>
                 <textarea id="alamat" name="alamat" rows="3" required></textarea>
               </div>
+              
+              <!-- Data Orang Tua -->
               <div class="form-group">
-                <label for="nama_ayah">Nama Ayah <span class="text-danger">*</span></label>
+                <label for="nama_ayah">Nama Ayah <span class="required-icon">*</span></label>
                 <input type="text" id="nama_ayah" name="nama_ayah" required>
               </div>
               <div class="form-group">
-                <label for="nama_ibu">Nama Ibu <span class="text-danger">*</span></label>
+                <label for="pekerjaan_ayah">Pekerjaan Ayah <span class="required-icon">*</span></label>
+                <select id="pekerjaan_ayah" name="pekerjaan_ayah" required>
+                  <option value="">Pilih Pekerjaan</option>
+                  <!-- Opsi akan diisi oleh JavaScript -->
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="nama_ibu">Nama Ibu <span class="required-icon">*</span></label>
                 <input type="text" id="nama_ibu" name="nama_ibu" required>
               </div>
               <div class="form-group">
-                <label for="no_hp_ortu">No HP Orang Tua <span class="text-danger">*</span></label>
+                <label for="pekerjaan_ibu">Pekerjaan Ibu <span class="required-icon">*</span></label>
+                <select id="pekerjaan_ibu" name="pekerjaan_ibu" required>
+                  <option value="">Pilih Pekerjaan</option>
+                  <!-- Opsi akan diisi oleh JavaScript -->
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="no_hp_ortu">No HP Orang Tua <span class="required-icon">*</span></label>
                 <input type="tel" id="no_hp_ortu" name="no_hp_ortu" required 
                   pattern="[0-9]{10,13}" title="Nomor HP 10-13 digit angka">
               </div>
+              
+              <!-- Data Sekolah Asal -->
               <div class="form-group">
-                <label for="asal_sekolah">Asal Sekolah <span class="text-danger">*</span></label>
+                <label for="asal_sekolah">Asal Sekolah <span class="required-icon">*</span></label>
                 <input type="text" id="asal_sekolah" name="asal_sekolah" required>
               </div>
               <div class="form-group">
-                <label for="tahun_lulus">Tahun Lulus <span class="text-danger">*</span></label>
+                <label for="tahun_lulus">Tahun Lulus <span class="required-icon">*</span></label>
                 <input type="number" id="tahun_lulus" name="tahun_lulus" 
                   min="2000" max="2024" required>
               </div>
+              <div class="form-group">
+                <label for="jenis_pendaftaran">Jenis Pendaftaran <span class="required-icon">*</span></label>
+                <select id="jenis_pendaftaran" name="jenis_pendaftaran" required>
+                  <option value="">Pilih Jenis Pendaftaran</option>
+                  <!-- Opsi akan diisi oleh JavaScript -->
+                </select>
+              </div>
+              
+              <!-- Upload Dokumen -->
               <div class="form-group form-full-width">
-                <label>Upload Dokumen <span class="text-danger">*</span></label>
+                <label>Upload Dokumen <span class="required-icon">*</span></label>
                 <div style="border: 1px dashed var(--light-gray); padding: 1rem; border-radius: var(--radius-sm);">
                   <p style="margin-bottom: 0.5rem; font-size: 0.9rem;">File yang perlu diupload:</p>
                   <ul style="list-style-type: disc; padding-left: 1.5rem; font-size: 0.85rem; color: var(--gray);">
@@ -1036,16 +1072,17 @@
           <h2 class="card-title">Dashboard Admin SPMB</h2>
           <p>Fitur ini hanya tersedia untuk admin sekolah.</p>
           
-          <div class="form-grid mt-4">
-            <div class="form-group">
-              <label for="admin-username">Username</label>
-              <input type="text" id="admin-username" placeholder="Masukkan username">
+          <div id="login-form">
+            <div class="form-grid mt-4">
+              <div class="form-group">
+                <label for="admin-username">Username</label>
+                <input type="text" id="admin-username" placeholder="Masukkan username">
+              </div>
+              <div class="form-group">
+                <label for="admin-password">Password</label>
+                <input type="password" id="admin-password" placeholder="Masukkan password">
+              </div>
             </div>
-            <div class="form-group">
-              <label for="admin-password">Password</label>
-              <input type="password" id="admin-password" placeholder="Masukkan password">
-            </div>
-          </div>
 
 <!-- Di bagian Dashboard Admin -->
 <div id="admin-logs-tab" class="hidden">
@@ -1113,7 +1150,7 @@
 
   <script>
     // Konfigurasi backend
-    const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxlig1VDqr4kK_wJKlxCxcWvRcVTuAmbfISWiEVGC4B30bXOqy50b__GYLWAf4ohXmnPQ/exec'; // Ganti dengan URL Web App Anda
+    const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxlig1VDqr4kK_wJKlxCxcWvRcVTuAmbfISWiEVGC4B30bXOqy50b__GYLWAf4ohXmnPQ/exec';
     
     // Daftar section yang valid
     const validSections = ['landing', 'info', 'form', 'check', 'dashboard'];
@@ -1140,117 +1177,6 @@
         setTimeout(() => checkStatus(), 500);
       }
     };
-
-    // Enhanced form validation
-    function validateForm() {
-      let isValid = true;
-      const form = document.getElementById('registration-form');
-      const inputs = form.querySelectorAll('input, select, textarea[required]');
-      
-      inputs.forEach(input => {
-        if (!input.checkValidity()) {
-          isValid = false;
-          // Highlight invalid fields
-          input.classList.add('invalid');
-          const errorMsg = input.nextElementSibling;
-          if (errorMsg && errorMsg.classList.contains('error')) {
-            errorMsg.style.display = 'block';
-          }
-        }
-      });
-      
-      return isValid;
-    }
-
-    // Enhanced submit function
-    function submitForm() {
-      if (!validateForm()) {
-        alert('Harap lengkapi semua field yang wajib diisi dengan format yang benar');
-        return;
-      }
-
-      const submitBtn = document.getElementById('submit-btn');
-      submitBtn.classList.add('loading');
-      submitBtn.disabled = true;
-      
-      // Rest of your submit logic...
-    }
-
-    // Enhanced error handling
-    function handleApiError(error) {
-      console.error('API Error:', error);
-      
-      // Show user-friendly error message
-      const errorHtml = `
-        <div class="alert alert-danger">
-          <strong><i class="fas fa-exclamation-triangle"></i> Terjadi Kesalahan</strong>
-          <p>${error.message || 'Gagal memproses permintaan. Silakan coba lagi.'}</p>
-          ${error.details ? `<small>Detail: ${error.details}</small>` : ''}
-        </div>
-      `;
-      
-      // Insert error message at the top of the current section
-      const currentSection = document.querySelector('section:not(.hidden)');
-      if (currentSection) {
-        currentSection.insertAdjacentHTML('afterbegin', errorHtml);
-      }
-      
-      // Scroll to error
-      window.scrollTo(0, 0);
-    }
-
-    // Enhanced fetch wrapper with error handling
-    async function safeFetch(url, options = {}) {
-      try {
-        const response = await fetch(url, options);
-        
-        if (!response.ok) {
-          const error = new Error(`HTTP error! status: ${response.status}`);
-          error.status = response.status;
-          throw error;
-        }
-        
-        const data = await response.json();
-        
-        if (data && data.success === false) {
-          const error = new Error(data.message || 'Request failed');
-          error.details = data.details;
-          throw error;
-        }
-        
-        return data;
-      } catch (error) {
-        handleApiError(error);
-        throw error; // Re-throw for further handling if needed
-      }
-    }
-
-    // Usage example:
-    async function checkStatus() {
-      try {
-        const checkBtn = document.getElementById('check-btn');
-        checkBtn.classList.add('loading');
-        
-        const nomor = document.getElementById('check-nomor').value.trim();
-        const nisn = document.getElementById('check-nisn').value.trim();
-        
-        if (!nomor || !nisn) {
-          throw new Error('Harap isi nomor pendaftaran dan NISN');
-        }
-        
-        const result = await safeFetch(
-          `${BACKEND_URL}?action=check_status&nomor=${encodeURIComponent(nomor)}&nisn=${encodeURIComponent(nisn)}`
-        );
-        
-        // Process result...
-        
-      } catch (error) {
-        // Already handled by safeFetch
-      } finally {
-        const checkBtn = document.getElementById('check-btn');
-        checkBtn.classList.remove('loading');
-      }
-    }
     
     // Fungsi toggle mobile menu
     function toggleMobileMenu() {

@@ -848,7 +848,7 @@
             <h3 class="section-title">
               <i class="fas fa-clipboard-list"></i> Persyaratan
             </h3>
-            <div class="table-responsive">
+            <div id="requirements-list">
               <ul>
                 <li>Scan Ijazah/SKL SMP/MTs (format PDF, maks. 2MB)</li>
                 <li>Pas Foto 3x4 berwarna (format JPG, maks. 1MB)</li>
@@ -1084,48 +1084,14 @@
               </div>
             </div>
 
-<!-- Di bagian Dashboard Admin -->
-<div id="admin-logs-tab" class="hidden">
-  <div class="admin-toolbar mb-3">
-    <div class="search-box">
-      <input type="text" id="log-search" placeholder="Cari aktivitas...">
-      <button onclick="searchLogs()"><i class="fas fa-search"></i></button>
-    </div>
-    <button onclick="exportLogs()" class="btn btn-sm btn-outline">
-      <i class="fas fa-download"></i> Export
-    </button>
-  </div>
-  
-  <div class="table-responsive">
-    <table id="log-table">
-      <thead>
-        <tr>
-          <th>Waktu</th>
-          <th>Aktivitas</th>
-          <th>Detail</th>
-          <th>User</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Data log akan diisi oleh JavaScript -->
-      </tbody>
-    </table>
-  </div>
-  
-  <div class="pagination mt-3">
-    <button id="prev-log-page" disabled><i class="fas fa-chevron-left"></i></button>
-    <span id="log-page-info">Halaman 1</span>
-    <button id="next-log-page"><i class="fas fa-chevron-right"></i></button>
-  </div>
-</div>
-          
-          <div class="action-buttons mt-4">
-            <button onclick="adminLogin()" class="btn btn-primary" id="admin-login-btn">
-              <i class="fas fa-sign-in-alt"></i> Login
-            </button>
-            <button onclick="showSection('landing')" class="btn btn-danger">
-              <i class="fas fa-arrow-left"></i> Kembali
-            </button>
+            <div class="action-buttons mt-4">
+              <button onclick="adminLogin()" class="btn btn-primary" id="admin-login-btn">
+                <i class="fas fa-sign-in-alt"></i> Login
+              </button>
+              <button onclick="showSection('landing')" class="btn btn-danger">
+                <i class="fas fa-arrow-left"></i> Kembali
+              </button>
+            </div>
           </div>
           
           <div id="admin-content" class="hidden mt-4">
@@ -1140,17 +1106,18 @@
       <div class="footer-links">
         <a href="#" class="footer-link" onclick="showSection('info')">Informasi</a>
         <a href="#" class="footer-link" onclick="showSection('check')">Cek Status</a>
+        <a href="#" class="footer-link" onclick="showSection('dashboard')">Admin</a>
       </div>
       <p>SMAS PGRI TAKOKAK</p>
       <p>Jl. Pahlawan No. 5, Takokak, Jawa Barat</p>
-      <p>Email: info@smatakokak.sch.id | Telp: (0266) 6482212</p>
+      <p>Email: info@smapgritakokak.sch.id | Telp: (0266) 6482212</p>
       <p>© 2025 SMPB Online - Hak Cipta Dilindungi</p>
     </footer>
   </div>
 
   <script>
     // Konfigurasi backend
-    const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxlig1VDqr4kK_wJKlxCxcWvRcVTuAmbfISWiEVGC4B30bXOqy50b__GYLWAf4ohXmnPQ/exec';
+    const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbx63Mq6oL5Y7ZH83IGMe4gAWSdPIlIZfLWfmiJ42tu3FpcpB1FWa1JAWEAGXlfL0Xm2Sw/exec';
     
     // Daftar section yang valid
     const validSections = ['landing', 'info', 'form', 'check', 'dashboard'];
@@ -1176,6 +1143,9 @@
         document.getElementById('check-nomor').value = nomor;
         setTimeout(() => checkStatus(), 500);
       }
+      
+      // Load dropdown options
+      loadDropdownOptions();
     };
     
     // Fungsi toggle mobile menu
@@ -1184,6 +1154,61 @@
       nav.classList.toggle('hidden');
     }
 
+    // Fungsi untuk memuat opsi dropdown
+    function loadDropdownOptions() {
+      // Load pekerjaan options
+      fetch(`${BACKEND_URL}?action=get_pekerjaan_options`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            const pekerjaanSelects = [
+              document.getElementById('pekerjaan_ayah'),
+              document.getElementById('pekerjaan_ibu')
+            ];
+            
+            pekerjaanSelects.forEach(select => {
+              data.options.forEach(option => {
+                const opt = document.createElement('option');
+                opt.value = option;
+                opt.textContent = option;
+                select.appendChild(opt);
+              });
+            });
+          }
+        });
+      
+      // Load jenis pendaftaran options
+      fetch(`${BACKEND_URL}?action=get_jenis_pendaftaran`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            const select = document.getElementById('jenis_pendaftaran');
+            data.options.forEach(option => {
+              const opt = document.createElement('option');
+              opt.value = option;
+              opt.textContent = option;
+              select.appendChild(opt);
+            });
+          }
+        });
+      
+      // Load agama options
+      fetch(`${BACKEND_URL}?action=get_agama_options`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            const select = document.getElementById('agama');
+            data.options.forEach(option => {
+              const opt = document.createElement('option');
+              opt.value = option;
+              opt.textContent = option;
+              select.appendChild(opt);
+            });
+          }
+        });
+    }
+
+    // Fungsi untuk memuat data informasi
     function loadInfoData() {
       // Ambil data jadwal
       fetch(`${BACKEND_URL}?action=get_schedule`)
@@ -1195,15 +1220,29 @@
           
             data.data.forEach(item => {
               const row = document.createElement('tr');
+              // Highlight aktif event
+              const now = new Date();
+              const startDate = new Date(item['Tanggal Mulai']);
+              const endDate = new Date(item['Tanggal Selesai']);
+              const isActive = now >= startDate && now <= endDate;
+              
               row.innerHTML = `
                 <td>${item.Kegiatan || '-'}</td>
                 <td>${formatDate(item['Tanggal Mulai'])}</td>
                 <td>${formatDate(item['Tanggal Selesai'])}</td>
                 <td>${item.Keterangan || '-'}</td>
               `;
+              
+              if (isActive) {
+                row.classList.add('active-event');
+              }
+              
               tableBody.appendChild(row);
             });
           }
+        })
+        .catch(error => {
+          console.error('Error loading schedule:', error);
         });
     
       // Ambil data biaya
@@ -1216,6 +1255,11 @@
           
             data.data.forEach(item => {
               const row = document.createElement('tr');
+              // Highlight biaya wajib
+              if (item.Wajib === 'Ya') {
+                row.classList.add('mandatory-fee');
+              }
+              
               row.innerHTML = `
                 <td>${item['Jenis Biaya'] || '-'}</td>
                 <td>${formatCurrency(item.Nominal)}</td>
@@ -1224,6 +1268,9 @@
               tableBody.appendChild(row);
             });
           }
+        })
+        .catch(error => {
+          console.error('Error loading fees:', error);
         });
     }
 
@@ -1269,6 +1316,7 @@
         landingSection.classList.add('hidden');
       }
 
+      // Load data khusus section
       if (section === 'info') {
         loadInfoData();
       }
@@ -1358,6 +1406,616 @@
       document.getElementById('preview-section').classList.add('hidden');
       document.getElementById('registration-form').classList.remove('hidden');
     }
+    
+    // Fungsi Submit Form ke Backend
+    function submitForm() {
+      const submitBtn = document.getElementById('submit-btn');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<span class="spinner"></span> Memproses...';
+      submitBtn.disabled = true;
+      
+      const form = document.getElementById('registration-form');
+      const formData = new FormData(form);
+      
+      // Konversi FormData ke objek JSON
+      const data = {};
+      formData.forEach((value, key) => {
+        if (key !== 'dokumen') {
+          data[key] = value;
+        }
+      });
+      
+      // Kirim data ke backend
+      fetch(`${BACKEND_URL}?action=submit_form`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams(data).toString()
+      })
+      .then(response => response.json())
+      .then(result => {
+        if (result.success) {
+          // Tampilkan pesan sukses
+          const successHtml = `
+            <div class="alert alert-success">
+              <h4 style="margin-bottom: 0.5rem;">
+                <i class="fas fa-check-circle"></i> Pendaftaran Berhasil!
+              </h4>
+              <p>Nomor Pendaftaran Anda: <strong>${result.nomorPendaftaran}</strong></p>
+              <p class="mt-2">Silakan simpan nomor pendaftaran ini untuk mengecek status pendaftaran.</p>
+            </div>
+            <div class="action-buttons mt-3">
+              <button onclick="window.print()" class="btn btn-secondary">
+                <i class="fas fa-print"></i> Cetak Bukti
+              </button>
+              <button onclick="showCheckStatus('${result.nomorPendaftaran}')" class="btn btn-primary">
+                <i class="fas fa-search"></i> Cek Status
+              </button>
+              <button onclick="showSection('landing')" class="btn btn-success">
+                <i class="fas fa-home"></i> Kembali ke Beranda
+              </button>
+            </div>
+          `;
+          
+          document.getElementById('preview-section').innerHTML = successHtml;
+          
+          // Reset form
+          form.reset();
+        } else {
+          throw new Error(result.message || 'Terjadi kesalahan saat submit');
+        }
+      })
+      .catch(error => {
+        alert(`Gagal submit: ${error.message}`);
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+      });
+    }
+    
+    // Fungsi untuk langsung ke cek status dengan nomor tertentu
+    function showCheckStatus(nomor) {
+      showSection('check');
+      document.getElementById('check-nomor').value = nomor;
+      checkStatus();
+    }
+    
+    // Fungsi Cek Status Pendaftaran
+    function checkStatus() {
+      const checkBtn = document.getElementById('check-btn');
+      const originalText = checkBtn.innerHTML;
+      checkBtn.innerHTML = '<span class="spinner"></span> Mencari...';
+      checkBtn.disabled = true;
+      
+      const nomor = document.getElementById('check-nomor').value.trim();
+      const nisn = document.getElementById('check-nisn').value.trim();
+      
+      if (!nomor || !nisn) {
+        alert('Harap isi nomor pendaftaran dan NISN!');
+        checkBtn.innerHTML = originalText;
+        checkBtn.disabled = false;
+        return;
+      }
+      
+      // Kirim permintaan ke backend
+      fetch(`${BACKEND_URL}?action=check_status&nomor=${encodeURIComponent(nomor)}&nisn=${encodeURIComponent(nisn)}`)
+        .then(response => response.json())
+        .then(result => {
+          const resultDiv = document.getElementById('check-result');
+          
+          if (result.success) {
+            const data = result.data;
+            let statusClass = '';
+            if (data.Status === 'Diverifikasi') {
+              statusClass = 'status-verified';
+            } else if (data.Status === 'Ditolak') {
+              statusClass = 'status-rejected';
+            } else {
+              statusClass = 'status-pending';
+            }
+            
+            resultDiv.innerHTML = `
+              <div class="card">
+                <h4 style="margin-bottom: 1rem; color: var(--primary-dark);">
+                  <i class="fas fa-user-graduate"></i> Status Pendaftaran
+                </h4>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                  <div>
+                    <strong style="font-size: 0.85rem; color: var(--gray);">Nomor Pendaftaran:</strong>
+                    <p style="margin-top: 0.25rem;">${data['Nomor Pendaftaran']}</p>
+                  </div>
+                  <div>
+                    <strong style="font-size: 0.85rem; color: var(--gray);">Nama:</strong>
+                    <p style="margin-top: 0.25rem;">${data.Nama}</p>
+                  </div>
+                  <div>
+                    <strong style="font-size: 0.85rem; color: var(--gray);">Asal Sekolah:</strong>
+                    <p style="margin-top: 0.25rem;">${data['Asal Sekolah']}</p>
+                  </div>
+                  <div>
+                    <strong style="font-size: 0.85rem; color: var(--gray);">Tanggal Daftar:</strong>
+                    <p style="margin-top: 0.25rem;">${data['Tanggal Daftar']}</p>
+                  </div>
+                  <div>
+                    <strong style="font-size: 0.85rem; color: var(--gray);">Status:</strong>
+                    <p style="margin-top: 0.25rem;" class="${statusClass}">
+                      <i class="fas fa-${data.Status === 'Diverifikasi' ? 'check-circle' : 
+                        data.Status === 'Ditolak' ? 'times-circle' : 'clock'}"></i>
+                      ${data.Status}
+                    </p>
+                  </div>
+                </div>
+                
+                ${data.Status === 'Diverifikasi' ? `
+                  <div class="alert alert-success mt-3">
+                    <strong><i class="fas fa-check-circle"></i> Selamat!</strong> 
+                    Anda diterima di SMAS PGRI Takokak. Silakan lakukan daftar ulang sesuai jadwal.
+                  </div>
+                ` : data.Status === 'Ditolak' ? `
+                  <div class="alert alert-danger mt-3">
+                    <strong><i class="fas fa-times-circle"></i> Maaf</strong>, 
+                    Anda belum diterima di SMAS PGRI Takokak.
+                  </div>
+                ` : `
+                  <div class="alert alert-info mt-3">
+                    <strong><i class="fas fa-info-circle"></i> Proses Verifikasi</strong> 
+                    Pendaftaran Anda sedang dalam proses verifikasi. Silakan cek kembali beberapa hari lagi.
+                  </div>
+                `}
+                
+                <div class="action-buttons mt-3">
+                  <button onclick="window.print()" class="btn btn-secondary">
+                    <i class="fas fa-print"></i> Cetak
+                  </button>
+                  <button onclick="showSection('landing')" class="btn btn-primary">
+                    <i class="fas fa-home"></i> Kembali
+                  </button>
+                </div>
+              </div>
+            `;
+          } else {
+            resultDiv.innerHTML = `
+              <div class="alert alert-danger">
+                <strong><i class="fas fa-exclamation-triangle"></i> Data tidak ditemukan</strong>
+                <p class="mt-2">Nomor pendaftaran atau NISN yang Anda masukkan tidak valid. Silakan coba lagi.</p>
+              </div>
+            `;
+          }
+          
+          resultDiv.classList.remove('hidden');
+        })
+        .catch(error => {
+          alert(`Gagal memeriksa status: ${error.message}`);
+        })
+        .finally(() => {
+          checkBtn.innerHTML = originalText;
+          checkBtn.disabled = false;
+        });
+    }
+    
+    // Fungsi Login Admin
+    function adminLogin() {
+      const loginBtn = document.getElementById('admin-login-btn');
+      const originalText = loginBtn.innerHTML;
+      loginBtn.innerHTML = '<span class="spinner"></span> Memverifikasi...';
+      loginBtn.disabled = true;
+      
+      const username = document.getElementById('admin-username').value;
+      const password = document.getElementById('admin-password').value;
+      
+      if (!username || !password) {
+        alert('Username dan password harus diisi!');
+        loginBtn.innerHTML = originalText;
+        loginBtn.disabled = false;
+        return;
+      }
+      
+      // Kirim permintaan login ke backend
+      fetch(`${BACKEND_URL}?action=admin_login&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`)
+        .then(response => response.json())
+        .then(result => {
+          if (result.success) {
+            // Login berhasil, tampilkan dashboard admin
+            loadAdminDashboard(result.token, result.user);
+          } else {
+            throw new Error(result.message || 'Login gagal');
+          }
+        })
+        .catch(error => {
+          alert(`Login gagal: ${error.message}`);
+        })
+        .finally(() => {
+          loginBtn.innerHTML = originalText;
+          loginBtn.disabled = false;
+        });
+    }
+    
+    // Fungsi Load Admin Dashboard
+    function loadAdminDashboard(token, user) {
+      const adminContent = document.getElementById('admin-content');
+      const loginForm = document.getElementById('login-form');
+      
+      // Sembunyikan form login
+      loginForm.classList.add('hidden');
+      
+      // Tampilkan konten admin
+      adminContent.innerHTML = `
+        <div class="admin-panel">
+          <div class="admin-toolbar">
+            <div>
+              <h3>Selamat datang, <strong>${user.name}</strong></h3>
+              <small>Role: ${user.role}</small>
+            </div>
+            <button onclick="adminLogout()" class="btn btn-danger btn-sm">
+              <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+          </div>
+          
+          <div class="tabs">
+            <button class="tab-btn active" onclick="showAdminTab('registrations', this)">
+              <i class="fas fa-users"></i> Data Pendaftar
+            </button>
+            <button class="tab-btn" onclick="showAdminTab('logs', this)">
+              <i class="fas fa-history"></i> Log Aktivitas
+            </button>
+            ${user.role === 'superadmin' ? `
+            <button class="tab-btn" onclick="showAdminTab('users', this)">
+              <i class="fas fa-user-cog"></i> Manajemen User
+            </button>
+            ` : ''}
+          </div>
+          
+          <div id="admin-registrations-tab">
+            <div class="admin-toolbar">
+              <div class="search-box">
+                <input type="text" id="reg-search" placeholder="Cari pendaftar...">
+                <button onclick="searchRegistrations()"><i class="fas fa-search"></i></button>
+              </div>
+              <button onclick="exportToExcel('${token}')" class="btn btn-sm btn-success">
+                <i class="fas fa-file-excel"></i> Export Excel
+              </button>
+            </div>
+            
+            <div class="table-responsive">
+              <table id="registrations-table">
+                <thead>
+                  <tr>
+                    <th>No. Pendaftaran</th>
+                    <th>Nama</th>
+                    <th>NISN</th>
+                    <th>Asal Sekolah</th>
+                    <th>Tanggal Daftar</th>
+                    <th>Status</th>
+                    <th>Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Data akan diisi oleh JavaScript -->
+                </tbody>
+              </table>
+            </div>
+            
+            <div class="pagination">
+              <button id="prev-reg-page" disabled><i class="fas fa-chevron-left"></i></button>
+              <span id="reg-page-info">Halaman 1</span>
+              <button id="next-reg-page"><i class="fas fa-chevron-right"></i></button>
+            </div>
+          </div>
+          
+          <div id="admin-logs-tab" class="hidden">
+            <div class="admin-toolbar">
+              <div class="search-box">
+                <input type="text" id="log-search" placeholder="Cari aktivitas...">
+                <button onclick="searchLogs()"><i class="fas fa-search"></i></button>
+              </div>
+              <button onclick="exportLogs('${token}')" class="btn btn-sm btn-outline">
+                <i class="fas fa-download"></i> Export
+              </button>
+            </div>
+            
+            <div class="table-responsive">
+              <table id="log-table">
+                <thead>
+                  <tr>
+                    <th>Waktu</th>
+                    <th>Aktivitas</th>
+                    <th>Deskripsi</th>
+                    <th>User</th>
+                    <th>IP</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Data akan diisi oleh JavaScript -->
+                </tbody>
+              </table>
+            </div>
+            
+            <div class="pagination">
+              <button id="prev-log-page" disabled><i class="fas fa-chevron-left"></i></button>
+              <span id="log-page-info">Halaman 1</span>
+              <button id="next-log-page"><i class="fas fa-chevron-right"></i></button>
+            </div>
+          </div>
+          
+          ${user.role === 'superadmin' ? `
+          <div id="admin-users-tab" class="hidden">
+            <div class="admin-toolbar">
+              <button onclick="showAddUserModal()" class="btn btn-sm btn-primary">
+                <i class="fas fa-user-plus"></i> Tambah User
+              </button>
+            </div>
+            
+            <div class="table-responsive">
+              <table id="users-table">
+                <thead>
+                  <tr>
+                    <th>Username</th>
+                    <th>Nama</th>
+                    <th>Role</th>
+                    <th>Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Data akan diisi oleh JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+          ` : ''}
+        </div>
+      `;
+      
+      adminContent.classList.remove('hidden');
+      
+      // Load data pendaftar
+      loadRegistrations(token);
+      
+      // Load log aktivitas
+      loadLogs(token);
+      
+      // Load data user jika superadmin
+      if (user.role === 'superadmin') {
+        loadUsers(token);
+      }
+    }
+    
+    // Fungsi untuk memuat data pendaftar
+    function loadRegistrations(token, page = 1, search = '') {
+      fetch(`${BACKEND_URL}?action=get_registrations&token=${encodeURIComponent(token)}&page=${page}&search=${encodeURIComponent(search)}`)
+        .then(response => response.json())
+        .then(result => {
+          if (result.success) {
+            const tableBody = document.querySelector('#registrations-table tbody');
+            tableBody.innerHTML = '';
+            
+            result.data.forEach(reg => {
+              const row = document.createElement('tr');
+              row.innerHTML = `
+                <td>${reg['Nomor Pendaftaran']}</td>
+                <td>${reg.Nama}</td>
+                <td>${reg.NISN}</td>
+                <td>${reg['Asal Sekolah']}</td>
+                <td>${formatDate(reg['Tanggal Daftar'])}</td>
+                <td>
+                  <span class="status-badge ${getStatusClass(reg.Status)}">
+                    ${reg.Status}
+                  </span>
+                </td>
+                <td>
+                  <select onchange="updateRegistrationStatus('${reg['Nomor Pendaftaran']}', this.value, '${token}')"
+                    class="status-select">
+                    <option value="Menunggu Verifikasi" ${reg.Status === 'Menunggu Verifikasi' ? 'selected' : ''}>
+                      Menunggu
+                    </option>
+                    <option value="Diverifikasi" ${reg.Status === 'Diverifikasi' ? 'selected' : ''}>
+                      Diverifikasi
+                    </option>
+                    <option value="Ditolak" ${reg.Status === 'Ditolak' ? 'selected' : ''}>
+                      Ditolak
+                    </option>
+                  </select>
+                </td>
+              `;
+              tableBody.appendChild(row);
+            });
+            
+            // Update pagination info
+            document.getElementById('reg-page-info').textContent = `Halaman ${page}`;
+            document.getElementById('prev-reg-page').disabled = page <= 1;
+            document.getElementById('next-reg-page').disabled = !result.hasMore;
+            
+            // Set event listeners for pagination
+            document.getElementById('prev-reg-page').onclick = () => loadRegistrations(token, page - 1, search);
+            document.getElementById('next-reg-page').onclick = () => loadRegistrations(token, page + 1, search);
+          } else {
+            throw new Error(result.message || 'Gagal memuat data pendaftar');
+          }
+        })
+        .catch(error => {
+          console.error('Error loading registrations:', error);
+          alert(`Gagal memuat data pendaftar: ${error.message}`);
+        });
+    }
+    
+    // Fungsi untuk memuat log aktivitas
+    function loadLogs(token, page = 1, search = '') {
+      fetch(`${BACKEND_URL}?action=get_logs&token=${encodeURIComponent(token)}&page=${page}&search=${encodeURIComponent(search)}`)
+        .then(response => response.json())
+        .then(result => {
+          if (result.success) {
+            const tableBody = document.querySelector('#log-table tbody');
+            tableBody.innerHTML = '';
+            
+            result.data.forEach(log => {
+              const row = document.createElement('tr');
+              row.innerHTML = `
+                <td>${formatDateTime(log.Timestamp)}</td>
+                <td>${log.Aktivitas}</td>
+                <td>${log.Deskripsi}</td>
+                <td>${log.User || 'System'}</td>
+                <td>${log.IP || '-'}</td>
+              `;
+              tableBody.appendChild(row);
+            });
+            
+            // Update pagination info
+            document.getElementById('log-page-info').textContent = `Halaman ${page}`;
+            document.getElementById('prev-log-page').disabled = page <= 1;
+            document.getElementById('next-log-page').disabled = !result.hasMore;
+            
+            // Set event listeners for pagination
+            document.getElementById('prev-log-page').onclick = () => loadLogs(token, page - 1, search);
+            document.getElementById('next-log-page').onclick = () => loadLogs(token, page + 1, search);
+          } else {
+            throw new Error(result.message || 'Gagal memuat log aktivitas');
+          }
+        })
+        .catch(error => {
+          console.error('Error loading logs:', error);
+          alert(`Gagal memuat log aktivitas: ${error.message}`);
+        });
+    }
+    
+    // Fungsi untuk memuat data user (superadmin only)
+    function loadUsers(token) {
+      fetch(`${BACKEND_URL}?action=get_users&token=${encodeURIComponent(token)}`)
+        .then(response => response.json())
+        .then(result => {
+          if (result.success) {
+            const tableBody = document.querySelector('#users-table tbody');
+            tableBody.innerHTML = '';
+            
+            result.data.forEach(user => {
+              const row = document.createElement('tr');
+              row.innerHTML = `
+                <td>${user.username}</td>
+                <td>${user.name}</td>
+                <td>${user.role}</td>
+                <td>
+                  <button onclick="editUser('${user.username}', '${user.name}', '${user.role}')" 
+                    class="btn btn-sm btn-warning">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button onclick="deleteUser('${user.username}', '${token}')" 
+                    class="btn btn-sm btn-danger">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </td>
+              `;
+              tableBody.appendChild(row);
+            });
+          } else {
+            throw new Error(result.message || 'Gagal memuat data user');
+          }
+        })
+        .catch(error => {
+          console.error('Error loading users:', error);
+          alert(`Gagal memuat data user: ${error.message}`);
+        });
+    }
+    
+    // Fungsi untuk menampilkan modal tambah user
+    function showAddUserModal() {
+      const modalHtml = `
+        <div id="user-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+          background-color: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000;">
+          <div style="background-color: white; padding: 2rem; border-radius: var(--radius-md); width: 100%; max-width: 500px;">
+            <h3 style="margin-bottom: 1.5rem; color: var(--primary-dark);">
+              <i class="fas fa-user-plus"></i> Tambah User Admin
+            </h3>
+            
+            <div class="form-group">
+              <label for="new-username">Username</label>
+              <input type="text" id="new-username" class="form-control">
+            </div>
+            
+            <div class="form-group">
+              <label for="new-password">Password</label>
+              <input type="password" id="new-password" class="form-control">
+            </div>
+            
+            <div class="form-group">
+              <label for="new-name">Nama Lengkap</label>
+              <input type="text" id="new-name" class="form-control">
+            </div>
+            
+            <div class="form-group">
+              <label for="new-role">Role</label>
+              <select id="new-role" class="form-control">
+                <option value="admin">Admin</option>
+                <option value="superadmin">Super Admin</option>
+              </select>
+            </div>
+            
+            <div class="action-buttons" style="margin-top: 1.5rem;">
+              <button onclick="addUser()" class="btn btn-primary">
+                <i class="fas fa-save"></i> Simpan
+              </button>
+              <button onclick="closeModal()" class="btn btn-danger">
+                <i class="fas fa-times"></i> Batal
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      document.body.insertAdjacentHTML('beforeend', modalHtml);
+    }
+    
+    // Fungsi untuk menutup modal
+    function closeModal() {
+      const modal = document.getElementById('user-modal');
+      if (modal) {
+        modal.remove();
+      }
+    }
+    
+    // Fungsi untuk menambah user baru
+    function addUser() {
+      const username = document.getElementById('new-username').value;
+      const password = document.getElementById('new-password').value;
+      const name = document.getElementById('new-name').value;
+      const role = document.getElementById('new-role').value;
+      
+      if (!username || !password || !name) {
+        alert('Semua field harus diisi!');
+        return;
+      }
+      
+      const token = document.querySelector('#admin-content [onclick*="exportToExcel"]')
+        .getAttribute('onclick')
+        .match(/'([^']+)'/)[1];
+      
+      fetch(`${BACKEND_URL}?action=add_user&token=${encodeURIComponent(token)}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          username: username,
+          password: password,
+          name: name,
+          role: role
+        }).toString()
+      })
+      .then(response => response.json())
+      .then(result => {
+        if (result.success) {
+          alert('User berhasil ditambahkan');
+          closeModal();
+          loadUsers(token);
+        } else {
+          throw new Error(result.message || 'Gagal menambah user');
+        }
+      })
+      .catch(error => {
+        alert(`Gagal menambah user: ${error.message}`);
+      });
+    }
+    
+    // Fungsi untuk mengedit user
+
     
     // Fungsi Submit Form ke Backend
     function submitForm() {

@@ -3,1233 +3,1698 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SPMB SMAS PGRI Takokak</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <title>SPMB | SMAS PGRI TAKOKAK</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    body { transition: background-color 0.3s, color 0.3s; }
-    .dark { background-color: #1f2937; color: #f3f4f6; }
-    .modal { transition: opacity 0.3s; }
-    .spinner { animation: spin 1s linear infinite; }
-    @keyframes spin { 100% { transform: rotate(360deg); } }
-    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; }
-    .error { color: #ef4444; font-size: 0.875rem; }
-    .stat-card { background: #fff; padding: 1rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center; }
-    .dark .stat-card { background: #374151; }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { padding: 0.75rem; border: 1px solid #e5e7eb; }
-    .dark th, .dark td { border-color: #4b5563; }
-    button { transition: background-color 0.2s; }
+    /* CSS sebelumnya tetap sama, tidak ada perubahan */
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1e40af;
+      --primary-light: #e0e7ff;
+      --secondary: #3b82f6;
+      --success: #10b981;
+      --success-dark: #059669;
+      --warning: #f59e0b;
+      --warning-dark: #d97706;
+      --danger: #ef4444;
+      --danger-dark: #dc2626;
+      --light: #f8fafc;
+      --dark: #1e293b;
+      --gray: #64748b;
+      --light-gray: #e5e7eb;
+      --white: #ffffff;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+      --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+      --radius-sm: 6px;
+      --radius-md: 8px;
+      --radius-lg: 10px;
+      --transition: all 0.3s ease;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      background-color: #f5f7fa;
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* Container */
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem;
+      flex: 1;
+    }
+    
+    /* Header */
+    header {
+      background-color: var(--primary);
+      color: var(--white);
+      padding: 1.5rem 0;
+      text-align: center;
+      border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      position: relative;
+    }
+    
+    .logo {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .header-subtitle {
+      font-size: 1rem;
+      opacity: 0.9;
+      margin-bottom: 1rem;
+    }
+    
+    .btn-group {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+    
+    /* Buttons */
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+    }
+    
+    .btn i {
+      font-size: 1rem;
+    }
+    
+    .btn-primary {
+      background-color: var(--white);
+      color: var(--primary);
+    }
+    
+    .btn-primary:hover {
+      background-color: var(--primary-light);
+    }
+    
+    .btn-secondary {
+      background-color: var(--secondary);
+      color: var(--white);
+    }
+    
+    .btn-secondary:hover {
+      background-color: var(--primary);
+    }
+    
+    .btn-success {
+      background-color: var(--success);
+      color: var(--white);
+    }
+    
+    .btn-success:hover {
+      background-color: var(--success-dark);
+    }
+    
+    .btn-warning {
+      background-color: var(--warning);
+      color: var(--white);
+    }
+    
+    .btn-warning:hover {
+      background-color: var(--warning-dark);
+    }
+    
+    .btn-danger {
+      background-color: var(--danger);
+      color: var(--white);
+    }
+    
+    .btn-danger:hover {
+      background-color: var(--danger-dark);
+    }
+    
+    .btn-outline {
+      background-color: transparent;
+      border: 1px solid var(--primary);
+      color: var(--primary);
+    }
+    
+    .btn-outline:hover {
+      background-color: var(--primary-light);
+    }
+
+  /* CSS Tambahan untuk Fitur Baru */
+  .info-section {
+    background-color: var(--light);
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    margin-bottom: 1.5rem;
+  }
+  
+  .section-title {
+    color: var(--primary-dark);
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+  }
+  
+  .info-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .info-table th {
+    background-color: var(--primary);
+    color: white;
+    padding: 0.75rem;
+  }
+  
+  .info-table td {
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--light-gray);
+  }
+  
+  .active-event {
+    background-color: #e3f2fd !important;
+    font-weight: 500;
+  }
+  
+  .mandatory-fee {
+    background-color: #fff8e1;
+  }
+  
+  .required-icon {
+    color: var(--danger);
+    font-size: 0.7rem;
+  }
+  
+  .error-log {
+    background-color: #ffebee;
+  }
+  
+  .admin-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .search-box {
+    display: flex;
+    align-items: center;
+  }
+  
+  .search-box input {
+    padding: 0.5rem;
+    border: 1px solid var(--light-gray);
+    border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+    width: 250px;
+  }
+  
+  .search-box button {
+    padding: 0.5rem 0.75rem;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    cursor: pointer;
+  }
+  
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .pagination button {
+    padding: 0.25rem 0.5rem;
+    min-width: 30px;
+  }
+
+    /* Main Content */
+    .main-content {
+      padding: 1.5rem 0;
+    }
+    
+    /* Cards */
+    .card {
+      background-color: var(--white);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+    }
+    
+    .card:hover {
+      box-shadow: var(--shadow-md);
+    }
+    
+    .card-title {
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+      color: var(--primary-dark);
+      font-weight: 600;
+    }
+    
+    .card-highlight {
+      background-color: var(--primary);
+      color: var(--white);
+    }
+    
+    .card-highlight .card-title {
+      color: var(--white);
+    }
+    
+    /* Features Grid */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .feature-card {
+      background-color: var(--light);
+      padding: 1.25rem;
+      border-radius: var(--radius-md);
+      text-align: center;
+      transition: var(--transition);
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 0.75rem;
+      color: var(--primary);
+    }
+    
+    .feature-title {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    
+    .feature-desc {
+      font-size: 0.85rem;
+      color: var(--gray);
+    }
+    
+    /* Form Styles */
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+    
+    input, select, textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid var(--light-gray);
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      transition: var(--transition);
+    }
+    
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px var(--primary-light);
+    }
+    
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+    
+    .form-full-width {
+      grid-column: 1 / -1;
+    }
+    
+    .action-buttons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+    
+    /* Table Styles */
+    .table-responsive {
+      overflow-x: auto;
+      margin-top: 1.5rem;
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-sm);
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 600px;
+    }
+    
+    th, td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid var(--light-gray);
+      font-size: 0.9rem;
+    }
+    
+    th {
+      background-color: var(--light);
+      font-weight: 600;
+      color: var(--dark);
+    }
+    
+    tr:hover {
+      background-color: var(--light);
+    }
+    
+    .status-pending {
+      color: var(--warning);
+    }
+    
+    .status-verified {
+      color: var(--success);
+    }
+    
+    .status-rejected {
+      color: var(--danger);
+    }
+    
+  .tabs {
+    display: flex;
+    border-bottom: 1px solid var(--light-gray);
+    margin-bottom: 1rem;
+  }
+  
+  .tab-btn {
+    padding: 0.75rem 1.5rem;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    font-weight: 500;
+    color: var(--gray);
+    transition: var(--transition);
+  }
+  
+  .tab-btn:hover {
+    color: var(--primary);
+  }
+  
+  .tab-btn.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+  }
+  
+    /* Alert */
+    .alert {
+      padding: 1rem;
+      border-radius: var(--radius-sm);
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+    }
+    
+    .alert-success {
+      background-color: #ecfdf5;
+      color: var(--success-dark);
+      border-left: 4px solid var(--success);
+    }
+    
+    .alert-info {
+      background-color: #e0f2fe;
+      color: var(--primary-dark);
+      border-left: 4px solid var(--primary);
+    }
+    
+    .alert-warning {
+      background-color: #fef3c7;
+      color: var(--warning-dark);
+      border-left: 4px solid var(--warning);
+    }
+    
+    .alert-danger {
+      background-color: #fee2e2;
+      color: var(--danger-dark);
+      border-left: 4px solid var(--danger);
+    }
+    
+    /* Footer */
+    footer {
+      background-color: var(--primary);
+      color: var(--white);
+      text-align: center;
+      padding: 1.5rem 0;
+      margin-top: 2rem;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    }
+    
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .footer-link {
+      color: var(--white);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+    
+    .footer-link:hover {
+      opacity: 0.8;
+    }
+    
+    /* Utility Classes */
+    .hidden {
+      display: none !important;
+    }
+    
+    .text-center {
+      text-align: center;
+    }
+    
+    .mt-2 { margin-top: 0.5rem; }
+    .mt-3 { margin-top: 0.75rem; }
+    .mt-4 { margin-top: 1rem; }
+    .mt-5 { margin-top: 1.5rem; }
+    
+    .mb-2 { margin-bottom: 0.5rem; }
+    .mb-3 { margin-bottom: 0.75rem; }
+    .mb-4 { margin-bottom: 1rem; }
+    .mb-5 { margin-bottom: 1.5rem; }
+    
+    /* Mobile Navigation */
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--white);
+      font-size: 1.5rem;
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      cursor: pointer;
+    }
+    
+    /* Loading Spinner */
+    .spinner {
+      display: inline-block;
+      width: 1.5rem;
+      height: 1.5rem;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: var(--white);
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      .logo {
+        font-size: 1.75rem;
+      }
+      
+      h1 {
+        font-size: 1.25rem;
+      }
+      
+      .header-subtitle {
+        font-size: 0.9rem;
+      }
+      
+      .btn {
+        padding: 0.6rem 1rem;
+        font-size: 0.85rem;
+      }
+      
+      .features {
+        grid-template-columns: 1fr;
+      }
+      
+      .mobile-menu-btn {
+        display: block;
+      }
+      
+      .btn-group {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .btn {
+        width: 100%;
+        max-width: 250px;
+      }
+      
+      .action-buttons {
+        flex-direction: column;
+      }
+      
+      .action-buttons .btn {
+        width: 100%;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .container {
+        padding: 0 0.75rem;
+      }
+      
+      .main-content {
+        padding: 1rem 0;
+      }
+      
+      .card {
+        padding: 1rem;
+      }
+      
+      .footer-links {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+    }
+    
+    /* Print Styles */
+    @media print {
+      header, footer, .btn-group, .action-buttons {
+        display: none !important;
+      }
+      
+      body {
+        background-color: white;
+        color: black;
+      }
+      
+      .container {
+        padding: 0;
+        max-width: 100%;
+      }
+      
+      .card {
+        box-shadow: none;
+        border: 1px solid #ddd;
+        page-break-inside: avoid;
+      }
+    }
   </style>
 </head>
-<body class="bg-gray-100 font-sans">
-  <nav class="bg-blue-600 text-white p-4 sticky top-0 z-10">
-    <div class="container mx-auto flex justify-between items-center">
-      <h1 class="text-xl font-bold">SPMB SMAS PGRI Takokak</h1>
-      <div class="space-x-4">
-        <button onclick="showSection('home')" class="hover:underline">Beranda</button>
-        <button onclick="showSection('form')" class="hover:underline">Pendaftaran</button>
-        <button onclick="showSection('completeness')" class="hover:underline">Cek Kelengkapan</button>
-        <button onclick="showSection('schedule')" class="hover:underline">Jadwal</button>
-        <button onclick="showSection('fees')" class="hover:underline">Biaya</button>
-        <button id="dashboardNav" onclick="showSection('dashboard')" class="hover:underline hidden">Dashboard</button>
-        <button id="logoutNav" onclick="logout()" class="hover:underline hidden">Logout</button>
-        <button onclick="toggleDarkMode()" class="hover:underline">🌙</button>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="logo">
+        <i class="fas fa-graduation-cap"></i>
       </div>
-    </div>
-  </nav>
-
-  <div class="container mx-auto p-4">
-    <div id="home" class="section">
-      <h2 class="text-2xl font-bold mb-4">Selamat Datang</h2>
-      <p class="mb-4">Sistem Pendaftaran Mahasiswa Baru (SPMB) SMAS PGRI Takokak. Silakan daftar atau cek status pendaftaran Anda.</p>
-      <div id="publicStats" class="grid gap-4 mb-4"></div>
-    </div>
-
-    <div id="form" class="section hidden">
-      <h2 class="text-2xl font-bold mb-4">Form Pendaftaran</h2>
-      <form id="registrationForm" class="form-grid">
-        <div class="form-group">
-          <label for="jenisPendaftaran">Jenis Pendaftaran</label>
-          <select id="jenisPendaftaran" name="jenis_pendaftaran" required>
-            <option value="">Pilih</option>
-            <option value="Reguler">Reguler</option>
-            <option value="Beasiswa">Beasiswa</option>
-          </select>
-          <div class="error" id="error-jenisPendaftaran"></div>
-        </div>
-        <div class="form-group">
-          <label for="nisn">NISN</label>
-          <input type="text" id="nisn" name="nisn" pattern="\d{10}" required>
-          <div class="error" id="error-nisn"></div>
-        </div>
-        <div class="form-group">
-          <label for="nik">NIK</label>
-          <input type="text" id="nik" name="nik" pattern="\d{16}" required>
-          <div class="error" id="error-nik"></div>
-        </div>
-        <div class="form-group">
-          <label for="nama">Nama Lengkap</label>
-          <input type="text" id="nama" name="nama" required>
-          <div class="error" id="error-nama"></div>
-        </div>
-        <div class="form-group">
-          <label for="jenisKelamin">Jenis Kelamin</label>
-          <select id="jenisKelamin" name="jenis_kelamin" required>
-            <option value="">Pilih</option>
-            <option value="Laki-laki">Laki-laki</option>
-            <option value="Perempuan">Perempuan</option>
-          </select>
-          <div class="error" id="error-jenisKelamin"></div>
-        </div>
-        <div class="form-group">
-          <label for="tempatLahir">Tempat Lahir</label>
-          <input type="text" id="tempatLahir" name="tempat_lahir" required>
-          <div class="error" id="error-tempatLahir"></div>
-        </div>
-        <div class="form-group">
-          <label for="tanggalLahir">Tanggal Lahir</label>
-          <input type="date" id="tanggalLahir" name="tanggal_lahir" required>
-          <div class="error" id="error-tanggalLahir"></div>
-        </div>
-        <div class="form-group">
-          <label for="agama">Agama</label>
-          <select id="agama" name="agama" required>
-            <option value="">Pilih</option>
-            <option value="Islam">Islam</option>
-            <option value="Kristen">Kristen</option>
-            <option value="Katolik">Katolik</option>
-            <option value="Hindu">Hindu</option>
-            <option value="Buddha">Buddha</option>
-            <option value="Konghucu">Konghucu</option>
-          </select>
-          <div class="error" id="error-agama"></div>
-        </div>
-        <div class="form-group">
-          <label for="alamat">Alamat</label>
-          <textarea id="alamat" name="alamat" required></textarea>
-          <div class="error" id="error-alamat"></div>
-        </div>
-        <div class="form-group">
-          <label for="whatsapp">WhatsApp</label>
-          <input type="tel" id="whatsapp" name="whatsapp" pattern="\+?\d{10,13}" required>
-          <div class="error" id="error-whatsapp"></div>
-        </div>
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input type="email" id="email" name="email" required>
-          <div class="error" id="error-email"></div>
-        </div>
-        <div class="form-group">
-          <label for="namaAyah">Nama Ayah</label>
-          <input type="text" id="namaAyah" name="nama_ayah" required>
-          <div class="error" id="error-namaAyah"></div>
-        </div>
-        <div class="form-group">
-          <label for="pekerjaanAyah">Pekerjaan Ayah</label>
-          <input type="text" id="pekerjaanAyah" name="pekerjaan_ayah" required>
-          <div class="error" id="error-pekerjaanAyah"></div>
-        </div>
-        <div class="form-group">
-          <label for="namaIbu">Nama Ibu</label>
-          <input type="text" id="namaIbu" name="nama_ibu" required>
-          <div class="error" id="error-namaIbu"></div>
-        </div>
-        <div class="form-group">
-          <label for="pekerjaanIbu">Pekerjaan Ibu</label>
-          <input type="text" id="pekerjaanIbu" name="pekerjaan_ibu" required>
-          <div class="error" id="error-pekerjaanIbu"></div>
-        </div>
-        <div class="form-group">
-          <label for="whatsappOrtu">WhatsApp Orang Tua</label>
-          <input type="tel" id="whatsappOrtu" name="whatsapp_ortu" pattern="\+?\d{10,13}" required>
-          <div class="error" id="error-whatsappOrtu"></div>
-        </div>
-        <div class="form-group">
-          <label for="asalSekolah">Asal Sekolah</label>
-          <input type="text" id="asalSekolah" name="asal_sekolah" required>
-          <div class="error" id="error-asalSekolah"></div>
-        </div>
-        <div class="form-group">
-          <label for="tahunLulus">Tahun Lulus</label>
-          <input type="number" id="tahunLulus" name="tahun_lulus" min="2000" max="2025" required>
-          <div class="error" id="error-tahunLulus"></div>
-        </div>
-        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Daftar</button>
-      </form>
-    </div>
-
-    <div id="completeness" class="section hidden">
-      <h2 class="text-2xl font-bold mb-4">Cek Kelengkapan Dokumen</h2>
-      <form id="completenessForm">
-        <div class="form-grid">
-          <div class="form-group">
-            <label for="completenessNomor">Nomor Pendaftaran</label>
-            <input type="text" id="completenessNomor" name="nomor" required>
-            <div class="error" id="error-completenessNomor"></div>
-          </div>
-          <div class="form-group">
-            <label for="completenessNisn">NISN</label>
-            <input type="text" id="completenessNisn" name="nisn" pattern="\d{10}" required>
-            <div class="error" id="error-completenessNisn"></div>
-          </div>
-        </div>
-        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Cek</button>
-      </form>
-      <div id="completenessResult" class="mt-4"></div>
-      <div id="editStudentForm" class="mt-4 hidden">
-        <h3 class="text-xl font-bold mb-2">Edit Data Siswa</h3>
-        <form id="updateStudentForm" class="form-grid">
-          <div class="form-group">
-            <label for="editAlamat">Alamat</label>
-            <textarea id="editAlamat" name="alamat"></textarea>
-            <div class="error" id="error-editAlamat"></div>
-          </div>
-          <div class="form-group">
-            <label for="editWhatsapp">WhatsApp</label>
-            <input type="tel" id="editWhatsapp" name="whatsapp" pattern="\+?\d{10,13}">
-            <div class="error" id="error-editWhatsapp"></div>
-          </div>
-          <div class="form-group">
-            <label for="editEmail">Email</label>
-            <input type="email" id="editEmail" name="email">
-            <div class="error" id="error-editEmail"></div>
-          </div>
-          <div class="form-group">
-            <label for="editWhatsappOrtu">WhatsApp Orang Tua</label>
-            <input type="tel" id="editWhatsappOrtu" name="whatsapp_ortu" pattern="\+?\d{10,13}">
-            <div class="error" id="error-editWhatsappOrtu"></div>
-          </div>
-          <input type="hidden" id="editNomor" name="nomor">
-          <input type="hidden" id="editNisn" name="nisn">
-          <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Simpan</button>
-        </form>
+      <h1>SMAS PGRI TAKOKAK</h1>
+      <p class="header-subtitle">Sistem Penerimaan Murid Baru Tahun 2025/2026</p>
+      <div class="btn-group" id="main-nav">
+        <button onclick="showSection('landing')" class="btn btn-primary">
+          <i class="fas fa-home"></i> Beranda
+        </button>
+        <button onclick="showSection('form')" class="btn btn-secondary">
+          <i class="fas fa-user-plus"></i> Daftar Sekarang
+        </button>
+        <button onclick="showSection('info')" class="btn btn-outline">
+          <i class="fas fa-info-circle"></i> Informasi
+        </button>
+        <button onclick="showSection('check')" class="btn btn-outline">
+          <i class="fas fa-search"></i> Cek Status
+        </button>
       </div>
-      <div id="uploadDocuments" class="mt-4 hidden">
-        <h3 class="text-xl font-bold mb-2">Upload Dokumen</h3>
-        <form id="uploadDocumentForm">
-          <div class="form-group">
-            <label for="documentType">Jenis Dokumen</label>
-            <select id="documentType" name="fieldName" required>
-              <option value="">Pilih</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="documentFile">File (PDF/JPG/PNG, max 2MB)</label>
-            <input type="file" id="documentFile" name="file" accept=".pdf,.jpg,.png" required>
-            <div class="error" id="error-documentFile"></div>
-          </div>
-          <input type="hidden" id="uploadNomor" name="nomor">
-          <input type="hidden" id="uploadNisn" name="nisn">
-          <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Upload</button>
-        </form>
-      </div>
-    </div>
+    </header>
 
-    <div id="schedule" class="section hidden">
-      <h2 class="text-2xl font-bold mb-4">Jadwal Pendaftaran</h2>
-      <table id="scheduleTable">
-        <thead>
-          <tr>
-            <th>Kegiatan</th>
-            <th>Tanggal Mulai</th>
-            <th>Tanggal Selesai</th>
-            <th>Keterangan</th>
-            <th>Waktu Pengumuman</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-
-    <div id="fees" class="section hidden">
-      <h2 class="text-2xl font-bold mb-4">Biaya Pendaftaran</h2>
-      <table id="feesTable">
-        <thead>
-          <tr>
-            <th>Jenis Biaya</th>
-            <th>Nominal</th>
-            <th>Keterangan</th>
-            <th>Wajib</th>
-            <th>Batas Pembayaran</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-
-    <div id="dashboard" class="section hidden">
-      <h2 class="text-2xl font-bold mb-4">Dashboard Admin</h2>
-      <form id="adminLoginForm" class="mb-4">
-        <div class="form-grid">
-          <div class="form-group">
-            <label for="adminUsername">Username</label>
-            <input type="text" id="adminUsername" name="username" required>
-            <div class="error" id="error-adminUsername"></div>
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Landing Page -->
+      <section id="landing-section">
+        <div class="alert alert-info">
+          <strong>Pendaftaran Gelombang 1</strong> dibuka dari 1 - 15 Juni 2025. Segera daftarkan diri Anda!
+        </div>
+        
+        <div class="card">
+          <!-- Features Cards -->
+          <div class="features">
+            <div class="feature-card">
+              <div class="feature-icon">
+                <i class="fas fa-check-circle"></i>
+              </div>
+              <h3 class="feature-title">Mudah</h3>
+              <p class="feature-desc">Proses pendaftaran online yang sederhana dan cepat</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon">
+                <i class="fas fa-lock"></i>
+              </div>
+              <h3 class="feature-title">Aman</h3>
+              <p class="feature-desc">Data pendaftaran tersimpan dengan aman</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon">
+                <i class="fas fa-bolt"></i>
+              </div>
+              <h3 class="feature-title">Cepat</h3>
+              <p class="feature-desc">Notifikasi langsung melalui WhatsApp dan Email</p>
+            </div>
           </div>
-          <div class="form-group">
-            <label for="adminPassword">Password</label>
-            <input type="password" id="adminPassword" name="password" required>
-            <div class="error" id="error-adminPassword"></div>
+
+          <!-- Alur Pendaftaran -->
+          <div class="mb-5">
+            <h2 class="card-title text-center">Alur Pendaftaran</h2>
+            <div class="form-grid mt-4">
+              <div class="feature-card">
+                <div class="feature-icon">
+                  <span class="step-number">1</span>
+                </div>
+                <h3 class="feature-title">Isi Formulir</h3>
+                <p class="feature-desc">Lengkapi formulir pendaftaran dengan data yang valid</p>
+              </div>
+              <div class="feature-card">
+                <div class="feature-icon">
+                  <span class="step-number">2</span>
+                </div>
+                <h3 class="feature-title">Upload Dokumen</h3>
+                <p class="feature-desc">Upload pas foto dan scan ijazah/SKL</p>
+              </div>
+              <div class="feature-card">
+                <div class="feature-icon">
+                  <span class="step-number">3</span>
+                </div>
+                <h3 class="feature-title">Verifikasi</h3>
+                <p class="feature-desc">Tim akan memverifikasi data pendaftaran</p>
+              </div>
+              <div class="feature-card">
+                <div class="feature-icon">
+                  <span class="step-number">4</span>
+                </div>
+                <h3 class="feature-title">Pengumuman</h3>
+                <p class="feature-desc">Hasil seleksi diumumkan melalui WhatsApp dan Email</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mulai Pendaftaran -->
+          <div class="card card-highlight">
+            <h2 class="card-title text-center">Mulai Pendaftaran Sekarang</h2>
+            <p class="text-center mt-3">Dapatkan kesempatan belajar di sekolah terbaik di daerah Anda</p>
+            <div class="text-center mt-4">
+              <button onclick="showSection('form')" class="btn btn-primary">
+                <i class="fas fa-user-plus"></i> Daftar Sekarang
+              </button>
+            </div>
           </div>
         </div>
-        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Login</button>
-      </form>
-      <div id="adminStats" class="hidden">
-        <h3 class="text-xl font-bold mb-2">Statistik Admin</h3>
-        <div class="grid gap-4 mb-4" id="adminStatsGrid"></div>
-        <canvas id="statusChart" class="mb-4"></canvas>
-        <h3 class="text-xl font-bold mb-2">Kelola Pendaftaran</h3>
-        <div class="mb-4">
-          <input type="text" id="searchRegistrations" placeholder="Cari berdasarkan nama atau nomor..." class="p-2 border rounded">
-          <select id="filterStatus" class="p-2 border rounded">
-            <option value="">Semua Status</option>
-            <option value="Menunggu">Menunggu</option>
-            <option value="Diterima">Diterima</option>
-            <option value="Ditolak">Ditolak</option>
-          </select>
-        </div>
-        <button onclick="exportExcel()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 mb-4">Export ke Excel</button>
-        <table id="registrationsTable">
+      </section>
+
+      <!-- Informasi Section -->
+<section id="info-section" class="hidden">
+  <div class="card">
+    <h2 class="card-title">Informasi PPDB</h2>
+    
+    <div class="alert alert-info" id="info-alert">
+      <i class="fas fa-info-circle"></i> Memuat informasi terbaru...
+    </div>
+    
+    <!-- Jadwal Pendaftaran -->
+    <div class="info-section">
+      <h3 class="section-title">
+        <i class="fas fa-calendar-alt"></i> Jadwal Pendaftaran
+      </h3>
+      <div class="table-responsive">
+        <table id="schedule-table" class="info-table">
           <thead>
             <tr>
-              <th>Nomor</th>
-              <th>Nama</th>
-              <th>NISN</th>
-              <th>Status</th>
-              <th>Aksi</th>
+              <th>Kegiatan</th>
+              <th>Periode</th>
+              <th>Keterangan</th>
             </tr>
           </thead>
-          <tbody></tbody>
-        </table>
-        <div id="pagination" class="mt-4">
-          <button onclick="changePage(-1)" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Previous</button>
-          <span id="pageInfo"></span>
-          <button onclick="changePage(1)" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Next</button>
-        </div>
-        <h3 class="text-xl font-bold mb-2 mt-4">Log Aktivitas</h3>
-        <table id="logsTable">
-          <thead>
-            <tr>
-              <th>Timestamp</th>
-              <th>Aktivitas</th>
-              <th>Detail</th>
-              <th>User</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
+          <tbody>
+            <!-- Data akan diisi oleh JavaScript -->
+          </tbody>
         </table>
       </div>
     </div>
-  </div>
-
-  <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg max-w-md w-full">
-      <p id="modalMessage" class="mb-4"></p>
-      <button onclick="hideModal()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Tutup</button>
-    </div>
-  </div>
-
-  <div id="editRegistrationModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
-      <h3 class="text-xl font-bold mb-4">Edit Pendaftaran</h3>
-      <form id="editRegistrationForm" class="form-grid">
-        <!-- Fields sama seperti registrationForm, diisi via JS -->
-      </form>
-      <div class="mt-4 flex justify-end space-x-2">
-        <button onclick="hideEditRegistrationModal()" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">Batal</button>
-        <button onclick="submitEditRegistration()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Simpan</button>
+    
+    <!-- Biaya Pendaftaran -->
+    <div class="info-section mt-4">
+      <h3 class="section-title">
+        <i class="fas fa-money-bill-wave"></i> Biaya Pendaftaran
+      </h3>
+      <div class="table-responsive">
+        <table id="fee-table" class="info-table">
+          <thead>
+            <tr>
+              <th>Jenis Biaya</th>
+              <th>Nominal</th>
+              <th>Ketentuan</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Data akan diisi oleh JavaScript -->
+          </tbody>
+        </table>
       </div>
     </div>
+    
+    <!-- Persyaratan -->
+    <div class="info-section mt-4">
+      <h3 class="section-title">
+        <i class="fas fa-clipboard-list"></i> Persyaratan
+      </h3>
+      <div id="requirements-list">
+        <!-- Tetap statis atau bisa diambil dari spreadsheet -->
+      </div>
+    </div>
+  </div>
+          
+          <div class="action-buttons">
+            <button onclick="showSection('landing')" class="btn btn-secondary">
+              <i class="fas fa-arrow-left"></i> Kembali
+            </button>
+            <button onclick="window.print()" class="btn btn-outline">
+              <i class="fas fa-print"></i> Cetak Informasi
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Formulir Pendaftaran -->
+      <section id="form-section" class="hidden">
+        <div class="card">
+          <h2 class="card-title">Formulir Pendaftaran</h2>
+          <p class="mb-4">Silakan lengkapi formulir berikut dengan data yang valid dan benar.</p>
+          
+          <form id="registration-form">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="nisn">NISN <span class="text-danger">*</span></label>
+                <input type="text" id="nisn" name="nisn" required pattern="[0-9]{10}" 
+                  title="NISN harus 10 digit angka">
+              </div>
+              <div class="form-group">
+                <label for="nik">NIK <span class="text-danger">*</span></label>
+                <input type="text" id="nik" name="nik" required pattern="[0-9]{16}" 
+                  title="NIK harus 16 digit angka">
+              </div>
+              <div class="form-group">
+                <label for="nama">Nama Lengkap <span class="text-danger">*</span></label>
+                <input type="text" id="nama" name="nama" required>
+              </div>
+              <div class="form-group">
+                <label for="jenis_kelamin">Jenis Kelamin <span class="text-danger">*</span></label>
+                <select id="jenis_kelamin" name="jenis_kelamin" required>
+                  <option value="">Pilih Jenis Kelamin</option>
+                  <option value="Laki-laki">Laki-laki</option>
+                  <option value="Perempuan">Perempuan</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="tempat_lahir">Tempat Lahir <span class="text-danger">*</span></label>
+                <input type="text" id="tempat_lahir" name="tempat_lahir" required>
+              </div>
+              <div class="form-group">
+                <label for="tanggal_lahir">Tanggal Lahir <span class="text-danger">*</span></label>
+                <input type="date" id="tanggal_lahir" name="tanggal_lahir" required 
+                  max="2010-12-31" min="1990-01-01">
+              </div>
+              <div class="form-group">
+                <label for="agama">Agama <span class="text-danger">*</span></label>
+                <select id="agama" name="agama" required>
+                  <option value="">Pilih Agama</option>
+                  <option value="Islam">Islam</option>
+                  <option value="Kristen">Kristen</option>
+                  <option value="Katolik">Katolik</option>
+                  <option value="Hindu">Hindu</option>
+                  <option value="Buddha">Buddha</option>
+                  <option value="Konghucu">Konghucu</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="no_hp">No HP (WhatsApp) <span class="text-danger">*</span></label>
+                <input type="tel" id="no_hp" name="no_hp" required 
+                  pattern="[0-9]{10,13}" title="Nomor HP 10-13 digit angka">
+                <small class="text-gray">Contoh: 081234567890</small>
+              </div>
+              <div class="form-group">
+                <label for="email">Email <span class="text-danger">*</span></label>
+                <input type="email" id="email" name="email" required>
+              </div>
+              <div class="form-group form-full-width">
+                <label for="alamat">Alamat Lengkap <span class="text-danger">*</span></label>
+                <textarea id="alamat" name="alamat" rows="3" required></textarea>
+              </div>
+              <div class="form-group">
+                <label for="nama_ayah">Nama Ayah <span class="text-danger">*</span></label>
+                <input type="text" id="nama_ayah" name="nama_ayah" required>
+              </div>
+              <div class="form-group">
+                <label for="nama_ibu">Nama Ibu <span class="text-danger">*</span></label>
+                <input type="text" id="nama_ibu" name="nama_ibu" required>
+              </div>
+              <div class="form-group">
+                <label for="no_hp_ortu">No HP Orang Tua <span class="text-danger">*</span></label>
+                <input type="tel" id="no_hp_ortu" name="no_hp_ortu" required 
+                  pattern="[0-9]{10,13}" title="Nomor HP 10-13 digit angka">
+              </div>
+              <div class="form-group">
+                <label for="asal_sekolah">Asal Sekolah <span class="text-danger">*</span></label>
+                <input type="text" id="asal_sekolah" name="asal_sekolah" required>
+              </div>
+              <div class="form-group">
+                <label for="tahun_lulus">Tahun Lulus <span class="text-danger">*</span></label>
+                <input type="number" id="tahun_lulus" name="tahun_lulus" 
+                  min="2000" max="2024" required>
+              </div>
+              <div class="form-group form-full-width">
+                <label>Upload Dokumen <span class="text-danger">*</span></label>
+                <div style="border: 1px dashed var(--light-gray); padding: 1rem; border-radius: var(--radius-sm);">
+                  <p style="margin-bottom: 0.5rem; font-size: 0.9rem;">File yang perlu diupload:</p>
+                  <ul style="list-style-type: disc; padding-left: 1.5rem; font-size: 0.85rem; color: var(--gray);">
+                    <li>Scan Ijazah/SKL (format PDF/JPG, maks. 2MB)</li>
+                    <li>Pas Foto 3x4 (format JPG, maks. 1MB)</li>
+                  </ul>
+                  <input type="file" id="dokumen" name="dokumen" multiple 
+                    accept=".pdf,.jpg,.jpeg" style="margin-top: 1rem;">
+                  <small class="text-gray">Format file: PDF, JPG (maks. 2MB per file)</small>
+                </div>
+              </div>
+            </div>
+            <div class="action-buttons">
+              <button type="button" onclick="previewForm()" class="btn btn-secondary">
+                <i class="fas fa-eye"></i> Pratinjau
+              </button>
+              <button type="reset" class="btn btn-warning">
+                <i class="fas fa-undo"></i> Reset
+              </button>
+              <button type="button" onclick="showSection('landing')" class="btn btn-danger">
+                <i class="fas fa-times"></i> Batal
+              </button>
+            </div>
+          </form>
+
+          <!-- Pratinjau -->
+          <div id="preview-section" class="hidden mt-4">
+            <h3 class="card-title">Pratinjau Data</h3>
+            <p>Periksa kembali data Anda sebelum submit. Pastikan semua data sudah benar.</p>
+            
+            <div id="preview-content" class="card mt-3" style="background-color: var(--light);"></div>
+            
+            <div class="alert alert-info mt-3">
+              <strong>Informasi:</strong> Setelah submit, Anda akan mendapatkan nomor pendaftaran yang dapat digunakan untuk mengecek status pendaftaran.
+            </div>
+            
+            <div class="action-buttons mt-4">
+              <button onclick="editForm()" class="btn btn-warning">
+                <i class="fas fa-edit"></i> Edit
+              </button>
+              <button onclick="submitForm()" class="btn btn-success" id="submit-btn">
+                <i class="fas fa-check"></i> Konfirmasi Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Cek Status Pendaftaran -->
+      <section id="check-section" class="hidden">
+        <div class="card">
+          <h2 class="card-title">Cek Status Pendaftaran</h2>
+          <p>Masukkan nomor pendaftaran dan NISN untuk mengecek status pendaftaran Anda.</p>
+          
+          <div class="form-grid mt-4">
+            <div class="form-group">
+              <label for="check-nomor">Nomor Pendaftaran</label>
+              <input type="text" id="check-nomor" placeholder="Contoh: SMAPTA-16AD5U">
+            </div>
+            <div class="form-group">
+              <label for="check-nisn">NISN</label>
+              <input type="text" id="check-nisn" placeholder="10 digit NISN">
+            </div>
+          </div>
+          
+          <div class="action-buttons mt-4">
+            <button onclick="checkStatus()" class="btn btn-primary" id="check-btn">
+              <i class="fas fa-search"></i> Cek Status
+            </button>
+            <button onclick="showSection('landing')" class="btn btn-danger">
+              <i class="fas fa-arrow-left"></i> Kembali
+            </button>
+          </div>
+          
+          <div id="check-result" class="hidden mt-4">
+            <!-- Hasil pencarian akan ditampilkan di sini -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Dashboard Admin -->
+      <section id="dashboard-section" class="hidden">
+        <div class="card">
+          <h2 class="card-title">Dashboard Admin SPMB</h2>
+          <p>Fitur ini hanya tersedia untuk admin sekolah.</p>
+          
+          <div class="form-grid mt-4">
+            <div class="form-group">
+              <label for="admin-username">Username</label>
+              <input type="text" id="admin-username" placeholder="Masukkan username">
+            </div>
+            <div class="form-group">
+              <label for="admin-password">Password</label>
+              <input type="password" id="admin-password" placeholder="Masukkan password">
+            </div>
+          </div>
+
+<!-- Di bagian Dashboard Admin -->
+<div id="admin-logs-tab" class="hidden">
+  <div class="admin-toolbar mb-3">
+    <div class="search-box">
+      <input type="text" id="log-search" placeholder="Cari aktivitas...">
+      <button onclick="searchLogs()"><i class="fas fa-search"></i></button>
+    </div>
+    <button onclick="exportLogs()" class="btn btn-sm btn-outline">
+      <i class="fas fa-download"></i> Export
+    </button>
+  </div>
+  
+  <div class="table-responsive">
+    <table id="log-table">
+      <thead>
+        <tr>
+          <th>Waktu</th>
+          <th>Aktivitas</th>
+          <th>Detail</th>
+          <th>User</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Data log akan diisi oleh JavaScript -->
+      </tbody>
+    </table>
+  </div>
+  
+  <div class="pagination mt-3">
+    <button id="prev-log-page" disabled><i class="fas fa-chevron-left"></i></button>
+    <span id="log-page-info">Halaman 1</span>
+    <button id="next-log-page"><i class="fas fa-chevron-right"></i></button>
+  </div>
+</div>
+          
+          <div class="action-buttons mt-4">
+            <button onclick="adminLogin()" class="btn btn-primary" id="admin-login-btn">
+              <i class="fas fa-sign-in-alt"></i> Login
+            </button>
+            <button onclick="showSection('landing')" class="btn btn-danger">
+              <i class="fas fa-arrow-left"></i> Kembali
+            </button>
+          </div>
+          
+          <div id="admin-content" class="hidden mt-4">
+            <!-- Konten admin akan ditampilkan di sini -->
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+      <div class="footer-links">
+        <a href="#" class="footer-link" onclick="showSection('info')">Informasi</a>
+        <a href="#" class="footer-link" onclick="showSection('check')">Cek Status</a>
+      </div>
+      <p>SMAS PGRI TAKOKAK</p>
+      <p>Jl. Pahlawan No. 5, Takokak, Jawa Barat</p>
+      <p>Email: info@smatakokak.sch.id | Telp: (0266) 6482212</p>
+      <p>© 2025 SMPB Online - Hak Cipta Dilindungi</p>
+    </footer>
   </div>
 
   <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbz6PZqBIgPuafiE8MT7NibHS3PxnwEWC6dYt7NQjH7b_-3FWZ0Uzm2dK5c3PGdtjRcucg/exec'; // Ganti dengan URL Web App dari code.gs
-    const { jsPDF } = window.jspdf;
-    let isAdminLoggedIn = false;
-    let adminData = null;
-    let token = localStorage.getItem('adminToken');
-    let statusChart = null;
-    let currentPage = 1;
-    const limit = 10;
-    let currentRegistrations = [];
-    let currentRegData = null;
-
-    function showSection(sectionId) {
-      document.querySelectorAll('.section').forEach(section => section.classList.add('hidden'));
-      document.getElementById(sectionId).classList.remove('hidden');
-      if (sectionId === 'home') fetchStatistics();
-      else if (sectionId === 'schedule') fetchSchedule();
-      else if (sectionId === 'fees') fetchFees();
-      else if (sectionId === 'dashboard' && isAdminLoggedIn) {
-        fetchStatistics();
-        fetchRegistrations();
-        fetchLogs();
+    // Konfigurasi backend
+    const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbzoYp_MXUbMhZ3CPiadh2WyZuFnTMBk2VXic8hf6Rg96YK43269vEcEhq5C1DlLT-D43Q/exec'; // Ganti dengan URL Web App Anda
+    
+    // Daftar section yang valid
+    const validSections = ['landing', 'info', 'form', 'check', 'dashboard'];
+    
+    // Tampilkan halaman berdasarkan parameter URL saat halaman dimuat
+    window.onload = function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      let page = urlParams.get('page') || 'landing';
+      
+      // Validasi section
+      if (!validSections.includes(page)) {
+        console.warn(`Invalid section: ${page}. Defaulting to landing.`);
+        page = 'landing';
+        // Update URL to reflect the default section
+        const baseUrl = window.location.pathname;
+        window.history.replaceState({}, '', `${baseUrl}?page=landing`);
       }
+      showSection(page);
+      
+      // Cek jika ada parameter nomor pendaftaran (untuk deep link)
+      const nomor = urlParams.get('nomor');
+      if (nomor && page === 'check') {
+        document.getElementById('check-nomor').value = nomor;
+        setTimeout(() => checkStatus(), 500);
+      }
+    };
+    
+    // Fungsi toggle mobile menu
+    function toggleMobileMenu() {
+      const nav = document.getElementById('main-nav');
+      nav.classList.toggle('hidden');
     }
 
-    function updateNav() {
-      document.getElementById('dashboardNav').classList.toggle('hidden', !isAdminLoggedIn);
-      document.getElementById('logoutNav').classList.toggle('hidden', !isAdminLoggedIn);
-    }
-
-    function toggleDarkMode() {
-      document.body.classList.toggle('dark');
-      localStorage.setItem('darkMode', document.body.classList.contains('dark'));
-    }
-
-    if (localStorage.getItem('darkMode') === 'true') {
-      document.body.classList.add('dark');
-    }
-
-    function showModal(message) {
-      document.getElementById('modalMessage').textContent = message;
-      document.getElementById('modal').classList.remove('hidden');
-    }
-
-    function hideModal() {
-      document.getElementById('modal').classList.add('hidden');
-    }
-
-    function showEditRegistrationModal() {
-      document.getElementById('editRegistrationModal').classList.remove('hidden');
-    }
-
-    function hideEditRegistrationModal() {
-      document.getElementById('editRegistrationModal').classList.add('hidden');
-    }
-
-    async function fetchStatistics() {
-      try {
-        const response = await fetch(`${API_URL}?action=get_statistics`, { method: 'GET' });
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-        const result = await response.json();
-
-        if (result.success) {
-          const publicStats = document.getElementById('publicStats');
-          publicStats.innerHTML = `
-            <div class="stat-card">
-              <h3>${result.data.total}</h3>
-              <p>Total Pendaftar</p>
-            </div>
-            <div class="stat-card">
-              <h3>${result.data.accepted}</h3>
-              <p>Diterima</p>
-            </div>
-            <div class="stat-card">
-              <h3>${result.data.complete}</h3>
-              <p>Dokumen Lengkap</p>
-            </div>
-          `;
-
-          if (isAdminLoggedIn) {
-            document.getElementById('adminStats').classList.remove('hidden');
-            const adminStatsGrid = document.getElementById('adminStatsGrid');
-            adminStatsGrid.innerHTML = `
-              <div class="stat-card">
-                <h3>${result.data.pending}</h3>
-                <p>Menunggu Verifikasi</p>
-              </div>
-              <div class="stat-card">
-                <h3>${result.data.rejected}</h3>
-                <p>Ditolak</p>
-              </div>
-              <div class="stat-card">
-                <h3>${result.data.incomplete}</h3>
-                <p>Dokumen Kurang</p>
-              </div>
-            `;
-            if (statusChart) statusChart.destroy();
-            const ctx = document.getElementById('statusChart').getContext('2d');
-            statusChart = new Chart(ctx, {
-              type: 'bar',
-              data: {
-                labels: ['Total', 'Diterima', 'Ditolak', 'Menunggu', 'Dokumen Lengkap', 'Dokumen Kurang'],
-                datasets: [{
-                  label: 'Statistik Pendaftaran',
-                  data: [
-                    result.data.total,
-                    result.data.accepted,
-                    result.data.rejected,
-                    result.data.pending,
-                    result.data.complete,
-                    result.data.incomplete
-                  ],
-                  backgroundColor: ['#3b82f6', '#16a34a', '#dc2626', '#f59e0b', '#10b981', '#ef4444']
-                }]
-              },
-              options: {
-                scales: { y: { beginAtZero: true } }
-              }
+    function loadInfoData() {
+      // Ambil data jadwal
+      fetch(`${BACKEND_URL}?action=get_schedule`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            const tableBody = document.querySelector('#schedule-table tbody');
+            tableBody.innerHTML = '';
+          
+            data.data.forEach(item => {
+              const row = document.createElement('tr');
+              row.innerHTML = `
+                <td>${item.Kegiatan || '-'}</td>
+                <td>${formatDate(item['Tanggal Mulai'])}</td>
+                <td>${formatDate(item['Tanggal Selesai'])}</td>
+                <td>${item.Keterangan || '-'}</td>
+              `;
+              tableBody.appendChild(row);
             });
           }
-        } else {
-          showModal(`Gagal memuat statistik: ${result.message}`);
-        }
-      } catch (err) {
-        console.error('Error fetching statistics:', err);
-        document.getElementById('publicStats').innerHTML = `<div class="error">Gagal memuat statistik. Silakan coba lagi.</div>`;
-      }
+        });
+    
+      // Ambil data biaya
+      fetch(`${BACKEND_URL}?action=get_fees`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            const tableBody = document.querySelector('#fee-table tbody');
+            tableBody.innerHTML = '';
+          
+            data.data.forEach(item => {
+              const row = document.createElement('tr');
+              row.innerHTML = `
+                <td>${item['Jenis Biaya'] || '-'}</td>
+                <td>${formatCurrency(item.Nominal)}</td>
+                <td>${item.Keterangan || '-'}</td>
+              `;
+              tableBody.appendChild(row);
+            });
+          }
+        });
     }
 
-    async function fetchSchedule() {
-      try {
-        const response = await fetch(`${API_URL}?action=get_schedule`, { method: 'GET' });
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-        const result = await response.json();
-
-        if (result.success) {
-          const tbody = document.querySelector('#scheduleTable tbody');
-          tbody.innerHTML = result.data.map(row => `
-            <tr>
-              <td>${row.Kegiatan}</td>
-              <td>${row['Tanggal Mulai']}</td>
-              <td>${row['Tanggal Selesai']}</td>
-              <td>${row.Keterangan}</td>
-              <td>${row['Waktu Pengumuman']}</td>
-            </tr>
-          `).join('');
-        } else {
-          showModal(`Gagal memuat jadwal: ${result.message}`);
-        }
-      } catch (err) {
-        console.error('Error fetching schedule:', err);
-        showModal('Terjadi kesalahan. Silakan coba lagi.');
-      }
+    // Fungsi pembantu format tanggal
+    function formatDate(dateString) {
+      if (!dateString) return '-';
+      const date = new Date(dateString);
+      return isNaN(date.getTime()) ? dateString : date.toLocaleDateString('id-ID');
     }
 
-    async function fetchFees() {
-      try {
-        const response = await fetch(`${API_URL}?action=get_fees`, { method: 'GET' });
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-        const result = await response.json();
-
-        if (result.success) {
-          const tbody = document.querySelector('#feesTable tbody');
-          tbody.innerHTML = result.data.map(row => `
-            <tr>
-              <td>${row['Jenis Biaya']}</td>
-              <td>${row.Nominal}</td>
-              <td>${row.Keterangan}</td>
-              <td>${row.Wajib}</td>
-              <td>${row['Batas Pembayaran']}</td>
-            </tr>
-          `).join('');
-        } else {
-          showModal(`Gagal memuat biaya: ${result.message}`);
-        }
-      } catch (err) {
-        console.error('Error fetching fees:', err);
-        showModal('Terjadi kesalahan. Silakan coba lagi.');
-      }
+    // Fungsi pembantu format mata uang
+    function formatCurrency(amount) {
+      return amount ? 'Rp ' + parseInt(amount).toLocaleString('id-ID') : '-';
     }
+    
+    // Fungsi untuk menampilkan section tanpa reload penuh
+    function showSection(section) {
+      // Validasi section
+      if (!validSections.includes(section)) {
+        console.warn(`Invalid section: ${section}. Defaulting to landing.`);
+        section = 'landing';
+        // Update URL to reflect the default section
+        const baseUrl = window.location.pathname;
+        window.history.replaceState({}, '', `${baseUrl}?page=landing`);
+      }
+    
+      // Sembunyikan semua section
+      document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+    
+      // Tampilkan section yang diminta
+      const targetSection = document.getElementById(`${section}-section`);
+      if (targetSection) {
+        targetSection.classList.remove('hidden');
+      } else {
+        console.error(`Section element not found: ${section}-section`);
+        // Fallback ke landing jika section tidak ditemukan
+        document.getElementById('landing-section').classList.remove('hidden');
+      }
+    
+      // Sembunyikan landing jika bukan landing
+      const landingSection = document.getElementById('landing-section');
+      if (section !== 'landing' && landingSection) {
+        landingSection.classList.add('hidden');
+      }
 
-    document.getElementById('registrationForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const form = e.target;
+      if (section === 'info') {
+        loadInfoData();
+      }
+    
+      // Update URL tanpa reload
+      const baseUrl = window.location.pathname;
+      window.history.pushState({}, '', `${baseUrl}?page=${section}`);
+      
+      // Sembunyikan mobile menu jika terbuka
+      document.getElementById('main-nav').classList.add('hidden');
+      
+      // Scroll ke atas
+      window.scrollTo(0, 0);
+    }
+    
+    // Handle browser back/forward buttons
+    window.onpopstate = function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      let page = urlParams.get('page') || 'landing';
+      
+      // Validasi section
+      if (!validSections.includes(page)) {
+        console.warn(`Invalid section: ${page}. Defaulting to landing.`);
+        page = 'landing';
+        const baseUrl = window.location.pathname;
+        window.history.replaceState({}, '', `${baseUrl}?page=landing`);
+      }
+      showSection(page);
+    };
+    
+    // Fungsi Pratinjau
+    function previewForm() {
+      const form = document.getElementById('registration-form');
       const formData = new FormData(form);
-      const params = new URLSearchParams(formData);
-      params.append('action', 'submit_form');
-
-      // Validasi client-side
-      let valid = true;
-      const nisn = formData.get('nisn');
-      const nik = formData.get('nik');
-      const whatsapp = formData.get('whatsapp');
-      const email = formData.get('email');
-      const whatsappOrtu = formData.get('whatsapp_ortu');
-      const tahunLulus = formData.get('tahun_lulus');
-
-      if (!/^\d{10}$/.test(nisn)) {
-        document.getElementById('error-nisn').textContent = 'NISN harus 10 digit angka';
-        valid = false;
-      } else {
-        document.getElementById('error-nisn').textContent = '';
+      
+      // Validasi file dokumen
+      const fileInput = document.getElementById('dokumen');
+      if (fileInput.files.length === 0) {
+        alert('Harap upload dokumen yang diperlukan!');
+        return;
       }
-
-      if (!/^\d{16}$/.test(nik)) {
-        document.getElementById('error-nik').textContent = 'NIK harus 16 digit angka';
-        valid = false;
-      } else {
-        document.getElementById('error-nik').textContent = '';
+      
+      let previewHtml = `
+        <h4 style="margin-bottom: 1rem; font-weight: 600; color: var(--primary-dark);">
+          <i class="fas fa-user-check"></i> Data Pendaftaran
+        </h4>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+      `;
+      
+      // Tampilkan data form
+      for (const [name, value] of formData.entries()) {
+        if (name !== 'dokumen') {
+          const label = document.querySelector(`label[for="${name}"]`).textContent;
+          previewHtml += `
+            <div style="margin-bottom: 0.5rem;">
+              <strong style="font-size: 0.85rem; color: var(--gray);">${label.replace(' *', '')}:</strong>
+              <p style="margin-top: 0.25rem;">${value || '-'}</p>
+            </div>
+          `;
+        }
       }
-
-      if (!/\+?\d{10,13}/.test(whatsapp)) {
-        document.getElementById('error-whatsapp').textContent = 'Nomor WhatsApp tidak valid';
-        valid = false;
-      } else {
-        document.getElementById('error-whatsapp').textContent = '';
+      
+      // Tambahkan info dokumen
+      previewHtml += `
+        </div>
+        <div style="margin-top: 1rem;">
+          <strong style="font-size: 0.85rem; color: var(--gray);">Dokumen Diupload:</strong>
+          <ul style="margin-top: 0.25rem; padding-left: 1.25rem;">
+      `;
+      
+      for (let i = 0; i < fileInput.files.length; i++) {
+        previewHtml += `<li>${fileInput.files[i].name}</li>`;
       }
-
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        document.getElementById('error-email').textContent = 'Email tidak valid';
-        valid = false;
-      } else {
-        document.getElementById('error-email').textContent = '';
+      
+      previewHtml += `
+          </ul>
+        </div>
+      `;
+      
+      document.getElementById('preview-content').innerHTML = previewHtml;
+      document.getElementById('preview-section').classList.remove('hidden');
+      form.classList.add('hidden');
+    }
+    
+    // Fungsi Edit
+    function editForm() {
+      document.getElementById('preview-section').classList.add('hidden');
+      document.getElementById('registration-form').classList.remove('hidden');
+    }
+    
+    // Fungsi Submit Form ke Backend
+    function submitForm() {
+      const submitBtn = document.getElementById('submit-btn');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<span class="spinner"></span> Memproses...';
+      submitBtn.disabled = true;
+      
+      const form = document.getElementById('registration-form');
+      const formData = new FormData(form);
+      
+      // Konversi FormData ke objek JSON
+      const data = {};
+      formData.forEach((value, key) => {
+        if (key !== 'dokumen') {
+          data[key] = value;
+        }
+      });
+      
+      // Tambahkan nama file dokumen
+      const fileInput = document.getElementById('dokumen');
+      data.dokumen = [];
+      for (let i = 0; i < fileInput.files.length; i++) {
+        data.dokumen.push(fileInput.files[i].name);
       }
-
-      if (!/\+?\d{10,13}/.test(whatsappOrtu)) {
-        document.getElementById('error-whatsappOrtu').textContent = 'Nomor WhatsApp tidak valid';
-        valid = false;
-      } else {
-        document.getElementById('error-whatsappOrtu').textContent = '';
-      }
-
-      if (tahunLulus < 2000 || tahunLulus > 2025) {
-        document.getElementById('error-tahunLulus').textContent = 'Tahun lulus harus antara 2000 dan 2025';
-        valid = false;
-      } else {
-        document.getElementById('error-tahunLulus').textContent = '';
-      }
-
-      if (!valid) return;
-
-      form.querySelector('button').disabled = true;
-      form.querySelector('button').innerHTML = '<svg class="spinner w-5 h-5 inline-block" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="4" /></svg> Memproses...';
-
-      try {
-        const response = await fetch(`${API_URL}?${params.toString()}`, { method: 'GET' });
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-        const result = await response.json();
-
-        form.querySelector('button').disabled = false;
-        form.querySelector('button').innerHTML = 'Daftar';
-
+      
+      // Kirim data ke backend
+      fetch(`${BACKEND_URL}?action=submit_form`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams(data).toString()
+      })
+      .then(response => response.json())
+      .then(result => {
         if (result.success) {
-          showModal(`Pendaftaran berhasil! Nomor pendaftaran: ${result.nomor_pendaftaran}. Silakan cek kelengkapan dokumen.`);
+          // Tampilkan pesan sukses
+          const successHtml = `
+            <div class="alert alert-success">
+              <h4 style="margin-bottom: 0.5rem;">
+                <i class="fas fa-check-circle"></i> Pendaftaran Berhasil!
+              </h4>
+              <p>Nomor Pendaftaran Anda: <strong>${result.nomor_pendaftaran}</strong></p>
+              <p class="mt-2">Silakan simpan nomor pendaftaran ini untuk mengecek status pendaftaran.</p>
+            </div>
+            <div class="action-buttons mt-3">
+              <button onclick="window.print()" class="btn btn-secondary">
+                <i class="fas fa-print"></i> Cetak Bukti
+              </button>
+              <button onclick="showCheckStatus('${result.nomor_pendaftaran}')" class="btn btn-primary">
+                <i class="fas fa-search"></i> Cek Status
+              </button>
+              <button onclick="showSection('landing')" class="btn btn-success">
+                <i class="fas fa-home"></i> Kembali ke Beranda
+              </button>
+            </div>
+          `;
+          
+          document.getElementById('preview-section').innerHTML = successHtml;
+          
+          // Reset form
           form.reset();
         } else {
-          showModal(`Pendaftaran gagal: ${result.message}`);
+          throw new Error(result.message || 'Terjadi kesalahan saat submit');
         }
-      } catch (err) {
-        console.error('Error submitting form:', err);
-        showModal('Terjadi kesalahan. Silakan coba lagi.');
-        form.querySelector('button').disabled = false;
-        form.querySelector('button').innerHTML = 'Daftar';
-      }
-    });
-
-    document.getElementById('completenessForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const form = e.target;
-      const resultDiv = document.getElementById('completenessResult');
-      const editForm = document.getElementById('editStudentForm');
-      const uploadForm = document.getElementById('uploadDocuments');
-
-      const nomor = document.getElementById('completenessNomor').value;
-      const nisn = document.getElementById('completenessNisn').value;
-
-      if (!nomor) {
-        document.getElementById('error-completenessNomor').textContent = 'Wajib diisi';
-        return;
-      }
-      if (!/^\d{10}$/.test(nisn)) {
-        document.getElementById('error-completenessNisn').textContent = 'NISN harus 10 digit angka';
-        return;
-      }
-
-      document.getElementById('error-completenessNomor').textContent = '';
-      document.getElementById('error-completenessNisn').textContent = '';
-
-      const params = new URLSearchParams({ action: 'student_login', nomor, nisn });
-
-      try {
-        const response = await fetch(`${API_URL}?${params.toString()}`, { method: 'GET' });
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-        const result = await response.json();
-
-        if (result.success) {
-          const data = result.data;
-          const docTypesResponse = await fetch(`${API_URL}?action=get_document_types`);
-          const docTypesResult = await docTypesResponse.json();
-          const requiredDocs = docTypesResult.success ? docTypesResult.data : ['Ijazah', 'Akte Kelahiran', 'Kartu Keluarga', 'Foto'];
-          const uploadedDocs = data.Dokumen.map(doc => doc.field);
-          const missingDocs = requiredDocs.filter(doc => !uploadedDocs.includes(doc));
-
-          resultDiv.innerHTML = `
-            <h3 class="text-xl font-bold mb-2">Kelengkapan Data</h3>
-            <p><strong>Nomor:</strong> ${data['Nomor Pendaftaran']}</p>
-            <p><strong>Nama:</strong> ${data.Nama}</p>
-            <p><strong>Status:</strong> ${data.Status}</p>
-            <h4 class="mt-2">Dokumen yang Sudah Diupload:</h4>
-            ${data.Dokumen.length ? `
-              <ul class="list-disc pl-5">${data.Dokumen.map(doc => `<li>${doc.field} (<a href="${doc.url}" target="_blank" class="text-blue-600 hover:underline">${doc.name}</a>)</li>`).join('')}</ul>
-            ` : '<p>Belum ada dokumen diupload.</p>'}
-            <h4 class="mt-2">Dokumen yang Kurang:</h4>
-            ${missingDocs.length ? `
-              <ul class="list-disc pl-5">${missingDocs.map(doc => `<li>${doc}</li>`).join('')}</ul>
-            ` : '<p>Semua dokumen lengkap!</p>'}
-            <button onclick='generatePDF(${JSON.stringify(data)})' class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mt-2">Cetak Bukti Pendaftaran</button>
-            <button onclick="showEditForm('${data['Nomor Pendaftaran']}', '${data.NISN}', '${data.Alamat.replace(/'/g, "\\'")}', '${data.WhatsApp}', '${data.Email}', '${data['WhatsApp Ortu']}')" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mt-2">Edit Data</button>
-          `;
-
-          editForm.classList.remove('hidden');
-          uploadForm.classList.remove('hidden');
-          document.getElementById('uploadNomor').value = data['Nomor Pendaftaran'];
-          document.getElementById('uploadNisn').value = data.NISN;
-          const docSelect = document.getElementById('documentType');
-          docSelect.innerHTML = '<option value="">Pilih</option>' + requiredDocs.map(doc => `<option value="${doc}">${doc}</option>`).join('');
-        } else {
-          resultDiv.innerHTML = `<div class="error">${result.message}</div>`;
-          editForm.classList.add('hidden');
-          uploadForm.classList.add('hidden');
-        }
-      } catch (err) {
-        console.error('Error checking completeness:', err);
-        resultDiv.innerHTML = `<div class="error">Terjadi kesalahan. Silakan coba lagi.</div>`;
-        editForm.classList.add('hidden');
-        uploadForm.classList.add('hidden');
-      }
-    });
-
-    function showEditForm(nomor, nisn, alamat, whatsapp, email, whatsappOrtu) {
-      document.getElementById('editNomor').value = nomor;
-      document.getElementById('editNisn').value = nisn;
-      document.getElementById('editAlamat').value = alamat;
-      document.getElementById('editWhatsapp').value = whatsapp;
-      document.getElementById('editEmail').value = email;
-      document.getElementById('editWhatsappOrtu').value = whatsappOrtu;
-    }
-
-    document.getElementById('updateStudentForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const form = e.target;
-      const formData = new FormData(form);
-      const params = new URLSearchParams(formData);
-      params.append('action', 'update_student');
-
-      // Validasi client-side
-      let valid = true;
-      const whatsapp = formData.get('whatsapp');
-      const email = formData.get('email');
-      const whatsappOrtu = formData.get('whatsapp_ortu');
-
-      if (whatsapp && !/\+?\d{10,13}/.test(whatsapp)) {
-        document.getElementById('error-editWhatsapp').textContent = 'Nomor WhatsApp tidak valid';
-        valid = false;
-      } else {
-        document.getElementById('error-editWhatsapp').textContent = '';
-      }
-
-      if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        document.getElementById('error-editEmail').textContent = 'Email tidak valid';
-        valid = false;
-      } else {
-        document.getElementById('error-editEmail').textContent = '';
-      }
-
-      if (whatsappOrtu && !/\+?\d{10,13}/.test(whatsappOrtu)) {
-        document.getElementById('error-editWhatsappOrtu').textContent = 'Nomor WhatsApp tidak valid';
-        valid = false;
-      } else {
-        document.getElementById('error-editWhatsappOrtu').textContent = '';
-      }
-
-      if (!valid) return;
-
-      form.querySelector('button').disabled = true;
-      form.querySelector('button').innerHTML = '<svg class="spinner w-5 h-5 inline-block" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="4" /></svg> Memproses...';
-
-      try {
-        const response = await fetch(`${API_URL}?${params.toString()}`, { method: 'GET' });
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-        const result = await response.json();
-
-        form.querySelector('button').disabled = false;
-        form.querySelector('button').innerHTML = 'Simpan';
-
-        if (result.success) {
-          showModal('Data siswa berhasil diperbarui!');
-          document.getElementById('completenessForm').dispatchEvent(new Event('submit'));
-        } else {
-          showModal(`Gagal memperbarui data: ${result.message}`);
-        }
-      } catch (err) {
-        console.error('Error updating student:', err);
-        showModal('Terjadi kesalahan. Silakan coba lagi.');
-        form.querySelector('button').disabled = false;
-        form.querySelector('button').innerHTML = 'Simpan';
-      }
-    });
-
-    document.getElementById('uploadDocumentForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const form = e.target;
-      const fileInput = document.getElementById('documentFile');
-      const file = fileInput.files[0];
-
-      if (!file) {
-        document.getElementById('error-documentFile').textContent = 'Pilih file terlebih dahulu';
-        return;
-      }
-
-      if (file.size > 2 * 1024 * 1024) {
-        document.getElementById('error-documentFile').textContent = 'File maksimum 2MB';
-        return;
-      }
-
-      document.getElementById('error-documentFile').textContent = '';
-
-      const reader = new FileReader();
-      reader.onload = async () => {
-        const base64 = reader.result.split(',')[1];
-        const data = {
-          nomor: document.getElementById('uploadNomor').value,
-          nisn: document.getElementById('uploadNisn').value,
-          fieldName: document.getElementById('documentType').value + '.' + file.name.split('.').pop()
-        };
-
-        form.querySelector('button').disabled = true;
-        form.querySelector('button').innerHTML = '<svg class="spinner w-5 h-5 inline-block" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="4" /></svg> Mengunggah...';
-
-        try {
-          const response = await fetch(API_URL, {
-            method: 'POST',
-            body: JSON.stringify({ data, file: base64 })
-          });
-          if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-          const result = await response.json();
-
-          form.querySelector('button').disabled = false;
-          form.querySelector('button').innerHTML = 'Upload';
-
-          if (result.success) {
-            showModal('Dokumen berhasil diunggah!');
-            form.reset();
-            document.getElementById('completenessForm').dispatchEvent(new Event('submit'));
-          } else {
-            showModal(`Gagal mengunggah dokumen: ${result.message}`);
-          }
-        } catch (err) {
-          console.error('Error uploading document:', err);
-          showModal('Terjadi kesalahan. Silakan coba lagi.');
-          form.querySelector('button').disabled = false;
-          form.querySelector('button').innerHTML = 'Upload';
-        }
-      };
-      reader.readAsDataURL(file);
-    });
-
-    function generatePDF(data) {
-      const doc = new jsPDF();
-      doc.setFontSize(16);
-      doc.text('Bukti Pendaftaran SMAS PGRI Takokak', 20, 20);
-      doc.setFontSize(12);
-      doc.text(`Nomor Pendaftaran: ${data['Nomor Pendaftaran']}`, 20, 30);
-      doc.text(`Nama: ${data.Nama}`, 20, 40);
-      doc.text(`NISN: ${data.NISN}`, 20, 50);
-      doc.text(`Status: ${data.Status}`, 20, 60);
-      doc.text(`Tanggal Daftar: ${data['Tanggal Daftar']}`, 20, 70);
-      doc.text('Dokumen:', 20, 80);
-      data.Dokumen.forEach((doc, i) => {
-        doc.text(`- ${doc.field} (${doc.name})`, 30, 90 + i * 10);
+      })
+      .catch(error => {
+        alert(`Gagal submit: ${error.message}`);
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
       });
-      doc.save(`Bukti_Pendaftaran_${data['Nomor Pendaftaran']}.pdf`);
     }
-
-    document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const form = e.target;
-      const username = document.getElementById('adminUsername').value;
-      const password = document.getElementById('adminPassword').value;
-
-      if (!username) {
-        document.getElementById('error-adminUsername').textContent = 'Wajib diisi';
+    
+    // Fungsi untuk langsung ke cek status dengan nomor tertentu
+    function showCheckStatus(nomor) {
+      showSection('check');
+      document.getElementById('check-nomor').value = nomor;
+      checkStatus();
+    }
+    
+    // Fungsi Cek Status Pendaftaran
+    function checkStatus() {
+      const checkBtn = document.getElementById('check-btn');
+      const originalText = checkBtn.innerHTML;
+      checkBtn.innerHTML = '<span class="spinner"></span> Mencari...';
+      checkBtn.disabled = true;
+      
+      const nomor = document.getElementById('check-nomor').value.trim();
+      const nisn = document.getElementById('check-nisn').value.trim();
+      
+      if (!nomor || !nisn) {
+        alert('Harap isi nomor pendaftaran dan NISN!');
+        checkBtn.innerHTML = originalText;
+        checkBtn.disabled = false;
         return;
       }
-      if (!password) {
-        document.getElementById('error-adminPassword').textContent = 'Wajib diisi';
-        return;
-      }
-
-      document.getElementById('error-adminUsername').textContent = '';
-      document.getElementById('error-adminPassword').textContent = '';
-
-      const params = new URLSearchParams({ action: 'admin_login', username, password });
-
-      form.querySelector('button').disabled = true;
-      form.querySelector('button').innerHTML = '<svg class="spinner w-5 h-5 inline-block" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="4" /></svg> Memproses...';
-
-      try {
-        const response = await fetch(`${API_URL}?${params.toString()}`, { method: 'GET' });
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-        const result = await response.json();
-
-        form.querySelector('button').disabled = false;
-        form.querySelector('button').innerHTML = 'Login';
-
-        if (result.success) {
-          isAdminLoggedIn = true;
-          adminData = result.data;
-          token = result.data.token;
-          localStorage.setItem('adminToken', token);
-          updateNav();
-          showModal('Login admin berhasil! Mengarahkan ke dashboard.');
-          setTimeout(() => {
-            showSection('dashboard');
-            fetchRegistrations();
-            fetchLogs();
-          }, 1000);
-        } else {
-          showModal(`Login gagal: ${result.message}`);
-        }
-      } catch (err) {
-        console.error('Error admin login:', err);
-        showModal('Terjadi kesalahan. Silakan coba lagi.');
-        form.querySelector('button').disabled = false;
-        form.querySelector('button').innerHTML = 'Login';
-      }
-    });
-
-    async function fetchRegistrations() {
-      try {
-        const search = document.getElementById('searchRegistrations').value.toLowerCase();
-        const status = document.getElementById('filterStatus').value;
-        const params = new URLSearchParams({
-          action: 'get_registrations',
-          page: currentPage,
-          limit,
-          token
+      
+      // Kirim permintaan ke backend
+      fetch(`${BACKEND_URL}?action=check_status&nomor=${encodeURIComponent(nomor)}&nisn=${encodeURIComponent(nisn)}`)
+        .then(response => response.json())
+        .then(result => {
+          const resultDiv = document.getElementById('check-result');
+          
+          if (result.success) {
+            const data = result.data;
+            let statusClass = '';
+            if (data.Status === 'Diverifikasi') {
+              statusClass = 'status-verified';
+            } else if (data.Status === 'Ditolak') {
+              statusClass = 'status-rejected';
+            } else {
+              statusClass = 'status-pending';
+            }
+            
+            resultDiv.innerHTML = `
+              <div class="card">
+                <h4 style="margin-bottom: 1rem; color: var(--primary-dark);">
+                  <i class="fas fa-user-graduate"></i> Status Pendaftaran
+                </h4>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                  <div>
+                    <strong style="font-size: 0.85rem; color: var(--gray);">Nomor Pendaftaran:</strong>
+                    <p style="margin-top: 0.25rem;">${data['Nomor Pendaftaran']}</p>
+                  </div>
+                  <div>
+                    <strong style="font-size: 0.85rem; color: var(--gray);">Nama:</strong>
+                    <p style="margin-top: 0.25rem;">${data.Nama}</p>
+                  </div>
+                  <div>
+                    <strong style="font-size: 0.85rem; color: var(--gray);">Asal Sekolah:</strong>
+                    <p style="margin-top: 0.25rem;">${data['Asal Sekolah']}</p>
+                  </div>
+                  <div>
+                    <strong style="font-size: 0.85rem; color: var(--gray);">Tanggal Daftar:</strong>
+                    <p style="margin-top: 0.25rem;">${data['Tanggal Daftar']}</p>
+                  </div>
+                  <div>
+                    <strong style="font-size: 0.85rem; color: var(--gray);">Status:</strong>
+                    <p style="margin-top: 0.25rem;" class="${statusClass}">
+                      <i class="fas fa-${data.Status === 'Diverifikasi' ? 'check-circle' : 
+                        data.Status === 'Ditolak' ? 'times-circle' : 'clock'}"></i>
+                      ${data.Status}
+                    </p>
+                  </div>
+                </div>
+                
+                ${data.Status === 'Diverifikasi' ? `
+                  <div class="alert alert-success mt-3">
+                    <strong><i class="fas fa-check-circle"></i> Selamat!</strong> 
+                    Anda diterima di SMAS PGRI Takokak. Silakan lakukan daftar ulang sesuai jadwal.
+                  </div>
+                ` : data.Status === 'Ditolak' ? `
+                  <div class="alert alert-danger mt-3">
+                    <strong><i class="fas fa-times-circle"></i> Maaf</strong>, 
+                    Anda belum diterima di SMAS PGRI Takokak.
+                  </div>
+                ` : `
+                  <div class="alert alert-info mt-3">
+                    <strong><i class="fas fa-info-circle"></i> Proses Verifikasi</strong> 
+                    Pendaftaran Anda sedang dalam proses verifikasi. Silakan cek kembali beberapa hari lagi.
+                  </div>
+                `}
+                
+                <div class="action-buttons mt-3">
+                  <button onclick="window.print()" class="btn btn-secondary">
+                    <i class="fas fa-print"></i> Cetak
+                  </button>
+                  <button onclick="showSection('landing')" class="btn btn-primary">
+                    <i class="fas fa-home"></i> Kembali
+                  </button>
+                </div>
+              </div>
+            `;
+          } else {
+            resultDiv.innerHTML = `
+              <div class="alert alert-danger">
+                <strong><i class="fas fa-exclamation-triangle"></i> Data tidak ditemukan</strong>
+                <p class="mt-2">Nomor pendaftaran atau NISN yang Anda masukkan tidak valid. Silakan coba lagi.</p>
+              </div>
+            `;
+          }
+          
+          resultDiv.classList.remove('hidden');
+        })
+        .catch(error => {
+          alert(`Gagal memeriksa status: ${error.message}`);
+        })
+        .finally(() => {
+          checkBtn.innerHTML = originalText;
+          checkBtn.disabled = false;
         });
+    }
+    
+    // Fungsi Login Admin
+    function adminLogin() {
+      const loginBtn = document.getElementById('admin-login-btn');
+      const originalText = loginBtn.innerHTML;
+      loginBtn.innerHTML = '<span class="spinner"></span> Memverifikasi...';
+      loginBtn.disabled = true;
+      
+      const username = document.getElementById('admin-username').value;
+      const password = document.getElementById('admin-password').value;
+      
+      // Kirim permintaan login ke backend
+      fetch(`${BACKEND_URL}?action=admin_login&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`)
+        .then(response => response.json())
+        .then(result => {
+          if (result.success) {
+            // Login berhasil, tampilkan dashboard admin
+            loadAdminDashboard(result.token);
+          } else {
+            throw new Error(result.message || 'Login gagal');
+          }
+        })
+        .catch(error => {
+          alert(`Login gagal: ${error.message}`);
+        })
+        .finally(() => {
+          loginBtn.innerHTML = originalText;
+          loginBtn.disabled = false;
+        });
+    }
+    
+// Fungsi Load Admin Dashboard
+function loadAdminDashboard(token) {
+  const adminContent = document.getElementById('admin-content');
+  adminContent.innerHTML = '<p>Memuat data...</p>';
+  adminContent.classList.remove('hidden');
 
-        const response = await fetch(`${API_URL}?${params.toString()}`, { method: 'GET' });
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-        const result = await response.json();
+  // Atur struktur dashboard (tab + area isi)
+  adminContent.innerHTML = `
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showAdminTab('registrations', this)">
+        <i class="fas fa-users"></i> Data Pendaftar
+      </button>
+      <button class="tab-btn" onclick="showAdminTab('logs', this)">
+        <i class="fas fa-history"></i> Log Aktivitas
+      </button>
+    </div>
+    
+    <div id="admin-registrations-tab">
+      <p>Memuat data pendaftar...</p>
+    </div>
+    
+    <div id="admin-logs-tab" class="hidden">
+      <div class="table-responsive">
+        <table id="log-table">
+          <thead>
+            <tr>
+              <th>Waktu</th>
+              <th>Aktivitas</th>
+              <th>Deskripsi</th>
+              <th>User</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Data log akan diisi oleh JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
 
-        if (result.success) {
-          currentRegistrations = result.data;
-          const filtered = currentRegistrations.filter(reg => {
-            const matchesSearch = reg['Nomor Pendaftaran'].toLowerCase().includes(search) || reg.Nama.toLowerCase().includes(search);
-            const matchesStatus = !status || reg.Status === status;
-            return matchesSearch && matchesStatus;
-          });
+  // Load data pendaftar
+  fetch(`${BACKEND_URL}?action=get_registrations&token=${encodeURIComponent(token)}`)
+    .then(response => response.json())
+    .then(result => {
+      const regTab = document.getElementById('admin-registrations-tab');
 
-          const tbody = document.querySelector('#registrationsTable tbody');
-          tbody.innerHTML = filtered.map(reg => `
+      if (result.success) {
+        let tableHtml = `
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>No. Pendaftaran</th>
+                  <th>Nama</th>
+                  <th>Asal Sekolah</th>
+                  <th>Tanggal Daftar</th>
+                  <th>Status</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+        `;
+
+        result.data.forEach(reg => {
+          let statusClass = '';
+          if (reg.Status === 'Diverifikasi') {
+            statusClass = 'status-verified';
+          } else if (reg.Status === 'Ditolak') {
+            statusClass = 'status-rejected';
+          } else {
+            statusClass = 'status-pending';
+          }
+
+          tableHtml += `
             <tr>
               <td>${reg['Nomor Pendaftaran']}</td>
               <td>${reg.Nama}</td>
-              <td>${reg.NISN}</td>
+              <td>${reg['Asal Sekolah']}</td>
+              <td>${reg['Tanggal Daftar']}</td>
+              <td class="${statusClass}">${reg.Status}</td>
               <td>
-                <select onchange="updateStatus('${reg['Nomor Pendaftaran']}', this.value)">
-                  <option value="Menunggu" ${reg.Status === 'Menunggu' ? 'selected' : ''}>Menunggu</option>
-                  <option value="Diterima" ${reg.Status === 'Diterima' ? 'selected' : ''}>Diterima</option>
-                  <option value="Ditolak" ${reg.Status === 'Ditolak' ? 'selected' : ''}>Ditolak</option>
+                <select onchange="updateStatus('${reg['Nomor Pendaftaran']}', this.value, '${token}')"
+                  style="padding: 0.25rem; border-radius: 4px; border: 1px solid var(--light-gray);">
+                  <option value="Belum Diverifikasi" ${reg.Status === 'Belum Diverifikasi' ? 'selected' : ''}>
+                    Belum Diverifikasi
+                  </option>
+                  <option value="Diverifikasi" ${reg.Status === 'Diverifikasi' ? 'selected' : ''}>
+                    Diverifikasi
+                  </option>
+                  <option value="Ditolak" ${reg.Status === 'Ditolak' ? 'selected' : ''}>
+                    Ditolak
+                  </option>
                 </select>
               </td>
-              <td>
-                <button onclick='editRegistration(${JSON.stringify(reg)})' class="bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700">Edit</button>
-              </td>
             </tr>
-          `).join('');
-          document.getElementById('pageInfo').textContent = `Page ${result.page} of ${Math.ceil(result.total / limit)}`;
-        } else {
-          showModal(`Gagal memuat data: ${result.message}`);
-        }
-      } catch (err) {
-        console.error('Error fetching registrations:', err);
-        showModal('Terjadi kesalahan. Silakan coba lagi.');
-      }
-    }
+          `;
+        });
 
-    function changePage(delta) {
-      currentPage += delta;
-      if (currentPage < 1) currentPage = 1;
-      fetchRegistrations();
-    }
+        tableHtml += `
+              </tbody>
+            </table>
+          </div>
+          <div class="action-buttons mt-3">
+            <button onclick="exportToExcel('${token}')" class="btn btn-success">
+              <i class="fas fa-file-excel"></i> Export ke Excel
+            </button>
+            <button onclick="showSection('landing')" class="btn btn-danger">
+              <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+          </div>
+        `;
 
-    async function updateStatus(nomor, status) {
-      const params = new URLSearchParams({
-        action: 'update_status',
-        nomor,
-        status,
-        admin: adminData.username,
-        token
-      });
-
-      try {
-        const response = await fetch(`${API_URL}?${params.toString()}`, { method: 'GET' });
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-        const result = await response.json();
-
-        if (result.success) {
-          showModal('Status berhasil diperbarui!');
-          fetchRegistrations();
-        } else {
-          showModal(`Gagal memperbarui status: ${result.message}`);
-        }
-      } catch (err) {
-        console.error('Error updating status:', err);
-        showModal('Terjadi kesalahan. Silakan coba lagi.');
-      }
-    }
-
-    function editRegistration(reg) {
-      currentRegData = reg;
-      const form = document.getElementById('editRegistrationForm');
-      form.innerHTML = `
-        <div class="form-group">
-          <label for="editJenisPendaftaran">Jenis Pendaftaran</label>
-          <select id="editJenisPendaftaran" name="jenis_pendaftaran" required>
-            <option value="Reguler" ${reg['Jenis Pendaftaran'] === 'Reguler' ? 'selected' : ''}>Reguler</option>
-            <option value="Beasiswa" ${reg['Jenis Pendaftaran'] === 'Beasiswa' ? 'selected' : ''}>Beasiswa</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="editNisn">NISN</label>
-          <input type="text" id="editNisn" name="nisn" value="${reg.NISN}" pattern="\d{10}" required>
-          <div class="error" id="error-editNisn"></div>
-        </div>
-        <div class="form-group">
-          <label for="editNik">NIK</label>
-          <input type="text" id="editNik" name="nik" value="${reg.NIK}" pattern="\d{16}" required>
-          <div class="error" id="error-editNik"></div>
-        </div>
-        <div class="form-group">
-          <label for="editNama">Nama Lengkap</label>
-          <input type="text" id="editNama" name="nama" value="${reg.Nama}" required>
-          <div class="error" id="error-editNama"></div>
-        </div>
-        <div class="form-group">
-          <label for="editJenisKelamin">Jenis Kelamin</label>
-          <select id="editJenisKelamin" name="jenis_kelamin" required>
-            <option value="Laki-laki" ${reg['Jenis Kelamin'] === 'Laki-laki' ? 'selected' : ''}>Laki-laki</option>
-            <option value="Perempuan" ${reg['Jenis Kelamin'] === 'Perempuan' ? 'selected' : ''}>Perempuan</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="editTempatLahir">Tempat Lahir</label>
-          <input type="text" id="editTempatLahir" name="tempat_lahir" value="${reg['Tempat Lahir']}" required>
-          <div class="error" id="error-editTempatLahir"></div>
-        </div>
-        <div class="form-group">
-          <label for="editTanggalLahir">Tanggal Lahir</label>
-          <input type="date" id="editTanggalLahir" name="tanggal_lahir" value="${reg['Tanggal Lahir']}" required>
-          <div class="error" id="error-editTanggalLahir"></div>
-        </div>
-        <div class="form-group">
-          <label for="editAgama">Agama</label>
-          <select id="editAgama" name="agama" required>
-            <option value="Islam" ${reg.Agama === 'Islam' ? 'selected' : ''}>Islam</option>
-            <option value="Kristen" ${reg.Agama === 'Kristen' ? 'selected' : ''}>Kristen</option>
-            <option value="Katolik" ${reg.Agama === 'Katolik' ? 'selected' : ''}>Katolik</option>
-            <option value="Hindu" ${reg.Agama === 'Hindu' ? 'selected' : ''}>Hindu</option>
-            <option value="Buddha" ${reg.Agama === 'Buddha' ? 'selected' : ''}>Buddha</option>
-            <option value="Konghucu" ${reg.Agama === 'Konghucu' ? 'selected' : ''}>Konghucu</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="editAlamat">Alamat</label>
-          <textarea id="editAlamat" name="alamat" required>${reg.Alamat}</textarea>
-          <div class="error" id="error-editAlamat"></div>
-        </div>
-        <div class="form-group">
-          <label for="editWhatsapp">WhatsApp</label>
-          <input type="tel" id="editWhatsapp" name="whatsapp" value="${reg.WhatsApp}" pattern="\+?\d{10,13}" required>
-          <div class="error" id="error-editWhatsapp"></div>
-        </div>
-        <div class="form-group">
-          <label for="editEmail">Email</label>
-          <input type="email" id="editEmail" name="email" value="${reg.Email}" required>
-          <div class="error" id="error-editEmail"></div>
-        </div>
-        <div class="form-group">
-          <label for="editNamaAyah">Nama Ayah</label>
-          <input type="text" id="editNamaAyah" name="nama_ayah" value="${reg['Nama Ayah']}" required>
-          <div class="error" id="error-editNamaAyah"></div>
-        </div>
-        <div class="form-group">
-          <label for="editPekerjaanAyah">Pekerjaan Ayah</label>
-          <input type="text" id="editPekerjaanAyah" name="pekerjaan_ayah" value="${reg['Pekerjaan Ayah']}" required>
-          <div class="error" id="error-editPekerjaanAyah"></div>
-        </div>
-        <div class="form-group">
-          <label for="editNamaIbu">Nama Ibu</label>
-          <input type="text" id="editNamaIbu" name="nama_ibu" value="${reg['Nama Ibu']}" required>
-          <div class="error" id="error-editNamaIbu"></div>
-        </div>
-        <div class="form-group">
-          <label for="editPekerjaanIbu">Pekerjaan Ibu</label>
-          <input type="text" id="editPekerjaanIbu" name="pekerjaan_ibu" value="${reg['Pekerjaan Ibu']}" required>
-          <div class="error" id="error-editPekerjaanIbu"></div>
-        </div>
-        <div class="form-group">
-          <label for="editWhatsappOrtu">WhatsApp Orang Tua</label>
-          <input type="tel" id="editWhatsappOrtu" name="whatsapp_ortu" value="${reg['WhatsApp Ortu']}" pattern="\+?\d{10,13}" required>
-          <div class="error" id="error-editWhatsappOrtu"></div>
-        </div>
-        <div class="form-group">
-          <label for="editAsalSekolah">Asal Sekolah</label>
-          <input type="text" id="editAsalSekolah" name="asal_sekolah" value="${reg['Asal Sekolah']}" required>
-          <div class="error" id="error-editAsalSekolah"></div>
-        </div>
-        <div class="form-group">
-          <label for="editTahunLulus">Tahun Lulus</label>
-          <input type="number" id="editTahunLulus" name="tahun_lulus" value="${reg['Tahun Lulus']}" min="2000" max="2025" required>
-          <div class="error" id="error-editTahunLulus"></div>
-        </div>
-        <input type="hidden" name="nomor" value="${reg['Nomor Pendaftaran']}">
-      `;
-      showEditRegistrationModal();
-    }
-
-    async function submitEditRegistration() {
-      const form = document.getElementById('editRegistrationForm');
-      const formData = new FormData(form);
-      const params = new URLSearchParams(formData);
-      params.append('action', 'update_registration');
-      params.append('admin', adminData.username);
-      params.append('token', token);
-
-      // Validasi client-side
-      let valid = true;
-      const nisn = formData.get('nisn');
-      const nik = formData.get('nik');
-      const whatsapp = formData.get('whatsapp');
-      const email = formData.get('email');
-      const whatsappOrtu = formData.get('whatsapp_ortu');
-      const tahunLulus = formData.get('tahun_lulus');
-
-      if (!/^\d{10}$/.test(nisn)) {
-        document.getElementById('error-editNisn').textContent = 'NISN harus 10 digit angka';
-        valid = false;
+        regTab.innerHTML = tableHtml;
       } else {
-        document.getElementById('error-editNisn').textContent = '';
+        regTab.innerHTML = `<div class="alert alert-danger"><strong>Error:</strong> ${result.message}</div>`;
       }
+    })
+    .catch(error => {
+      const regTab = document.getElementById('admin-registrations-tab');
+      regTab.innerHTML = `<div class="alert alert-danger"><strong>Gagal memuat data:</strong> ${error.message}</div>`;
+    });
 
-      if (!/^\d{16}$/.test(nik)) {
-        document.getElementById('error-editNik').textContent = 'NIK harus 16 digit angka';
-        valid = false;
-      } else {
-        document.getElementById('error-editNik').textContent = '';
+  // Load log aktivitas
+  fetch(`${BACKEND_URL}?action=get_logs&token=${encodeURIComponent(token)}`)
+    .then(response => response.json())
+    .then(result => {
+      if (result.success) {
+        const tableBody = document.querySelector('#log-table tbody');
+        tableBody.innerHTML = '';
+
+        result.data.forEach(log => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${log.Timestamp || '-'}</td>
+            <td>${log.Aktivitas || '-'}</td>
+            <td>${log.Deskripsi || '-'}</td>
+            <td>${log.User || 'System'}</td>
+          `;
+          tableBody.appendChild(row);
+        });
       }
-
-      if (!/\+?\d{10,13}/.test(whatsapp)) {
-        document.getElementById('error-editWhatsapp').textContent = 'Nomor WhatsApp tidak valid';
-        valid = false;
-      } else {
-        document.getElementById('error-editWhatsapp').textContent = '';
-      }
-
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        document.getElementById('error-editEmail').textContent = 'Email tidak valid';
-        valid = false;
-      } else {
-        document.getElementById('error-editEmail').textContent = '';
-      }
-
-      if (!/\+?\d{10,13}/.test(whatsappOrtu)) {
-        document.getElementById('error-editWhatsappOrtu').textContent = 'Nomor WhatsApp tidak valid';
-        valid = false;
-      } else {
-        document.getElementById('error-editWhatsappOrtu').textContent = '';
-      }
-
-      if (tahunLulus < 2000 || tahunLulus > 2025) {
-        document.getElementById('error-editTahunLulus').textContent = 'Tahun lulus harus antara 2000 dan 2025';
-        valid = false;
-      } else {
-        document.getElementById('error-editTahunLulus').textContent = '';
-      }
-
-      if (!valid) return;
-
-      const submitButton = form.parentElement.querySelector('button:last-child');
-      submitButton.disabled = true;
-      submitButton.innerHTML = '<svg class="spinner w-5 h-5 inline-block" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="4" /></svg> Memproses...';
-
-      try {
-        const response = await fetch(`${API_URL}?${params.toString()}`, { method: 'GET' });
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-        const result = await response.json();
-
-        submitButton.disabled = false;
-        submitButton.innerHTML = 'Simpan';
-
-        if (result.success) {
-          showModal('Data pendaftaran berhasil diperbarui!');
-          hideEditRegistrationModal();
-          fetchRegistrations();
-        } else {
-          showModal(`Gagal memperbarui data: ${result.message}`);
-        }
-      } catch (err) {
-        console.error('Error updating registration:', err);
-        showModal('Terjadi kesalahan. Silakan coba lagi.');
-        submitButton.disabled = false;
-        submitButton.innerHTML = 'Simpan';
-      }
-    }
-
-    async function exportExcel() {
-      try {
-        const response = await fetch(`${API_URL}?action=export_excel&token=${token}`, { method: 'GET' });
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-        const result = await response.json();
-
-        if (result.success) {
-          window.open(result.url, '_blank');
-        } else {
-          showModal(`Gagal export: ${result.message}`);
-        }
-      } catch (err) {
-        console.error('Error exporting excel:', err);
-        showModal('Terjadi kesalahan. Silakan coba lagi.');
-      }
-    }
-
-async function fetchLogs() {
-  try {
-    const response = await fetch(`${API_URL}?action=get_logs&token=${token}`, { method: 'GET' });
-    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-    const result = await response.json();
-
-    if (result.success) {
-      const tbody = document.querySelector('#logsTable tbody');
-      tbody.innerHTML = result.data.map(log => `
-        <tr>
-          <td>${log.Timestamp}</td>
-          <td>${log.Activity}</td>
-          <td>${log.Details}</td>
-          <td>${log.User}</td>
-        </tr>
-      `).join('');
-    } else {
-      showModal(`Gagal memuat log: ${result.message}`);
-    }
-  } catch (err) {
-    console.error('Error fetching logs:', err);
-    showModal('Terjadi kesalahan. Silakan coba lagi.');
-  }
+    });
 }
 
-    function logout() {
-      isAdminLoggedIn = false;
-      adminData = null;
-      token = null;
-      localStorage.removeItem('adminToken');
-      updateNav();
-      showSection('home');
-      document.getElementById('adminStats').classList.add('hidden');
-      showModal('Logout berhasil!');
+// Fungsi untuk menampilkan tab admin
+function showAdminTab(tabName, button) {
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  button.classList.add('active');
+
+  document.getElementById('admin-registrations-tab').classList.add('hidden');
+  document.getElementById('admin-logs-tab').classList.add('hidden');
+
+  document.getElementById(`admin-${tabName}-tab`).classList.remove('hidden');
+}
+    
+    // Fungsi Update Status Pendaftaran
+    function updateStatus(nomor, status, token) {
+      fetch(`${BACKEND_URL}?action=update_status&token=${encodeURIComponent(token)}&nomor=${encodeURIComponent(nomor)}&status=${encodeURIComponent(status)}`)
+        .then(response => response.json())
+        .then(result => {
+          if (result.success) {
+            // Tampilkan notifikasi
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-success';
+            alertDiv.innerHTML = `<strong><i class="fas fa-check-circle"></i> Status diperbarui!</strong>`;
+            document.getElementById('admin-content').prepend(alertDiv);
+            
+            // Hilangkan notifikasi setelah 3 detik
+            setTimeout(() => {
+              alertDiv.remove();
+            }, 3000);
+          } else {
+            throw new Error(result.message || 'Gagal memperbarui status');
+          }
+        })
+        .catch(error => {
+          alert(`Gagal memperbarui status: ${error.message}`);
+        });
     }
-
-    document.getElementById('searchRegistrations').addEventListener('input', () => {
-      currentPage = 1;
-      fetchRegistrations();
-    });
-
-    document.getElementById('filterStatus').addEventListener('change', () => {
-      currentPage = 1;
-      fetchRegistrations();
-    });
-
-    // Inisialisasi
-    showSection('home');
-    if (token) {
-      isAdminLoggedIn = true;
-      updateNav();
+    
+    // Fungsi Export ke Excel (simulasi)
+    function exportToExcel(token) {
+      fetch(`${BACKEND_URL}?action=export_excel&token=${encodeURIComponent(token)}`)
+        .then(response => response.json())
+        .then(result => {
+          if (result.success) {
+            alert('Data berhasil diexport ke format Excel');
+          } else {
+            throw new Error(result.message || 'Gagal export data');
+          }
+        })
+        .catch(error => {
+          alert(`Gagal export: ${error.message}`);
+        });
     }
   </script>
 </body>

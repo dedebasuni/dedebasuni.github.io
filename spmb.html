@@ -2248,6 +2248,14 @@
           minute: '2-digit'
         });
     }
+
+    function getClientIp() {
+      try {
+        return ScriptApp.getOAuthToken().split('/')[0];
+      } catch {
+        return 'Unknown';
+      }
+    }
   </script>
 </body>
 </html>

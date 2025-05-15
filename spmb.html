@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SPMB | SMAS PGRI TAKOKAK</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    /* Base Styles */
     :root {
       --primary: #2563eb;
       --primary-dark: #1e40af;
@@ -38,7 +40,7 @@
     }
     
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       line-height: 1.6;
       background-color: #f5f7fa;
       color: #333;
@@ -797,7 +799,7 @@
           <h2 class="card-title">Informasi PPDB</h2>
           
           <div class="alert alert-info" id="info-alert">
-            <i class="fas fa-info-circle"></i> Memuat informasi terbaru...
+            <i class="fas fa-info-circle"></i><strong>Perhatian:</strong> Pastikan semua dokumen yang diperlukan sudah disiapkan sebelum mendaftar.
           </div>
           
           <!-- Jadwal Pendaftaran -->
@@ -815,8 +817,32 @@
                     <th>Keterangan</th>
                   </tr>
                 </thead>
-                <tbody>
                   <!-- Data akan diisi oleh JavaScript -->
+                <tbody>
+                  <tr>
+                    <td>Pendaftaran Online</td>
+                    <td>01 Juni 2025</td>
+                    <td>30 Juni 2025</td>
+                    <td>Pendaftaran dilakukan melalui website resmi</td>
+                  </tr>
+                  <tr>
+                    <td>Verifikasi Berkas</td>
+                    <td>02 Juli 2025</td>
+                    <td>05 Juli 2025</td>
+                    <td>Verifikasi dilakukan secara daring oleh panitia</td>
+                  </tr>
+                  <tr>
+                    <td>Ujian Seleksi</td>
+                    <td>10 Juli 2025</td>
+                    <td>10 Juli 2025</td>
+                    <td>Ujian tertulis di kampus utama</td>
+                  </tr>
+                  <tr>
+                    <td>Pengumuman Hasil</td>
+                    <td>15 Juli 2025</td>
+                    <td>15 Juli 2025</td>
+                    <td>Diumumkan di website dan papan pengumuman</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -836,8 +862,23 @@
                     <th>Keterangan</th>
                   </tr>
                 </thead>
-                <tbody>
                   <!-- Data akan diisi oleh JavaScript -->
+                <tbody>
+                  <tr>
+                    <td>Formulir Pendaftaran</td>
+                    <td>Rp 100.000</td>
+                    <td>Wajib dibayar saat awal pendaftaran</td>
+                  </tr>
+                  <tr>
+                    <td>Biaya Tes Masuk</td>
+                    <td>Rp 150.000</td>
+                    <td>Termasuk tes akademik dan psikotes</td>
+                  </tr>
+                  <tr>
+                    <td>Biaya Administrasi</td>
+                    <td>Rp 50.000</td>
+                    <td>Dibayarkan satu kali saat pendaftaran</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -846,29 +887,69 @@
           <!-- Persyaratan -->
           <div class="info-section mt-4">
             <h3 class="section-title">
-              <i class="fas fa-clipboard-list"></i> Persyaratan
+              <i class="fas fa-file-alt"></i> Persyaratan
             </h3>
-            <div id="requirements-list">
-              <ul style="list-style-type: disc; padding-left: 1.5rem; margin-top: 0.5rem;">
-                <li>Fotokopi ijazah/SKL SMP/MTs yang telah dilegalisir</li>
-                <li>Fotokopi SKHUN yang telah dilegalisir</li>
-                <li>Fotokopi akta kelahiran</li>
-                <li>Fotokopi kartu keluarga</li>
-                <li>Pas foto 3x4 (2 lembar) background merah</li>
-                <li>Surat keterangan sehat dari dokter</li>
-                <li>Fotokopi rapor kelas 7-9 yang telah dilegalisir</li>
-              </ul>
+            <div class="table-responsive">
+              <table id="requirement-table" class="info-table">
+                <thead>
+                  <tr>
+                    <th>No</th>
+                    <th>Persyaratan</th>
+                    <th>Keterangan</th>
+                  </tr>
+                </thead>
+                  <!-- Data akan diisi oleh JavaScript -->                
+                <tbody>
+                  <tr>
+                    <td>1</td>
+                    <td>Fotokopi Ijazah/SKL SMP/MTs</td>
+                    <td>Telah dilegalisir sebanyak 2 lembar</td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td>Fotokopi SKHUN</td>
+                    <td>Telah dilegalisir sebanyak 2 lembar</td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td>Fotokopi Akta Kelahiran</td>
+                    <td>1 lembar, jelas dan terbaca</td>
+                  </tr>
+                  <tr>
+                    <td>4</td>
+                    <td>Fotokopi Kartu Keluarga</td>
+                    <td>1 lembar, masih berlaku dan terbaca</td>
+                  </tr>
+                  <tr>
+                    <td>5</td>
+                    <td>Pas Foto 3x4 (2 lembar)</td>
+                    <td>Berwarna, latar belakang merah</td>
+                  </tr>
+                  <tr>
+                    <td>6</td>
+                    <td>Surat Keterangan Sehat dari Dokter</td>
+                    <td>Asli, dikeluarkan oleh puskesmas atau rumah sakit</td>
+                  </tr>
+                  <tr>
+                    <td>7</td>
+                    <td>Fotokopi Rapor Kelas 7–9</td>
+                    <td>Telah dilegalisir oleh pihak sekolah</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
-        </div>
-                
-        <div class="action-buttons">
+
+
+        <div class="action-buttons mt-4">
+          <button onclick="window.print()" class="btn btn-outline">
+            <i class="fas fa-print"></i> Cetak Informasi
+          </button>          
           <button onclick="showSection('landing')" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Kembali
           </button>
-          <button onclick="window.print()" class="btn btn-outline">
-            <i class="fas fa-print"></i> Cetak Informasi
-          </button>
+        </div>
+
         </div>
       </section>
 
@@ -878,42 +959,41 @@
           <h2 class="card-title">Formulir Pendaftaran</h2>
           <p class="mb-4">Silakan lengkapi formulir berikut dengan data yang valid dan benar.</p>
           
-          <form id="registration-form">
+          <form id="registration-form" onsubmit="event.preventDefault(); submitForm();">
             <div class="form-grid">
-              <!-- Data Pribadi -->
               <div class="form-group">
-                <label for="nisn">NISN <span class="required-icon">*</span></label>
+                <label for="nisn">NISN <span class="text-danger">*</span></label>
                 <input type="text" id="nisn" name="nisn" required pattern="[0-9]{10}" 
                   title="NISN harus 10 digit angka">
               </div>
               <div class="form-group">
-                <label for="nik">NIK <span class="required-icon">*</span></label>
+                <label for="nik">NIK <span class="text-danger">*</span></label>
                 <input type="text" id="nik" name="nik" required pattern="[0-9]{16}" 
                   title="NIK harus 16 digit angka">
               </div>
               <div class="form-group">
-                <label for="nama">Nama Lengkap <span class="required-icon">*</span></label>
+                <label for="nama">Nama Lengkap <span class="text-danger">*</span></label>
                 <input type="text" id="nama" name="nama" required>
               </div>
               <div class="form-group">
-                <label for="jenis_kelamin">Jenis Kelamin <span class="required-icon">*</span></label>
+                <label for="jenis_kelamin">Jenis Kelamin <span class="text-danger">*</span></label>
                 <select id="jenis_kelamin" name="jenis_kelamin" required>
                   <option value="">Pilih Jenis Kelamin</option>
-                  <option value="L">Laki-laki</option>
-                  <option value="P">Perempuan</option>
+                  <option value="Laki-laki">Laki-laki</option>
+                  <option value="Perempuan">Perempuan</option>
                 </select>
               </div>
               <div class="form-group">
-                <label for="tempat_lahir">Tempat Lahir <span class="required-icon">*</span></label>
+                <label for="tempat_lahir">Tempat Lahir <span class="text-danger">*</span></label>
                 <input type="text" id="tempat_lahir" name="tempat_lahir" required>
               </div>
               <div class="form-group">
-                <label for="tanggal_lahir">Tanggal Lahir <span class="required-icon">*</span></label>
+                <label for="tanggal_lahir">Tanggal Lahir <span class="text-danger">*</span></label>
                 <input type="date" id="tanggal_lahir" name="tanggal_lahir" required 
                   max="2010-12-31" min="1990-01-01">
               </div>
               <div class="form-group">
-                <label for="agama">Agama <span class="required-icon">*</span></label>
+                <label for="agama">Agama <span class="text-danger">*</span></label>
                 <select id="agama" name="agama" required>
                   <option value="">Pilih Agama</option>
                   <option value="Islam">Islam</option>
@@ -925,67 +1005,38 @@
                 </select>
               </div>
               <div class="form-group">
-                <label for="no_hp">No HP (WhatsApp) <span class="required-icon">*</span></label>
+                <label for="no_hp">No HP (WhatsApp) <span class="text-danger">*</span></label>
                 <input type="tel" id="no_hp" name="no_hp" required 
                   pattern="[0-9]{10,13}" title="Nomor HP 10-13 digit angka">
                 <small class="text-gray">Contoh: 081234567890</small>
               </div>
-              <div class="form-group">
-                <label for="email">Email <span class="required-icon">*</span></label>
-                <input type="email" id="email" name="email" required>
-              </div>
               <div class="form-group form-full-width">
-                <label for="alamat">Alamat Lengkap <span class="required-icon">*</span></label>
+                <label for="alamat">Alamat Lengkap <span class="text-danger">*</span></label>
                 <textarea id="alamat" name="alamat" rows="3" required></textarea>
               </div>
-              
-              <!-- Data Orang Tua -->
               <div class="form-group">
-                <label for="nama_ayah">Nama Ayah <span class="required-icon">*</span></label>
+                <label for="nama_ayah">Nama Ayah <span class="text-danger">*</span></label>
                 <input type="text" id="nama_ayah" name="nama_ayah" required>
               </div>
               <div class="form-group">
-                <label for="pekerjaan_ayah">Pekerjaan Ayah <span class="required-icon">*</span></label>
-                <select id="pekerjaan_ayah" name="pekerjaan_ayah" required>
-                  <option value="">Pilih Pekerjaan</option>
-                  <!-- Opsi akan diisi oleh JavaScript -->
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="nama_ibu">Nama Ibu <span class="required-icon">*</span></label>
+                <label for="nama_ibu">Nama Ibu <span class="text-danger">*</span></label>
                 <input type="text" id="nama_ibu" name="nama_ibu" required>
               </div>
               <div class="form-group">
-                <label for="pekerjaan_ibu">Pekerjaan Ibu <span class="required-icon">*</span></label>
-                <select id="pekerjaan_ibu" name="pekerjaan_ibu" required>
-                  <option value="">Pilih Pekerjaan</option>
-                  <!-- Opsi akan diisi oleh JavaScript -->
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="no_hp_ortu">No HP Orang Tua <span class="required-icon">*</span></label>
+                <label for="no_hp_ortu">No HP Orang Tua <span class="text-danger">*</span></label>
                 <input type="tel" id="no_hp_ortu" name="no_hp_ortu" required 
                   pattern="[0-9]{10,13}" title="Nomor HP 10-13 digit angka">
               </div>
-              
-              <!-- Data Sekolah Asal -->
               <div class="form-group">
-                <label for="asal_sekolah">Asal Sekolah <span class="required-icon">*</span></label>
+                <label for="asal_sekolah">Asal Sekolah <span class="text-danger">*</span></label>
                 <input type="text" id="asal_sekolah" name="asal_sekolah" required>
               </div>
               <div class="form-group">
-                <label for="tahun_lulus">Tahun Lulus <span class="required-icon">*</span></label>
+                <label for="tahun_lulus">Tahun Lulus <span class="text-danger">*</span></label>
                 <input type="number" id="tahun_lulus" name="tahun_lulus" 
                   min="2000" max="2024" required>
               </div>
-              <div class="form-group">
-                <label for="jenis_pendaftaran">Jenis Pendaftaran <span class="required-icon">*</span></label>
-                <select id="jenis_pendaftaran" name="jenis_pendaftaran" required>
-                  <option value="">Pilih Jenis Pendaftaran</option>
-                  <!-- Opsi akan diisi oleh JavaScript -->
-                </select>
-              </div>
-              
+
               <!-- Upload Dokumen -->
               <div class="form-group form-full-width">
                 <label>Upload Dokumen <span class="required-icon">*</span></label>
@@ -1053,11 +1104,11 @@
               <input type="text" id="check-nisn" placeholder="10 digit NISN">
             </div>
           </div>
-          
+        
           <div class="action-buttons mt-4">
-            <button onclick="checkStatus()" class="btn btn-primary" id="check-btn">
-              <i class="fas fa-search"></i> Cek Status
-            </button>
+            <button onclick="checkStatus()" class="btn btn-outline" id="check-btn">
+              <i class="fas fa-search"></i> Cek Status Pendaftaran
+            </button>            
             <button onclick="showSection('landing')" class="btn btn-danger">
               <i class="fas fa-arrow-left"></i> Kembali
             </button>
@@ -1088,9 +1139,9 @@
             </div>
 
             <div class="action-buttons mt-4">
-              <button onclick="adminLogin()" class="btn btn-primary" id="admin-login-btn">
+              <button onclick="adminLogin()" class="btn btn-outline" id="admin-login-btn">
                 <i class="fas fa-sign-in-alt"></i> Login
-              </button>
+              </button>              
               <button onclick="showSection('landing')" class="btn btn-danger">
                 <i class="fas fa-arrow-left"></i> Kembali
               </button>
@@ -1119,11 +1170,59 @@
   </div>
 
   <script>
-    // Konfigurasi backend
-    const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbzY5eC12gCgENEoKITnOOO1a6b8Gsp1_s1fXCs0zZzFS1mtXjmhwkVNxpssbeEGoOtZxw/exec';
-    
     // Daftar section yang valid
     const validSections = ['landing', 'info', 'form', 'check', 'dashboard'];
+    
+    // Data dummy untuk simulasi
+    const dummyData = {
+      registrations: [
+        {
+          nomor: 'SMAPTA-16AD5U',
+          nisn: '1234567890',
+          nik: '1234567890123456',
+          nama: 'Budi Santoso',
+          jenis_kelamin: 'Laki-laki',
+          tempat_lahir: 'Jakarta',
+          tanggal_lahir: '2008-05-15',
+          agama: 'Islam',
+          alamat: 'Jl. Merdeka No. 123, Jakarta',
+          no_hp: '081234567890',
+          nama_ayah: 'Ahmad Santoso',
+          nama_ibu: 'Siti Rahayu',
+          no_hp_ortu: '081298765432',
+          asal_sekolah: 'SMP Negeri 1 Jakarta',
+          tahun_lulus: 2024,
+          timestamp: '15 Juni 2024',
+          status_verifikasi: 'Belum Diverifikasi',
+          dokumen: ['ijazah_budi.jpg', 'foto_budi.jpg']
+        },
+        {
+          nomor: 'SMAPTA-7RAD5U',
+          nisn: '2345678901',
+          nik: '2345678901234567',
+          nama: 'Ani Wijaya',
+          jenis_kelamin: 'Perempuan',
+          tempat_lahir: 'Bandung',
+          tanggal_lahir: '2008-08-20',
+          agama: 'Kristen',
+          alamat: 'Jl. Asia Afrika No. 45, Bandung',
+          no_hp: '082345678901',
+          nama_ayah: 'Joko Wijaya',
+          nama_ibu: 'Dewi Lestari',
+          no_hp_ortu: '082345678912',
+          asal_sekolah: 'SMP Negeri 3 Bandung',
+          tahun_lulus: 2024,
+          timestamp: '16 Juni 2024',
+          status_verifikasi: 'Diverifikasi',
+          dokumen: ['ijazah_ani.pdf', 'foto_ani.jpg']
+        }
+      ],
+      nextNumber: 20240003,
+      admin: {
+        username: 'admin',
+        password: 'ppdb2024'
+      }
+    };
     
     // Tampilkan halaman berdasarkan parameter URL saat halaman dimuat
     window.onload = function() {
@@ -1146,147 +1245,12 @@
         document.getElementById('check-nomor').value = nomor;
         setTimeout(() => checkStatus(), 500);
       }
-      
-      // Load dropdown options
-      loadDropdownOptions();
     };
     
     // Fungsi toggle mobile menu
     function toggleMobileMenu() {
       const nav = document.getElementById('main-nav');
       nav.classList.toggle('hidden');
-    }
-
-    // Fungsi untuk memuat opsi dropdown
-    function loadDropdownOptions() {
-      // Load pekerjaan options
-      fetch(`${BACKEND_URL}?action=get_pekerjaan_options`)
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            const pekerjaanSelects = [
-              document.getElementById('pekerjaan_ayah'),
-              document.getElementById('pekerjaan_ibu')
-            ];
-            
-            pekerjaanSelects.forEach(select => {
-              data.options.forEach(option => {
-                const opt = document.createElement('option');
-                opt.value = option;
-                opt.textContent = option;
-                select.appendChild(opt);
-              });
-            });
-          }
-        });
-      
-      // Load jenis pendaftaran options
-      fetch(`${BACKEND_URL}?action=get_jenis_pendaftaran`)
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            const select = document.getElementById('jenis_pendaftaran');
-            data.options.forEach(option => {
-              const opt = document.createElement('option');
-              opt.value = option;
-              opt.textContent = option;
-              select.appendChild(opt);
-            });
-          }
-        });
-      
-      // Load agama options
-      fetch(`${BACKEND_URL}?action=get_agama_options`)
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            const select = document.getElementById('agama');
-            data.options.forEach(option => {
-              const opt = document.createElement('option');
-              opt.value = option;
-              opt.textContent = option;
-              select.appendChild(opt);
-            });
-          }
-        });
-    }
-
-    // Fungsi untuk memuat data informasi
-    function loadInfoData() {
-      // Ambil data jadwal
-      fetch(`${BACKEND_URL}?action=get_schedule`)
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            const tableBody = document.querySelector('#schedule-table tbody');
-            tableBody.innerHTML = '';
-          
-            data.data.forEach(item => {
-              const row = document.createElement('tr');
-              // Highlight aktif event
-              const now = new Date();
-              const startDate = new Date(item['Tanggal Mulai']);
-              const endDate = new Date(item['Tanggal Selesai']);
-              const isActive = now >= startDate && now <= endDate;
-              
-              row.innerHTML = `
-                <td>${item.Kegiatan || '-'}</td>
-                <td>${formatDate(item['Tanggal Mulai'])}</td>
-                <td>${formatDate(item['Tanggal Selesai'])}</td>
-                <td>${item.Keterangan || '-'}</td>
-              `;
-              
-              if (isActive) {
-                row.classList.add('active-event');
-              }
-              
-              tableBody.appendChild(row);
-            });
-          }
-        })
-        .catch(error => {
-          console.error('Error loading schedule:', error);
-        });
-    
-      // Ambil data biaya
-      fetch(`${BACKEND_URL}?action=get_fees`)
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            const tableBody = document.querySelector('#fee-table tbody');
-            tableBody.innerHTML = '';
-          
-            data.data.forEach(item => {
-              const row = document.createElement('tr');
-              // Highlight biaya wajib
-              if (item.Wajib === 'Ya') {
-                row.classList.add('mandatory-fee');
-              }
-              
-              row.innerHTML = `
-                <td>${item['Jenis Biaya'] || '-'}</td>
-                <td>${formatCurrency(item.Nominal)}</td>
-                <td>${item.Keterangan || '-'}</td>
-              `;
-              tableBody.appendChild(row);
-            });
-          }
-        })
-        .catch(error => {
-          console.error('Error loading fees:', error);
-        });
-    }
-
-    // Fungsi pembantu format tanggal
-    function formatDate(dateString) {
-      if (!dateString) return '-';
-      const date = new Date(dateString);
-      return isNaN(date.getTime()) ? dateString : date.toLocaleDateString('id-ID');
-    }
-
-    // Fungsi pembantu format mata uang
-    function formatCurrency(amount) {
-      return amount ? 'Rp ' + parseInt(amount).toLocaleString('id-ID') : '-';
     }
     
     // Fungsi untuk menampilkan section tanpa reload penuh
@@ -1317,11 +1281,6 @@
       const landingSection = document.getElementById('landing-section');
       if (section !== 'landing' && landingSection) {
         landingSection.classList.add('hidden');
-      }
-
-      // Load data khusus section
-      if (section === 'info') {
-        loadInfoData();
       }
     
       // Update URL tanpa reload
@@ -1369,10 +1328,24 @@
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
       `;
       
-      // Tampilkan data form
-      for (const [name, value] of formData.entries()) {
-        if (name !== 'dokumen') {
-          const label = document.querySelector(`label[for="${name}"]`).textContent;
+      // Buat array dari formData untuk diurutkan
+      const formEntries = Array.from(formData.entries());
+      
+      // Urutkan berdasarkan urutan field yang diinginkan
+      const fieldOrder = [
+        'nisn', 'nik', 'nama', 'jenis_kelamin', 'tempat_lahir', 'tanggal_lahir',
+        'agama', 'alamat', 'no_hp', 'nama_ayah', 'nama_ibu', 'no_hp_ortu',
+        'asal_sekolah', 'tahun_lulus'
+      ];
+      
+      formEntries.sort((a, b) => {
+        return fieldOrder.indexOf(a[0]) - fieldOrder.indexOf(b[0]);
+      });
+      
+      // Bangun HTML untuk pratinjau
+      formEntries.forEach(([key, value]) => {
+        if (key !== 'dokumen') {
+          const label = document.querySelector(`label[for="${key}"]`).textContent;
           previewHtml += `
             <div style="margin-bottom: 0.5rem;">
               <strong style="font-size: 0.85rem; color: var(--gray);">${label.replace(' *', '')}:</strong>
@@ -1380,7 +1353,7 @@
             </div>
           `;
         }
-      }
+      });
       
       // Tambahkan info dokumen
       previewHtml += `
@@ -1410,70 +1383,83 @@
       document.getElementById('registration-form').classList.remove('hidden');
     }
     
-    // Fungsi Submit Form ke Backend
+    // Fungsi Submit
     function submitForm() {
       const submitBtn = document.getElementById('submit-btn');
       const originalText = submitBtn.innerHTML;
       submitBtn.innerHTML = '<span class="spinner"></span> Memproses...';
       submitBtn.disabled = true;
       
-      const form = document.getElementById('registration-form');
-      const formData = new FormData(form);
-      
-      // Konversi FormData ke objek JSON
-      const data = {};
-      formData.forEach((value, key) => {
-        if (key !== 'dokumen') {
-          data[key] = value;
+      // Simulasi proses submit (2 detik)
+      setTimeout(() => {
+        const form = document.getElementById('registration-form');
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData);
+        
+        // Generate nomor pendaftaran
+        data.nomor = `2024${dummyData.nextNumber.toString().padStart(4, '0')}`;
+        dummyData.nextNumber++;
+        
+        // Tambahkan timestamp
+        const now = new Date();
+        data.timestamp = now.toLocaleDateString('id-ID', { 
+          day: 'numeric', 
+          month: 'long', 
+          year: 'numeric' 
+        });
+        
+        // Tambahkan status default
+        data.status_verifikasi = 'Belum Diverifikasi';
+        
+        // Simpan dokumen (simulasi)
+        const fileInput = document.getElementById('dokumen');
+        data.dokumen = [];
+        for (let i = 0; i < fileInput.files.length; i++) {
+          data.dokumen.push(fileInput.files[i].name);
         }
-      });
-      
-      // Kirim data ke backend
-      fetch(`${BACKEND_URL}?action=submit_form`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams(data).toString()
-      })
-      .then(response => response.json())
-      .then(result => {
-        if (result.success) {
-          // Tampilkan pesan sukses
-          const successHtml = `
-            <div class="alert alert-success">
-              <h4 style="margin-bottom: 0.5rem;">
-                <i class="fas fa-check-circle"></i> Pendaftaran Berhasil!
-              </h4>
-              <p>Nomor Pendaftaran Anda: <strong>${result.nomorPendaftaran}</strong></p>
-              <p class="mt-2">Silakan simpan nomor pendaftaran ini untuk mengecek status pendaftaran.</p>
-            </div>
-            <div class="action-buttons mt-3">
-              <button onclick="window.print()" class="btn btn-secondary">
-                <i class="fas fa-print"></i> Cetak Bukti
-              </button>
-              <button onclick="showCheckStatus('${result.nomorPendaftaran}')" class="btn btn-primary">
-                <i class="fas fa-search"></i> Cek Status
-              </button>
-              <button onclick="showSection('landing')" class="btn btn-success">
-                <i class="fas fa-home"></i> Kembali ke Beranda
-              </button>
-            </div>
-          `;
-          
-          document.getElementById('preview-section').innerHTML = successHtml;
-          
-          // Reset form
-          form.reset();
-        } else {
-          throw new Error(result.message || 'Terjadi kesalahan saat submit');
-        }
-      })
-      .catch(error => {
-        alert(`Gagal submit: ${error.message}`);
-        submitBtn.innerHTML = originalText;
-        submitBtn.disabled = false;
-      });
+        
+        // Simpan ke data dummy
+        dummyData.registrations.push(data);
+        
+        // Tampilkan alert sukses
+        const successHtml = `
+          <div class="alert alert-success">
+            <h4 style="margin-bottom: 0.5rem;">
+              <i class="fas fa-check-circle"></i> Pendaftaran Berhasil!
+            </h4>
+            <p>Nomor Pendaftaran Anda: <strong>${data.nomor}</strong></p>
+            <p class="mt-2">Silakan simpan nomor pendaftaran ini untuk mengecek status pendaftaran.</p>
+          </div>
+          <div class="action-buttons mt-3">
+            <button onclick="window.print()" class="btn btn-secondary">
+              <i class="fas fa-print"></i> Cetak Bukti
+            </button>
+            <button onclick="showCheckStatus('${data.nomor}')" class="btn btn-primary">
+              <i class="fas fa-search"></i> Cek Status
+            </button>
+            <button onclick="showSection('landing')" class="btn btn-outline">
+              <i class="fas fa-home"></i> Kembali ke Beranda
+            </button>
+          </div>
+        `;
+        
+        document.getElementById('preview-section').innerHTML = successHtml;
+        
+        // Reset form
+        form.reset();
+        
+        // Simulasi kirim WhatsApp
+        const whatsappMessage = `Hallo admin SMA Contoh Takokak, berikut data pendaftaran saya:
+        
+Nama: ${data.nama}
+Nomor Pendaftaran: ${data.nomor}
+Asal Sekolah: ${data.asal_sekolah}
+
+Terima kasih.`;
+        
+        console.log('WhatsApp message:', whatsappMessage);
+        // window.open(`https://wa.me/6281234567890?text=${encodeURIComponent(whatsappMessage)}`, '_blank');
+      }, 2000);
     }
     
     // Fungsi untuk langsung ke cek status dengan nomor tertentu
@@ -1483,7 +1469,7 @@
       checkStatus();
     }
     
-    // Fungsi Cek Status Pendaftaran
+    // Fungsi Cek Status
     function checkStatus() {
       const checkBtn = document.getElementById('check-btn');
       const originalText = checkBtn.innerHTML;
@@ -1500,101 +1486,97 @@
         return;
       }
       
-      // Kirim permintaan ke backend
-      fetch(`${BACKEND_URL}?action=check_status&nomor=${encodeURIComponent(nomor)}&nisn=${encodeURIComponent(nisn)}`)
-        .then(response => response.json())
-        .then(result => {
-          const resultDiv = document.getElementById('check-result');
-          
-          if (result.success) {
-            const data = result.data;
-            let statusClass = '';
-            if (data.Status === 'Diverifikasi') {
-              statusClass = 'status-verified';
-            } else if (data.Status === 'Ditolak') {
-              statusClass = 'status-rejected';
-            } else {
-              statusClass = 'status-pending';
-            }
-            
-            resultDiv.innerHTML = `
-              <div class="card">
-                <h4 style="margin-bottom: 1rem; color: var(--primary-dark);">
-                  <i class="fas fa-user-graduate"></i> Status Pendaftaran
-                </h4>
-                
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
-                  <div>
-                    <strong style="font-size: 0.85rem; color: var(--gray);">Nomor Pendaftaran:</strong>
-                    <p style="margin-top: 0.25rem;">${data['Nomor Pendaftaran']}</p>
-                  </div>
-                  <div>
-                    <strong style="font-size: 0.85rem; color: var(--gray);">Nama:</strong>
-                    <p style="margin-top: 0.25rem;">${data.Nama}</p>
-                  </div>
-                  <div>
-                    <strong style="font-size: 0.85rem; color: var(--gray);">Asal Sekolah:</strong>
-                    <p style="margin-top: 0.25rem;">${data['Asal Sekolah']}</p>
-                  </div>
-                  <div>
-                    <strong style="font-size: 0.85rem; color: var(--gray);">Tanggal Daftar:</strong>
-                    <p style="margin-top: 0.25rem;">${data['Tanggal Daftar']}</p>
-                  </div>
-                  <div>
-                    <strong style="font-size: 0.85rem; color: var(--gray);">Status:</strong>
-                    <p style="margin-top: 0.25rem;" class="${statusClass}">
-                      <i class="fas fa-${data.Status === 'Diverifikasi' ? 'check-circle' : 
-                        data.Status === 'Ditolak' ? 'times-circle' : 'clock'}"></i>
-                      ${data.Status}
-                    </p>
-                  </div>
-                </div>
-                
-                ${data.Status === 'Diverifikasi' ? `
-                  <div class="alert alert-success mt-3">
-                    <strong><i class="fas fa-check-circle"></i> Selamat!</strong> 
-                    Anda diterima di SMAS PGRI Takokak. Silakan lakukan daftar ulang sesuai jadwal.
-                  </div>
-                ` : data.Status === 'Ditolak' ? `
-                  <div class="alert alert-danger mt-3">
-                    <strong><i class="fas fa-times-circle"></i> Maaf</strong>, 
-                    Anda belum diterima di SMAS PGRI Takokak.
-                  </div>
-                ` : `
-                  <div class="alert alert-info mt-3">
-                    <strong><i class="fas fa-info-circle"></i> Proses Verifikasi</strong> 
-                    Pendaftaran Anda sedang dalam proses verifikasi. Silakan cek kembali beberapa hari lagi.
-                  </div>
-                `}
-                
-                <div class="action-buttons mt-3">
-                  <button onclick="window.print()" class="btn btn-secondary">
-                    <i class="fas fa-print"></i> Cetak
-                  </button>
-                  <button onclick="showSection('landing')" class="btn btn-primary">
-                    <i class="fas fa-home"></i> Kembali
-                  </button>
-                </div>
-              </div>
-            `;
+      // Simulasi pencarian (1 detik)
+      setTimeout(() => {
+        const data = dummyData.registrations.find(reg => 
+          reg.nomor === nomor && reg.nisn === nisn
+        );
+        
+        const resultDiv = document.getElementById('check-result');
+        
+        if (data) {
+          let statusClass = '';
+          if (data.status_verifikasi === 'Diverifikasi') {
+            statusClass = 'status-verified';
+          } else if (data.status_verifikasi === 'Ditolak') {
+            statusClass = 'status-rejected';
           } else {
-            resultDiv.innerHTML = `
-              <div class="alert alert-danger">
-                <strong><i class="fas fa-exclamation-triangle"></i> Data tidak ditemukan</strong>
-                <p class="mt-2">Nomor pendaftaran atau NISN yang Anda masukkan tidak valid. Silakan coba lagi.</p>
-              </div>
-            `;
+            statusClass = 'status-pending';
           }
           
-          resultDiv.classList.remove('hidden');
-        })
-        .catch(error => {
-          alert(`Gagal memeriksa status: ${error.message}`);
-        })
-        .finally(() => {
-          checkBtn.innerHTML = originalText;
-          checkBtn.disabled = false;
-        });
+          resultDiv.innerHTML = `
+            <div class="card">
+              <h4 style="margin-bottom: 1rem; color: var(--primary-dark);">
+                <i class="fas fa-user-graduate"></i> Status Pendaftaran
+              </h4>
+              
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                <div>
+                  <strong style="font-size: 0.85rem; color: var(--gray);">Nomor Pendaftaran:</strong>
+                  <p style="margin-top: 0.25rem;">${data.nomor}</p>
+                </div>
+                <div>
+                  <strong style="font-size: 0.85rem; color: var(--gray);">Nama:</strong>
+                  <p style="margin-top: 0.25rem;">${data.nama}</p>
+                </div>
+                <div>
+                  <strong style="font-size: 0.85rem; color: var(--gray);">Asal Sekolah:</strong>
+                  <p style="margin-top: 0.25rem;">${data.asal_sekolah}</p>
+                </div>
+                <div>
+                  <strong style="font-size: 0.85rem; color: var(--gray);">Tanggal Daftar:</strong>
+                  <p style="margin-top: 0.25rem;">${data.timestamp}</p>
+                </div>
+                <div>
+                  <strong style="font-size: 0.85rem; color: var(--gray);">Status:</strong>
+                  <p style="margin-top: 0.25rem;" class="${statusClass}">
+                    <i class="fas fa-${data.status_verifikasi === 'Diverifikasi' ? 'check-circle' : 
+                      data.status_verifikasi === 'Ditolak' ? 'times-circle' : 'clock'}"></i>
+                    ${data.status_verifikasi}
+                  </p>
+                </div>
+              </div>
+              
+              ${data.status_verifikasi === 'Diverifikasi' ? `
+                <div class="alert alert-success mt-3">
+                  <strong><i class="fas fa-check-circle"></i> Selamat!</strong> 
+                  Anda diterima di SMA Contoh Takokak. Silakan lakukan daftar ulang sesuai jadwal.
+                </div>
+              ` : data.status_verifikasi === 'Ditolak' ? `
+                <div class="alert alert-danger mt-3">
+                  <strong><i class="fas fa-times-circle"></i> Maaf</strong>, 
+                  Anda belum diterima di SMA Contoh Takokak.
+                </div>
+              ` : `
+                <div class="alert alert-info mt-3">
+                  <strong><i class="fas fa-info-circle"></i> Proses Verifikasi</strong> 
+                  Pendaftaran Anda sedang dalam proses verifikasi. Silakan cek kembali beberapa hari lagi.
+                </div>
+              `}
+              
+              <div class="action-buttons mt-3">
+                <button onclick="window.print()" class="btn btn-secondary">
+                  <i class="fas fa-print"></i> Cetak
+                </button>
+                <button onclick="showSection('landing')" class="btn btn-primary">
+                  <i class="fas fa-home"></i> Kembali
+                </button>
+              </div>
+            </div>
+          `;
+        } else {
+          resultDiv.innerHTML = `
+            <div class="alert alert-danger">
+              <strong><i class="fas fa-exclamation-triangle"></i> Data tidak ditemukan</strong>
+              <p class="mt-2">Nomor pendaftaran atau NISN yang Anda masukkan tidak valid. Silakan coba lagi.</p>
+            </div>
+          `;
+        }
+        
+        resultDiv.classList.remove('hidden');
+        checkBtn.innerHTML = originalText;
+        checkBtn.disabled = false;
+      }, 1000);
     }
     
     // Fungsi Login Admin
@@ -1607,654 +1589,119 @@
       const username = document.getElementById('admin-username').value;
       const password = document.getElementById('admin-password').value;
       
-      if (!username || !password) {
-        alert('Username dan password harus diisi!');
+      // Simulasi proses login (1.5 detik)
+      setTimeout(() => {
+        if (username === dummyData.admin.username && password === dummyData.admin.password) {
+          // Tampilkan dashboard admin
+          loadAdminDashboard();
+          document.getElementById('admin-content').classList.remove('hidden');
+        } else {
+          alert('Username atau password salah!');
+        }
+        
         loginBtn.innerHTML = originalText;
         loginBtn.disabled = false;
-        return;
-      }
-      
-      // Kirim permintaan login ke backend
-      fetch(`${BACKEND_URL}?action=admin_login&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`)
-        .then(response => response.json())
-        .then(result => {
-          if (result.success) {
-            // Login berhasil, tampilkan dashboard admin
-            loadAdminDashboard(result.token, result.user);
-          } else {
-            throw new Error(result.message || 'Login gagal');
-          }
-        })
-        .catch(error => {
-          alert(`Login gagal: ${error.message}`);
-        })
-        .finally(() => {
-          loginBtn.innerHTML = originalText;
-          loginBtn.disabled = false;
-        });
+      }, 1500);
     }
     
     // Fungsi Load Admin Dashboard
-    function loadAdminDashboard(token, user) {
+    function loadAdminDashboard() {
       const adminContent = document.getElementById('admin-content');
-      const loginForm = document.getElementById('login-form');
       
-      // Sembunyikan form login
-      loginForm.classList.add('hidden');
-      
-      // Tampilkan konten admin
-      adminContent.innerHTML = `
-        <div class="admin-panel">
-          <div class="admin-toolbar">
-            <div>
-              <h3>Selamat datang, <strong>${user.name}</strong></h3>
-              <small>Role: ${user.role}</small>
-            </div>
-            <button onclick="adminLogout()" class="btn btn-danger btn-sm">
-              <i class="fas fa-sign-out-alt"></i> Logout
-            </button>
-          </div>
-          
-          <div class="tabs">
-            <button class="tab-btn active" onclick="showAdminTab('registrations', this)">
-              <i class="fas fa-users"></i> Data Pendaftar
-            </button>
-            <button class="tab-btn" onclick="showAdminTab('logs', this)">
-              <i class="fas fa-history"></i> Log Aktivitas
-            </button>
-            ${user.role === 'superadmin' ? `
-            <button class="tab-btn" onclick="showAdminTab('users', this)">
-              <i class="fas fa-user-cog"></i> Manajemen User
-            </button>
-            ` : ''}
-          </div>
-          
-          <div id="admin-registrations-tab">
-            <div class="admin-toolbar">
-              <div class="search-box">
-                <input type="text" id="reg-search" placeholder="Cari pendaftar...">
-                <button onclick="searchRegistrations()"><i class="fas fa-search"></i></button>
-              </div>
-              <button onclick="exportToExcel('${token}')" class="btn btn-sm btn-success">
-                <i class="fas fa-file-excel"></i> Export Excel
-              </button>
-            </div>
-            
-            <div class="table-responsive">
-              <table id="registrations-table">
-                <thead>
-                  <tr>
-                    <th>No. Pendaftaran</th>
-                    <th>Nama</th>
-                    <th>NISN</th>
-                    <th>Asal Sekolah</th>
-                    <th>Tanggal Daftar</th>
-                    <th>Status</th>
-                    <th>Aksi</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <!-- Data akan diisi oleh JavaScript -->
-                </tbody>
-              </table>
-            </div>
-            
-            <div class="pagination">
-              <button id="prev-reg-page" disabled><i class="fas fa-chevron-left"></i></button>
-              <span id="reg-page-info">Halaman 1</span>
-              <button id="next-reg-page"><i class="fas fa-chevron-right"></i></button>
-            </div>
-          </div>
-          
-          <div id="admin-logs-tab" class="hidden">
-            <div class="admin-toolbar">
-              <div class="search-box">
-                <input type="text" id="log-search" placeholder="Cari aktivitas...">
-                <button onclick="searchLogs()"><i class="fas fa-search"></i></button>
-              </div>
-              <button onclick="exportLogs('${token}')" class="btn btn-sm btn-outline">
-                <i class="fas fa-download"></i> Export
-              </button>
-            </div>
-            
-            <div class="table-responsive">
-              <table id="log-table">
-                <thead>
-                  <tr>
-                    <th>Waktu</th>
-                    <th>Aktivitas</th>
-                    <th>Deskripsi</th>
-                    <th>User</th>
-                    <th>IP</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <!-- Data akan diisi oleh JavaScript -->
-                </tbody>
-              </table>
-            </div>
-            
-            <div class="pagination">
-              <button id="prev-log-page" disabled><i class="fas fa-chevron-left"></i></button>
-              <span id="log-page-info">Halaman 1</span>
-              <button id="next-log-page"><i class="fas fa-chevron-right"></i></button>
-            </div>
-          </div>
-          
-          ${user.role === 'superadmin' ? `
-          <div id="admin-users-tab" class="hidden">
-            <div class="admin-toolbar">
-              <button onclick="showAddUserModal()" class="btn btn-sm btn-primary">
-                <i class="fas fa-user-plus"></i> Tambah User
-              </button>
-            </div>
-            
-            <div class="table-responsive">
-              <table id="users-table">
-                <thead>
-                  <tr>
-                    <th>Username</th>
-                    <th>Nama</th>
-                    <th>Role</th>
-                    <th>Aksi</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <!-- Data akan diisi oleh JavaScript -->
-                </tbody>
-              </table>
-            </div>
-          </div>
-          ` : ''}
-        </div>
+      // Buat tabel data pendaftar
+      let tableHtml = `
+        <div class="info-section">
+        <div class="table-responsive">
+            <table id="admin-registrations-tab" class="info-table">
+              <thead>
+                <tr>
+                  <th>No. Pendaftaran</th>
+                  <th>Nama</th>
+                  <th>Asal Sekolah</th>
+                  <th>Tanggal Daftar</th>
+                  <th>Status</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
       `;
       
-      adminContent.classList.remove('hidden');
-      
-      // Load data pendaftar
-      loadRegistrations(token);
-      
-      // Load log aktivitas
-      loadLogs(token);
-      
-      // Load data user jika superadmin
-      if (user.role === 'superadmin') {
-        loadUsers(token);
-      }
-    }
-    
-    // Fungsi untuk memuat data pendaftar
-    function loadRegistrations(token, page = 1, search = '') {
-      fetch(`${BACKEND_URL}?action=get_registrations&token=${encodeURIComponent(token)}&page=${page}&search=${encodeURIComponent(search)}`)
-        .then(response => response.json())
-        .then(result => {
-          if (result.success) {
-            const tableBody = document.querySelector('#registrations-table tbody');
-            tableBody.innerHTML = '';
-            
-            result.data.forEach(reg => {
-              const row = document.createElement('tr');
-              row.innerHTML = `
-                <td>${reg['Nomor Pendaftaran']}</td>
-                <td>${reg.Nama}</td>
-                <td>${reg.NISN}</td>
-                <td>${reg['Asal Sekolah']}</td>
-                <td>${formatDate(reg['Tanggal Daftar'])}</td>
-                <td>
-                  <span class="status-badge ${getStatusClass(reg.Status)}">
-                    ${reg.Status}
-                  </span>
-                </td>
-                <td>
-                  <select onchange="updateRegistrationStatus('${reg['Nomor Pendaftaran']}', this.value, '${token}')"
-                    class="status-select">
-                    <option value="Menunggu Verifikasi" ${reg.Status === 'Menunggu Verifikasi' ? 'selected' : ''}>
-                      Menunggu
-                    </option>
-                    <option value="Diverifikasi" ${reg.Status === 'Diverifikasi' ? 'selected' : ''}>
-                      Diverifikasi
-                    </option>
-                    <option value="Ditolak" ${reg.Status === 'Ditolak' ? 'selected' : ''}>
-                      Ditolak
-                    </option>
-                  </select>
-                </td>
-              `;
-              tableBody.appendChild(row);
-            });
-            
-            // Update pagination info
-            document.getElementById('reg-page-info').textContent = `Halaman ${page}`;
-            document.getElementById('prev-reg-page').disabled = page <= 1;
-            document.getElementById('next-reg-page').disabled = !result.hasMore;
-            
-            // Set event listeners for pagination
-            document.getElementById('prev-reg-page').onclick = () => loadRegistrations(token, page - 1, search);
-            document.getElementById('next-reg-page').onclick = () => loadRegistrations(token, page + 1, search);
-          } else {
-            throw new Error(result.message || 'Gagal memuat data pendaftar');
-          }
-        })
-        .catch(error => {
-          console.error('Error loading registrations:', error);
-          alert(`Gagal memuat data pendaftar: ${error.message}`);
-        });
-    }
-    
-    // Fungsi untuk memuat log aktivitas
-    function loadLogs(token, page = 1, search = '') {
-      fetch(`${BACKEND_URL}?action=get_logs&token=${encodeURIComponent(token)}&page=${page}&search=${encodeURIComponent(search)}`)
-        .then(response => response.json())
-        .then(result => {
-          if (result.success) {
-            const tableBody = document.querySelector('#log-table tbody');
-            tableBody.innerHTML = '';
-            
-            result.data.forEach(log => {
-              const row = document.createElement('tr');
-              row.innerHTML = `
-                <td>${formatDateTime(log.Timestamp)}</td>
-                <td>${log.Aktivitas}</td>
-                <td>${log.Deskripsi}</td>
-                <td>${log.User || 'System'}</td>
-                <td>${log.IP || '-'}</td>
-              `;
-              tableBody.appendChild(row);
-            });
-            
-            // Update pagination info
-            document.getElementById('log-page-info').textContent = `Halaman ${page}`;
-            document.getElementById('prev-log-page').disabled = page <= 1;
-            document.getElementById('next-log-page').disabled = !result.hasMore;
-            
-            // Set event listeners for pagination
-            document.getElementById('prev-log-page').onclick = () => loadLogs(token, page - 1, search);
-            document.getElementById('next-log-page').onclick = () => loadLogs(token, page + 1, search);
-          } else {
-            throw new Error(result.message || 'Gagal memuat log aktivitas');
-          }
-        })
-        .catch(error => {
-          console.error('Error loading logs:', error);
-          alert(`Gagal memuat log aktivitas: ${error.message}`);
-        });
-    }
-    
-    // Fungsi untuk memuat data user (superadmin only)
-    function loadUsers(token) {
-      fetch(`${BACKEND_URL}?action=get_users&token=${encodeURIComponent(token)}`)
-        .then(response => response.json())
-        .then(result => {
-          if (result.success) {
-            const tableBody = document.querySelector('#users-table tbody');
-            tableBody.innerHTML = '';
-            
-            result.data.forEach(user => {
-              const row = document.createElement('tr');
-              row.innerHTML = `
-                <td>${user.username}</td>
-                <td>${user.name}</td>
-                <td>${user.role}</td>
-                <td>
-                  <button onclick="editUser('${user.username}', '${user.name}', '${user.role}')" 
-                    class="btn btn-sm btn-warning">
-                    <i class="fas fa-edit"></i>
-                  </button>
-                  <button onclick="deleteUser('${user.username}', '${token}')" 
-                    class="btn btn-sm btn-danger">
-                    <i class="fas fa-trash"></i>
-                  </button>
-                </td>
-              `;
-              tableBody.appendChild(row);
-            });
-          } else {
-            throw new Error(result.message || 'Gagal memuat data user');
-          }
-        })
-        .catch(error => {
-          console.error('Error loading users:', error);
-          alert(`Gagal memuat data user: ${error.message}`);
-        });
-    }
-    
-    // Fungsi untuk menampilkan modal tambah user
-    function showAddUserModal() {
-      const modalHtml = `
-        <div id="user-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-          background-color: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000;">
-          <div style="background-color: white; padding: 2rem; border-radius: var(--radius-md); width: 100%; max-width: 500px;">
-            <h3 style="margin-bottom: 1.5rem; color: var(--primary-dark);">
-              <i class="fas fa-user-plus"></i> Tambah User Admin
-            </h3>
-            
-            <div class="form-group">
-              <label for="new-username">Username</label>
-              <input type="text" id="new-username" class="form-control">
-            </div>
-            
-            <div class="form-group">
-              <label for="new-password">Password</label>
-              <input type="password" id="new-password" class="form-control">
-            </div>
-            
-            <div class="form-group">
-              <label for="new-name">Nama Lengkap</label>
-              <input type="text" id="new-name" class="form-control">
-            </div>
-            
-            <div class="form-group">
-              <label for="new-role">Role</label>
-              <select id="new-role" class="form-control">
-                <option value="admin">Admin</option>
-                <option value="superadmin">Super Admin</option>
-              </select>
-            </div>
-            
-            <div class="action-buttons" style="margin-top: 1.5rem;">
-              <button onclick="addUser()" class="btn btn-primary">
-                <i class="fas fa-save"></i> Simpan
-              </button>
-              <button onclick="closeModal()" class="btn btn-danger">
-                <i class="fas fa-times"></i> Batal
-              </button>
-            </div>
-          </div>
-        </div>
-      `;
-      
-      document.body.insertAdjacentHTML('beforeend', modalHtml);
-    }
-    
-    // Fungsi untuk menutup modal
-    function closeModal() {
-      const modal = document.getElementById('user-modal');
-      if (modal) {
-        modal.remove();
-      }
-    }
-    
-    // Fungsi untuk menambah user baru
-    function addUser() {
-      const username = document.getElementById('new-username').value;
-      const password = document.getElementById('new-password').value;
-      const name = document.getElementById('new-name').value;
-      const role = document.getElementById('new-role').value;
-      
-      if (!username || !password || !name) {
-        alert('Semua field harus diisi!');
-        return;
-      }
-      
-      const token = document.querySelector('#admin-content [onclick*="exportToExcel"]')
-        .getAttribute('onclick')
-        .match(/'([^']+)'/)[1];
-      
-      fetch(`${BACKEND_URL}?action=add_user&token=${encodeURIComponent(token)}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-          username: username,
-          password: password,
-          name: name,
-          role: role
-        }).toString()
-      })
-      .then(response => response.json())
-      .then(result => {
-        if (result.success) {
-          alert('User berhasil ditambahkan');
-          closeModal();
-          loadUsers(token);
+      dummyData.registrations.forEach(reg => {
+        let statusClass = '';
+        if (reg.status_verifikasi === 'Diverifikasi') {
+          statusClass = 'status-verified';
+        } else if (reg.status_verifikasi === 'Ditolak') {
+          statusClass = 'status-rejected';
         } else {
-          throw new Error(result.message || 'Gagal menambah user');
+          statusClass = 'status-pending';
         }
-      })
-      .catch(error => {
-        alert(`Gagal menambah user: ${error.message}`);
-      });
-    }
-    
-    // Fungsi untuk mengedit user
-    function editUser(username, name, role) {
-      const modalHtml = `
-        <div id="user-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-          background-color: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000;">
-          <div style="background-color: white; padding: 2rem; border-radius: var(--radius-md); width: 100%; max-width: 500px;">
-            <h3 style="margin-bottom: 1.5rem; color: var(--primary-dark);">
-              <i class="fas fa-user-edit"></i> Edit User
-            </h3>
-            
-            <div class="form-group">
-              <label>Username</label>
-              <input type="text" value="${username}" class="form-control" disabled>
-            </div>
-            
-            <div class="form-group">
-              <label for="edit-password">Password Baru (kosongkan jika tidak diubah)</label>
-              <input type="password" id="edit-password" class="form-control">
-            </div>
-            
-            <div class="form-group">
-              <label for="edit-name">Nama Lengkap</label>
-              <input type="text" id="edit-name" value="${name}" class="form-control">
-            </div>
-            
-            <div class="form-group">
-              <label for="edit-role">Role</label>
-              <select id="edit-role" class="form-control">
-                <option value="admin" ${role === 'admin' ? 'selected' : ''}>Admin</option>
-                <option value="superadmin" ${role === 'superadmin' ? 'selected' : ''}>Super Admin</option>
+        
+        tableHtml += `
+          <tr>
+            <td>${reg.nomor}</td>
+            <td>${reg.nama}</td>
+            <td>${reg.asal_sekolah}</td>
+            <td>${reg.timestamp}</td>
+            <td class="${statusClass}">${reg.status_verifikasi}</td>
+            <td>
+              <select onchange="updateStatus('${reg.nomor}', this.value)" 
+                style="padding: 0.25rem; border-radius: 4px; border: 1px solid var(--light-gray);">
+                <option value="Belum Diverifikasi" ${reg.status_verifikasi === 'Belum Diverifikasi' ? 'selected' : ''}>
+                  Belum Diverifikasi
+                </option>
+                <option value="Diverifikasi" ${reg.status_verifikasi === 'Diverifikasi' ? 'selected' : ''}>
+                  Diverifikasi
+                </option>
+                <option value="Ditolak" ${reg.status_verifikasi === 'Ditolak' ? 'selected' : ''}>
+                  Ditolak
+                </option>
               </select>
-            </div>
-            
-            <div class="action-buttons" style="margin-top: 1.5rem;">
-              <button onclick="saveUserChanges('${username}')" class="btn btn-primary">
-                <i class="fas fa-save"></i> Simpan Perubahan
-              </button>
-              <button onclick="closeModal()" class="btn btn-danger">
-                <i class="fas fa-times"></i> Batal
-              </button>
-            </div>
-          </div>
+            </td>
+          </tr>
+        </div>  
+        `;
+      });
+      
+      tableHtml += `
+            </tbody>
+          </table>
+        </div>
+        <div class="action-buttons mt-3">
+          <button onclick="exportToExcel()" class="btn btn-outline">
+            <i class="fas fa-file-excel"></i> Export ke Excel
+          </button>         
+          <button onclick="showSection('landing')" class="btn btn-danger">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </button>       
         </div>
       `;
       
-      document.body.insertAdjacentHTML('beforeend', modalHtml);
+      adminContent.innerHTML = tableHtml;
     }
     
-    // Fungsi untuk menyimpan perubahan user
-    function saveUserChanges(username) {
-      const password = document.getElementById('edit-password').value;
-      const name = document.getElementById('edit-name').value;
-      const role = document.getElementById('edit-role').value;
-      
-      const token = document.querySelector('#admin-content [onclick*="exportToExcel"]')
-        .getAttribute('onclick')
-        .match(/'([^']+)'/)[1];
-      
-      fetch(`${BACKEND_URL}?action=save_admin&token=${encodeURIComponent(token)}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-          username: username,
-          password: password,
-          name: name,
-          role: role
-        }).toString()
-      })
-      .then(response => response.json())
-      .then(result => {
-        if (result.success) {
-          alert('Perubahan berhasil disimpan');
-          closeModal();
-          loadUsers(token);
-        } else {
-          throw new Error(result.message || 'Gagal menyimpan perubahan');
-        }
-      })
-      .catch(error => {
-        alert(`Gagal menyimpan perubahan: ${error.message}`);
-      });
-    }
-    
-    // Fungsi untuk menghapus user
-    function deleteUser(username, token) {
-      if (!confirm(`Apakah Anda yakin ingin menghapus user ${username}?`)) {
-        return;
-      }
-      
-      fetch(`${BACKEND_URL}?action=delete_user&token=${encodeURIComponent(token)}&username=${encodeURIComponent(username)}`)
-        .then(response => response.json())
-        .then(result => {
-          if (result.success) {
-            alert('User berhasil dihapus');
-            loadUsers(token);
-          } else {
-            throw new Error(result.message || 'Gagal menghapus user');
-          }
-        })
-        .catch(error => {
-          alert(`Gagal menghapus user: ${error.message}`);
-        });
-    }
-    
-    // Fungsi untuk menampilkan tab admin
-    function showAdminTab(tabName, button) {
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      button.classList.add('active');
-      
-      document.getElementById('admin-registrations-tab').classList.add('hidden');
-      document.getElementById('admin-logs-tab').classList.add('hidden');
-      if (document.getElementById('admin-users-tab')) {
-        document.getElementById('admin-users-tab').classList.add('hidden');
-      }
-      
-      document.getElementById(`admin-${tabName}-tab`).classList.remove('hidden');
-    }
-    
-    // Fungsi untuk mencari pendaftar
-    function searchRegistrations() {
-      const search = document.getElementById('reg-search').value;
-      const token = document.querySelector('#admin-content [onclick*="exportToExcel"]')
-        .getAttribute('onclick')
-        .match(/'([^']+)'/)[1];
-      
-      loadRegistrations(token, 1, search);
-    }
-    
-    // Fungsi untuk mencari log
-    function searchLogs() {
-      const search = document.getElementById('log-search').value;
-      const token = document.querySelector('#admin-content [onclick*="exportToExcel"]')
-        .getAttribute('onclick')
-        .match(/'([^']+)'/)[1];
-      
-      loadLogs(token, 1, search);
-    }
-    
-    // Fungsi untuk mengupdate status pendaftaran
-    function updateRegistrationStatus(nomor, status, token) {
-      fetch(`${BACKEND_URL}?action=update_status&token=${encodeURIComponent(token)}&nomor=${encodeURIComponent(nomor)}&status=${encodeURIComponent(status)}`)
-        .then(response => response.json())
-        .then(result => {
-          if (result.success) {
-            // Tampilkan notifikasi sukses
-            const alertDiv = document.createElement('div');
-            alertDiv.className = 'alert alert-success';
-            alertDiv.innerHTML = `<strong><i class="fas fa-check-circle"></i> Status berhasil diperbarui!</strong>`;
-            document.querySelector('#admin-registrations-tab').prepend(alertDiv);
-            
-            // Hilangkan notifikasi setelah 3 detik
-            setTimeout(() => {
-              alertDiv.remove();
-            }, 3000);
-          } else {
-            throw new Error(result.message || 'Gagal memperbarui status');
-          }
-        })
-        .catch(error => {
-          alert(`Gagal memperbarui status: ${error.message}`);
-          // Reload data untuk mengembalikan tampilan ke state sebelumnya
-          loadRegistrations(token);
-        });
-    }
-    
-    // Fungsi untuk export data ke Excel
-    function exportToExcel(token) {
-      fetch(`${BACKEND_URL}?action=export_excel&token=${encodeURIComponent(token)}`)
-        .then(response => response.json())
-        .then(result => {
-          if (result.success) {
-            // Buka file Excel di tab baru
-            window.open(result.fileUrl, '_blank');
-          } else {
-            throw new Error(result.message || 'Gagal export data');
-          }
-        })
-        .catch(error => {
-          alert(`Gagal export data: ${error.message}`);
-        });
-    }
-    
-    // Fungsi untuk export log
-    function exportLogs(token) {
-      fetch(`${BACKEND_URL}?action=export_logs&token=${encodeURIComponent(token)}`)
-        .then(response => response.json())
-        .then(result => {
-          if (result.success) {
-            // Buka file log di tab baru
-            window.open(result.fileUrl, '_blank');
-          } else {
-            throw new Error(result.message || 'Gagal export log');
-          }
-        })
-        .catch(error => {
-          alert(`Gagal export log: ${error.message}`);
-        });
-    }
-    
-    // Fungsi untuk logout admin
-    function adminLogout() {
-      document.getElementById('admin-content').classList.add('hidden');
-      document.getElementById('login-form').classList.remove('hidden');
-      document.getElementById('admin-username').value = '';
-      document.getElementById('admin-password').value = '';
-    }
-    
-    // Fungsi pembantu untuk mendapatkan class status
-    function getStatusClass(status) {
-      switch (status) {
-        case 'Diverifikasi': return 'status-verified';
-        case 'Ditolak': return 'status-rejected';
-        default: return 'status-pending';
+    // Fungsi Update Status
+    function updateStatus(nomor, status) {
+      const index = dummyData.registrations.findIndex(reg => reg.nomor === nomor);
+      if (index !== -1) {
+        dummyData.registrations[index].status_verifikasi = status;
+        
+        // Tampilkan notifikasi
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-success';
+        alertDiv.innerHTML = `<strong><i class="fas fa-check-circle"></i> Status diperbarui!</strong>`;
+        document.getElementById('admin-content').prepend(alertDiv);
+        
+        // Hilangkan notifikasi setelah 3 detik
+        setTimeout(() => {
+          alertDiv.remove();
+        }, 3000);
       }
     }
     
-    // Fungsi pembantu untuk format tanggal dan waktu
-    function formatDateTime(dateString) {
-      if (!dateString) return '-';
-      const date = new Date(dateString);
-      return isNaN(date.getTime()) ? dateString : 
-        date.toLocaleString('id-ID', {
-          day: '2-digit',
-          month: '2-digit',
-          year: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit'
-        });
-    }
-
-    function getClientIp() {
-      try {
-        return ScriptApp.getOAuthToken().split('/')[0];
-      } catch {
-        return 'Unknown';
-      }
+    // Fungsi Export ke Excel (simulasi)
+    function exportToExcel() {
+      alert('Data berhasil diexport ke format Excel (simulasi)');
+      console.log('Exporting data:', dummyData.registrations);
     }
   </script>
 </body>

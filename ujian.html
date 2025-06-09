@@ -1156,7 +1156,7 @@ document.addEventListener('DOMContentLoaded', function () {
           state.participants = data.data.participants || [];
           state.questions = data.data.questions || [];
           state.allResults = data.data.results || [];
-          console.log('Data dari Google Sheet:', data.data);
+          // hapus dulu console.log('Data dari Google Sheet:', data.data);
 
           // Set header info based on settings
           if (state.settings['Mata Pelajaran'] && state.settings['Guru Mapel']) {

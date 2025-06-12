@@ -1,0 +1,2292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Ujian Online</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4895ef;
+            --danger-color: #f72585;
+            --success-color: #4cc9f0;
+            --warning-color: #f8961e;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
+            color: var(--dark-color);
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            transition: all 0.3s;
+            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .sidebar-header {
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+        
+        .sidebar-menu {
+            padding: 0;
+            list-style: none;
+        }
+        
+        .sidebar-menu li {
+            padding: 10px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+        }
+        
+        .sidebar-menu li:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .sidebar-menu li a {
+            color: white;
+            text-decoration: none;
+            display: block;
+        }
+        
+        .sidebar-menu li.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-left: 4px solid white;
+        }
+        
+        /* Main Content Styles */
+        .main-content {
+            padding: 20px;
+            width: 100%;
+        }
+        
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-bottom: 20px;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 10px 10px 0 0 !important;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+        
+        .btn-danger {
+            background-color: var(--danger-color);
+            border-color: var(--danger-color);
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+            border-color: var(--success-color);
+        }
+        
+        .badge-primary {
+            background-color: var(--primary-color);
+        }
+        
+        .badge-success {
+            background-color: var(--success-color);
+        }
+        
+        .badge-warning {
+            background-color: var(--warning-color);
+        }
+        
+        /* Dashboard Stats */
+        .stat-card {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .stat-card i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+        
+        .stat-card h3 {
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .stat-card p {
+            color: #6c757d;
+            margin-bottom: 0;
+        }
+        
+        /* Exam Card */
+        .exam-card {
+            cursor: pointer;
+        }
+        
+        .exam-card .card-body {
+            padding: 20px;
+        }
+        
+        .exam-card .exam-title {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .exam-card .exam-meta {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        
+        /* Loading Spinner */
+        .loading-spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary-color);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .sidebar {
+                min-height: auto;
+                width: 100%;
+            }
+            
+            .main-content {
+                padding: 15px;
+            }
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 10px;
+        }
+        
+        /* Utility Classes */
+        .hidden { display: none; }
+        .cursor-pointer { cursor: pointer; }
+        .rounded-lg { border-radius: 15px; }
+        .shadow-sm { box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    </style>
+</head>
+<body>
+    <div class="wrapper d-flex">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header text-center">
+                <h3 class="mb-0">Sistem Ujian</h3>
+                <p class="text-muted mb-0">Online CBT</p>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="active" data-page="dashboard">
+                    <a href="#"><i class="fas fa-home me-2"></i> Dashboard</a>
+                </li>
+                <li data-page="exams">
+                    <a href="#"><i class="fas fa-book-open me-2"></i> Ujian</a>
+                </li>
+                <li data-page="results">
+                    <a href="#"><i class="fas fa-chart-bar me-2"></i> Hasil</a>
+                </li>
+                <li class="hidden" id="questions-nav-item" data-page="questions">
+                    <a href="#"><i class="fas fa-question-circle me-2"></i> Soal</a>
+                </li>
+                <li class="hidden" id="users-nav-item" data-page="users">
+                    <a href="#"><i class="fas fa-users me-2"></i> Pengguna</a>
+                </li>
+                <li class="hidden" id="classes-nav-item" data-page="classes">
+                    <a href="#"><i class="fas fa-school me-2"></i> Kelas</a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Navigation -->
+            <nav class="navbar navbar-expand-lg navbar-light bg-white mb-4 rounded shadow-sm">
+                <div class="container-fluid">
+                    <button class="btn btn-sm d-lg-none" id="sidebarToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    
+                    <div class="d-flex align-items-center ms-auto">
+                        <div id="user-info" class="hidden">
+                            <div class="dropdown">
+                                <button class="btn dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span id="username-display"></span>
+                                    <i class="fas fa-user-circle ms-2"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                    <li><a class="dropdown-item" href="#" id="profile-link"><i class="fas fa-user me-2"></i> Profil</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item text-danger" href="#" id="logout-btn"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div id="auth-buttons">
+                            <button class="btn btn-outline-primary me-2" id="login-btn">Login</button>
+                            <button class="btn btn-primary" id="register-btn">Register</button>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Loading Spinner -->
+            <div id="loading-spinner" class="hidden text-center py-5">
+                <div class="loading-spinner"></div>
+                <p class="text-center text-muted mt-3">Memuat...</p>
+            </div>
+
+            <!-- Dashboard Page -->
+            <div id="dashboard-page">
+                <div class="row mb-4">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Selamat Datang, <span id="welcome-name"></span></h5>
+                            </div>
+                            <div class="card-body">
+                                <p id="welcome-message">Silakan login untuk mengakses sistem ujian online.</p>
+                                
+                                <div class="alert alert-info hidden text-center mt-4 rounded" id="login-alert">
+                                    <i class="fas fa-info-circle me-2"></i> Silakan login untuk mengakses fitur lengkap.
+                                </div>
+                                
+                                <div id="dashboard-stats" class="row hidden">
+                                    <div class="col-md-4">
+                                        <div class="card stat-card">
+                                            <i class="fas fa-book-open"></i>
+                                            <h3 id="active-exams-count">0</h3>
+                                            <p>Ujian Aktif</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card stat-card">
+                                            <i class="fas fa-check-circle"></i>
+                                            <h3 id="completed-exams-count">0</h3>
+                                            <p>Ujian Selesai</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card stat-card">
+                                            <i class="fas fa-chart-line"></i>
+                                            <h3 id="average-score">0</h3>
+                                            <p>Rata-rata Nilai</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Exams (For Students) -->
+                <div class="row hidden" id="recent-exams-section">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Ujian Terbaru</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row" id="recent-exams-list">
+                                    <!-- Recent exams will be loaded here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Results (For Teachers) -->
+                <div class="row hidden" id="recent-results-section">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Hasil Terbaru</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Nama Siswa</th>
+                                                <th>Ujian</th>
+                                                <th>Nilai</th>
+                                                <th>Tanggal</th>
+                                                <th>Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="recent-results-list">
+                                            <!-- Recent results will be loaded here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Auth Pages -->
+            <div id="login-page" class="hidden">
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0 text-center">Login</h5>
+                            </div>
+                            <div class="card-body">
+                                <form id="login-form">
+                                    <div class="mb-3">
+                                        <label for="login-username" class="form-label">Username</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                            <input type="text" class="form-control" id="login-username" required>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="login-password" class="form-label">Password</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                            <input type="password" class="form-control" id="login-password" required>
+                                        </div>
+                                    </div>
+                                    <div class="d-grid">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-sign-in-alt me-2"></i> Login
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="register-page" class="hidden">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0 text-center">Registrasi Pengguna Baru</h5>
+                            </div>
+                            <div class="card-body">
+                                <form id="register-form">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="register-username" class="form-label">Username</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                                <input type="text" class="form-control" id="register-username" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="register-password" class="form-label">Password</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                                <input type="password" class="form-control" id="register-password" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="register-name" class="form-label">Nama Lengkap</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                                                <input type="text" class="form-control" id="register-name" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="register-role" class="form-label">Role</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-user-tag"></i></span>
+                                                <select class="form-select" id="register-role" required>
+                                                    <option value="siswa">Siswa</option>
+                                                    <option value="guru">Guru</option>
+                                                    <option value="admin">Admin</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row hidden" id="kelas-field">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="register-kelas" class="form-label">Kelas</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-school"></i></span>
+                                                <input type="text" class="form-control" id="register-kelas">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="d-grid">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-user-plus me-2"></i> Daftar
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Exams Page -->
+            <div id="exams-page" class="hidden">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0">Daftar Ujian</h5>
+                                <button class="btn btn-sm btn-primary hidden" id="add-exam-btn">
+                                    <i class="fas fa-plus me-1"></i> Tambah Ujian
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="row" id="exams-list">
+                                    <!-- Exams will be loaded here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Exam Detail Page -->
+            <div id="exam-detail-page" class="hidden">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0" id="exam-title"></h5>
+                            </div>
+                            <div class="card-body">
+                                <p id="exam-description"></p>
+                                <p class="text-muted">
+                                    <i class="fas fa-clock me-2"></i> <strong>Durasi:</strong> <span id="exam-duration"></span> menit
+                                </p>
+                                
+                                <div id="exam-questions-container" class="mt-4">
+                                    <h5>Daftar Soal</h5>
+                                    <div id="exam-questions-list">
+                                        <!-- Questions will be loaded here -->
+                                    </div>
+                                    <button id="start-exam-btn" class="btn btn-primary mt-3 hidden">
+                                        <i class="fas fa-play me-2"></i> Mulai Ujian
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Take Exam Page -->
+            <div id="take-exam-page" class="hidden">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0" id="take-exam-title"></h5>
+                                <div class="d-flex align-items-center">
+                                    <div id="exam-timer" class="fw-bold fs-5 text-primary me-3"></div>
+                                    <button id="submit-exam-btn" class="btn btn-success">
+                                        <i class="fas fa-check-circle me-2"></i> Selesai Ujian
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <form id="exam-answers-form">
+                                    <div id="exam-questions-answers">
+                                        <!-- Exam questions with options will be loaded here -->
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Page -->
+            <div id="results-page" class="hidden">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Hasil Ujian</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Ujian</th>
+                                                <th>Skor</th>
+                                                <th>Total Soal</th>
+                                                <th>Tanggal</th>
+                                                <th>Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="results-list">
+                                            <!-- Results will be loaded here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Result Detail Page -->
+            <div id="result-detail-page" class="hidden">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Detail Hasil Ujian</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <div class="card bg-light">
+                                            <div class="card-body">
+                                                <h5 class="card-title" id="result-exam-title"></h5>
+                                                <p class="card-text">
+                                                    <strong>Skor:</strong> <span id="result-score"></span>/<span id="result-total"></span><br>
+                                                    <strong>Tanggal:</strong> <span id="result-date"></span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <h5>Detail Jawaban</h5>
+                                <div id="result-answers-detail">
+                                    <!-- Answer details will be loaded here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Questions Management Page (Admin/Guru) -->
+            <div id="questions-page" class="hidden">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0">Manajemen Soal</h5>
+                                <button id="add-question-btn" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-plus me-1"></i> Tambah Soal
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Pertanyaan</th>
+                                                <th>Ujian</th>
+                                                <th>Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="questions-list">
+                                            <!-- Questions will be loaded here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Management Page (Admin) -->
+            <div id="users-page" class="hidden">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0">Manajemen Pengguna</h5>
+                                <button class="btn btn-primary btn-sm" id="add-user-btn">
+                                    <i class="fas fa-plus me-1"></i> Tambah Pengguna
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Username</th>
+                                                <th>Nama</th>
+                                                <th>Role</th>
+                                                <th>Kelas</th>
+                                                <th>Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="users-list">
+                                            <!-- Users will be loaded here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Classes Management Page (Admin/Guru) -->
+            <div id="classes-page" class="hidden">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0">Manajemen Kelas</h5>
+                                <button class="btn btn-primary btn-sm" id="add-class-btn">
+                                    <i class="fas fa-plus me-1"></i> Tambah Kelas
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Nama Kelas</th>
+                                                <th>Jumlah Siswa</th>
+                                                <th>Wali Kelas</th>
+                                                <th>Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="classes-list">
+                                            <!-- Classes will be loaded here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Page -->
+            <div id="profile-page" class="hidden">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0 text-center">Profil Pengguna</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-4">
+                                    <div class="col-md-4 text-center">
+                                        <div class="mb-3">
+                                            <i class="fas fa-user-circle fa-5x text-primary"></i>
+                                        </div>
+                                        <h4 id="profile-name"></h4>
+                                        <span class="badge bg-primary" id="profile-role"></span>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="mb-3">
+                                            <label class="form-label">Username</label>
+                                            <input type="text" class="form-control" id="profile-username" readonly>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Email</label>
+                                            <input type="email" class="form-control" id="profile-email">
+                                        </div>
+                                        <div class="mb-3 hidden" id="profile-kelas-field">
+                                            <label class="form-label">Kelas</label>
+                                            <input type="text" class="form-control" id="profile-kelas">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-end">
+                                    <button class="btn btn-primary" id="update-profile-btn">
+                                        <i class="fas fa-save me-2"></i> Simpan Perubahan
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add/Edit Question Modal -->
+            <div class="modal fade" id="question-modal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="question-modal-title">Tambah Soal</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="question-form">
+                                <input type="hidden" id="question-id">
+                                <div class="mb-3">
+                                    <label for="question-text" class="form-label">Pertanyaan</label>
+                                    <textarea class="form-control" id="question-text" rows="3" required></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Pilihan Jawaban</label>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-2">
+                                            <div class="input-group">
+                                                <span class="input-group-text">A</span>
+                                                <input type="text" class="form-control option-input" data-option="0" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-2">
+                                            <div class="input-group">
+                                                <span class="input-group-text">B</span>
+                                                <input type="text" class="form-control option-input" data-option="1" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-2">
+                                            <div class="input-group">
+                                                <span class="input-group-text">C</span>
+                                                <input type="text" class="form-control option-input" data-option="2" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-2">
+                                            <div class="input-group">
+                                                <span class="input-group-text">D</span>
+                                                <input type="text" class="form-control option-input" data-option="3" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-2">
+                                            <div class="input-group">
+                                                <span class="input-group-text">E</span>
+                                                <input type="text" class="form-control option-input" data-option="4" required> <!-- Added for 5th option -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="correct-answer" class="form-label">Jawaban Benar</label>
+                                        <select class="form-select" id="correct-answer" required>
+                                            <option value="0">A</option>
+                                            <option value="1">B</option>
+                                            <option value="2">C</option>
+                                            <option value="3">D</option>
+                                            <option value="4">E</option> <!-- Added for 5th option -->
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="question-exam" class="form-label">Ujian</label>
+                                        <select class="form-select" id="question-exam">
+                                            <option value="">Tidak ada</option>
+                                            <!-- Exam options will be loaded here -->
+                                        </select>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class="fas fa-times me-2"></i> Batal
+                            </button>
+                            <button type="button" class="btn btn-primary" id="save-question-btn">
+                                <i class="fas fa-save me-2"></i> Simpan
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add/Edit Exam Modal -->
+            <div class="modal fade" id="exam-modal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exam-modal-title">Tambah Ujian</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="exam-form">
+                                <input type="hidden" id="exam-id">
+                                <div class="mb-3">
+                                    <label for="exam-title-input" class="form-label">Judul</label>
+                                    <input type="text" class="form-control" id="exam-title-input" required>
+                                    <div class="invalid-feedback">
+                                        Judul ujian tidak boleh kosong.
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="exam-description" class="form-label">Deskripsi</label>
+                                    <textarea class="form-control" id="exam-description" rows="3"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="exam-duration" class="form-label">Durasi (menit)</label>
+                                    <input type="number" class="form-control" id="exam-duration" min="1" required>
+                                    <div class="invalid-feedback">
+                                        Durasi harus angka positif (minimal 1).
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class="fas fa-times me-2"></i> Batal
+                            </button>
+                            <button type="button" class="btn btn-primary" id="save-exam-btn">
+                                <i class="fas fa-save me-2"></i> Simpan
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add/Edit User Modal -->
+            <div class="modal fade" id="user-modal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="user-modal-title">Tambah Pengguna</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="user-form">
+                                <input type="hidden" id="user-id">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="user-username" class="form-label">Username</label>
+                                        <input type="text" class="form-control" id="user-username" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="user-password" class="form-label">Password</label>
+                                        <input type="password" class="form-control" id="user-password">
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="user-name" class="form-label">Nama Lengkap</label>
+                                    <input type="text" class="form-control" id="user-name" required>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="user-role" class="form-label">Role</label>
+                                        <select class="form-select" id="user-role" required>
+                                            <option value="siswa">Siswa</option>
+                                            <option value="guru">Guru</option>
+                                            <option value="admin">Admin</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3 hidden" id="user-kelas-field">
+                                        <label for="user-kelas" class="form-label">Kelas</label>
+                                        <input type="text" class="form-control" id="user-kelas">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class="fas fa-times me-2"></i> Batal
+                            </button>
+                            <button type="button" class="btn btn-primary" id="save-user-btn">
+                                <i class="fas fa-save me-2"></i> Simpan
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add/Edit Class Modal -->
+            <div class="modal fade" id="class-modal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="class-modal-title">Tambah Kelas</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="class-form">
+                                <input type="hidden" id="class-id">
+                                <div class="mb-3">
+                                    <label for="class-name" class="form-label">Nama Kelas</label>
+                                    <input type="text" class="form-control" id="class-name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="class-teacher" class="form-label">Wali Kelas</label>
+                                    <select class="form-select" id="class-teacher">
+                                        <!-- Teachers will be loaded here -->
+                                    </select>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class="fas fa-times me-2"></i> Batal
+                            </button>
+                            <button type="button" class="btn btn-primary" id="save-class-btn">
+                                <i class="fas fa-save me-2"></i> Simpan
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Link ke jQuery, Bootstrap JS, dan Chart.js -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        // Variabel global
+        let currentUser = null;
+        let currentExam = null;
+        let examTimer = null;
+        let remainingTime = 0;
+        
+        // Ganti dengan URL Web App Google Apps Script Anda
+        const API_URL = "https://script.google.com/macros/s/AKfycbzmTTSTPaebFs-aaw5rJcFxzDuh2w6a_s0DX_OMcuXMV6PKOCW7LUQjIZ-Xv4RiwlS1/exec"; // PASTE URL APPS SCRIPT ANDA DI SINI
+        
+        $(document).ready(function() {
+            // Inisialisasi UI
+            checkAuthState();
+            
+            // Event listener untuk sidebar
+            $('.sidebar-menu li').click(function() {
+                $('.sidebar-menu li').removeClass('active');
+                $(this).addClass('active');
+                const page = $(this).data('page');
+                showPage(page + '-page');
+                
+                // Load data sesuai halaman
+                switch(page) {
+                    case 'dashboard': loadDashboard(); break;
+                    case 'exams': loadExams(); break;
+                    case 'results': loadResults(); break;
+                    case 'questions': loadQuestions(); break;
+                    case 'users': loadUsers(); break;
+                    case 'classes': loadClasses(); break;
+                }
+            });
+            
+            // Event listener untuk tombol sidebar toggle
+            $('#sidebarToggle').click(function() {
+                $('.sidebar').toggleClass('active');
+            });
+            
+            // Event listener untuk autentikasi
+            $('#login-btn').click(function() { showPage('login-page'); });
+            $('#register-btn').click(function() { showPage('register-page'); });
+            $('#logout-btn').click(logout);
+            $('#profile-link').click(function() { 
+                loadProfile(); 
+                showPage('profile-page'); 
+            });
+            
+            // Event listener untuk form
+            $('#login-form').submit(function(e) {
+                e.preventDefault();
+                const username = $('#login-username').val();
+                const password = $('#login-password').val();
+                login(username, password);
+            });
+            
+            $('#register-form').submit(function(e) {
+                e.preventDefault();
+                const username = $('#register-username').val();
+                const password = $('#register-password').val();
+                const nama = $('#register-name').val();
+                const role = $('#register-role').val();
+                const kelas = role === 'siswa' ? $('#register-kelas').val() : null;
+                register(username, password, nama, role, kelas);
+            });
+            
+            // Toggle kelas field berdasarkan role
+            $('#register-role').change(function() {
+                if ($(this).val() === 'siswa') {
+                    $('#kelas-field').removeClass('hidden');
+                } else {
+                    $('#kelas-field').addClass('hidden');
+                }
+            });
+            
+            // Event listener untuk manajemen soal
+            $('#add-question-btn').click(showAddQuestionModal);
+            $('#save-question-btn').click(saveQuestion);
+            
+            // Event listener untuk manajemen ujian
+            $('#add-exam-btn').click(showAddExamModal);
+            $('#save-exam-btn').click(saveExam);
+            
+            // Event listener untuk manajemen pengguna
+            $('#add-user-btn').click(showAddUserModal);
+            $('#save-user-btn').click(saveUser);
+            $('#user-role').change(function() {
+                if ($(this).val() === 'siswa') {
+                    $('#user-kelas-field').removeClass('hidden');
+                } else {
+                    $('#user-kelas-field').addClass('hidden');
+                }
+            });
+            
+            // Event listener untuk manajemen kelas
+            $('#add-class-btn').click(showAddClassModal);
+            $('#save-class-btn').click(saveClass);
+            
+            // Event listener untuk profil
+            $('#update-profile-btn').click(updateProfile);
+
+            // Event listener untuk tombol Mulai Ujian (dalam halaman detail ujian)
+            $(document).on('click', '#start-exam-btn', function() {
+                if (currentExam) {
+                    startExam(currentExam);
+                } else {
+                    showError('Ujian tidak ditemukan.');
+                }
+            });
+
+            // Event listener untuk tombol Selesai Ujian (dalam halaman take exam)
+            $(document).on('click', '#submit-exam-btn', function() {
+                if (confirm('Apakah Anda yakin ingin mengakhiri ujian dan mengirim jawaban?')) {
+                    submitExam();
+                }
+            });
+        });
+        
+        // Fungsi untuk menampilkan halaman tertentu
+        function showPage(pageId) {
+            $('.hidden').addClass('hidden');
+            $(`#${pageId}`).removeClass('hidden');
+            
+            // Scroll ke atas
+            window.scrollTo(0, 0);
+        }
+        
+        // Fungsi untuk memeriksa status autentikasi
+        function checkAuthState() {
+            const userData = localStorage.getItem('userData');
+            if (userData) {
+                currentUser = JSON.parse(userData);
+                updateUIForLoggedInUser();
+                loadDashboard();
+            } else {
+                updateUIForLoggedOutUser();
+                showPage('dashboard-page');
+            }
+        }
+        
+        // Fungsi untuk memperbarui UI setelah login
+        function updateUIForLoggedInUser() {
+            $('#auth-buttons').addClass('hidden');
+            $('#user-info').removeClass('hidden');
+            $('#username-display').text(currentUser.nama);
+            $('#welcome-name').text(currentUser.nama);
+            
+            // Tampilkan menu berdasarkan role
+            const role = currentUser.role;
+            
+            if (role === 'admin') {
+                $('#questions-nav-item, #users-nav-item, #classes-nav-item').removeClass('hidden');
+                $('#add-exam-btn').removeClass('hidden');
+            } else if (role === 'guru') {
+                $('#questions-nav-item, #classes-nav-item').removeClass('hidden');
+            }
+            
+            // Set welcome message based on role
+            let welcomeMessage = '';
+            switch(role) {
+                case 'admin':
+                    welcomeMessage = 'Anda login sebagai Administrator. Anda memiliki akses penuh ke sistem.';
+                    break;
+                case 'guru':
+                    welcomeMessage = 'Anda login sebagai Guru. Anda dapat membuat soal ujian dan melihat hasil siswa.';
+                    break;
+                case 'siswa':
+                    welcomeMessage = 'Anda login sebagai Siswa. Silakan pilih ujian yang tersedia untuk dikerjakan.';
+                    break;
+            }
+            $('#welcome-message').text(welcomeMessage);
+            
+            // Tampilkan dashboard stats
+            $('#dashboard-stats').removeClass('hidden');
+            
+            // Tampilkan section berdasarkan role
+            if (role === 'siswa') {
+                $('#recent-exams-section').removeClass('hidden');
+            } else if (role === 'guru' || role === 'admin') {
+                $('#recent-results-section').removeClass('hidden');
+            }
+        }
+        
+        // Fungsi untuk memperbarui UI setelah logout
+        function updateUIForLoggedOutUser() {
+            $('#auth-buttons').removeClass('hidden');
+            $('#user-info').addClass('hidden');
+            $('.hidden').addClass('hidden');
+            
+            // Sembunyikan semua menu kecuali dashboard
+            $('#questions-nav-item, #users-nav-item, #classes-nav-item').addClass('hidden');
+            
+            // Tampilkan alert login
+            $('#login-alert').removeClass('hidden');
+            
+            // Sembunyikan dashboard stats
+            $('#dashboard-stats').addClass('hidden');
+            $('#recent-exams-section, #recent-results-section').addClass('hidden');
+        }
+        
+        // Fungsi untuk memanggil API
+        function callApi(endpoint, method, data, callback) {
+            showLoading(true);
+            
+            let url = new URL(API_URL);
+            url.searchParams.append('action', endpoint);
+            
+            const options = {
+                method: method,
+                headers: {}
+            };
+            
+            if (method === 'POST') {
+                options.body = JSON.stringify(data);
+                options.headers['Content-Type'] = 'application/json';
+            } else if (method === 'GET' && data) {
+                for (const key in data) {
+                    if (data.hasOwnProperty(key)) {
+                        url.searchParams.append(key, data[key]);
+                    }
+                }
+            }
+            
+            fetch(url.toString(), options)
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => {
+                            throw new Error(`HTTP error! Status: ${response.status}. Respons: ${text}`);
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    showLoading(false);
+                    if (data.success) {
+                        callback(data);
+                    } else {
+                        showError(data.message || `Terjadi kesalahan saat memproses ${endpoint}.`);
+                        console.error(`API Error (${endpoint}):`, data.message || 'Pesan tidak tersedia.', data);
+                    }
+                })
+                .catch(error => {
+                    showLoading(false);
+                    showError('Gagal terhubung ke server. Silakan coba lagi.');
+                    console.error('Error fetching API:', error);
+                });
+        }
+        
+        // Fungsi untuk menampilkan loading spinner
+        function showLoading(show) {
+            if (show) {
+                $('#loading-spinner').removeClass('hidden');
+            } else {
+                $('#loading-spinner').addClass('hidden');
+            }
+        }
+        
+        // Fungsi untuk menampilkan error (gunakan modal di produksi)
+        function showError(message) {
+            // Di lingkungan nyata, ini bisa diganti dengan modal yang lebih baik
+            alert(message);
+        }
+        
+        // Fungsi autentikasi
+        function login(username, password) {
+            callApi('auth_login', 'POST', { username, password }, function(response) {
+                currentUser = response.data;
+                localStorage.setItem('userData', JSON.stringify(currentUser));
+                updateUIForLoggedInUser();
+                showPage('dashboard-page');
+            });
+        }
+        
+        function register(username, password, nama, role, kelas) {
+            callApi('auth_register', 'POST', { username, password, nama, role, kelas }, function(response) {
+                alert('Registrasi berhasil! Silakan login.');
+                showPage('login-page');
+            });
+        }
+        
+        function logout() {
+            if (!currentUser) return;
+            
+            callApi('auth_logout', 'POST', { 
+                userId: currentUser.userId, 
+                token: currentUser.token 
+            }, function() {
+                currentUser = null;
+                localStorage.removeItem('userData');
+                updateUIForLoggedOutUser();
+                showPage('dashboard-page');
+            });
+        }
+        
+        // Fungsi untuk dashboard
+        function loadDashboard() {
+            if (!currentUser) return;
+            
+            // Load stats
+            callApi('get_dashboard_stats', 'GET', { 
+                userId: currentUser.userId, 
+                token: currentUser.token 
+            }, function(response) {
+                const stats = response.data;
+                $('#active-exams-count').text(stats.activeExams || 0);
+                $('#completed-exams-count').text(stats.completedExams || 0);
+                $('#average-score').text(stats.averageScore || 0);
+            });
+            
+            // Load recent exams (for students)
+            if (currentUser.role === 'siswa') {
+                callApi('get_recent_exams', 'GET', { 
+                    userId: currentUser.userId, 
+                    token: currentUser.token 
+                }, function(response) {
+                    const exams = response.data;
+                    const $examsList = $('#recent-exams-list');
+                    $examsList.empty();
+                    
+                    if (exams.length === 0) {
+                        $examsList.append('<div class="col-12 text-center text-muted">Tidak ada ujian terbaru.</div>');
+                        return;
+                    }
+                    
+                    exams.forEach(exam => {
+                        $examsList.append(`
+                            <div class="col-md-4 mb-4">
+                                <div class="card exam-card" data-exam-id="${exam.id}">
+                                    <div class="card-body">
+                                        <h5 class="exam-title">${exam.title}</h5>
+                                        <p class="exam-meta">
+                                            <i class="fas fa-clock me-1"></i> ${exam.duration} menit
+                                        </p>
+                                        <button class="btn btn-sm btn-primary start-exam-btn" data-exam-id="${exam.id}">
+                                            Mulai Ujian
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `);
+                    });
+                    
+                    // Attach click handler using event delegation
+                    $examsList.find('.start-exam-btn').off('click').on('click', function() {
+                        const examId = $(this).data('exam-id');
+                        loadExamDetail(examId);
+                    });
+                });
+            }
+            
+            // Load recent results (for teachers/admins)
+            if (currentUser.role === 'guru' || currentUser.role === 'admin') {
+                callApi('get_recent_results', 'GET', { 
+                    userId: currentUser.userId, 
+                    token: currentUser.token 
+                }, function(response) {
+                    const results = response.data;
+                    const $resultsList = $('#recent-results-list');
+                    $resultsList.empty();
+                    
+                    if (results.length === 0) {
+                        $resultsList.append('<tr><td colspan="5" class="text-center text-muted">Belum ada hasil ujian.</td></tr>');
+                        return;
+                    }
+                    
+                    results.forEach(result => {
+                        $resultsList.append(`
+                            <tr>
+                                <td>${result.studentName}</td>
+                                <td>${result.examTitle}</td>
+                                <td>${result.score}/${result.totalQuestions}</td>
+                                <td>${new Date(result.timestamp).toLocaleString()}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-info view-result-btn" data-exam-id="${result.examId}" data-student-id="${result.studentId}">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        `);
+                    });
+                    
+                    // Attach click handler using event delegation
+                    $resultsList.find('.view-result-btn').off('click').on('click', function() {
+                        const examId = $(this).data('exam-id');
+                        const studentId = $(this).data('student-id');
+                        loadResultDetail(examId, studentId);
+                    });
+                });
+            }
+        }
+        
+        // Fungsi untuk manajemen soal
+        function loadQuestions() {
+            if (!currentUser) return;
+            
+            callApi('get_questions', 'GET', { 
+                userId: currentUser.userId, 
+                token: currentUser.token 
+            }, function(response) {
+                const questions = response.data;
+                const $questionsList = $('#questions-list');
+                $questionsList.empty();
+                
+                if (questions.length === 0) {
+                    $questionsList.append('<tr><td colspan="4" class="text-center text-muted">Tidak ada soal.</td></tr>');
+                    return;
+                }
+                
+                questions.forEach(q => {
+                    $questionsList.append(`
+                        <tr>
+                            <td>${q.id.substring(0, 8)}...</td>
+                            <td>${q.question.substring(0, 70)}${q.question.length > 70 ? '...' : ''}</td>
+                            <td>${q.examId ? q.examId.substring(0, 8) + '...' : '-'}</td>
+                            <td>
+                                <button class="btn btn-sm btn-warning edit-question-btn me-2" data-id="${q.id}">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger delete-question-btn" data-id="${q.id}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `);
+                });
+                
+                $('.edit-question-btn').off('click').on('click', function() {
+                    const questionId = $(this).data('id');
+                    editQuestion(questionId);
+                });
+                
+                $('.delete-question-btn').off('click').on('click', function() {
+                    const questionId = $(this).data('id');
+                    if (confirm('Apakah Anda yakin ingin menghapus soal ini?')) {
+                        deleteQuestion(questionId);
+                    }
+                });
+            });
+        }
+        
+        function showAddQuestionModal() {
+            $('#question-modal-title').text('Tambah Soal');
+            $('#question-id').val('');
+            $('#question-text').val('');
+            $('.option-input').val(''); // Clear all option inputs
+            $('#correct-answer').val('0'); // Set default correct answer to A
+            $('#question-exam').val('');
+            
+            // Load exam options for the dropdown
+            callApi('get_exams', 'GET', { 
+                userId: currentUser.userId, 
+                token: currentUser.token 
+            }, function(response) {
+                const exams = response.data;
+                const $select = $('#question-exam');
+                $select.empty();
+                $select.append('<option value="">Tidak ada</option>');
+                
+                exams.forEach(exam => {
+                    $select.append(`<option value="${exam.id}">${exam.title}</option>`);
+                });
+                
+                $('#question-modal').modal('show');
+            });
+        }
+        
+        function editQuestion(questionId) {
+            callApi('get_question_by_id', 'GET', { 
+                id: questionId,
+                userId: currentUser.userId, 
+                token: currentUser.token 
+            }, function(response) {
+                const question = response.data;
+                
+                $('#question-modal-title').text('Edit Soal');
+                $('#question-id').val(question.id);
+                $('#question-text').val(question.question);
+                
+                // Populate options
+                $('.option-input').val(''); // Clear existing
+                question.options.forEach((opt, index) => {
+                    $(`.option-input[data-option="${index}"]`).val(opt);
+                });
+                
+                $('#correct-answer').val(question.correctIndex || '0');
+                $('#question-exam').val(question.examId || '');
+                
+                // Load exam options and set selected
+                callApi('get_exams', 'GET', { 
+                    userId: currentUser.userId, 
+                    token: currentUser.token 
+                }, function(response) {
+                    const exams = response.data;
+                    const $select = $('#question-exam');
+                    $select.empty();
+                    $select.append('<option value="">Tidak ada</option>');
+                    
+                    exams.forEach(exam => {
+                        $select.append(`<option value="${exam.id}">${exam.title}</option>`);
+                    });
+                    
+                    $select.val(question.examId || ''); // Select the assigned exam
+                    $('#question-modal').modal('show');
+                });
+            });
+        }
+        
+        function saveQuestion() {
+            const id = $('#question-id').val();
+            const question = $('#question-text').val();
+            // Get all 5 options
+            const options = [
+                $(`.option-input[data-option="0"]`).val(),
+                $(`.option-input[data-option="1"]`).val(),
+                $(`.option-input[data-option="2"]`).val(),
+                $(`.option-input[data-option="3"]`).val(),
+                $(`.option-input[data-option="4"]`).val() // Get 5th option
+            ];
+            const correctIndex = parseInt($('#correct-answer').val());
+            const examId = $('#question-exam').val() || null;
+            
+            // Basic validation for 5 options
+            if (options.some(opt => opt === '')) {
+                showError('Semua 5 pilihan jawaban harus diisi.');
+                return;
+            }
+
+            const payload = {
+                userId: currentUser.userId,
+                token: currentUser.token,
+                id: id || undefined,
+                question,
+                options,
+                correctIndex,
+                examId
+            };
+            
+            const endpoint = id ? 'update_question' : 'add_question';
+            
+            callApi(endpoint, 'POST', payload, function() {
+                $('#question-modal').modal('hide');
+                loadQuestions();
+            });
+        }
+        
+        function deleteQuestion(questionId) {
+            callApi('delete_question', 'POST', {
+                userId: currentUser.userId,
+                token: currentUser.token,
+                id: questionId
+            }, function() {
+                loadQuestions();
+            });
+        }
+        
+        // Fungsi untuk manajemen ujian
+        function loadExams() {
+            if (!currentUser) return;
+            
+            callApi('get_exams', 'GET', { 
+                userId: currentUser.userId, 
+                token: currentUser.token 
+            }, function(response) {
+                const exams = response.data;
+                const $examsList = $('#exams-list');
+                $examsList.empty();
+                
+                if (exams.length === 0) {
+                    $examsList.append('<div class="col-12 text-center text-muted">Tidak ada ujian.</div>');
+                    return;
+                }
+                
+                exams.forEach(exam => {
+                    $examsList.append(`
+                        <div class="col-md-4 mb-4">
+                            <div class="card exam-card" data-exam-id="${exam.id}">
+                                <div class="card-body">
+                                    <h5 class="exam-title">${exam.title}</h5>
+                                    <p class="exam-meta">
+                                        <i class="fas fa-clock me-1"></i> ${exam.duration} menit
+                                    </p>
+                                    <div class="d-flex justify-content-between">
+                                        <button class="btn btn-sm btn-primary view-exam-btn" data-exam-id="${exam.id}">
+                                            <i class="fas fa-eye me-1"></i> Lihat
+                                        </button>
+                                        ${currentUser.role === 'admin' || currentUser.role === 'guru' ? `
+                                        <button class="btn btn-sm btn-warning edit-exam-btn me-2" data-exam-id="${exam.id}">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger delete-exam-btn" data-exam-id="${exam.id}">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `);
+                });
+                
+                $examsList.find('.view-exam-btn').off('click').on('click', function() {
+                    const examId = $(this).data('exam-id');
+                    loadExamDetail(examId);
+                });
+                
+                $examsList.find('.edit-exam-btn').off('click').on('click', function() {
+                    const examId = $(this).data('exam-id');
+                    editExam(examId);
+                });
+                
+                $examsList.find('.delete-exam-btn').off('click').on('click', function() {
+                    const examId = $(this).data('exam-id');
+                    if (confirm('Apakah Anda yakin ingin menghapus ujian ini?')) {
+                        deleteExam(examId);
+                    }
+                });
+            });
+        }
+        
+        function showAddExamModal() {
+            $('#exam-modal-title').text('Tambah Ujian');
+            $('#exam-id').val('');
+            $('#exam-title-input').val('');
+            $('#exam-description').val('');
+            $('#exam-duration').val('');
+            $('#exam-modal').modal('show');
+        }
+        
+        function editExam(examId) {
+            callApi('get_exam_detail', 'GET', { 
+                examId,
+                userId: currentUser.userId, 
+                token: currentUser.token 
+            }, function(response) {
+                const exam = response.data;
+                
+                $('#exam-modal-title').text('Edit Ujian');
+                $('#exam-id').val(exam.id);
+                $('#exam-title-input').val(exam.title);
+                $('#exam-description').val(exam.description || '');
+                $('#exam-duration').val(exam.duration);
+                
+                $('#exam-modal').modal('show');
+            });
+        }
+        
+        function saveExam() {
+            const id = $('#exam-id').val();
+            const title = $('#exam-title-input').val().trim();
+            const description = $('#exam-description').val();
+            const duration = parseInt($('#exam-duration').val());
+            
+            let isValid = true;
+            
+            if (!title) {
+                $('#exam-title-input').addClass('is-invalid');
+                isValid = false;
+            } else {
+                $('#exam-title-input').removeClass('is-invalid');
+            }
+            
+            if (isNaN(duration) || duration <= 0) {
+                $('#exam-duration').addClass('is-invalid');
+                isValid = false;
+            } else {
+                $('#exam-duration').removeClass('is-invalid');
+            }
+            
+            if (!isValid) {
+                showError('Mohon isi semua field yang wajib dan pastikan durasi adalah angka positif.');
+                return;
+            }
+            
+            const payload = {
+                userId: currentUser.userId,
+                token: currentUser.token,
+                id: id || undefined,
+                title,
+                description,
+                duration
+            };
+            
+            const endpoint = id ? 'update_exam' : 'add_exam';
+            
+            callApi(endpoint, 'POST', payload, function() {
+                $('#exam-modal').modal('hide');
+                loadExams();
+            });
+        }
+        
+        function deleteExam(examId) {
+            callApi('delete_exam', 'POST', {
+                userId: currentUser.userId,
+                token: currentUser.token,
+                id: examId
+            }, function() {
+                loadExams();
+            });
+        }
+        
+        // Fungsi untuk detail ujian
+        function loadExamDetail(examId) {
+            callApi('get_exam_detail', 'GET', { 
+                examId,
+                userId: currentUser.userId, 
+                token: currentUser.token 
+            }, function(response) {
+                currentExam = response.data;
+                $('#exam-title').text(currentExam.title);
+                $('#exam-description').text(currentExam.description || 'Tidak ada deskripsi');
+                $('#exam-duration').text(currentExam.duration);
+                
+                // Load questions for display
+                callApi('get_exam_questions', 'GET', { 
+                    examId,
+                    userId: currentUser.userId, 
+                    token: currentUser.token 
+                }, function(response) {
+                    const questions = response.data;
+                    const $questionsList = $('#exam-questions-list');
+                    $questionsList.empty();
+                    
+                    if (questions.length === 0) {
+                        $questionsList.append('<p class="text-center text-muted">Tidak ada soal untuk ujian ini.</p>');
+                        $('#start-exam-btn').addClass('hidden');
+                    } else {
+                        questions.forEach((q, index) => {
+                            $questionsList.append(`
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <h5 class="card-title text-info">Soal ${index + 1}</h5>
+                                        <p class="card-text">${q.question}</p>
+                                        <ol type="A" class="list-unstyled">
+                                            ${q.options.map(opt => `<li class="mb-1 text-secondary">${opt}</li>`).join('')}
+                                        </ol>
+                                    </div>
+                                </div>
+                            `);
+                        });
+                        
+                        if (currentUser.role === 'siswa') {
+                            $('#start-exam-btn').removeClass('hidden');
+                        } else {
+                            $('#start-exam-btn').addClass('hidden');
+                        }
+                    }
+                    
+                    showPage('exam-detail-page');
+                });
+            });
+        }
+        
+        function startExam(exam) {
+            remainingTime = exam.duration * 60;
+            updateTimerDisplay();
+            
+            examTimer = setInterval(function() {
+                remainingTime--;
+                updateTimerDisplay();
+                
+                if (remainingTime <= 0) {
+                    clearInterval(examTimer);
+                    submitExam();
+                    showError('Waktu ujian habis! Jawaban Anda telah dikirim.');
+                }
+            }, 1000);
+            
+            callApi('get_exam_questions', 'GET', { 
+                examId: exam.id,
+                userId: currentUser.userId, 
+                token: currentUser.token 
+            }, function(response) {
+                const questions = response.data;
+                const $form = $('#exam-answers-form');
+                $form.empty();
+                
+                $('#take-exam-title').text(exam.title);
+                
+                questions.forEach((q, index) => {
+                    let optionsHtml = '';
+                    q.options.forEach((opt, i) => {
+                        optionsHtml += `
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="q${q.id}" id="q${q.id}_${i}" value="${i}">
+                                <label class="form-check-label" for="q${q.id}_${i}">${String.fromCharCode(65 + i)}. ${opt}</label>
+                            </div>
+                        `;
+                    });
+
+                    $form.append(`
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title text-info">Soal ${index + 1}</h5>
+                                <p class="card-text">${q.question}</p>
+                                ${optionsHtml}
+                            </div>
+                        </div>
+                    `);
+                });
+                
+                showPage('take-exam-page');
+            });
+        }
+        
+        function updateTimerDisplay() {
+            const minutes = Math.floor(remainingTime / 60);
+            const seconds = remainingTime % 60;
+            $('#exam-timer').text(`Waktu tersisa: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`);
+        }
+        
+        function submitExam() {
+            if (examTimer) {
+                clearInterval(examTimer);
+            }
+            
+            const answers = [];
+            // Collect answers for all questions
+            $('#exam-answers-form').find('.card').each(function() {
+                const card = $(this);
+                // Extract questionId from the name attribute of radio buttons
+                const questionId = card.find('input[type="radio"]').first().attr('name').substring(1);
+                const selectedOption = card.find('input[type="radio"]:checked').val();
+                
+                // If no option is selected for a question, `selectedOption` will be undefined.
+                // Store null or a specific value to indicate an unanswered question if needed,
+                // otherwise, it won't be pushed to `answers` array.
+                if (selectedOption !== undefined) {
+                    answers.push({ questionId, answer: parseInt(selectedOption) });
+                }
+            });
+            
+            callApi('submit_answers', 'POST', {
+                userId: currentUser.userId,
+                token: currentUser.token,
+                examId: currentExam.id,
+                answers
+            }, function() {
+                callApi('submit_exam', 'POST', {
+                    userId: currentUser.userId,
+                    token: currentUser.token,
+                    examId: currentExam.id
+                }, function(response) {
+                    showError(`Ujian selesai! Skor Anda: ${response.score}/${response.totalQuestions}`);
+                    showPage('dashboard-page');
+                });
+            });
+        }
+        
+        // Fungsi untuk hasil ujian
+        function loadResults() {
+            if (!currentUser) return;
+            
+            callApi('get_results', 'GET', { 
+                userId: currentUser.userId, 
+                token: currentUser.token 
+            }, function(response) {
+                const results = response.data;
+                const $resultsList = $('#results-list');
+                $resultsList.empty();
+                
+                if (results.length === 0) {
+                    $resultsList.append('<tr><td colspan="5" class="text-center text-muted">Belum ada hasil ujian.</td></tr>');
+                    return;
+                }
+                
+                callApi('get_exams', 'GET', { 
+                    userId: currentUser.userId, 
+                    token: currentUser.token 
+                }, function(examsResponse) {
+                    const exams = examsResponse.data;
+                    const examMap = {};
+                    exams.forEach(exam => examMap[exam.id] = exam);
+                    
+                    results.forEach(result => {
+                        const exam = examMap[result.examId] || { title: 'Ujian Tidak Ditemukan' };
+                        const date = new Date(result.timestamp).toLocaleString();
+                        
+                        $resultsList.append(`
+                            <tr>
+                                <td>${exam.title}</td>
+                                <td>${result.score}</td>
+                                <td>${result.totalQuestions}</td>
+                                <td>${date}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-info view-result-btn" data-exam-id="${result.examId}">
+                                        <i class="fas fa-eye me-1"></i> Lihat Detail
+                                    </button>
+                                </td>
+                            </tr>
+                        `);
+                    });
+                    
+                    $resultsList.find('.view-result-btn').off('click').on('click', function() {
+                        const examId = $(this).data('exam-id');
+                        loadResultDetail(examId);
+                    });
+                });
+            });
+        }
+        
+        function loadResultDetail(examId, studentId = null) {
+            const userIdToFetchResult = studentId || currentUser.userId;
+            
+            callApi('get_result_detail', 'GET', { 
+                userId: currentUser.userId, 
+                token: currentUser.token,
+                examId,
+                studentId: userIdToFetchResult
+            }, function(response) {
+                const result = response.data;
+                const date = new Date(result.timestamp).toLocaleString();
+                
+                callApi('get_exam_detail', 'GET', { 
+                    examId,
+                    userId: currentUser.userId, 
+                    token: currentUser.token 
+                }, function(examResponse) {
+                    const exam = examResponse.data;
+                    
+                    $('#result-exam-title').text(exam.title);
+                    $('#result-score').text(result.score);
+                    $('#result-total').text(result.totalQuestions);
+                    $('#result-date').text(date);
+                    
+                    callApi('get_exam_questions', 'GET', { 
+                        examId,
+                        userId: currentUser.userId, 
+                        token: currentUser.token 
+                    }, function(questionsResponse) {
+                        const examQuestions = questionsResponse.data; // Questions for this specific exam
+                        
+                        // We also need the user's submitted answers to highlight them
+                        callApi('submit_answers', 'GET', { // Re-using submit_answers endpoint for getting answers temporarily
+                            userId: userIdToFetchResult, // Get answers for the specific student or current user
+                            token: currentUser.token,
+                            examId: examId
+                        }, function(userAnswersResponse) {
+                            // The submit_answers endpoint isn't designed to GET answers.
+                            // For a real app, you'd have a 'get_student_answers' endpoint that returns stored answers.
+                            // For this mock, we'll assume the result object has a 'submittedAnswers' field,
+                            // or we'd load it from tempAnswers if it exists.
+                            // For now, let's simplify and just show correct answers.
+                            // To actually show what user chose, you'd need to store user choices in the result itself.
+                            
+                            const $answersDetail = $('#result-answers-detail');
+                            $answersDetail.empty();
+                            
+                            examQuestions.forEach((q, index) => {
+                                const correctIndex = q.correctIndex; // Get correct index from the question itself
+                                // Assume for now we don't have user's actual choice stored in the result
+                                // So we only highlight the correct answer.
+                                
+                                $answersDetail.append(`
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <h5 class="card-title text-info">Soal ${index + 1}</h5>
+                                            <p class="card-text">${q.question}</p>
+                                            <ul class="list-group list-group-flush">
+                                                ${q.options.map((opt, i) => `
+                                                    <li class="list-group-item ${i === correctIndex ? 'list-group-item-success fw-bold' : 'text-muted'}">
+                                                        ${String.fromCharCode(65 + i)}. ${opt}
+                                                        ${i === correctIndex ? ' (Jawaban benar)' : ''}
+                                                    </li>
+                                                `).join('')}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                `);
+                            });
+                            
+                            showPage('result-detail-page');
+                        });
+                    });
+                });
+            });
+        }
+        
+        // Fungsi untuk manajemen pengguna
+        function loadUsers() {
+            if (!currentUser || currentUser.role !== 'admin') return;
+            
+            callApi('get_users', 'GET', { 
+                userId: currentUser.userId, 
+                token: currentUser.token 
+            }, function(response) {
+                const users = response.data;
+                const $usersList = $('#users-list');
+                $usersList.empty();
+                
+                if (users.length === 0) {
+                    $usersList.append('<tr><td colspan="5" class="text-center text-muted">Tidak ada pengguna.</td></tr>');
+                    return;
+                }
+                
+                users.forEach(user => {
+                    $usersList.append(`
+                        <tr>
+                            <td>${user.username}</td>
+                            <td>${user.nama}</td>
+                            <td>
+                                <span class="badge ${user.role === 'admin' ? 'bg-danger' : user.role === 'guru' ? 'bg-warning' : 'bg-primary'}">
+                                    ${user.role}
+                                </span>
+                            </td>
+                            <td>${user.kelas || '-'}</td>
+                            <td>
+                                <button class="btn btn-sm btn-warning edit-user-btn me-2" data-id="${user.userId}">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger delete-user-btn" data-id="${user.userId}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `);
+                });
+                
+                $('.edit-user-btn').off('click').on('click', function() {
+                    const userId = $(this).data('id');
+                    editUser(userId);
+                });
+                
+                $('.delete-user-btn').off('click').on('click', function() {
+                    const userId = $(this).data('id');
+                    if (confirm('Apakah Anda yakin ingin menghapus pengguna ini?')) {
+                        deleteUser(userId);
+                    }
+                });
+            });
+        }
+        
+        function showAddUserModal() {
+            $('#user-modal-title').text('Tambah Pengguna');
+            $('#user-id').val('');
+            $('#user-username').val('');
+            $('#user-password').val('');
+            $('#user-name').val('');
+            $('#user-role').val('siswa');
+            $('#user-kelas').val('');
+            $('#user-kelas-field').addClass('hidden');
+            $('#user-modal').modal('show');
+        }
+        
+        function editUser(userId) {
+            callApi('get_user_by_id', 'GET', { 
+                id: userId,
+                userId: currentUser.userId, 
+                token: currentUser.token 
+            }, function(response) {
+                const user = response.data;
+                
+                $('#user-modal-title').text('Edit Pengguna');
+                $('#user-id').val(user.userId);
+                $('#user-username').val(user.username);
+                $('#user-password').val(''); // Clear password field for security
+                $('#user-name').val(user.nama);
+                $('#user-role').val(user.role);
+                
+                if (user.role === 'siswa') {
+                    $('#user-kelas-field').removeClass('hidden');
+                    $('#user-kelas').val(user.kelas || '');
+                } else {
+                    $('#user-kelas-field').addClass('hidden');
+                }
+                
+                $('#user-modal').modal('show');
+            });
+        }
+        
+        function saveUser() {
+            const id = $('#user-id').val();
+            const username = $('#user-username').val();
+            const password = $('#user-password').val(); // Only send if not empty
+            const nama = $('#user-name').val();
+            const role = $('#user-role').val();
+            const kelas = role === 'siswa' ? $('#user-kelas').val() : null;
+            
+            if (!username || !nama || !role) {
+                showError('Mohon isi semua field yang wajib.');
+                return;
+            }
+
+            // If it's a new user and password is empty
+            if (!id && !password) {
+                showError('Kata sandi wajib diisi untuk pengguna baru.');
+                return;
+            }
+            
+            const payload = {
+                userId: currentUser.userId,
+                token: currentUser.token,
+                id: id || undefined,
+                username,
+                password: password || undefined, // Only include if provided
+                nama,
+                role,
+                kelas
+            };
+            
+            const endpoint = id ? 'update_user' : 'add_user';
+            
+            callApi(endpoint, 'POST', payload, function() {
+                $('#user-modal').modal('hide');
+                loadUsers();
+            });
+        }
+        
+        function deleteUser(userId) {
+            callApi('delete_user', 'POST', {
+                userId: currentUser.userId,
+                token: currentUser.token,
+                id: userId
+            }, function() {
+                loadUsers();
+            });
+        }
+        
+        // Fungsi untuk manajemen kelas
+        function loadClasses() {
+            if (!currentUser || (currentUser.role !== 'admin' && currentUser.role !== 'guru')) return;
+            
+            callApi('get_classes', 'GET', { 
+                userId: currentUser.userId, 
+                token: currentUser.token 
+            }, function(response) {
+                const classes = response.data;
+                const $classesList = $('#classes-list');
+                $classesList.empty();
+                
+                if (classes.length === 0) {
+                    $classesList.append('<tr><td colspan="4" class="text-center text-muted">Tidak ada kelas.</td></tr>');
+                    return;
+                }
+                
+                classes.forEach(cls => {
+                    $classesList.append(`
+                        <tr>
+                            <td>${cls.name}</td>
+                            <td>${cls.studentCount}</td>
+                            <td>${cls.teacherName || '-'}</td>
+                            <td>
+                                <button class="btn btn-sm btn-warning edit-class-btn me-2" data-id="${cls.id}">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger delete-class-btn" data-id="${cls.id}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `);
+                });
+                
+                $('.edit-class-btn').off('click').on('click', function() {
+                    const classId = $(this).data('id');
+                    editClass(classId);
+                });
+                
+                $('.delete-class-btn').off('click').on('click', function() {
+                    const classId = $(this).data('id');
+                    if (confirm('Apakah Anda yakin ingin menghapus kelas ini?')) {
+                        deleteClass(classId);
+                    }
+                });
+            });
+        }
+        
+        function showAddClassModal() {
+            $('#class-modal-title').text('Tambah Kelas');
+            $('#class-id').val('');
+            $('#class-name').val('');
+            $('#class-teacher').empty();
+            
+            // Load teachers for the dropdown
+            callApi('get_teachers', 'GET', { 
+                userId: currentUser.userId, 
+                token: currentUser.token 
+            }, function(response) {
+                const teachers = response.data;
+                const $select = $('#class-teacher');
+                $select.append('<option value="">Pilih Wali Kelas (Opsional)</option>'); // Add an optional empty choice
+                
+                teachers.forEach(teacher => {
+                    $select.append(`<option value="${teacher.userId}">${teacher.nama}</option>`);
+                });
+                
+                $('#class-modal').modal('show');
+            });
+        }
+        
+        function editClass(classId) {
+            callApi('get_class_by_id', 'GET', { 
+                id: classId,
+                userId: currentUser.userId, 
+                token: currentUser.token 
+            }, function(response) {
+                const cls = response.data;
+                
+                $('#class-modal-title').text('Edit Kelas');
+                $('#class-id').val(cls.id);
+                $('#class-name').val(cls.name);
+                
+                // Load teachers and set selected
+                callApi('get_teachers', 'GET', { 
+                    userId: currentUser.userId, 
+                    token: currentUser.token 
+                }, function(teachersResponse) {
+                    const teachers = teachersResponse.data;
+                    const $select = $('#class-teacher');
+                    $select.empty();
+                    $select.append('<option value="">Pilih Wali Kelas (Opsional)</option>');
+                    
+                    teachers.forEach(teacher => {
+                        $select.append(`<option value="${teacher.userId}">${teacher.nama}</option>`);
+                    });
+                    
+                    $select.val(cls.teacherId || ''); // Select the assigned teacher
+                    $('#class-modal').modal('show');
+                });
+            });
+        }
+        
+        function saveClass() {
+            const id = $('#class-id').val();
+            const name = $('#class-name').val();
+            const teacherId = $('#class-teacher').val();
+            
+            if (!name) {
+                showError('Mohon isi nama kelas.');
+                return;
+            }
+            
+            const payload = {
+                userId: currentUser.userId,
+                token: currentUser.token,
+                id: id || undefined,
+                name,
+                teacherId: teacherId || null // Ensure null if "Tidak ada" selected
+            };
+            
+            const endpoint = id ? 'update_class' : 'add_class';
+            
+            callApi(endpoint, 'POST', payload, function() {
+                $('#class-modal').modal('hide');
+                loadClasses();
+            });
+        }
+        
+        function deleteClass(classId) {
+            callApi('delete_class', 'POST', {
+                userId: currentUser.userId,
+                token: currentUser.token,
+                id: classId
+            }, function() {
+                loadClasses();
+            });
+        }
+        
+        // Fungsi untuk profil pengguna
+        function loadProfile() {
+            if (!currentUser) return;
+            
+            $('#profile-name').text(currentUser.nama);
+            $('#profile-username').val(currentUser.username);
+            $('#profile-role').text(currentUser.role);
+            $('#profile-email').val(currentUser.email || ''); // Ensure email is populated if exists
+            
+            // Set role badge color
+            const $roleBadge = $('#profile-role');
+            // Remove all role classes first to prevent multiple classes
+            $roleBadge.removeClass('bg-danger bg-warning bg-primary'); 
+            if (currentUser.role === 'admin') {
+                $roleBadge.addClass('bg-danger');
+            } else if (currentUser.role === 'guru') {
+                $roleBadge.addClass('bg-warning');
+            } else {
+                $roleBadge.addClass('bg-primary');
+            }
+            
+            // Show kelas field for siswa
+            if (currentUser.role === 'siswa') {
+                $('#profile-kelas-field').removeClass('hidden');
+                $('#profile-kelas').val(currentUser.kelas || '');
+            } else {
+                $('#profile-kelas-field').addClass('hidden');
+            }
+        }
+        
+        function updateProfile() {
+            const email = $('#profile-email').val();
+            const kelas = currentUser.role === 'siswa' ? $('#profile-kelas').val() : null;
+            
+            callApi('update_profile', 'POST', {
+                userId: currentUser.userId,
+                token: currentUser.token,
+                email,
+                kelas
+            }, function(response) {
+                showError('Profil berhasil diperbarui.');
+                currentUser = response.data; // Update currentUser with fresh data from API
+                localStorage.setItem('userData', JSON.stringify(currentUser));
+                updateUIForLoggedInUser(); // Re-render UI based on updated user data
+                loadProfile(); // Reload profile page to reflect changes
+            });
+        }
+    </script>
+</body>
+</html>

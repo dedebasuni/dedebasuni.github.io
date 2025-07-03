@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <!-- Meta Tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Aplikasi Pembelajaran Daring untuk siswa Indonesia.">
+    <meta name="author" content="Dede Basuni">
+    <meta name="theme-color" content="#667eea">
+
+    <!-- Title -->
+    <title>Aplikasi Pembelajaran Daring</title>
+
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Custom Styles -->
+    <style>
+        /* General Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f0f2f5;
+        }
+
+        /* Custom scrollbar styles */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #a8a8a8; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #888; }
+        
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+            padding-bottom: 120px; /* Added padding to prevent overlap */
+            background-color: #f7fafc;
+            position: relative;
+        }
+
+        /* Landing Page Styles */
+        .landing-container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 20px; text-align: center; }
+        .landing-logo { width: 120px; height: 120px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 30px; display: flex; align-items: center; justify-content: center; font-size: 50px; color: white; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3); }
+        .landing-title { font-size: 24px; font-weight: bold; color: #2d3748; margin-bottom: 10px; }
+        .landing-subtitle { font-size: 16px; color: #718096; margin-bottom: 30px; }
+        .nisn-input-container { width: 100%; max-width: 300px; margin-bottom: 20px; }
+        .nisn-input { width: 100%; padding: 15px 20px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 16px; text-align: center; transition: all 0.3s ease; }
+        .nisn-input:focus { border-color: #667eea; outline: none; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2); }
+
+        /* Button Styles */
+        .submit-btn { background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; padding: 15px 30px; border-radius: 12px; font-size: 16px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); }
+        .submit-btn:active { transform: scale(0.95); }
+        .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .save-btn { background: linear-gradient(135deg, #48bb78, #38a169); color: white; }
+        .back-btn { background: #e2e8f0; color: #4a5568; }
+
+        /* Form Section Styles */
+        .form-section { background: white; border-radius: 16px; padding: 24px; margin-bottom: 20px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); }
+        .section-title { font-size: 18px; font-weight: 600; color: #2d3748; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+        .section-title-main { display: flex; align-items: center; gap: 10px; }
+        .section-title-icon { width: 30px; height: 30px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; flex-shrink: 0; }
+        .form-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
+        .form-row { display: flex; flex-direction: column; gap: 8px; }
+        .form-label { font-size: 14px; color: #4a5568; font-weight: 500; }
+        .form-input, .form-select, .form-textarea { padding: 12px 15px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 14px; transition: all 0.3s ease; width: 100%; }
+        .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: #667eea; outline: none; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2); }
+        .form-textarea { resize: vertical; min-height: 120px; }
+        .form-error-text { color: #e53e3e; font-size: 12px; margin-top: 4px; }
+        .form-input.error, .form-select.error, .form-textarea.error { border-color: #e53e3e !important; }
+
+        /* File Upload Styles */
+        .file-upload-container { border: 2px dashed #e2e8f0; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s ease; margin-bottom: 10px; }
+        .file-upload-container:hover { border-color: #667eea; background: rgba(102, 126, 234, 0.05); }
+        .file-upload-icon { font-size: 40px; color: #a0aec0; margin-bottom: 10px; }
+        .file-upload-text { font-size: 14px; color: #718096; margin-bottom: 5px; }
+        .file-upload-hint { font-size: 12px; color: #a0aec0; }
+        .file-upload-input { display: none; }
+        .file-preview { display: flex; align-items: center; gap: 10px; margin-top: 10px; padding: 10px; background: #f7fafc; border-radius: 8px; }
+        .file-preview-icon { font-size: 20px; color: #4a5568; }
+        .file-preview-name { font-size: 13px; color: #4a5568; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .file-preview-remove { color: #e53e3e; font-size: 16px; cursor: pointer; }
+
+        /* Stats Cards Styles */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+        .stat-card { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); text-align: center; transition: all 0.3s ease; }
+        .stat-icon { width: 50px; height: 50px; border-radius: 25px; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; }
+        .stat-number { font-size: 24px; font-weight: bold; color: #2d3748; margin-bottom: 4px; }
+        .stat-label { font-size: 12px; color: #718096; }
+
+        /* Fixed Button Container */
+        .fixed-buttons-container { position: sticky; bottom: 0; left: 0; right: 0; width: 100%; display: flex; gap: 10px; z-index: 1000; padding: 16px 24px; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); border-top: 1px solid #e2e8f0; }
+        .fixed-buttons-container button { flex: 1; border: none; padding: 15px 25px; border-radius: 12px; font-size: 16px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .fixed-buttons-container button:active { transform: scale(0.95); }
+        
+        /* Toast Notification */
+        .toast { position: fixed; top: 20px; right: 20px; background-color: #2d3748; color: white; padding: 15px 25px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); z-index: 9999; transform: translateY(-150%); opacity: 0; transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out; }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast.success { background: linear-gradient(135deg, #48bb78, #38a169); }
+        .toast.error { background: linear-gradient(135deg, #f56565, #c53030); }
+        
+        /* Loading Overlay */
+        .loading-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255, 255, 255, 0.7); display: flex; align-items: center; justify-content: center; z-index: 5000; }
+        .spinner { width: 50px; height: 50px; border: 5px solid #e2e8f0; border-top-color: #667eea; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+    </style>
+    <!-- React, ReactDOM, dan Babel CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center p-4">
+    <div id="root" class="w-full max-w-6xl bg-white rounded-lg shadow-xl overflow-hidden"></div>
+
+    <script type="text/babel">
+        // Data Dummy (entities)
+        const initialEntities = [
+            // USERS
+            { type: 'user', id: 'user1', nama: 'Budi Santoso', role: 'siswa', nisn_nip: '12345', tingkat: 10, kelasId: 'X1', status: 'Aktif', fotoProfil: 'https://placehold.co/40x40/667eea/ffffff?text=B', poin: 150, lencanaDiperoleh: ['lencana1'], nilai: [{ mapelId: 'mat101', nilai: 92 }, { mapelId: 'fis102', nilai: 88 }], tugasDikumpulkan: [{ tugasId: 'tgs1', tanggalKumpul: '2025-07-08', fileUrl: 'https://example.com/aljabar_user1.pdf', nilai: 90 }], absensi: [{ jadwalId: 'jad1', tanggal: '2025-07-01', status: 'Hadir' }, { jadwalId: 'jad2', tanggal: '2025-07-02', status: 'Hadir' }, { jadwalId: 'jad3', tanggal: '2025-07-03', status: 'Sakit' }, { jadwalId: 'jad4', tanggal: '2025-07-04', status: 'Hadir' }] },
+            { type: 'user', id: 'user6', nama: 'Siti Aminah', role: 'siswa', nisn_nip: '67890', tingkat: 10, kelasId: 'X1', status: 'Aktif', fotoProfil: 'https://placehold.co/40x40/764ba2/ffffff?text=S', poin: 250, lencanaDiperoleh: ['lencana1', 'lencana2'], nilai: [{ mapelId: 'mat101', nilai: 85 }, { mapelId: 'fis102', nilai: 90 }], tugasDikumpulkan: [{ tugasId: 'tgs1', tanggalKumpul: '2025-07-09', fileUrl: 'https://example.com/aljabar_user6.pdf', nilai: 88 }, { tugasId: 'tgs3', tanggalKumpul: '2025-07-01', fileUrl: 'https://example.com/optik_user6.pdf', nilai: 95 }], absensi: [{ jadwalId: 'jad1', tanggal: '2025-07-01', status: 'Hadir' }, { jadwalId: 'jad2', tanggal: '2025-07-02', status: 'Izin' }, { jadwalId: 'jad3', tanggal: '2025-07-03', status: 'Hadir' }, { jadwalId: 'jad4', tanggal: '2025-07-04', status: 'Hadir' }] },
+            { type: 'user', id: 'user7', nama: 'Eko Prasetyo', role: 'siswa', nisn_nip: '11223', tingkat: 10, kelasId: 'X1', status: 'Aktif', fotoProfil: 'https://placehold.co/40x40/48bb78/ffffff?text=E', poin: 50, lencanaDiperoleh: [], nilai: [], tugasDikumpulkan: [], absensi: [{ jadwalId: 'jad1', tanggal: '2025-07-01', status: 'Hadir' }, { jadwalId: 'jad2', tanggal: '2025-07-02', status: 'Hadir' }, { jadwalId: 'jad3', tanggal: '2025-07-03', status: 'Hadir' }, { jadwalId: 'jad4', tanggal: '2025-07-04', status: 'Tidak Hadir' }] },
+            { type: 'user', id: 'user2', nama: 'Prof. Adi Nugroho', role: 'guru', nisn_nip: 'T001', status: 'Aktif', fotoProfil: 'https://placehold.co/40x40/f56565/ffffff?text=A', waliKelasId: 'X1', mapel: ['mat101', 'fis102'], jadwalMengajar: [{ jadwalId: 'jad1', mapelId: 'mat101', kelasId: 'X1', hari: 'Senin', jam: '07:00-08:30' }, { jadwalId: 'jad2', mapelId: 'fis102', kelasId: 'X1', hari: 'Selasa', jam: '08:30-10:00' }] },
+            { type: 'user', id: 'user5', nama: 'Dr. Indah Permata', role: 'guru', nisn_nip: 'T002', status: 'Aktif', fotoProfil: 'https://placehold.co/40x40/ed8936/ffffff?text=I', mapel: ['kim103'], jadwalMengajar: [{ jadwalId: 'jad3', mapelId: 'kim103', kelasId: 'X1', hari: 'Rabu', jam: '10:00-11:30' }] },
+            { type: 'user', id: 'user4', nama: 'Dewi Lestari', role: 'siswa', nisn_nip: '98765', tingkat: 11, kelasId: 'X2', status: 'Aktif', fotoProfil: 'https://placehold.co/40x40/4299e1/ffffff?text=D', poin: 0, lencanaDiperoleh: [], nilai: [], tugasDikumpulkan: [], absensi: [] },
+
+            // KELAS
+            { type: 'kelas', id: 'X1', nama: 'Kelas 10 IPA 1', tingkat: 10, waliKelasId: 'user2', mapel: ['mat101', 'fis102', 'kim103'], jadwal: ['jad1', 'jad2', 'jad3', 'jad4'], siswaIds: ['user1', 'user6', 'user7'] },
+            { type: 'kelas', id: 'X2', nama: 'Kelas 11 IPA 1', tingkat: 11, waliKelasId: null, mapel: [], jadwal: [], siswaIds: ['user4'] },
+
+            // MATA PELAJARAN
+            { type: 'mapel', id: 'mat101', nama: 'Matematika', tingkat: 10 },
+            { type: 'mapel', id: 'fis102', nama: 'Fisika', tingkat: 10 },
+            { type: 'mapel', id: 'kim103', nama: 'Kimia', tingkat: 10 },
+
+            // JADWAL
+            { type: 'jadwal', id: 'jad1', mapelId: 'mat101', kelasId: 'X1', guruId: 'user2', hari: 'Senin', jam: '07:00-08:30' },
+            { type: 'jadwal', id: 'jad2', mapelId: 'fis102', kelasId: 'X1', guruId: 'user2', hari: 'Selasa', jam: '08:30-10:00' },
+            { type: 'jadwal', id: 'jad3', mapelId: 'kim103', kelasId: 'X1', guruId: 'user5', hari: 'Rabu', jam: '10:00-11:30' },
+            { type: 'jadwal', id: 'jad4', mapelId: 'fis102', kelasId: 'X1', guruId: 'user2', hari: 'Kamis', jam: '07:00-08:30' },
+            
+            // MATERI
+            { type: 'materi', id: 'mat1', mapelId: 'mat101', kelasId: 'X1', judul: 'Persamaan Linear', deskripsi: 'Materi persamaan linear satu dan dua variabel, metode eliminasi dan substitusi.', fileUrl: 'https://example.com/materi_linear.pdf', tanggalUnggah: '2025-06-28', guruId: 'user2' },
+            { type: 'materi', id: 'mat2', mapelId: 'kim103', kelasId: 'X1', judul: 'Asam Basa', deskripsi: 'Teori asam basa Arrhenius, Bronsted-Lowry, dan Lewis.', fileUrl: 'https://example.com/asam_basa.pdf', tanggalUnggah: '2025-06-29', guruId: 'user5' },
+            { type: 'materi', id: 'mat3', mapelId: 'fis102', kelasId: 'X1', judul: 'Hukum Newton', deskripsi: 'Pembahasan lengkap mengenai Hukum Newton I, II, dan III beserta contoh soal.', fileUrl: null, tanggalUnggah: '2025-07-02', guruId: 'user2' },
+
+            // TUGAS
+            { type: 'tugas', id: 'tgs1', mapelId: 'mat101', kelasId: 'X1', judul: 'Tugas Aljabar', deskripsi: 'Kerjakan soal-soal aljabar pada lampiran.', deadline: '2025-07-10', fileLampiran: 'https://example.com/soal_aljabar.pdf', guruId: 'user2' },
+            { type: 'tugas', id: 'tgs2', mapelId: 'kim103', kelasId: 'X1', judul: 'Tugas Reaksi Kimia', deskripsi: 'Identifikasi jenis-jenis reaksi kimia.', deadline: '2025-07-12', fileLampiran: 'https://example.com/soal_reaksi_kimia.pdf', guruId: 'user5' },
+            { type: 'tugas', id: 'tgs3', mapelId: 'fis102', kelasId: 'X1', judul: 'Latihan Soal Optik', deskripsi: 'Kerjakan soal terlampir. Dikumpulkan sebelum UTS.', deadline: '2025-07-02', fileLampiran: 'https://example.com/soal_optik.pdf', guruId: 'user2' }, // Tugas terlambat
+
+            // KOMENTAR MATERI
+            { type: 'komentarMateri', id: 'km1', materiId: 'mat1', userId: 'user1', isi: 'Saya kurang paham bagian terakhir, bisa dijelaskan lagi?', tanggal: '2025-07-03T10:15:00Z' },
+            { type: 'komentarMateri', id: 'km2', materiId: 'mat1', userId: 'user2', isi: 'Tentu, Budi. Bagian mana yang kurang jelas? Nanti saya tambahkan catatan tambahan.', tanggal: '2025-07-03T10:30:00Z' },
+            
+            // PENGUMUMAN
+            { type: 'pengumuman', id: 'peng1', kelasId: 'X1', judul: 'Persiapan Ujian Tengah Semester', isi: 'Harap semua siswa mempersiapkan diri untuk UTS yang akan dilaksanakan minggu depan. Pelajari kembali materi dari bab 1 sampai 3.', tanggal: '2025-07-03T08:00:00Z', guruId: 'user2' },
+            { type: 'pengumuman', id: 'peng2', kelasId: 'X1', judul: 'Jadwal Tambahan Kimia', isi: 'Akan diadakan kelas tambahan Kimia pada hari Jumat jam 14:00 di Lab Kimia. Kehadiran tidak wajib namun dianjurkan.', tanggal: '2025-07-02T15:00:00Z', guruId: 'user5' },
+            
+            // LENCANA (BADGES)
+            { type: 'lencana', id: 'lencana1', nama: 'Rajin Mengumpulkan', deskripsi: 'Diberikan karena mengumpulkan 5 tugas tepat waktu.', ikon: '🎯' },
+            { type: 'lencana', id: 'lencana2', nama: 'Partisipan Aktif', deskripsi: 'Diberikan karena aktif berkomentar di materi pelajaran.', ikon: '💬' },
+            { type: 'lencana', id: 'lencana3', nama: 'Skor Sempurna', deskripsi: 'Diberikan karena mendapatkan nilai 100 pada tugas.', ikon: '💯' },
+        ];
+
+        // =================================================================
+        // UI COMPONENTS
+        // =================================================================
+
+        const Toast = ({ message, type, onHide }) => {
+            React.useEffect(() => {
+                const timer = setTimeout(onHide, 3000);
+                return () => clearTimeout(timer);
+            }, [onHide]);
+
+            return <div className={`toast ${type} show`}>{message}</div>;
+        };
+
+        const LoadingSpinner = () => (
+            <div className="loading-overlay"><div className="spinner"></div></div>
+        );
+
+        // =================================================================
+        // PAGE COMPONENTS
+        // =================================================================
+
+        const LoginPage = ({ onLogin, showToast, findEntity }) => {
+            const [nisnNip, setNisnNip] = React.useState('');
+            const handleLoginClick = () => {
+                const user = findEntity('user', u => u.nisn_nip === nisnNip);
+                if (user) {
+                    onLogin(user.id);
+                } else {
+                    showToast('NISN/NIP tidak ditemukan.', 'error');
+                }
+            };
+            return (
+                <div className="landing-container">
+                    <div className="landing-logo"><span>🏫</span></div>
+                    <h2 className="landing-title">Selamat Datang di Aplikasi Pembelajaran Daring</h2>
+                    <p className="landing-subtitle">Sekolah Menengah Atas Contoh</p>
+                    <p className="landing-subtitle">Simulasi Login (Siswa: 11223, 12345, 67890, Guru dan Wali Kelas: T001, T002)</p>
+                    <div className="nisn-input-container">
+                        <input type="text" id="nisn-nip" className="nisn-input" value={nisnNip} onChange={(e) => setNisnNip(e.target.value)} placeholder="Isi dengan NISN atau NIP Anda." />
+                    </div>
+                    <button onClick={handleLoginClick} disabled={!nisnNip.trim()} className="submit-btn">Masuk</button>
+                </div>
+            );
+        };
+
+        const Sidebar = ({ loggedInUser, onNavigate, onLogout, isSidebarOpen }) => {
+            const navItemsSiswa = [
+                { name: 'Dashboard', icon: '📊', page: 'dashboard' },
+                { name: 'Profil', icon: '👤', page: 'profil' },
+                { name: 'Jadwal', icon: '🗓️', page: 'jadwal' },
+                { name: 'Materi Pelajaran', icon: '📚', page: 'materiSiswa' },
+                { name: 'Daftar Tugas', icon: '📝', page: 'daftarTugas' },
+                { name: 'Nilai', icon: '🏆', page: 'nilai' },
+                { name: 'Papan Peringkat', icon: '🏅', page: 'papanPeringkat' },
+                { name: 'Absensi', icon: '✅', page: 'absensi' },
+            ];
+            const navItemsGuru = [
+                { name: 'Dashboard', icon: '📊', page: 'dashboard' },
+                { name: 'Profil', icon: '👤', page: 'profil' },
+                ...(loggedInUser.waliKelasId ? [{ name: 'Manajemen Kelas', icon: '🏫', page: 'manajemenKelas' }] : []),
+                { name: 'Jadwal Mengajar', icon: '🗓️', page: 'jadwal' },
+                { name: 'Materi', icon: '📚', page: 'materiGuru' },
+                { name: 'Tugas Dibuat', icon: '📝', page: 'tugasGuru' },
+            ];
+            const navItems = loggedInUser.role === 'siswa' ? navItemsSiswa : navItemsGuru;
+            return (
+                <div className={`w-64 bg-gray-800 text-white flex-col rounded-l-lg ${isSidebarOpen ? 'flex' : 'hidden md:flex'}`}>
+                    <div className="p-6 border-b border-gray-700 flex items-center space-x-3">
+                        <img src={loggedInUser.fotoProfil} alt="Profil" className="w-12 h-12 rounded-full border-2 border-blue-400" />
+                        <div>
+                            <h3 className="font-semibold text-lg">{loggedInUser.nama}</h3>
+                            <p className="text-sm text-gray-400 capitalize">{loggedInUser.role}</p>
+                        </div>
+                    </div>
+                    <nav className="flex-grow p-4">
+                        <ul>
+                            {navItems.map(item => (
+                                <li key={item.page} className="mb-2">
+                                    <button onClick={() => onNavigate(item.page)} className="flex items-center w-full px-4 py-2 rounded-lg text-left text-gray-300 hover:bg-gray-700 hover:text-white transition duration-200 ease-in-out">
+                                        <span className="mr-3 text-xl">{item.icon}</span>
+                                        {item.name}
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                    </nav>
+                    <div className="p-4 border-t border-gray-700">
+                        <button onClick={onLogout} className="flex items-center w-full px-4 py-2 rounded-lg text-left text-red-400 hover:bg-gray-700 hover:text-red-300 transition duration-200 ease-in-out">
+                            <span className="mr-3 text-xl">🚪</span>Keluar
+                        </button>
+                    </div>
+                </div>
+            );
+        };
+        
+        const DashboardSiswa = ({ loggedInUser, onNavigate, findEntity, filterEntities }) => {
+            const kelas = findEntity('kelas', loggedInUser.kelasId);
+            const tugasMendatang = filterEntities('tugas', t => kelas && t.kelasId === kelas.id && !(loggedInUser.tugasDikumpulkan || []).some(td => td.tugasId === t.id) && new Date(t.deadline) >= new Date());
+            const pengumumanTerbaru = filterEntities('pengumuman', p => p.kelasId === loggedInUser.kelasId).sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal)).slice(0, 2);
+
+            return (
+                <div className="main-content">
+                    <h1 className="text-3xl font-bold text-gray-800 mb-2">Selamat Datang, {loggedInUser.nama.split(' ')[0]}!</h1>
+                    <p className="text-gray-600 mb-6">Berikut adalah ringkasan aktivitas belajarmu hari ini.</p>
+                    
+                    <div className="stats-grid" style={{gridTemplateColumns: 'repeat(3, 1fr)'}}>
+                        <div className="stat-card"><div className="stat-icon" style={{ background: 'linear-gradient(135deg, #f6e05e, #ecc94b)' }}><span>⭐</span></div><div className="stat-number">{loggedInUser.poin || 0}</div><div className="stat-label">Poin</div></div>
+                        <div className="stat-card"><div className="stat-icon" style={{ background: 'linear-gradient(135deg, #68d391, #48bb78)' }}><span>🎯</span></div><div className="stat-number">{(loggedInUser.tugasDikumpulkan || []).length}</div><div className="stat-label">Tugas Selesai</div></div>
+                        <div className="stat-card"><div className="stat-icon" style={{ background: 'linear-gradient(135deg, #f56565, #c53030)' }}><span>📝</span></div><div className="stat-number">{tugasMendatang.length}</div><div className="stat-label">Tugas Mendatang</div></div>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                         <div className="form-section">
+                            <h2 className="section-title"><div className="section-title-main"><span className="section-title-icon bg-yellow-500">📢</span> Pengumuman Terbaru</div></h2>
+                            {pengumumanTerbaru.length > 0 ? (
+                                <ul className="space-y-4">
+                                    {pengumumanTerbaru.map(p => (
+                                        <li key={p.id} className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg">
+                                            <p className="font-bold text-yellow-800">{p.judul}</p>
+                                            <p className="text-sm text-yellow-700">{p.isi}</p>
+                                            <p className="text-xs text-gray-500 mt-2">Oleh: {findEntity('user', p.guruId)?.nama} - {new Date(p.tanggal).toLocaleDateString('id-ID')}</p>
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : <p className="text-gray-600">Tidak ada pengumuman baru.</p>}
+                        </div>
+                        <div className="form-section">
+                            <h2 className="section-title"><div className="section-title-main"><span className="section-title-icon">⚡</span> Aksi Cepat</div></h2>
+                            <div className="flex flex-col space-y-3">
+                                <button onClick={() => onNavigate('daftarTugas')} className="w-full text-left p-4 rounded-lg bg-red-50 hover:bg-red-100 text-red-700 font-semibold transition">Lihat Semua Tugas</button>
+                                <button onClick={() => onNavigate('papanPeringkat')} className="w-full text-left p-4 rounded-lg bg-yellow-50 hover:bg-yellow-100 text-yellow-700 font-semibold transition">Lihat Papan Peringkat</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const DashboardGuru = ({ loggedInUser, onNavigate, findEntity, filterEntities }) => {
+            const materiSaya = filterEntities('materi', m => m.guruId === loggedInUser.id);
+            const tugasDibuat = filterEntities('tugas', t => t.guruId === loggedInUser.id);
+            const kelasDiajar = filterEntities('kelas', k => loggedInUser.waliKelasId === k.id || (filterEntities('jadwal', j => j.guruId === loggedInUser.id) || []).some(jd => jd.kelasId === k.id));
+            const pengumumanTerbaru = filterEntities('pengumuman', p => p.guruId === loggedInUser.id).sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal)).slice(0, 2);
+            
+            return (
+                <div className="main-content">
+                    <h1 className="text-3xl font-bold text-gray-800 mb-2">Selamat Datang, {loggedInUser.nama}!</h1>
+                    <p className="text-gray-600 mb-6">Berikut adalah ringkasan aktivitas mengajar.</p>
+                    <div className="stats-grid" style={{gridTemplateColumns: 'repeat(3, 1fr)'}}>
+                        <div className="stat-card"><div className="stat-icon" style={{ background: 'linear-gradient(135deg, #4299e1, #3182ce)' }}><span>🏫</span></div><div className="stat-number">{kelasDiajar.length}</div><div className="stat-label">Kelas Diajar</div></div>
+                        <div className="stat-card"><div className="stat-icon" style={{ background: 'linear-gradient(135deg, #48bb78, #38a169)' }}><span>📚</span></div><div className="stat-number">{materiSaya.length}</div><div className="stat-label">Materi Dibuat</div></div>
+                        <div className="stat-card"><div className="stat-icon" style={{ background: 'linear-gradient(135deg, #f56565, #c53030)' }}><span>📝</span></div><div className="stat-number">{tugasDibuat.length}</div><div className="stat-label">Tugas Dibuat</div></div>
+                    </div>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div className="form-section">
+                            <h2 className="section-title"><div className="section-title-main"><span className="section-title-icon bg-yellow-500">📢</span> Pengumuman</div><button onClick={() => onNavigate('formPengumuman')} className="text-sm text-blue-600 font-semibold hover:underline">Buat Baru</button></h2>
+                            {pengumumanTerbaru.length > 0 ? (
+                                <ul className="space-y-3">
+                                    {pengumumanTerbaru.map(p => <li key={p.id} className="bg-yellow-50 p-3 rounded-lg"><p className="font-semibold text-yellow-800">{p.judul}</p><p className="text-sm text-yellow-700">{p.isi}</p></li>)}
+                                </ul>
+                            ) : <p className="text-gray-600">Anda belum membuat pengumuman.</p>}
+                        </div>
+                        <div className="form-section">
+                            <h2 className="section-title"><div className="section-title-main"><span className="section-title-icon">⚡</span> Aksi Cepat</div></h2>
+                            <div className="flex flex-col space-y-3">
+                                <button onClick={() => onNavigate('formMateri')} className="w-full text-left p-4 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold transition">Buat Materi Baru</button>
+                                <button onClick={() => onNavigate('formTugas')} className="w-full text-left p-4 rounded-lg bg-green-50 hover:bg-green-100 text-green-700 font-semibold transition">Buat Tugas Baru</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+        
+        const ProfilPage = ({ loggedInUser, onBack, findEntity }) => {
+            const kelas = loggedInUser.role === 'siswa' ? findEntity('kelas', loggedInUser.kelasId) : null;
+            const waliKelas = loggedInUser.role === 'guru' ? findEntity('kelas', loggedInUser.waliKelasId) : null;
+            const lencana = loggedInUser.role === 'siswa' ? (loggedInUser.lencanaDiperoleh || []).map(id => findEntity('lencana', id)) : [];
+            return (
+                <div className="main-content">
+                    <h1 className="text-3xl font-bold text-gray-800 mb-6">Profil</h1>
+                    <div className="form-section">
+                        <div className="flex items-center space-x-6">
+                            <img src={loggedInUser.fotoProfil} alt="Profil" className="w-24 h-24 rounded-full border-4 border-gray-200" />
+                            <div>
+                                <h2 className="text-2xl font-bold text-gray-800">{loggedInUser.nama}</h2>
+                                <p className="text-gray-600 capitalize">{loggedInUser.role}</p>
+                                {loggedInUser.role === 'siswa' && <p className="font-bold text-yellow-500 text-lg mt-1">{loggedInUser.poin || 0} Poin</p>}
+                            </div>
+                        </div>
+                        <div className="mt-6 border-t pt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div><p className="text-sm text-gray-500">NISN/NIP</p><p className="font-semibold">{loggedInUser.nisn_nip}</p></div>
+                            <div><p className="text-sm text-gray-500">Status</p><p className="font-semibold text-green-600">{loggedInUser.status}</p></div>
+                            {loggedInUser.role === 'siswa' && <>
+                                <div><p className="text-sm text-gray-500">Tingkat</p><p className="font-semibold">{loggedInUser.tingkat}</p></div>
+                                <div><p className="text-sm text-gray-500">Kelas</p><p className="font-semibold">{kelas?.nama}</p></div>
+                            </>}
+                            {loggedInUser.role === 'guru' && <>
+                                <div><p className="text-sm text-gray-500">Mata Pelajaran</p><p className="font-semibold">{loggedInUser.mapel.map(id => findEntity('mapel', id)?.nama).join(', ')}</p></div>
+                                {waliKelas && <div><p className="text-sm text-gray-500">Wali Kelas</p><p className="font-semibold">{waliKelas.nama}</p></div>}
+                            </>}
+                        </div>
+                    </div>
+                    {loggedInUser.role === 'siswa' && lencana.length > 0 && (
+                        <div className="form-section">
+                            <h2 className="section-title"><div className="section-title-main"><span className="section-title-icon">🏅</span> Lencana</div></h2>
+                            <div className="flex flex-wrap gap-4">
+                                {lencana.map(l => <div key={l.id} className="text-center p-3 bg-gray-100 rounded-lg w-24" title={l.deskripsi}><span className="text-4xl">{l.ikon}</span><p className="text-xs font-semibold mt-1">{l.nama}</p></div>)}
+                            </div>
+                        </div>
+                    )}
+                    <div className="fixed-buttons-container"><button onClick={onBack} className="back-btn"><span className="text-xl">⬅️</span> Kembali</button></div>
+                </div>
+            );
+        };
+        
+        const MateriDetailPage = ({ materi, loggedInUser, onBack, onAddComment, findEntity, filterEntities }) => {
+            if (!materi) return <div className="main-content"><h1 className="text-2xl font-bold mb-4">Materi Tidak Ditemukan</h1></div>;
+            const [newComment, setNewComment] = React.useState('');
+            const comments = filterEntities('komentarMateri', c => c.materiId === materi.id).sort((a, b) => new Date(a.tanggal) - new Date(b.tanggal));
+            const handleAddComment = () => { if (newComment.trim()) { onAddComment(materi.id, newComment, loggedInUser.id, materi.mapelId); setNewComment(''); } };
+            const guruPengunggah = findEntity('user', materi.guruId);
+            const mapel = findEntity('mapel', materi.mapelId);
+            return (
+                <div className="main-content">
+                    <h1 className="text-3xl font-bold text-gray-800 mb-4">{materi.judul}</h1>
+                    <p className="text-gray-600 mb-2"><strong>Mata Pelajaran:</strong> {mapel?.nama || 'Tidak diketahui'}</p>
+                    <p className="text-gray-600 mb-4"><strong>Diunggah oleh:</strong> {guruPengunggah?.nama || 'Tidak diketahui'} pada {materi.tanggalUnggah}</p>
+                    <div className="form-section mb-6">
+                        <h2 className="section-title"><div className="section-title-main"><span className="section-title-icon">📄</span> Deskripsi</div></h2>
+                        <p className="text-gray-700 leading-relaxed">{materi.deskripsi || "Tidak ada deskripsi."}</p>
+                        {materi.fileUrl && <a href={materi.fileUrl} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex items-center text-blue-600 hover:underline font-medium"><span className="mr-2 text-xl">⬇️</span> Unduh Materi</a>}
+                    </div>
+                    <div className="form-section">
+                        <h2 className="section-title"><div className="section-title-main"><span className="section-title-icon">💬</span> Komentar ({comments.length})</div></h2>
+                        <div className="space-y-4 mb-6 max-h-60 overflow-y-auto pr-2">
+                            {comments.length > 0 ? comments.map(comment => (
+                                <div key={comment.id} className="bg-gray-50 p-4 rounded-lg">
+                                    <div className="flex items-center mb-2">
+                                        <img src={findEntity('user', comment.userId)?.fotoProfil} alt="Profil" className="w-8 h-8 rounded-full mr-3" />
+                                        <div>
+                                            <p className="font-semibold text-gray-800">{findEntity('user', comment.userId)?.nama}</p>
+                                            <p className="text-xs text-gray-500">{new Date(comment.tanggal).toLocaleString('id-ID')}</p>
+                                        </div>
+                                    </div>
+                                    <p className="text-gray-700">{comment.isi}</p>
+                                </div>
+                            )) : <p className="text-gray-600">Belum ada komentar.</p>}
+                        </div>
+                        <div className="mt-4">
+                            <textarea className="form-textarea" rows="3" placeholder="Tambahkan komentar Anda..." value={newComment} onChange={e => setNewComment(e.target.value)}></textarea>
+                            <button onClick={handleAddComment} disabled={!newComment.trim()} className="submit-btn mt-3">Kirim Komentar</button>
+                        </div>
+                    </div>
+                    <div className="fixed-buttons-container"><button onClick={onBack} className="back-btn"><span className="text-xl">⬅️</span> Kembali</button></div>
+                </div>
+            );
+        };
+
+        const TugasDetailPage = ({ tugas, loggedInUser, onBack, onSubmitTugas, onSaveNilai, showToast, findEntity, filterEntities }) => {
+            if (!tugas) return <div className="main-content"><h1 className="text-2xl font-bold mb-4">Tugas Tidak Ditemukan</h1></div>;
+            const [fileUpload, setFileUpload] = React.useState(null);
+            const [nilaiInputs, setNilaiInputs] = React.useState({});
+            const mapel = findEntity('mapel', tugas.mapelId);
+            const kelas = findEntity('kelas', tugas.kelasId);
+            const guruPembuat = findEntity('user', tugas.guruId);
+            const tugasSiswa = (loggedInUser.tugasDikumpulkan || []).find(td => td.tugasId === tugas.id);
+            const handleFileChange = (event) => setFileUpload(event.target.files[0]);
+            const handleSubmitTask = () => { if (fileUpload) { onSubmitTugas(tugas.id, fileUpload, loggedInUser.id, tugas.mapelId); setFileUpload(null); } };
+            const handleNilaiChange = (siswaId, value) => setNilaiInputs(prev => ({ ...prev, [siswaId]: value }));
+            const handleSaveNilai = (siswaId) => {
+                const nilai = nilaiInputs[siswaId];
+                if (nilai && !isNaN(nilai) && nilai >= 0 && nilai <= 100) {
+                    onSaveNilai(tugas.id, siswaId, parseInt(nilai));
+                } else {
+                    showToast('Masukkan nilai yang valid (0-100).', 'error');
+                }
+            };
+            const submittedTasks = filterEntities('user', u => u.type === 'user' && u.role === 'siswa' && u.kelasId === tugas.kelasId).map(siswa => ({ siswa, submission: (siswa.tugasDikumpulkan || []).find(td => td.tugasId === tugas.id) })).filter(item => item.submission);
+            return (
+                <div className="main-content">
+                    <h1 className="text-3xl font-bold text-gray-800 mb-4">{tugas.judul}</h1>
+                    <p className="text-gray-600 mb-2"><strong>Mata Pelajaran:</strong> {mapel?.nama}</p>
+                    <p className="text-gray-600 mb-2"><strong>Kelas:</strong> {kelas?.nama}</p>
+                    <p className="text-red-600 font-semibold mb-4"><strong>Deadline:</strong> {tugas.deadline}</p>
+                    <div className="form-section mb-6">
+                        <h2 className="section-title"><div className="section-title-main"><span className="section-title-icon">📄</span> Deskripsi Tugas</div></h2>
+                        <p className="text-gray-700 leading-relaxed">{tugas.deskripsi}</p>
+                        {tugas.fileLampiran && <a href={tugas.fileLampiran} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex items-center text-blue-600 hover:underline font-medium"><span className="mr-2 text-xl">⬇️</span> Unduh Lampiran</a>}
+                    </div>
+                    {loggedInUser.role === 'siswa' && (
+                        <div className="form-section">
+                            <h2 className="section-title"><div className="section-title-main"><span className="section-title-icon">📤</span> Status Pengumpulan</div></h2>
+                            {tugasSiswa ? (
+                                <div>
+                                    <p className="text-green-600 font-semibold mb-2">Anda sudah mengumpulkan tugas ini.</p>
+                                    <p className="text-gray-700">Tanggal Kumpul: {tugasSiswa.tanggalKumpul}</p>
+                                    <p className="text-gray-700">Nilai: <strong>{tugasSiswa.nilai !== null ? tugasSiswa.nilai : 'Belum dinilai'}</strong></p>
+                                    <a href={tugasSiswa.fileUrl} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center text-blue-600 hover:underline font-medium"><span className="mr-2 text-xl">🔗</span> Lihat File Anda</a>
+                                </div>
+                            ) : (
+                                <div>
+                                    <p className="text-red-600 mb-3">Anda belum mengumpulkan tugas ini.</p>
+                                    <label htmlFor="file-upload" className="file-upload-container"><span className="file-upload-icon">⬆️</span><p className="file-upload-text">Seret & lepas file atau klik untuk memilih</p><input type="file" id="file-upload" onChange={handleFileChange} className="file-upload-input" /></label>
+                                    {fileUpload && <div className="file-preview"><span className="file-preview-icon">📄</span><span className="file-preview-name">{fileUpload.name}</span><span className="file-preview-remove" onClick={() => setFileUpload(null)}>✖️</span></div>}
+                                    <button onClick={handleSubmitTask} disabled={!fileUpload} className="submit-btn mt-4">Kumpulkan Tugas</button>
+                                </div>
+                            )}
+                        </div>
+                    )}
+                    {loggedInUser.role === 'guru' && (
+                        <div className="form-section">
+                            <h2 className="section-title"><div className="section-title-main"><span className="section-title-icon">👥</span> Pengumpulan Siswa</div></h2>
+                            {submittedTasks.length > 0 ? (
+                                <ul className="space-y-4">
+                                    {submittedTasks.map(({ siswa, submission }) => (
+                                        <li key={siswa.id} className="bg-gray-50 p-4 rounded-lg">
+                                            <div className="flex justify-between items-start">
+                                                <div>
+                                                    <p className="font-semibold text-gray-800">{siswa.nama}</p>
+                                                    <p className="text-sm text-gray-600">Dikumpulkan: {submission.tanggalKumpul}</p>
+                                                    <a href={submission.fileUrl} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline">Lihat File</a>
+                                                </div>
+                                                <div className="flex items-center space-x-2 w-48">
+                                                    <input type="number" min="0" max="100" placeholder="Nilai" defaultValue={submission.nilai ?? ''} onChange={(e) => handleNilaiChange(siswa.id, e.target.value)} className="form-input w-24 text-center" />
+                                                    <button onClick={() => handleSaveNilai(siswa.id, nilaiInputs[siswa.id])} className="px-3 py-2 text-sm bg-green-500 text-white rounded-lg hover:bg-green-600">Simpan</button>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : <p className="text-gray-600">Belum ada siswa yang mengumpulkan tugas ini.</p>}
+                        </div>
+                    )}
+                    <div className="fixed-buttons-container"><button onClick={onBack} className="back-btn"><span className="text-xl">⬅️</span> Kembali</button></div>
+                </div>
+            );
+        };
+        
+        const JadwalPage = ({ loggedInUser, onBack, findEntity, filterEntities }) => {
+            let jadwalData = [], title = '';
+            if (loggedInUser.role === 'siswa') {
+                const kelas = findEntity('kelas', loggedInUser.kelasId);
+                if (kelas) {
+                    jadwalData = filterEntities('jadwal', j => j.kelasId === kelas.id).map(j => ({ ...j, mapelNama: findEntity('mapel', j.mapelId)?.nama, guruNama: findEntity('user', j.guruId)?.nama }));
+                    title = `Jadwal Pelajaran ${kelas.nama}`;
+                }
+            } else {
+                jadwalData = filterEntities('jadwal', j => j.guruId === loggedInUser.id).map(j => ({ ...j, mapelNama: findEntity('mapel', j.mapelId)?.nama, kelasNama: findEntity('kelas', j.kelasId)?.nama }));
+                title = 'Jadwal Mengajar';
+            }
+            const orderedDays = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+            const groupedJadwal = jadwalData.sort((a, b) => orderedDays.indexOf(a.hari) - orderedDays.indexOf(b.hari) || a.jam.localeCompare(b.jam)).reduce((acc, curr) => { (acc[curr.hari] = acc[curr.hari] || []).push(curr); return acc; }, {});
+            return (
+                <div className="main-content">
+                    <h1 className="text-3xl font-bold text-gray-800 mb-6">{title}</h1>
+                    {Object.keys(groupedJadwal).length > 0 ? orderedDays.map(day => groupedJadwal[day] && (
+                        <div key={day} className="form-section mb-6">
+                            <h2 className="section-title"><div className="section-title-main"><span className="section-title-icon">📅</span> {day}</div></h2>
+                            <ul className="space-y-3">
+                                {groupedJadwal[day].map((item, index) => (
+                                    <li key={index} className="bg-gray-50 p-4 rounded-lg">
+                                        <p className="font-semibold text-gray-800">{item.mapelNama}</p>
+                                        <p className="text-sm text-gray-600">Jam: {item.jam}</p>
+                                        {loggedInUser.role === 'siswa' && <p className="text-sm text-gray-600">Guru: {item.guruNama}</p>}
+                                        {loggedInUser.role === 'guru' && <p className="text-sm text-gray-600">Kelas: {item.kelasNama}</p>}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )) : <p className="text-gray-600">Tidak ada jadwal yang tersedia.</p>}
+                    <div className="fixed-buttons-container"><button onClick={onBack} className="back-btn"><span className="text-xl">⬅️</span> Kembali</button></div>
+                </div>
+            );
+        };
+
+        const NilaiPage = ({ loggedInUser, onBack, findEntity }) => {
+            const nilaiSiswa = (loggedInUser.nilai || []).map(n => ({ ...n, mapelNama: findEntity('mapel', n.mapelId)?.nama }));
+            return (
+                <div className="main-content">
+                    <h1 className="text-3xl font-bold text-gray-800 mb-6">Transkrip Nilai</h1>
+                    {nilaiSiswa.length > 0 ? (
+                        <div className="overflow-x-auto rounded-lg shadow-md form-section">
+                            <table className="min-w-full bg-white"><thead className="bg-gray-200"><tr><th className="py-3 px-6 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider rounded-tl-lg">Mata Pelajaran</th><th className="py-3 px-6 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider rounded-tr-lg">Nilai</th></tr></thead>
+                                <tbody className="divide-y divide-gray-200">
+                                    {nilaiSiswa.map((item, index) => <tr key={index} className="hover:bg-gray-50"><td className="py-4 px-6 whitespace-nowrap text-gray-800">{item.mapelNama}</td><td className="py-4 px-6 whitespace-nowrap text-gray-800 font-medium">{item.nilai}</td></tr>)}
+                                </tbody>
+                            </table>
+                        </div>
+                    ) : <p className="text-gray-600">Belum ada data nilai.</p>}
+                    <div className="fixed-buttons-container"><button onClick={onBack} className="back-btn"><span className="text-xl">⬅️</span> Kembali</button></div>
+                </div>
+            );
+        };
+
+        const AbsensiPage = ({ loggedInUser, onBack, findEntity }) => {
+            const absensiSiswa = (loggedInUser.absensi || []).map(a => ({ ...a, mapelNama: findEntity('mapel', findEntity('jadwal', a.jadwalId)?.mapelId)?.nama })).sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+            return (
+                <div className="main-content">
+                    <h1 className="text-3xl font-bold text-gray-800 mb-6">Riwayat Absensi</h1>
+                    {absensiSiswa.length > 0 ? (
+                        <div className="overflow-x-auto rounded-lg shadow-md form-section">
+                            <table className="min-w-full bg-white"><thead className="bg-gray-200"><tr><th className="py-3 px-6 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider rounded-tl-lg">Tanggal</th><th className="py-3 px-6 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Mata Pelajaran</th><th className="py-3 px-6 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider rounded-tr-lg">Status</th></tr></thead>
+                                <tbody className="divide-y divide-gray-200">
+                                    {absensiSiswa.map((item, index) => <tr key={index} className="hover:bg-gray-50"><td className="py-4 px-6 whitespace-nowrap text-gray-800">{item.tanggal}</td><td className="py-4 px-6 whitespace-nowrap text-gray-800">{item.mapelNama}</td><td className={`py-4 px-6 whitespace-nowrap font-medium ${item.status === 'Hadir' ? 'text-green-600' : 'text-red-600'}`}>{item.status}</td></tr>)}
+                                </tbody>
+                            </table>
+                        </div>
+                    ) : <p className="text-gray-600">Belum ada riwayat absensi.</p>}
+                    <div className="fixed-buttons-container"><button onClick={onBack} className="back-btn"><span className="text-xl">⬅️</span> Kembali</button></div>
+                </div>
+            );
+        };
+        
+        const ManajemenKelasPage = ({ loggedInUser, onBack, onSelectSiswa, findEntity, filterEntities }) => {
+            const kelas = findEntity('kelas', loggedInUser.waliKelasId);
+            if (!kelas) return <div className="main-content"><p>Anda bukan wali kelas.</p><div className="fixed-buttons-container"><button onClick={onBack} className="back-btn">Kembali</button></div></div>;
+            
+            const siswaDiKelas = filterEntities('user', u => u.type === 'user' && u.kelasId === kelas.id).map(s => {
+                const tugasSelesai = (s.tugasDikumpulkan || []).length;
+                const totalTugas = filterEntities('tugas', t => t.kelasId === kelas.id).length;
+                const totalNilai = (s.tugasDikumpulkan || []).reduce((sum, t) => sum + (t.nilai || 0), 0);
+                const rataRataNilai = tugasSelesai > 0 ? (totalNilai / tugasSelesai).toFixed(1) : 'N/A';
+                const totalPertemuan = filterEntities('jadwal', j => j.kelasId === kelas.id).length;
+                const hadir = (s.absensi || []).filter(a => a.status === 'Hadir').length;
+                const kehadiran = totalPertemuan > 0 ? ((hadir / totalPertemuan) * 100).toFixed(0) + '%' : 'N/A';
+                return { ...s, tugasSelesai, totalTugas, rataRataNilai, kehadiran };
+            });
+
+            return (
+                <div className="main-content">
+                    <h1 className="text-3xl font-bold text-gray-800 mb-6">Manajemen Kelas - {kelas.nama}</h1>
+                    <div className="form-section">
+                        <h2 className="section-title"><div className="section-title-main"><span className="section-title-icon">👥</span> Analitik Siswa ({siswaDiKelas.length})</div></h2>
+                        <div className="overflow-x-auto rounded-lg shadow-md">
+                            <table className="min-w-full bg-white"><thead className="bg-gray-200"><tr>
+                                <th className="py-3 px-6 text-left text-sm font-semibold text-gray-700 uppercase">Siswa</th>
+                                <th className="py-3 px-6 text-left text-sm font-semibold text-gray-700 uppercase">Tugas Selesai</th>
+                                <th className="py-3 px-6 text-left text-sm font-semibold text-gray-700 uppercase">Rata-rata Nilai</th>
+                                <th className="py-3 px-6 text-left text-sm font-semibold text-gray-700 uppercase">Kehadiran</th>
+                            </tr></thead>
+                                <tbody className="divide-y divide-gray-200">
+                                    {siswaDiKelas.map(s => <tr key={s.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => onSelectSiswa(s)}>
+                                        <td className="py-4 px-6 whitespace-nowrap text-gray-800 flex items-center gap-3"><img src={s.fotoProfil} className="w-8 h-8 rounded-full" />{s.nama}</td>
+                                        <td className="py-4 px-6 whitespace-nowrap text-gray-800">{s.tugasSelesai}/{s.totalTugas}</td>
+                                        <td className="py-4 px-6 whitespace-nowrap text-gray-800 font-bold">{s.rataRataNilai}</td>
+                                        <td className="py-4 px-6 whitespace-nowrap text-gray-800">{s.kehadiran}</td>
+                                    </tr>)}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div className="fixed-buttons-container"><button onClick={onBack} className="back-btn"><span className="text-xl">⬅️</span> Kembali</button></div>
+                </div>
+            );
+        };
+
+        const MateriPage = ({ loggedInUser, onNavigate, onSelectMateri, isGuru, findEntity, filterEntities }) => {
+            const listMateri = isGuru ? filterEntities('materi', m => m.guruId === loggedInUser.id) : filterEntities('materi', m => m.kelasId === loggedInUser.kelasId);
+            const title = isGuru ? "Materi" : "Materi Pelajaran";
+            return (
+                <div className="main-content">
+                    <div className="flex justify-between items-center mb-6">
+                        <h1 className="text-3xl font-bold text-gray-800">{title}</h1>
+                        {isGuru && <button onClick={() => onNavigate('formMateri')} className="submit-btn">Tambah Materi</button>}
+                    </div>
+                    {listMateri.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {listMateri.map(m => (
+                                <div key={m.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                                    <div className="p-6">
+                                        <h2 className="text-xl font-semibold text-gray-800 mb-2">{m.judul}</h2>
+                                        <p className="text-sm text-gray-600 mb-3">Mapel: {findEntity('mapel', m.mapelId)?.nama}</p>
+                                        <p className="text-sm text-gray-500 mb-4 line-clamp-2">{m.deskripsi || "Tidak ada deskripsi."}</p>
+                                        <button onClick={() => { onSelectMateri(m); onNavigate('materiDetail'); }} className="inline-flex items-center text-blue-600 hover:underline font-medium">Lihat Detail <span className="ml-1 text-xl">➡️</span></button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : <p className="text-gray-600 text-center py-10">{isGuru ? "Anda belum mengunggah materi." : "Belum ada materi untuk kelas Anda."}</p>}
+                    <div className="fixed-buttons-container"><button onClick={() => onNavigate('dashboard')} className="back-btn"><span className="text-xl">⬅️</span> Kembali ke Dashboard</button></div>
+                </div>
+            );
+        };
+
+        const TugasPage = ({ loggedInUser, onNavigate, onSelectTugas, isGuru, findEntity, filterEntities }) => {
+            const title = isGuru ? "Tugas Dibuat" : "Daftar Tugas";
+            const tugas = isGuru ? filterEntities('tugas', t => t.guruId === loggedInUser.id) : filterEntities('tugas', t => t.kelasId === loggedInUser.kelasId);
+            
+            const tugasMendatang = !isGuru && loggedInUser.role === 'siswa' ? tugas.filter(t => new Date(t.deadline) >= new Date() && !(loggedInUser.tugasDikumpulkan || []).some(ts => ts.tugasId === t.id)) : [];
+            const tugasTerlambat = !isGuru && loggedInUser.role === 'siswa' ? tugas.filter(t => new Date(t.deadline) < new Date() && !(loggedInUser.tugasDikumpulkan || []).some(ts => ts.tugasId === t.id)) : [];
+            const tugasSelesai = !isGuru && loggedInUser.role === 'siswa' ? tugas.filter(t => (loggedInUser.tugasDikumpulkan || []).some(ts => ts.tugasId === t.id)).map(t => ({...t, submission: (loggedInUser.tugasDikumpulkan || []).find(ts => ts.tugasId === t.id) })) : [];
+
+            return (
+                <div className="main-content">
+                    <div className="flex justify-between items-center mb-6">
+                        <h1 className="text-3xl font-bold text-gray-800">{title}</h1>
+                        {isGuru && <button onClick={() => onNavigate('formTugas')} className="submit-btn">Buat Tugas Baru</button>}
+                    </div>
+                    {isGuru ? (
+                        tugas.length > 0 ? <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">{tugas.map(t => <div key={t.id} className="bg-white rounded-lg shadow-md p-6"><h2 className="text-xl font-semibold mb-2">{t.judul}</h2><p className="text-sm text-gray-600">Mapel: {findEntity('mapel', t.mapelId)?.nama}</p><p className="text-sm text-gray-600">Kelas: {findEntity('kelas', t.kelasId)?.nama}</p><p className="text-sm text-red-600 font-medium my-2">Deadline: {t.deadline}</p><button onClick={() => { onSelectTugas(t); onNavigate('tugasDetail'); }} className="text-blue-600 hover:underline font-medium">Lihat Detail ➡️</button></div>)}</div> : <p className="text-gray-600 text-center py-10">Anda belum membuat tugas.</p>
+                    ) : (
+                        <div className="space-y-6">
+                            <div><h2 className="text-xl font-bold text-red-600 mb-3">Mendatang ({tugasMendatang.length})</h2><div className="space-y-3">{tugasMendatang.map(t => <div key={t.id} className="bg-red-50 p-4 rounded-lg flex justify-between items-center"><p className="font-semibold">{t.judul}</p><button onClick={() => { onSelectTugas(t); onNavigate('tugasDetail'); }} className="submit-btn !py-2 !px-4 !text-sm">Kerjakan</button></div>)}</div></div>
+                            <div><h2 className="text-xl font-bold text-yellow-600 mb-3">Terlambat ({tugasTerlambat.length})</h2><div className="space-y-3">{tugasTerlambat.map(t => <div key={t.id} className="bg-yellow-50 p-4 rounded-lg"><p className="font-semibold">{t.judul}</p></div>)}</div></div>
+                            <div><h2 className="text-xl font-bold text-green-600 mb-3">Selesai ({tugasSelesai.length})</h2><div className="space-y-3">{tugasSelesai.map(t => <div key={t.id} className="bg-green-50 p-4 rounded-lg flex justify-between items-center"><div><p className="font-semibold">{t.judul}</p><p className="text-sm">Nilai: <strong>{t.submission.nilai ?? 'Belum Dinilai'}</strong></p></div><button onClick={() => { onSelectTugas(t); onNavigate('tugasDetail'); }} className="back-btn !py-2 !px-4 !text-sm">Lihat</button></div>)}</div></div>
+                        </div>
+                    )}
+                    <div className="fixed-buttons-container"><button onClick={() => onNavigate('dashboard')} className="back-btn"><span className="text-xl">⬅️</span> Kembali ke Dashboard</button></div>
+                </div>
+            );
+        };
+        
+        const PapanPeringkatPage = ({ loggedInUser, onBack, findEntity, filterEntities }) => {
+            const kelas = findEntity('kelas', loggedInUser.kelasId);
+            const siswaDiKelas = filterEntities('user', u => u.kelasId === kelas.id).sort((a, b) => (b.poin || 0) - (a.poin || 0));
+            return (
+                <div className="main-content">
+                    <h1 className="text-3xl font-bold text-gray-800 mb-6">Papan Peringkat - {kelas.nama}</h1>
+                    <div className="form-section">
+                        <ul className="space-y-3">
+                            {siswaDiKelas.map((s, index) => (
+                                <li key={s.id} className={`p-4 rounded-lg flex items-center justify-between ${s.id === loggedInUser.id ? 'bg-blue-100 border-2 border-blue-400' : 'bg-gray-50'}`}>
+                                    <div className="flex items-center gap-4">
+                                        <span className="text-2xl font-bold w-8 text-center">{index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : index + 1}</span>
+                                        <img src={s.fotoProfil} alt="profil" className="w-12 h-12 rounded-full" />
+                                        <p className="font-semibold text-gray-800">{s.nama}</p>
+                                    </div>
+                                    <p className="font-bold text-yellow-500 text-lg">{s.poin || 0} Poin</p>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                    <div className="fixed-buttons-container"><button onClick={onBack} className="back-btn"><span className="text-xl">⬅️</span> Kembali</button></div>
+                </div>
+            );
+        };
+
+        const FormPage = ({ loggedInUser, onSave, onBack, formType, showToast, setIsLoading, findEntity, filterEntities }) => {
+            const [formData, setFormData] = React.useState({ judul: '', deskripsi: '', mapelId: '', kelasId: '', deadline: '', file: null });
+            const [errors, setErrors] = React.useState({});
+            
+            const isMateri = formType === 'materi', isTugas = formType === 'tugas', isPengumuman = formType === 'pengumuman';
+            const title = isMateri ? "Buat Materi Baru" : isTugas ? "Buat Tugas Baru" : "Buat Pengumuman Baru";
+            const mapelGuru = loggedInUser.mapel.map(id => findEntity('mapel', id));
+            const kelasGuru = filterEntities('kelas', k => (filterEntities('jadwal', j => j.guruId === loggedInUser.id) || []).some(jd => jd.kelasId === k.id));
+
+            const validate = () => {
+                const newErrors = {};
+                if (!formData.judul.trim()) newErrors.judul = "Judul tidak boleh kosong.";
+                if (!formData.kelasId) newErrors.kelasId = "Kelas harus dipilih.";
+                if (isTugas && !formData.deadline) newErrors.deadline = "Deadline harus diisi.";
+                if (isMateri && !formData.mapelId) newErrors.mapelId = "Mata pelajaran harus dipilih.";
+                if (isPengumuman && !formData.deskripsi.trim()) newErrors.deskripsi = "Isi pengumuman tidak boleh kosong.";
+                
+                setErrors(newErrors);
+                return Object.keys(newErrors).length === 0;
+            };
+
+            const handleSave = () => {
+                if (!validate()) {
+                    showToast('Harap perbaiki error pada formulir.', 'error');
+                    return;
+                }
+                
+                setIsLoading(true);
+                setTimeout(() => { // Simulate network delay
+                    let newData = { id: formType + Date.now(), judul: formData.judul, kelasId: formData.kelasId, guruId: loggedInUser.id };
+                    if (isMateri) Object.assign(newData, { deskripsi: formData.deskripsi, mapelId: formData.mapelId, tanggalUnggah: new Date().toISOString().split('T')[0], fileUrl: formData.file ? `https://example.com/${formData.file.name}` : null });
+                    if (isTugas) Object.assign(newData, { deskripsi: formData.deskripsi, mapelId: formData.mapelId, deadline: formData.deadline, fileLampiran: formData.file ? `https://example.com/${formData.file.name}` : null });
+                    if (isPengumuman) Object.assign(newData, { isi: formData.deskripsi, tanggal: new Date().toISOString() });
+                    onSave(formType, newData);
+                    setIsLoading(false);
+                }, 1000); // 1 second delay
+            };
+
+            const handleChange = (e) => {
+                const { name, value, files } = e.target;
+                setFormData(prev => ({ ...prev, [name]: files ? files[0] : value }));
+                if (errors[name]) {
+                    setErrors(prev => ({ ...prev, [name]: null }));
+                }
+            };
+
+            return (
+                <div className="main-content">
+                    <h1 className="text-3xl font-bold text-gray-800 mb-6">{title}</h1>
+                    <div className="form-section"><div className="form-grid">
+                        <div className="form-row">
+                            <label className="form-label" htmlFor="judul">Judul</label>
+                            <input type="text" id="judul" name="judul" className={`form-input ${errors.judul ? 'error' : ''}`} value={formData.judul} onChange={handleChange} />
+                            {errors.judul && <p className="form-error-text">{errors.judul}</p>}
+                        </div>
+                        {(isMateri || isTugas) && <div className="form-row">
+                            <label className="form-label" htmlFor="mapelId">Mata Pelajaran</label>
+                            <select id="mapelId" name="mapelId" className={`form-select ${errors.mapelId ? 'error' : ''}`} value={formData.mapelId} onChange={handleChange}>
+                                <option value="">Pilih Mata Pelajaran</option>
+                                {mapelGuru.map(m => <option key={m.id} value={m.id}>{m.nama}</option>)}
+                            </select>
+                             {errors.mapelId && <p className="form-error-text">{errors.mapelId}</p>}
+                        </div>}
+                        <div className="form-row">
+                            <label className="form-label" htmlFor="kelasId">Untuk Kelas</label>
+                            <select id="kelasId" name="kelasId" className={`form-select ${errors.kelasId ? 'error' : ''}`} value={formData.kelasId} onChange={handleChange}>
+                                <option value="">Pilih Kelas</option>
+                                {kelasGuru.map(k => <option key={k.id} value={k.id}>{k.nama}</option>)}
+                            </select>
+                             {errors.kelasId && <p className="form-error-text">{errors.kelasId}</p>}
+                        </div>
+                        {isTugas && <div className="form-row">
+                            <label className="form-label" htmlFor="deadline">Deadline</label>
+                            <input type="date" id="deadline" name="deadline" className={`form-input ${errors.deadline ? 'error' : ''}`} value={formData.deadline} onChange={handleChange} />
+                             {errors.deadline && <p className="form-error-text">{errors.deadline}</p>}
+                        </div>}
+                        <div className="form-row">
+                            <label className="form-label" htmlFor="deskripsi">{isPengumuman ? "Isi Pengumuman" : "Deskripsi"}</label>
+                            <textarea id="deskripsi" name="deskripsi" className={`form-textarea ${errors.deskripsi ? 'error' : ''}`} value={formData.deskripsi} onChange={handleChange}></textarea>
+                             {errors.deskripsi && <p className="form-error-text">{errors.deskripsi}</p>}
+                        </div>
+                         {(isMateri || isTugas) && (
+                            <div className="form-row">
+                                <label className="form-label">Lampiran File (Opsional)</label>
+                                <label htmlFor="file" className="file-upload-container">
+                                    <span className="file-upload-icon">⬆️</span>
+                                    <p className="file-upload-text">Seret & lepas file atau klik untuk memilih</p>
+                                    <input type="file" id="file" name="file" onChange={handleChange} className="file-upload-input" />
+                                </label>
+                                {formData.file && (
+                                    <div className="file-preview">
+                                        <span className="file-preview-icon">📄</span>
+                                        <span className="file-preview-name">{formData.file.name}</span>
+                                        <span className="file-preview-remove" onClick={() => setFormData(p => ({...p, file: null}))}>✖️</span>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div></div>
+                    <div className="fixed-buttons-container"><button onClick={onBack} className="back-btn">Batal</button><button onClick={handleSave} className="save-btn">Simpan</button></div>
+                </div>
+            );
+        };
+        
+        const DetailSiswaPage = ({ siswa, onBack, findEntity, filterEntities }) => {
+            if (!siswa) {
+                return (
+                    <div className="main-content">
+                        <h1 className="text-2xl font-bold mb-4">Siswa tidak ditemukan</h1>
+                        <div className="fixed-buttons-container">
+                            <button onClick={onBack} className="back-btn">Kembali</button>
+                        </div>
+                    </div>
+                );
+            }
+
+            const tugasSiswa = (siswa.tugasDikumpulkan || []).map(t => ({
+                ...t,
+                tugasDetail: findEntity('tugas', t.tugasId)
+            }));
+            
+            const totalPertemuan = filterEntities('jadwal', j => j.kelasId === siswa.kelasId).length;
+            const hadir = (siswa.absensi || []).filter(a => a.status === 'Hadir').length;
+            const izin = (siswa.absensi || []).filter(a => a.status === 'Izin').length;
+            const sakit = (siswa.absensi || []).filter(a => a.status === 'Sakit').length;
+            const tidakHadir = totalPertemuan - hadir - izin - sakit;
+            const kehadiranPersen = totalPertemuan > 0 ? ((hadir / totalPertemuan) * 100).toFixed(0) : 0;
+
+            return (
+                <div className="main-content">
+                    <div className="flex items-center space-x-6 mb-6">
+                        <img src={siswa.fotoProfil} alt="Profil" className="w-24 h-24 rounded-full border-4 border-gray-200" />
+                        <div>
+                            <h1 className="text-3xl font-bold text-gray-800">{siswa.nama}</h1>
+                            <p className="text-gray-600">NISN: {siswa.nisn_nip}</p>
+                            <p className="font-bold text-yellow-500 text-lg mt-1">{siswa.poin || 0} Poin</p>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div className="form-section">
+                            <h2 className="section-title"><div className="section-title-main"><span className="section-title-icon">📝</span> Nilai Tugas</div></h2>
+                            {tugasSiswa.length > 0 ? (
+                                <table className="min-w-full bg-white">
+                                    <thead className="bg-gray-100">
+                                        <tr>
+                                            <th className="py-2 px-4 text-left text-sm font-semibold text-gray-600">Tugas</th>
+                                            <th className="py-2 px-4 text-left text-sm font-semibold text-gray-600">Nilai</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-200">
+                                        {tugasSiswa.map(t => (
+                                            <tr key={t.tugasId}>
+                                                <td className="py-2 px-4">{t.tugasDetail?.judul}</td>
+                                                <td className="py-2 px-4 font-bold">{t.nilai ?? 'Belum dinilai'}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            ) : <p className="text-gray-600">Belum ada tugas yang dikumpulkan.</p>}
+                        </div>
+                        <div className="form-section">
+                            <h2 className="section-title"><div className="section-title-main"><span className="section-title-icon">✅</span> Rekap Absensi ({kehadiranPersen}%)</div></h2>
+                             <ul className="space-y-2 text-sm">
+                                <li className="flex justify-between"><span>Hadir:</span> <span className="font-semibold">{hadir} hari</span></li>
+                                <li className="flex justify-between"><span>Izin:</span> <span className="font-semibold">{izin} hari</span></li>
+                                <li className="flex justify-between"><span>Sakit:</span> <span className="font-semibold">{sakit} hari</span></li>
+                                <li className="flex justify-between"><span>Tanpa Keterangan:</span> <span className="font-semibold">{tidakHadir} hari</span></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div className="fixed-buttons-container">
+                        <button onClick={onBack} className="back-btn">Kembali ke Manajemen Kelas</button>
+                    </div>
+                </div>
+            );
+        };
+
+
+        // =================================================================
+        // MAIN APP COMPONENT
+        // =================================================================
+
+        const App = () => {
+            const [entities, setEntities] = React.useState(initialEntities);
+            const [loggedInUserId, setLoggedInUserId] = React.useState(null);
+            const [currentPage, setCurrentPage] = React.useState('login');
+            const [selectedMateri, setSelectedMateri] = React.useState(null);
+            const [selectedTugas, setSelectedTugas] = React.useState(null);
+            const [selectedSiswa, setSelectedSiswa] = React.useState(null);
+            const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
+            const [isLoading, setIsLoading] = React.useState(false);
+            const [toast, setToast] = React.useState({ show: false, message: '', type: '' });
+
+            const findEntity = React.useCallback((type, predicateOrId) => {
+                if (typeof predicateOrId === 'function') {
+                    return entities.find(e => e.type === type && predicateOrId(e));
+                }
+                return entities.find(e => e.type === type && e.id === predicateOrId);
+            }, [entities]);
+
+            const filterEntities = React.useCallback((type, predicate) => {
+                return entities.filter(e => e.type === type && predicate(e));
+            }, [entities]);
+
+            const showToast = (message, type = 'success') => {
+                setToast({ show: true, message, type });
+            };
+
+            const awardPoints = (userId, points) => {
+                setEntities(prevEntities => prevEntities.map(e => {
+                    if (e.type === 'user' && e.id === userId) {
+                        return { ...e, poin: (e.poin || 0) + points };
+                    }
+                    return e;
+                }));
+            };
+
+            const catatAbsensiOtomatis = (userId, mapelId) => {
+                const user = findEntity('user', userId);
+                if (!user || user.role !== 'siswa' || !mapelId) return;
+
+                const today = new Date();
+                const todayStr = today.toISOString().split('T')[0];
+                const dayNames = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+                const todayDayName = dayNames[today.getDay()];
+
+                const jadwalHariIni = filterEntities('jadwal', j => j.kelasId === user.kelasId && j.mapelId === mapelId && j.hari === todayDayName);
+                if (jadwalHariIni.length === 0) return; 
+
+                const jadwalId = jadwalHariIni[0].id;
+                const sudahAbsen = (user.absensi || []).some(a => a.jadwalId === jadwalId && a.tanggal === todayStr);
+
+                if (!sudahAbsen) {
+                    awardPoints(userId, 10);
+                    setEntities(prev => prev.map(e => e.id === userId ? { ...e, absensi: [...(e.absensi || []), { jadwalId, tanggal: todayStr, status: 'Hadir' }] } : e));
+                    showToast(`Absensi otomatis di mapel ${findEntity('mapel', mapelId)?.nama}. Poin +10!`, 'success');
+                }
+            };
+            
+            React.useEffect(() => {
+                const currentUser = findEntity('user', loggedInUserId);
+                if (currentUser?.role === 'siswa') {
+                    if (currentPage === 'materiDetail' && selectedMateri) {
+                         catatAbsensiOtomatis(currentUser.id, selectedMateri.mapelId);
+                    } else if (currentPage === 'tugasDetail' && selectedTugas) {
+                         catatAbsensiOtomatis(currentUser.id, selectedTugas.mapelId);
+                    }
+                }
+            }, [currentPage, selectedMateri, selectedTugas]);
+
+            const handleLogin = (userId) => { setLoggedInUserId(userId); setCurrentPage('dashboard'); };
+            const handleLogout = () => { setLoggedInUserId(null); setCurrentPage('login'); };
+            const handleNavigate = (page) => {
+                setCurrentPage(page);
+                if (page !== 'materiDetail' && page !== 'tugasDetail' && page !== 'detailSiswa') {
+                    setSelectedMateri(null);
+                    setSelectedTugas(null);
+                    setSelectedSiswa(null);
+                }
+                setIsSidebarOpen(false);
+            };
+            
+            const handleSelectSiswa = (siswa) => {
+                setSelectedSiswa(siswa);
+                handleNavigate('detailSiswa');
+            };
+            
+            const handleAddComment = (materiId, isi, userId, mapelId) => {
+                const newComment = { type: 'komentarMateri', id: 'km' + Date.now(), materiId, userId, isi, tanggal: new Date().toISOString() };
+                setEntities(prev => [...prev, newComment]);
+                awardPoints(userId, 5);
+                catatAbsensiOtomatis(userId, mapelId);
+                showToast('Komentar berhasil dikirim! Poin +5', 'success');
+            };
+            
+            const handleSubmitTugas = (tugasId, file, userId, mapelId) => {
+                setIsLoading(true);
+                setTimeout(() => {
+                    setEntities(prev => prev.map(e => {
+                        if (e.type === 'user' && e.id === userId) {
+                            const newTugas = { tugasId, tanggalKumpul: new Date().toISOString().split('T')[0], fileUrl: `https://example.com/${file.name}`, nilai: null };
+                            return { ...e, tugasDikumpulkan: [...(e.tugasDikumpulkan || []), newTugas] };
+                        }
+                        return e;
+                    }));
+                    awardPoints(userId, 25);
+                    catatAbsensiOtomatis(userId, mapelId);
+                    showToast('Tugas berhasil dikumpulkan! Poin +25', 'success');
+                    setIsLoading(false);
+                }, 1000);
+            };
+            
+            const handleSaveNilai = (tugasId, siswaId, nilai) => {
+                let lencanaDiberikan = false;
+                let poinDiberikan = false;
+                const siswa = findEntity('user', siswaId);
+                const submission = (siswa.tugasDikumpulkan || []).find(td => td.tugasId === tugasId);
+                
+                if (submission && submission.nilai === null) {
+                    poinDiberikan = true;
+                }
+                if (submission && nilai === 100 && !(siswa.lencanaDiperoleh || []).includes('lencana3')) {
+                    lencanaDiberikan = true;
+                }
+
+                setEntities(prev => prev.map(e => {
+                    if (e.type === 'user' && e.id === siswaId) {
+                        const newTugasDikumpulkan = (e.tugasDikumpulkan || []).map(td => td.tugasId === tugasId ? {...td, nilai} : td);
+                        const newLencana = lencanaDiberikan ? [...(e.lencanaDiperoleh || []), 'lencana3'] : (e.lencanaDiperoleh || []);
+                        const newPoin = poinDiberikan ? (e.poin || 0) + nilai : (e.poin || 0);
+                        return { ...e, tugasDikumpulkan: newTugasDikumpulkan, lencanaDiperoleh: newLencana, poin: newPoin };
+                    }
+                    return e;
+                }));
+                
+                if (lencanaDiberikan) {
+                    showToast(`Nilai untuk ${siswa.nama} disimpan. Selamat, Anda mendapatkan lencana Skor Sempurna!`, 'success');
+                } else {
+                    showToast(`Nilai untuk ${siswa.nama} berhasil diperbarui.`, 'success');
+                }
+            };
+            
+            const handleSaveData = (type, data) => {
+                setEntities(prev => [...prev, { type, ...data }]);
+                showToast(`${type.charAt(0).toUpperCase() + type.slice(1)} berhasil disimpan!`, 'success');
+                handleNavigate(type === 'materi' ? 'materiGuru' : type === 'tugas' ? 'tugasGuru' : 'dashboard');
+            };
+
+            const renderPage = () => {
+                const user = loggedInUserId ? findEntity('user', loggedInUserId) : null;
+                if (!user) return <LoginPage onLogin={handleLogin} showToast={showToast} findEntity={findEntity} />;
+                
+                const pageProps = {
+                    loggedInUser: user,
+                    onNavigate: handleNavigate,
+                    onBack: () => handleNavigate('dashboard'),
+                    showToast,
+                    setIsLoading,
+                    findEntity,
+                    filterEntities,
+                };
+
+                switch (currentPage) {
+                    case 'dashboard': return user.role === 'siswa' ? <DashboardSiswa {...pageProps} /> : <DashboardGuru {...pageProps} />;
+                    case 'profil': return <ProfilPage {...pageProps} />;
+                    case 'materiDetail': return <MateriDetailPage {...pageProps} materi={selectedMateri} onBack={() => handleNavigate(user.role === 'guru' ? 'materiGuru' : 'materiSiswa')} onAddComment={handleAddComment} />;
+                    case 'tugasDetail': return <TugasDetailPage {...pageProps} tugas={selectedTugas} onBack={() => handleNavigate(user.role === 'guru' ? 'tugasGuru' : 'daftarTugas')} onSubmitTugas={handleSubmitTugas} onSaveNilai={handleSaveNilai} />;
+                    case 'jadwal': return <JadwalPage {...pageProps} />;
+                    case 'nilai': return <NilaiPage {...pageProps} />;
+                    case 'absensi': return <AbsensiPage {...pageProps} />;
+                    case 'manajemenKelas': return <ManajemenKelasPage {...pageProps} onSelectSiswa={handleSelectSiswa} />;
+                    case 'detailSiswa': return <DetailSiswaPage {...pageProps} siswa={selectedSiswa} onBack={() => handleNavigate('manajemenKelas')} />;
+                    case 'materiGuru': return <MateriPage {...pageProps} onSelectMateri={setSelectedMateri} isGuru={true} />;
+                    case 'materiSiswa': return <MateriPage {...pageProps} onSelectMateri={setSelectedMateri} isGuru={false} />;
+                    case 'tugasGuru': return <TugasPage {...pageProps} onSelectTugas={setSelectedTugas} isGuru={true} />;
+                    case 'daftarTugas': return <TugasPage {...pageProps} onSelectTugas={setSelectedTugas} isGuru={false} />;
+                    case 'papanPeringkat': return <PapanPeringkatPage {...pageProps} />;
+                    case 'formMateri': return <FormPage {...pageProps} onSave={handleSaveData} onBack={() => handleNavigate('materiGuru')} formType="materi" />;
+                    case 'formTugas': return <FormPage {...pageProps} onSave={handleSaveData} onBack={() => handleNavigate('tugasGuru')} formType="tugas" />;
+                    case 'formPengumuman': return <FormPage {...pageProps} onSave={handleSaveData} onBack={() => handleNavigate('dashboard')} formType="pengumuman" />;
+                    default: return <LoginPage onLogin={handleLogin} showToast={showToast} findEntity={findEntity}/>;
+                }
+            };
+
+            return (
+                <div className="flex flex-col md:flex-row min-h-[800px] w-full rounded-lg shadow-xl bg-gray-800">
+                    {toast.show && <Toast message={toast.message} type={toast.type} onHide={() => setToast({ ...toast, show: false })} />}
+                    {loggedInUserId && findEntity('user', loggedInUserId) && <>
+                        <div className="md:hidden bg-gray-800 text-white p-4 flex justify-between items-center rounded-t-lg">
+                            <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="text-white focus:outline-none"><span className="text-2xl">☰</span></button>
+                            <h2 className="text-lg font-semibold">Menu</h2>
+                            <img src={findEntity('user', loggedInUserId).fotoProfil} alt="Profil" className="w-10 h-10 rounded-full border-2 border-blue-400" />
+                        </div>
+                        <Sidebar loggedInUser={findEntity('user', loggedInUserId)} onNavigate={handleNavigate} onLogout={handleLogout} isSidebarOpen={isSidebarOpen} />
+                    </>}
+                    <main className="flex-grow bg-white rounded-r-lg flex flex-col overflow-hidden relative">
+                        {isLoading && <LoadingSpinner />}
+                        {renderPage()}
+                    </main>
+                </div>
+            );
+        };
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>

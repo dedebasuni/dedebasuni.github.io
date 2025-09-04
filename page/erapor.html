@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="description" content="e-Rapor Merdeka SMAPTA - Sistem rapor digital untuk memantau perkembangan akademik siswa" />
+  <meta name="keywords" content="e-rapor, rapor digital, SMAPTA, nilai akademik, laporan pendidikan" />
+  <meta name="author" content="SMAPTA" />
+  <meta name="theme-color" content="#3f51b5" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet"> 
+  
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="e-Rapor Merdeka SMAPTA" />
+  <meta property="og:description" content="Sistem rapor digital untuk memantau perkembangan akademik siswa" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://smapgritakokak.sch.id" />
+  <meta property="og:image" content="https://smapgritakokak.sch.id/spmb/assets/img/icons/icon-192x192.png" />
+  
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="e-Rapor Merdeka SMAPTA" />
+  <meta name="twitter:description" content="Sistem rapor digital untuk memantau perkembangan akademik siswa" />
+  <meta name="twitter:image" content="https://smapgritakokak.sch.id/spmb/assets/img/icons/icon-192x192.png" />
+  
+  <title>e-Rapor Merdeka - Sistem Rapor Digital</title>
+  <link rel="icon" href="https://smapgritakokak.sch.id/spmb/assets/img/icons/icon-96x96.png" type="image/x-icon">
+  <link rel="apple-touch-icon" href="https://smapgritakokak.sch.id/spmb/assets/img/icons/icon-192x192.png">
+  
+  <style>
+    /* CSS Reset */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+    
+    ::-webkit-scrollbar {
+      display: none;
+    }
+    
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, 'Google Sans', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+    
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #3f51b5 0%, #1a237e 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease-out;
+    }
+    
+    .logo-container {
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+    
+    .logo-container img {
+      width: 80px;
+      height: 80px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .logo-container h1 {
+      color: white;
+      font-size: 1.5rem;
+      margin-top: 1rem;
+      font-weight: 500;
+    }
+    
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .loading-text {
+      color: white;
+      margin-top: 1rem;
+      font-size: 1rem;
+    }
+    
+    .iframe-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+    
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    
+    .error-message {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #f5f5f5;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      text-align: center;
+      padding: 2rem;
+      z-index: 10000;
+    }
+    
+    .error-message h2 {
+      color: #d32f2f;
+      margin-bottom: 1rem;
+    }
+    
+    .error-message p {
+      margin-bottom: 1.5rem;
+      color: #424242;
+    }
+    
+    .retry-button {
+      background-color: #3f51b5;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background-color 0.3s;
+    }
+    
+    .retry-button:hover {
+      background-color: #303f9f;
+    }
+  </style>
+</head>
+<body>
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="logo-container">
+      <img src="https://smapgritakokak.sch.id/spmb/assets/img/icons/icon-96x96.png" alt="SMAPTA Logo">
+      <h1>e-Rapor Merdeka</h1>
+    </div>
+    <div class="spinner"></div>
+    <p class="loading-text">Memuat sistem e-Rapor...</p>
+  </div>
+  
+  <div class="error-message" id="errorMessage">
+    <h2>Gagal Memuat Konten</h2>
+    <p>Terjadi kendala saat memuat e-Rapor. Pastikan Anda terhubung ke internet dan coba lagi.</p>
+    <button class="retry-button" id="retryButton">Coba Lagi</button>
+  </div>
+  
+  <div class="iframe-container">
+    <iframe 
+      src="https://script.google.com/macros/s/AKfycbyQA4TxUtHm9RQwGuOjEbA5VA4AX1HR-njv6hTTj_s9GD8z8rUr2vAAlDJUlzsMhrwx/exec"
+      style="border:none;" 
+      allow="autoplay; camera; encrypted-media; geolocation; microphone; midi; payment; usb; accelerometer; gyroscope; magnetometer; screen-wake-lock; clipboard-read; clipboard-write; web-share; fullscreen"
+      id="contentFrame"
+      onload="hideLoading()">
+    </iframe>
+  </div>
+
+  <script>
+    // Fungsi untuk menyembunyikan loading overlay
+    function hideLoading() {
+      const loadingOverlay = document.getElementById('loadingOverlay');
+      loadingOverlay.style.opacity = '0';
+      setTimeout(() => {
+        loadingOverlay.style.display = 'none';
+      }, 500);
+    }
+    
+    // Fungsi untuk menangani error
+    function showError() {
+      document.getElementById('loadingOverlay').style.display = 'none';
+      document.getElementById('errorMessage').style.display = 'flex';
+    }
+    
+    // Event listener untuk tombol retry
+    document.getElementById('retryButton').addEventListener('click', function() {
+      document.getElementById('errorMessage').style.display = 'none';
+      document.getElementById('loadingOverlay').style.display = 'flex';
+      
+      // Reload iframe setelah sedikit delay
+      setTimeout(() => {
+        const iframe = document.getElementById('contentFrame');
+        iframe.src = iframe.src;
+      }, 500);
+    });
+    
+    // Deteksi jika iframe gagal dimuat
+    document.getElementById('contentFrame').addEventListener('error', showError);
+    
+    // Sembunyikan loading setelah 10 detik (fallback)
+    setTimeout(hideLoading, 10000);
+  </script>
+</body>
+</html>

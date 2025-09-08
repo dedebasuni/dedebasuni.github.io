@@ -37,15 +37,28 @@
     }
     
     ::-webkit-scrollbar {
-      display: none;
+      width: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: #a8a8a8;
     }
     
     html, body {
       height: 100%;
       margin: 0;
       padding: 0;
-      overflow: hidden;
       font-family: -apple-system, BlinkMacSystemFont, 'Google Sans', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background-color: #f5f5f5;
     }
     
     .loading-overlay {
@@ -66,6 +79,7 @@
     .logo-container {
       margin-bottom: 2rem;
       text-align: center;
+      animation: fadeIn 1s ease;
     }
     
     .logo-container img {
@@ -77,9 +91,16 @@
     
     .logo-container h1 {
       color: white;
-      font-size: 1.5rem;
+      font-size: 1.8rem;
       margin-top: 1rem;
       font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+    
+    .logo-container p {
+      color: rgba(255, 255, 255, 0.8);
+      margin-top: 0.5rem;
+      font-size: 1rem;
     }
     
     .spinner {
@@ -91,8 +112,30 @@
       animation: spin 1s ease-in-out infinite;
     }
     
+    .progress-container {
+      width: 240px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 2px;
+      margin-top: 1rem;
+      overflow: hidden;
+    }
+    
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: #fff;
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+    
     @keyframes spin {
       to { transform: rotate(360deg); }
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
     
     .loading-text {
@@ -105,6 +148,7 @@
       position: relative;
       width: 100%;
       height: 100%;
+      display: none;
     }
     
     iframe {
@@ -129,49 +173,81 @@
       z-index: 10000;
     }
     
+    .error-icon {
+      font-size: 3rem;
+      color: #d32f2f;
+      margin-bottom: 1rem;
+    }
+    
     .error-message h2 {
       color: #d32f2f;
       margin-bottom: 1rem;
+      font-size: 1.5rem;
     }
     
     .error-message p {
       margin-bottom: 1.5rem;
       color: #424242;
+      max-width: 500px;
+      line-height: 1.5;
+    }
+      
+    .connection-status {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 8px 12px;
+      border-radius: 20px;
+      font-size: 0.875rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      display: none;
     }
     
-    .retry-button {
-      background-color: #3f51b5;
+    .online {
+      background: #4caf50;
       color: white;
-      border: none;
-      padding: 0.75rem 1.5rem;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 1rem;
-      transition: background-color 0.3s;
     }
     
-    .retry-button:hover {
-      background-color: #303f9f;
+    .offline {
+      background: #f44336;
+      color: white;
     }
   </style>
 </head>
 <body>
   <div class="loading-overlay" id="loadingOverlay">
     <div class="logo-container">
-      <span class="material-icons-outlined text-white text-3xl">school</span>
-      <h1>e-Rapor Merdeka</h1>
+      <span class="material-icons-outlined" style="font-size: 3rem; color: white;">school</span>
+      <h1>e-Rapor Merdeka SMAPTA</h1>
+      <p>Sistem Rapor Digital untuk Pemantauan Akademik</p>
     </div>
     <div class="spinner"></div>
+    <div class="progress-container">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
     <p class="loading-text">Memuat sistem e-Rapor...</p>
   </div>
   
   <div class="error-message" id="errorMessage">
+    <span class="material-icons-outlined error-icon">error_outline</span>
     <h2>Gagal Memuat Konten</h2>
-    <p>Terjadi kendala saat memuat e-Rapor. Pastikan Anda terhubung ke internet dan coba lagi.</p>
-    <button class="retry-button" id="retryButton">Coba Lagi</button>
+    <p>Terjadi kendala saat memuat e-Rapor. Pastikan Anda terhubung ke internet dan coba lagi. Jika masalah berlanjut, silakan hubungi administrator.</p>
+    <button class="retry-button" id="retryButton">
+      <span class="material-icons-outlined">refresh</span>
+      Coba Lagi
+    </button>
   </div>
   
-  <div class="iframe-container">
+  <div class="connection-status" id="connectionStatus">
+    <span class="material-icons-outlined" id="connectionIcon">wifi_off</span>
+    <span id="connectionText">Tidak terhubung</span>
+  </div>
+  
+  <div class="iframe-container" id="iframeContainer">
     <iframe 
       src="https://script.google.com/macros/s/AKfycbydIZtvt3R77kdOJmJD5uE37LgWwrY5W8q1Xz0sVBAxTb4XdxVhoRZttBJ70WQsUKVD/exec"
       style="border:none;" 
@@ -182,42 +258,99 @@
   </div>
 
   <script>
+    // Variabel global
+    let progressInterval;
+    let isOnline = navigator.onLine;
+    
     // Fungsi untuk menyembunyikan loading overlay
     function hideLoading() {
-      const loadingOverlay = document.getElementById('loadingOverlay');
-      loadingOverlay.style.opacity = '0';
+      clearInterval(progressInterval);
+      document.getElementById('progressBar').style.width = '100%';
+      
       setTimeout(() => {
-        loadingOverlay.style.display = 'none';
-      }, 500);
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        loadingOverlay.style.opacity = '0';
+        
+        setTimeout(() => {
+          loadingOverlay.style.display = 'none';
+          document.getElementById('iframeContainer').style.display = 'block';
+          updateConnectionStatus();
+        }, 500);
+      }, 300);
     }
     
     // Fungsi untuk menangani error
     function showError() {
+      clearInterval(progressInterval);
       document.getElementById('loadingOverlay').style.display = 'none';
       document.getElementById('errorMessage').style.display = 'flex';
     }
     
-    // Event listener untuk tombol retry
-    document.getElementById('retryButton').addEventListener('click', function() {
-      document.getElementById('errorMessage').style.display = 'none';
-      document.getElementById('loadingOverlay').style.display = 'flex';
+    // Fungsi untuk mensimulasikan progress loading
+    function simulateProgress() {
+      const progressBar = document.getElementById('progressBar');
+      let width = 0;
       
-      // Reload iframe setelah sedikit delay
-      setTimeout(() => {
-        const iframe = document.getElementById('contentFrame');
-        iframe.src = iframe.src;
-      }, 500);
-    });
+      progressInterval = setInterval(() => {
+        if (width >= 90) {
+          clearInterval(progressInterval);
+        } else {
+          width += Math.random() * 5;
+          progressBar.style.width = width + '%';
+        }
+      }, 300);
+    }
     
+    // Fungsi untuk memeriksa status koneksi
+    function checkConnection() {
+      isOnline = navigator.onLine;
+      updateConnectionStatus();
+      
+      if (isOnline && document.getElementById('errorMessage').style.display === 'flex') {
+        document.getElementById('retryButton').click();
+      }
+    }
+    
+    // Fungsi untuk memperbarui tampilan status koneksi
+    function updateConnectionStatus() {
+      const statusElement = document.getElementById('connectionStatus');
+      const iconElement = document.getElementById('connectionIcon');
+      const textElement = document.getElementById('connectionText');
+      
+      if (isOnline) {
+        statusElement.className = 'connection-status online';
+        iconElement.textContent = 'wifi';
+        textElement.textContent = 'Terhubung';
+        
+        // Sembunyikan status online setelah 3 detik
+        setTimeout(() => {
+          if (isOnline) {
+            statusElement.style.display = 'none';
+          }
+        }, 3000);
+      } else {
+        statusElement.className = 'connection-status offline';
+        statusElement.style.display = 'flex';
+        iconElement.textContent = 'wifi_off';
+        textElement.textContent = 'Tidak terhubung';
+      }
+    }
+        
     // Deteksi jika iframe gagal dimuat
     document.getElementById('contentFrame').addEventListener('error', showError);
     
-    // Sembunyikan loading setelah 10 detik (fallback)
-    setTimeout(hideLoading, 10000);
+    // Event listener untuk perubahan koneksi
+    window.addEventListener('online', checkConnection);
+    window.addEventListener('offline', checkConnection);
+    
+    // Inisialisasi saat halaman dimuat
+    window.addEventListener('load', function() {
+      simulateProgress();
+      checkConnection();
+      
+      // Sembunyikan loading setelah 15 detik (fallback)
+      setTimeout(hideLoading, 15000);
+    });
   </script>
 </body>
-
 </html>
-
-
-

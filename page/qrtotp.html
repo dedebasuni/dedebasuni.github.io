@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://lh3.googleusercontent.com/a/AEdFTp5o-M5qkUuK8udmqYnz01dEsVcMwHlzpbEgQmFxng=s230-c" type="image/png">
+    <title>QR Code Reader & TOTP Generator</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
+    
+    <!-- JavaScript Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/protobufjs@7.2.5/dist/protobuf.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Google Sans', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .tab.active { color: #1a73e8; border-color: #1a73e8; }
+        .pulse { animation: pulse-animation 1.5s infinite; }
+        @keyframes pulse-animation {
+            0% { box-shadow: 0 0 0 0 rgba(26, 115, 232, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(26, 115, 232, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(26, 115, 232, 0); }
+        }
+        .file-input-button {
+            cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+            padding: 0.5rem 1rem; border-radius: 0.5rem; background-color: #1a73e8;
+            color: white; font-weight: 500; transition: background-color 0.2s;
+        }
+        .file-input-button:hover { background-color: #185abc; }
+        .file-input-button .material-icons-outlined { margin-right: 0.5rem; }
+        
+        /* Countdown Timer Styles */
+        .timer-svg { transform: rotate(-90deg); }
+        .timer-circle-bg { stroke: #e6e6e6; }
+        .timer-circle-progress {
+            stroke: #1a73e8;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s linear;
+        }
+        
+        /* Tooltip Styles */
+        [data-tooltip] {
+            position: relative;
+            cursor: help;
+        }
+        [data-tooltip]::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 8px;
+            background-color: #333;
+            color: #fff;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: pre;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s, visibility 0.2s;
+            z-index: 10;
+        }
+        [data-tooltip]:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex flex-col min-h-screen">
+
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8 flex-grow w-full">
+        <div class="max-w-2xl w-full mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+            <header class="p-4 sm:p-6 border-b border-gray-200">
+                <h1 class="text-xl sm:text-2xl font-medium text-gray-800 flex items-center">
+                    <span class="material-icons-outlined text-blue-600 mr-3">qr_code_scanner</span>
+                    QR & TOTP Tools
+                </h1>
+                <p class="text-gray-500 mt-1 text-sm sm:text-base">Alat bantu intuitif untuk membaca QR code dan menghasilkan kode TOTP.</p>
+            </header>
+
+            <!-- Tab Buttons -->
+            <div class="flex border-b border-gray-200">
+                <button data-tab="qr" class="tab active flex-1 py-3 px-2 sm:px-4 text-center text-sm sm:text-base font-medium text-gray-600 hover:bg-gray-50 border-b-2 border-transparent transition-colors duration-200 flex items-center justify-center">
+                    <span class="material-icons-outlined mr-1 sm:mr-2">qr_code</span> QR Reader
+                </button>
+                <button data-tab="totp" id="totp-tab-button" class="tab flex-1 py-3 px-2 sm:px-4 text-center text-sm sm:text-base font-medium text-gray-600 hover:bg-gray-50 border-b-2 border-transparent transition-colors duration-200 flex items-center justify-center">
+                    <span class="material-icons-outlined mr-1 sm:mr-2">password</span> TOTP Generator
+                </button>
+                <button data-tab="bookmarklet" class="tab flex-1 py-3 px-2 sm:px-4 text-center text-sm sm:text-base font-medium text-gray-600 hover:bg-gray-50 border-b-2 border-transparent transition-colors duration-200 flex items-center justify-center">
+                     <span class="material-icons-outlined mr-1 sm:mr-2">bookmark_add</span> Bookmarklet
+                </button>
+            </div>
+
+            <main class="p-4 sm:p-6">
+                <!-- QR Reader Panel -->
+                <div id="qr-panel" class="tab-panel">
+                    <div class="space-y-4">
+                         <div class="p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800 flex items-center gap-3">
+                            <span class="material-icons-outlined">info</span>
+                            <div>
+                                <p class="font-semibold">QR Code Reader</p>
+                                <p>Unggah gambar QR code dari aplikasi autentikasi dan ekstrak informasinya dengan mudah.</p>
+                            </div>
+                         </div>                        
+                         <div class="text-center">
+                              <label for="fileInput" class="file-input-button">
+                                  <span class="material-icons-outlined">upload_file</span>
+                                  Pilih Gambar QR
+                              </label>
+                             <input type="file" id="fileInput" class="hidden" accept="image/*">
+                             <p class="text-sm text-gray-500 mt-2">Unggah gambar untuk memindai QR code.</p>
+                         </div>
+                         <div id="output" class="mt-6 p-4 bg-gray-50 rounded-lg min-h-[100px] border border-gray-200">
+                             <p class="text-center text-gray-500">Hasil pemindaian akan muncul di sini.</p>
+                        </div>
+                    </div>
+                </div>                
+
+                <!-- TOTP Generator Panel -->
+                <div id="totp-panel" class="tab-panel hidden">
+                    <div class="space-y-4">
+                         <div class="p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800 flex items-center gap-3">
+                            <span class="material-icons-outlined">info</span>
+                            <div>
+                                <p class="font-semibold">Generate TOTP</p>
+                                <p>Hasilkan kode verifikasi 6 digit menggunakan secret key dengan algoritma yang aman.</p>
+                            </div>
+                         </div>                        
+                        <div>
+                            <label for="secret" class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                                Secret Key
+                            </label>
+                            <input type="text" id="secret" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="Masukkan secret key Base32 Anda">
+                        </div>
+                        <button id="btnGen" class="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors pulse">
+                            <span class="material-icons-outlined mr-2">vpn_key</span>
+                            Hasilkan Kode
+                        </button>
+                        <div>
+                            <label for="kode2fa" class="block text-sm font-medium text-gray-700 mb-1">Kode 2FA Anda (berubah setiap 30 detik)</label>
+                            <div class="relative flex items-center">
+                                <input type="text" id="kode2fa" readonly class="w-full pl-3 pr-20 py-2 bg-gray-100 border border-gray-300 rounded-md text-center text-xl sm:text-2xl font-mono tracking-widest" placeholder="------">
+                                <button id="copy-totp-btn" class="absolute right-[80px] p-1 text-gray-500 hover:text-blue-600 rounded-full hover:bg-gray-200 transition-colors" title="Salin kode">
+                                    <span class="material-icons-outlined">content_copy</span>
+                                </button>
+                                <div id="timer" class="absolute right-2 flex items-center space-x-2">
+                                     <span id="countdown-text" class="text-sm font-medium text-gray-600">30</span>
+                                     <svg class="timer-svg w-6 h-6" viewBox="0 0 30 30">
+                                        <circle class="timer-circle-bg" cx="15" cy="15" r="12" stroke-width="3" fill="none"/>
+                                        <circle id="countdown-progress" class="timer-circle-progress" cx="15" cy="15" r="12" stroke-width="3" fill="none" stroke-dasharray="75.4" stroke-dashoffset="0"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Bookmarklet Generator Panel -->
+                <div id="bookmarklet-panel" class="tab-panel hidden">
+                    <div class="space-y-4">
+                         <div class="p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800 flex items-center gap-3">
+                            <span class="material-icons-outlined">info</span>
+                            <div>
+                               <p class="font-semibold">Bookmarklet</p>
+                               <p>Buat bookmarklet untuk mengisi otomatis kode 2FA di halaman web.</p>
+                            </div>
+                         </div>
+                         <div>
+                            <label for="bookmarkletSecret" class="block text-sm font-medium text-gray-700 mb-1">Secret Key</label>
+                            <input type="text" id="bookmarkletSecret" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="Masukkan secret key Base32">
+                        </div>
+                        <div>
+                            <label for="bookmarkletName" class="block text-sm font-medium text-gray-700 mb-1">Nama Bookmark</label>
+                            <input type="text" id="bookmarkletName" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="Contoh: Kode 2FA Google">
+                        </div>
+                        <button id="generateBookmarkletBtn" class="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors">
+                            <span class="material-icons-outlined mr-2">add_link</span>
+                            Buat Bookmarklet
+                        </button>
+                        <div id="bookmarkletResult" class="text-center mt-4 hidden">
+                            <p class="text-sm text-gray-600 mb-2">Seret link ini ke bilah bookmark Anda!</p>
+                            <a id="bookmarkletLink" href="#" class="inline-block bg-blue-100 text-blue-800 text-sm font-semibold mr-2 px-4 py-2 rounded-full border border-blue-300 cursor-move">Seret Saya!</a>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <footer class="text-center py-4">
+        <p class="text-sm text-gray-500">QR Code Reader & TOTP Generator</p>
+    </footer>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let totpInterval = null;
+
+            // --- Bagian Logika Utama ---
+
+            // Fungsi untuk beralih antar tab
+            const switchTab = (tabId) => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+                const tabButton = document.querySelector(`[data-tab="${tabId}"]`);
+                if (tabButton) tabButton.classList.add('active');
+                const panel = document.getElementById(`${tabId}-panel`);
+                if (panel) panel.classList.remove('hidden');
+            };
+
+            // Menampilkan notifikasi sementara
+            const showNotification = (message, type = 'info') => {
+                const notification = document.createElement('div');
+                const colors = { success: 'bg-green-500', error: 'bg-red-500', info: 'bg-blue-500' };
+                const icons = { success: 'check_circle', error: 'error', info: 'info' };
+                notification.className = `fixed top-5 right-5 z-50 px-4 py-3 rounded-lg shadow-lg text-white font-medium flex items-center transition-transform transform translate-x-full`;
+                notification.innerHTML = `<span class="material-icons-outlined mr-3">${icons[type]}</span><span>${message}</span>`;
+                notification.classList.add(colors[type]);
+                document.body.appendChild(notification);
+                
+                requestAnimationFrame(() => { notification.style.transform = 'translateX(0)'; });
+
+                setTimeout(() => {
+                    notification.style.transform = 'translateX(calc(100% + 1.25rem))';
+                    notification.addEventListener('transitionend', () => notification.remove());
+                }, 3000);
+            };
+            
+            // Menyalin teks ke clipboard
+            const copyToClipboard = (text) => {
+                if (!text) return;
+                navigator.clipboard.writeText(text).then(
+                    () => showNotification('Berhasil disalin!', 'success'),
+                    () => showNotification('Gagal menyalin.', 'error')
+                );
+            };
+
+            // --- Pembaca QR Code ---
+            document.getElementById('fileInput').addEventListener('change', (evt) => {
+                const file = evt.target.files[0];
+                if (!file) return;
+                document.getElementById('output').innerHTML = '<p class="text-center py-8 text-gray-500">Memproses QR code...</p>';
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0);
+                        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                        const code = jsQR(imageData.data, imageData.width, imageData.height);
+                        if (code) {
+                            processQR(code.data);
+                        } else {
+                            document.getElementById('output').innerHTML = '<p class="text-center py-8 text-red-500 flex items-center justify-center"><span class="material-icons-outlined mr-2">error</span> QR code tidak terbaca.</p>';
+                        }
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+
+            const processQR = (qrText) => {
+                try {
+                    if (qrText.startsWith("otpauth-migration://")) {
+                        const dataParam = new URLSearchParams(qrText.substring(qrText.indexOf('?') + 1)).get("data");
+                        if (!dataParam) throw new Error("Parameter data tidak ditemukan.");
+
+                        const bytes = Uint8Array.from(atob(decodeURIComponent(dataParam)), c => c.charCodeAt(0));
+                        
+                        const root = protobuf.Root.fromJSON({
+                            nested: { MigrationPayload: { fields: { otpParameters: { rule: "repeated", type: "OtpParameters", id: 1 } } }, OtpParameters: { fields: { secret: { type: "bytes", id: 1 }, name: { type: "string", id: 2 }, issuer: { type: "string", id: 3 } } } }
+                        });
+
+                        const MigrationPayload = root.lookupType("MigrationPayload");
+                        const payload = MigrationPayload.decode(bytes);
+
+                        if (!payload.otpParameters || payload.otpParameters.length === 0) {
+                            document.getElementById('output').innerHTML = '<p class="text-yellow-700 flex items-center justify-center"><span class="material-icons-outlined mr-2">warning</span>Tidak ada akun ditemukan di payload migrasi.</p>';
+                            return;
+                        }
+
+                        let result = `<p class="text-green-600 font-semibold mb-3 flex items-center"><span class="material-icons-outlined mr-2">dns</span>Data Migrasi Ditemukan (${payload.otpParameters.length} akun)</p>`;
+                        payload.otpParameters.forEach((param, i) => {
+                            const secretBase32 = base32Encode(param.secret);
+                            result += `<div class="mb-4 pb-4 ${i < payload.otpParameters.length - 1 ? 'border-b border-gray-200' : ''}">
+                                <p class="font-semibold text-gray-800">📌 Akun ${i+1}: ${param.name} (${param.issuer})</p>
+                                <p><span class="font-medium">Secret</span>: <span class="font-mono bg-gray-200 px-1 py-0.5 rounded break-all">${secretBase32}</span></p>
+                                <div class="flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0 mt-2">
+                                    <button onclick="copyToClipboard('${secretBase32}')" class="text-blue-600 hover:text-blue-800 text-sm flex items-center justify-center sm:justify-start"><span class="material-icons-outlined mr-1 text-base">content_copy</span>Salin Secret</button>
+                                    <button onclick="useInGenerator('${secretBase32}')" class="text-green-600 hover:text-green-800 text-sm flex items-center justify-center sm:justify-start"><span class="material-icons-outlined mr-1 text-base">password</span>Gunakan di Generator</button>
+                                </div>
+                            </div>`;
+                        });
+                        document.getElementById('output').innerHTML = result;
+
+                    } else if (qrText.startsWith("otpauth://")) {
+                        const url = new URL(qrText);
+                        const secret = url.searchParams.get("secret");
+                        const issuer = url.searchParams.get("issuer") || "(tidak ada)";
+                        const account = decodeURIComponent(url.pathname.substring(url.pathname.lastIndexOf('/') + 1));
+                        
+                        if (secret) {
+                            document.getElementById('output').innerHTML = 
+                                `<div class="space-y-2">
+                                    <p class="text-green-600 font-semibold flex items-center"><span class="material-icons-outlined mr-2">verified</span>OTP Auth</p>
+                                    <p><span class="font-medium">Akun</span>: ${account}</p>
+                                    <p><span class="font-medium">Issuer</span>: ${issuer}</p>
+                                    <p><span class="font-medium">Secret</span>: <span class="font-mono bg-gray-200 px-1 py-0.5 rounded break-all">${secret}</span></p>
+                                    <div class="flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0 mt-3">
+                                        <button onclick="copyToClipboard('${secret}')" class="text-blue-600 hover:text-blue-800 text-sm flex items-center justify-center sm:justify-start">
+                                            <span class="material-icons-outlined mr-1 text-base">content_copy</span> Salin Secret
+                                        </button>
+                                        <button onclick="useInGenerator('${secret}')" class="text-green-600 hover:text-green-800 text-sm flex items-center justify-center sm:justify-start">
+                                            <span class="material-icons-outlined mr-1 text-base">password</span> Gunakan di Generator
+                                        </button>
+                                    </div>
+                                </div>`;
+                        } else { 
+                            document.getElementById('output').innerHTML = '<p class="text-yellow-700 flex items-center justify-center"><span class="material-icons-outlined mr-2">warning</span>Secret tidak ditemukan di QR.</p>';
+                        }
+                    } else {
+                        let content = '';
+                        try {
+                            new URL(qrText);
+                            content = `<a href="${qrText}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline break-all">${qrText}</a>`;
+                        } catch (_) {
+                            content = `<p class="break-all font-mono bg-gray-200 p-2 rounded">${qrText}</p>`;
+                        }
+                        document.getElementById('output').innerHTML = 
+                        `<div class="space-y-2">
+                            <p class="text-gray-800 font-semibold flex items-center"><span class="material-icons-outlined mr-2">link</span>Teks/URL Ditemukan</p>
+                            ${content}
+                        </div>`;
+                    }
+                } catch (err) { 
+                    console.error("QR Processing Error:", err);
+                    document.getElementById('output').innerHTML = `<p class="text-red-500 flex items-center justify-center"><span class="material-icons-outlined mr-2">error</span>Error: ${err.message}</p>`;
+                }
+            };
+            
+            window.useInGenerator = (secret) => {
+                document.getElementById('secret').value = secret;
+                switchTab('totp');
+                document.getElementById('btnGen').click();
+            }
+
+            window.copyToClipboard = copyToClipboard;
+
+            const base32Encode = (bytes) => {
+                const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+                let bits = 0, value = 0, output = '';
+                for (let i = 0; i < bytes.length; i++) {
+                    value = (value << 8) | bytes[i];
+                    bits += 8;
+                    while (bits >= 5) {
+                        output += alphabet[(value >>> (bits - 5)) & 31];
+                        bits -= 5;
+                    }
+                }
+                if (bits > 0) {
+                    output += alphabet[(value << (5 - bits)) & 31];
+                }
+                return output;
+            };
+            
+            // --- Logika TOTP ---
+            const generateTOTP = async (secret, digits = 6, period = 30, algo = 'SHA-1') => {
+                const base32Decode = (base32) => {
+                    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'; let bits = 0, value = 0; const bytes = [];
+                    base32 = base32.toUpperCase().replace(/=+$/, '').replace(/\s+/g, '');
+                    for (let i = 0; i < base32.length; i++) {
+                        const index = alphabet.indexOf(base32[i]); if (index === -1) throw new Error('Karakter Base32 tidak valid');
+                        value = (value << 5) | index; bits += 5;
+                        if (bits >= 8) { bytes.push((value >>> (bits - 8)) & 255); bits -= 8; }
+                    } return new Uint8Array(bytes);
+                };
+                try {
+                    const keyBytes = base32Decode(secret); const epoch = Math.floor(Date.now() / 1000); const timeStep = Math.floor(epoch / period);
+                    const timeBuffer = new ArrayBuffer(8); new DataView(timeBuffer).setUint32(4, timeStep, false);
+                    const cryptoKey = await crypto.subtle.importKey('raw', keyBytes, { name: 'HMAC', hash: { name: algo } }, false, ['sign']);
+                    const signature = await crypto.subtle.sign('HMAC', cryptoKey, timeBuffer);
+                    const offset = new Uint8Array(signature)[new Uint8Array(signature).length - 1] & 0x0f;
+                    const truncatedHash = new DataView(signature.slice(offset, offset + 4)).getUint32(0, false) & 0x7fffffff;
+                    return String(truncatedHash % Math.pow(10, digits)).padStart(digits, '0');
+                } catch (error) { throw new Error("Secret key tidak valid."); }
+            };
+            
+            document.getElementById('btnGen').addEventListener('click', () => {
+                const secret = document.getElementById('secret').value.trim();
+                if (!secret) { showNotification('Masukkan secret key terlebih dahulu.', 'error'); return; }
+                clearInterval(totpInterval);
+                
+                // --- FIX: Generate the code immediately on click ---
+                generateTOTP(secret)
+                    .then(code => {
+                        document.getElementById('kode2fa').value = code;
+                    })
+                    .catch(err => {
+                        showNotification(err.message, 'error');
+                        clearInterval(totpInterval);
+                        return; // Stop execution if the secret is invalid
+                    });
+                
+                const update = () => {
+                    const period = 30;
+                    const epoch = Math.floor(Date.now() / 1000);
+                    const timeRemaining = period - (epoch % period);
+                    document.getElementById('countdown-text').textContent = timeRemaining;
+                    const progress = timeRemaining / period;
+                    const circle = document.getElementById('countdown-progress');
+                    const circumference = 2 * Math.PI * 12; // 75.4
+                    circle.style.strokeDashoffset = circumference * (1 - progress);
+
+                    // This part now only re-generates the code when a new period starts.
+                    if (timeRemaining === period) {
+                        generateTOTP(secret)
+                            .then(code => document.getElementById('kode2fa').value = code)
+                            .catch(err => { showNotification(err.message, 'error'); clearInterval(totpInterval); });
+                    }
+                };
+                update(); // Call once to set the initial timer display correctly
+                totpInterval = setInterval(update, 1000);
+            });
+            
+            document.getElementById('copy-totp-btn').addEventListener('click', () => {
+                const code = document.getElementById('kode2fa').value;
+                if (code && code !== '------') { copyToClipboard(code); }
+            });
+
+            // --- Logika Bookmarklet ---
+            document.getElementById('generateBookmarkletBtn').addEventListener('click', () => {
+                const secret = document.getElementById("bookmarkletSecret").value.trim();
+                const name = document.getElementById("bookmarkletName").value.trim();
+
+                if (!secret) { showNotification('Masukkan secret key.', 'error'); return; }
+                if (!name) { showNotification('Masukkan nama bookmark.', 'error'); return; }
+                
+                const jsCode = `(async()=>{try{let s="${secret}",d=6,p=30,a="SHA-1",b=(s)=>{let t="ABCDEFGHIJKLMNOPQRSTUVWXYZ234567",r=0,e=0,i=[];s=s.toUpperCase().replace(/=+$/,"").replace(/\\s+/g,"");for(let a=0;a<s.length;a++){let n=t.indexOf(s[a]);if(-1===n)throw Error("Invalid Base32");e=e<<5|n,(r+=5)>=8&&(i.push(e>>>r-8&255),r-=8)}return new Uint8Array(i)},k=await crypto.subtle.importKey("raw",b(s),{name:"HMAC",hash:{name:a}},!1,["sign"]),c=new ArrayBuffer(8);new DataView(c).setUint32(4,Math.floor(Date.now()/1e3/p),!1);let g=await crypto.subtle.sign("HMAC",k,c),w=new Uint8Array(g),o=15&w[w.length-1],v=2147483647&new DataView(g.slice(o,o+4)).getUint32(0,!1),f=String(v%Math.pow(10,d)).padStart(d,"0");let l=document.querySelector('input[autocomplete="one-time-code"],input[name*="otp"],input[name*="2fa"],input[id*="otp"],input[id*="2fa"]');if(l)l.value=f,l.focus();else{prompt("Kode 2FA:",f)}}catch(t){alert("Gagal membuat kode 2FA: "+t.message)}})();`;
+                const bookmarkletHref = "javascript:" + encodeURIComponent(jsCode);
+                
+                const link = document.getElementById("bookmarkletLink");
+                const resultDiv = document.getElementById("bookmarkletResult");
+
+                link.href = bookmarkletHref;
+                link.textContent = name;
+                resultDiv.classList.remove('hidden');
+                
+                showNotification('Bookmarklet berhasil dibuat!', 'success');
+            });
+            
+            // Inisialisasi: pasang event listener untuk tab
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', () => switchTab(tab.getAttribute('data-tab')));
+            });
+        });
+    </script>
+</body>
+</html>

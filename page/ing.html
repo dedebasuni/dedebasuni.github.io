@@ -1,0 +1,1593 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simulasi TKA - Bahasa Inggris</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;600;700&family=Google+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1a73e8; /* Biru Google */
+            --primary-dark: #0d47a1;
+            --secondary-color: #34a853; /* Hijau Google */
+            --accent-color: #fbbc05; /* Kuning Google */
+            --error-color: #ea4335; /* Merah Google */
+            --background-color: #f8f9fa;
+            --surface-color: #ffffff;
+            --text-color: #202124;
+            --text-secondary: #5f6368;
+            --text-light-color: #ffffff;
+            --border-color: #dadce0;
+            --answered-color: #34a853;
+            --doubtful-color: #fbbc05;
+            --unanswered-color: #80868b;
+            --correct-color: #1e8e3e;
+            --incorrect-color: #d93025;
+            --shadow-1: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
+            --shadow-2: 0 1px 3px 0 rgba(60,64,67,0.3), 0 4px 8px 3px rgba(60,64,67,0.15);
+            --border-radius: 8px;
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            font-family: 'Google Sans', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            height: 100vh;
+            max-width: 1366px;
+            background-color: var(--surface-color);
+            box-shadow: var(--shadow-2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            background-color: var(--surface-color);
+            flex-shrink: 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .header h1 { 
+            margin: 0; 
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .header h1 .material-icons { font-size: 1.75rem; }
+        
+        .header-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        #timer {
+            font-size: 1rem;
+            font-weight: 500;
+            background-color: #f1f3f4;
+            padding: 8px 16px;
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+        }
+        
+        #timer.warning { background-color: #fef7e0; color: #f57c00; }
+        #timer.critical { background-color: #fce8e6; color: var(--error-color); animation: pulse 1s infinite; }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        
+        #question-list-btn {
+            font-family: 'Google Sans', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--primary-color);
+            color: var(--text-light-color);
+            border: none;
+            padding: 10px 16px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+        
+        #question-list-btn:hover { background-color: var(--primary-dark); box-shadow: var(--shadow-1); }
+        
+        .progress-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        .progress-bar { width: 120px; height: 8px; background-color: #e0e0e0; border-radius: 4px; overflow: hidden; }
+        .progress-fill { height: 100%; background-color: var(--primary-color); border-radius: 4px; transition: width 0.3s ease; }
+
+        /* Konten Utama */
+        .main-content { 
+            flex: 1; 
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+        }
+        
+        #question-container { flex: 1; }
+        
+        .passage {
+            background-color: #f8f9fa;
+            border-left: 4px solid var(--primary-color);
+            padding: 20px;
+            margin-bottom: 24px;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+        }
+        
+        .passage-title {
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #question-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        #question-number { 
+            font-size: 1.1rem; 
+            font-weight: 600; 
+            color: var(--primary-color); 
+        }
+        #question-stats { font-size: 0.9rem; color: var(--text-secondary); }
+        
+        #question-text { 
+            font-size: 1.2rem;
+            line-height: 1.5;
+            margin: 20px 0 28px 0;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .options { list-style: none; padding: 0; margin: 24px 0; }
+        .option {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 16px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: flex-start;
+            transition: var(--transition);
+        }
+
+        .option .option-text {
+            color: var(--text-secondary);
+            line-height: 1.5;
+            flex: 1;
+        }
+
+        .option:hover { background-color: #f8f9fa; border-color: #9ab5e9; }
+        
+        .option.selected { 
+            background-color: #e8f0fe; 
+            border-color: var(--primary-color); 
+        }
+        
+        .option.selected .option-text {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .option.correct { background-color: #e6f4ea; border-color: var(--correct-color); }
+        .option.incorrect { background-color: #fce8e6; border-color: var(--incorrect-color); }
+
+        .option-label {
+            font-weight: 600;
+            margin-right: 16px;
+            width: 32px;
+            height: 32px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+        .option.selected .option-label { background-color: var(--primary-color); color: var(--text-light-color); border-color: var(--primary-color); }
+
+        /* Gaya untuk Tipe Soal Kompleks */
+        .question-type-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 400;
+            background-color: #e8f0fe;
+            color: var(--primary-dark);
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin-top: 12px;
+        }
+
+        .category-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+        }
+        .category-table th, .category-table td {
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            text-align: left;
+        }
+        .category-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+        .category-table td:nth-child(1) { width: 40px; text-align: center; font-weight: 500; }
+        .category-table td:last-child, .category-table td:nth-last-child(2) {
+            width: 80px;
+            text-align: center;
+        }
+        .category-table input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        /* Tombol Aksi di Footer */
+        .action-buttons-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            border-top: 1px solid var(--border-color);
+            flex-shrink: 0;
+            background-color: #f8f9fa;
+        }
+        
+        .action-btn {
+            font-family: 'Google Sans', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+            padding: 12px 24px;
+            border: 1px solid transparent;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .action-btn:disabled { background-color: #f1f3f4; color: #bdc1c6; cursor: not-allowed; }
+
+        #prev-btn, #next-btn { background-color: var(--primary-color); color: var(--text-light-color); }
+        #prev-btn:hover:not(:disabled), #next-btn:hover:not(:disabled) { background-color: var(--primary-dark); }
+        
+        #finish-btn { background-color: var(--secondary-color); color: var(--text-light-color); }
+        #finish-btn:hover { background-color: #2e7d32; }
+        
+        .doubt-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .doubt-container label { cursor: pointer; font-weight: 500; color: var(--text-secondary); display: flex; align-items: center; gap: 8px; }
+        #doubt-checkbox { width: 18px; height: 18px; accent-color: var(--accent-color); }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            overflow: auto;
+            background-color: rgba(32,33,36,0.6);
+            animation: fadeIn 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        
+        .modal.hidden { display: none; }
+
+        .modal-content {
+            background-color: var(--surface-color);
+            padding: 0;
+            border-radius: var(--border-radius);
+            width: 100%;
+            max-width: 800px;
+            box-shadow: var(--shadow-2);
+            animation: slideIn 0.3s;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .modal-header h2 { margin: 0; color: var(--primary-color); font-weight: 600; display: flex; align-items: center; gap: 12px; }
+        
+        .close-btn { color: var(--text-secondary); font-size: 28px; cursor: pointer; transition: var(--transition); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
+        .close-btn:hover, .close-btn:focus { color: var(--text-color); background-color: #f1f3f4; }
+        
+        .modal-body { padding: 24px; max-height: 65vh; overflow-y: auto; }
+        .nav-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 12px; }
+        
+        .nav-btn {
+            font-family: 'Google Sans', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: var(--transition);
+            background-color: var(--surface-color);
+            color: var(--text-color);
+            position: relative;
+        }
+        
+        .nav-btn:hover { background-color: #f1f3f4; }
+        .nav-btn.answered { background-color: var(--answered-color); border-color: var(--answered-color); color: white; }
+        .nav-btn.doubtful { background-color: var(--doubtful-color); border-color: var(--doubtful-color); color: white; }
+        .nav-btn.active { outline: 3px solid var(--primary-color); transform: scale(1.05); }
+        .nav-btn .material-icons { position: absolute; bottom: 2px; right: 2px; font-size: 14px; opacity: 0.8; }
+        
+        .legend { display: flex; flex-wrap: wrap; gap: 12px 20px; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-color); }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; color: var(--text-secondary); }
+        .legend-color { width: 20px; height: 20px; border-radius: 4px; border: 1px solid var(--border-color); }
+        
+        /* Modal Konfirmasi */
+        .confirm-modal-content { max-width: 450px; }
+        .modal-footer { display: flex; justify-content: flex-end; padding: 16px 24px; border-top: 1px solid var(--border-color); background-color: #f8f9fa; gap: 12px; }
+        .action-btn.secondary { background-color: var(--surface-color); color: var(--primary-color); border-color: var(--border-color); }
+        .action-btn.secondary:hover { background-color: #f1f3f4; }
+
+        /* Halaman Hasil */
+        #results-container { display: none; padding: 24px; text-align: center; overflow-y: auto; flex: 1; }
+        #results-container h2 { color: var(--primary-color); font-size: 2rem; margin-bottom: 20px; }
+        .score-container { background-color: #f8f9fa; border-radius: var(--border-radius); padding: 24px; margin: 20px auto; max-width: 500px; }
+        #score { font-size: 1.5rem; margin: 20px 0 30px 0; }
+        #score span { font-weight: 700; color: var(--primary-color); font-size: 2rem; }
+        .score-details { display: flex; justify-content: space-around; margin-top: 20px; text-align: center; }
+        .score-item { flex: 1; }
+        .score-value { font-size: 1.8rem; font-weight: 700; margin-bottom: 8px; }
+        .score-label { font-size: 0.9rem; color: var(--text-secondary); }
+        .correct .score-value { color: var(--correct-color); }
+        .incorrect .score-value { color: var(--incorrect-color); }
+        .unanswered .score-value { color: var(--unanswered-color); }
+        
+        .analysis-section { text-align: left; max-width: 800px; margin: 30px auto; }
+        .analysis-section h3 { color: var(--primary-color); font-weight: 600; margin-bottom: 20px; }
+        .analysis-item { background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 20px; margin-bottom: 16px; }
+        .analysis-item h4 { margin-top: 0; color: var(--text-color); }
+        .analysis-item p { margin: 0.5em 0; }
+        .your-answer-text { font-weight: 500; }
+        .your-answer-text.correct { color: var(--correct-color); }
+        .your-answer-text.incorrect { color: var(--incorrect-color); }
+        .correct-answer-text { color: var(--correct-color); font-weight: 500; }
+        
+        .analysis-details { margin-top: 15px; font-size: 0.95rem; border-top: 1px solid var(--border-color); padding-top: 15px; line-height: 1.6; }
+        .analysis-details strong { display: block; margin: 10px 0 5px 0; color: var(--text-color); font-weight: 600; }
+        .analysis-details ul { padding-left: 20px; margin: 5px 0; color: var(--text-secondary); }
+        .analysis-details .quote { font-style: italic; background-color: #f8f9fa; padding: 10px; border-left: 4px solid var(--border-color); border-radius: 5px; margin-top: 10px; color: var(--text-secondary); }
+        
+        .analysis-meta { margin-top: 15px; display: flex; flex-wrap: wrap; gap: 10px; font-size: 0.8rem; color: var(--text-secondary); }
+        .analysis-meta span { background-color: #f1f3f4; padding: 5px 10px; border-radius: 15px; }
+
+        #restart-btn { padding: 15px 30px; margin: 40px auto 20px; background-color: var(--primary-color); color: white; font-size: 1.1rem; border: none; border-radius: var(--border-radius); cursor: pointer; font-weight: 600; transition: var(--transition); display: flex; align-items: center; gap: 8px; }
+        #restart-btn:hover { background-color: var(--primary-dark); transform: translateY(-2px); box-shadow: var(--shadow-1); }
+
+        /* Animasi */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { transform: translateY(-20px) scale(0.98); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+
+        /* Responsivitas */
+        @media (max-width: 768px) {
+            body { font-size: 15px; }
+            .container { height: 100%; min-height: 100vh; }
+            
+            .header { padding: 12px 16px; flex-wrap: wrap; gap: 12px; }
+            .header h1 { font-size: 1.2rem; width: 100%; text-align: center; order: 1; }
+            .header-info { width: 100%; justify-content: space-between; order: 2; }
+            
+            #question-list-btn .btn-text { display: none; }
+            #question-list-btn { padding: 10px; }
+
+            .progress-container { display: none; }
+
+            .main-content { padding: 16px; }
+            #question-text { font-size: 1.1rem; }
+            
+            .action-buttons-footer { flex-wrap: wrap; gap: 12px; justify-content: center; }
+            .action-btn { flex-grow: 1; }
+            #prev-btn { width: calc(50% - 6px); order: 2; }
+            #next-btn { width: calc(50% - 6px); order: 3; }
+            .doubt-container { width: 100%; justify-content: center; order: 1; margin: 0; }
+            #finish-btn { width: 100%; order: 4; }
+            
+            .nav-grid { grid-template-columns: repeat(auto-fill, minmax(50px, 1fr)); }
+            .score-details { flex-direction: column; gap: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header Utama -->
+        <header class="header">
+            <h1>
+                <span class="material-icons">quiz</span>
+                Simulasi TKA - Bahasa Inggris
+            </h1>
+            <div class="header-info">
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <span id="progress-text">0/0</span>
+                </div>
+                <div id="timer">
+                    <span class="material-icons">schedule</span>
+                    <span>02:00:00</span>
+                </div>
+                <button id="question-list-btn" title="Lihat Daftar Soal">
+                    <span class="material-icons">view_list</span>
+                    <span class="btn-text">Daftar Soal</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Konten Kuis -->
+        <main id="quiz-content" class="main-content">
+            <div id="question-container">
+                <div id="passage-container"></div>
+                <div id="question-info">
+                    <p id="question-number">Soal</p>
+                    <div id="question-stats">
+                        <span id="answered-count">0 terjawab</span> • 
+                        <span id="doubtful-count">0 ragu-ragu</span>
+                    </div>
+                </div>
+                <p id="question-text">Memuat soal...</p>
+                <ul id="options" class="options"></ul>
+            </div>
+        </main>
+        
+        <!-- Footer dengan Tombol Aksi -->
+        <footer id="quiz-footer" class="action-buttons-footer">
+            <button id="prev-btn" class="action-btn">
+                <span class="material-icons">arrow_back</span>
+                Sebelumnya
+            </button>
+            <div class="doubt-container">
+                <label for="doubt-checkbox">
+                    <input type="checkbox" id="doubt-checkbox">
+                    Ragu-ragu
+                </label>
+            </div>
+            <button id="next-btn" class="action-btn">
+                Selanjutnya
+                <span class="material-icons">arrow_forward</span>
+            </button>
+            <button id="finish-btn" class="action-btn" style="display: none;">
+                <span class="material-icons">flag</span>
+                Selesaikan Ujian
+            </button>
+        </footer>
+
+        <!-- Kontainer Hasil (tersembunyi) -->
+        <div id="results-container">
+            <h2>Hasil Ujian</h2>
+            <div class="score-container">
+                <div id="score"></div>
+                <div class="score-details">
+                    <div class="score-item correct">
+                        <div class="score-value" id="correct-count">0</div>
+                        <div class="score-label">Benar</div>
+                    </div>
+                    <div class="score-item incorrect">
+                        <div class="score-value" id="incorrect-count">0</div>
+                        <div class="score-label">Salah</div>
+                    </div>
+                    <div class="score-item unanswered">
+                        <div class="score-value" id="unanswered-count">0</div>
+                        <div class="score-label">Tidak Dijawab</div>
+                    </div>
+                </div>
+            </div>
+            <div class="analysis-section">
+                <h3>Analisis Jawaban</h3>
+                <div id="analysis-content"></div>
+            </div>
+            <button id="restart-btn">
+                <span class="material-icons">replay</span>
+                Ulangi Ujian
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal Daftar Soal -->
+    <div id="question-modal" class="modal hidden">
+        <div class="modal-content">
+            <header class="modal-header">
+                <h2>
+                    <span class="material-icons">view_list</span>
+                    Daftar Soal
+                </h2>
+                <span class="close-btn">&times;</span>
+            </header>
+            <div class="modal-body">
+                <div id="nav-grid" class="nav-grid"></div>
+                <div class="legend">
+                    <div class="legend-item"><span class="legend-color" style="background-color: var(--answered-color);"></span> Terjawab</div>
+                    <div class="legend-item"><span class="legend-color" style="background-color: var(--doubtful-color);"></span> Ragu-ragu</div>
+                    <div class="legend-item"><span class="legend-color"></span> Belum Dijawab</div>
+                    <div class="legend-item"><span class="legend-color" style="outline: 2px solid var(--primary-color);"></span> Posisi Saat Ini</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal Konfirmasi -->
+    <div id="confirm-modal" class="modal hidden">
+        <div class="modal-content confirm-modal-content">
+            <header class="modal-header">
+                <h2 id="confirm-title">Selesaikan Ujian</h2>
+            </header>
+            <div class="modal-body">
+                <p id="confirm-text">Apakah Anda yakin ingin menyelesaikan ujian? Jawaban tidak dapat diubah kembali.</p>
+            </div>
+            <footer class="modal-footer">
+                <button id="confirm-cancel-btn" class="action-btn secondary">Batal</button>
+                <button id="confirm-ok-btn" class="action-btn">Yakin</button>
+            </footer>
+        </div>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // === KONFIGURASI & DATA SOAL ===
+    const initialTimeSeconds = 7200; // 2 Jam
+    
+    const passages = {
+        baliWonders: `<p>Bali, a beautiful island in Indonesia, is known for its stunning landscapes and rich culture. While many come for the beaches and temples, the island also offers natural attractions that amaze nature lovers from around the world. From national parks and waterfalls to terraced rice fields, Bali is full of natural beauty.</p><p>In the west lies West Bali National Park, a peaceful area filled with green forests, calm mangrove swamps, and colorful coral reefs along the sea. The air is fresh, and the scenery feels untouched. One of the park's most special sights is the Bali Starling—a rare white bird with bright blue around its eyes. Its soft song adds magic to the quiet forest. Visitors can walk along clear paths and enjoy the rich variety of plants and animals in this protected area.</p>`,
+        internshipExperience: `<p>Last summer, I had the opportunity to work as an intern at a local sports club. It was my first time working in a professional sports environment, and I was both nervous and excited. The internship went through a few phases, starting from orientation until finally jumping in to help during practices and games.</p><p>On my first day, I met the head coach, who welcomed me and explained my tasks. I had to set up cones for drills, bring water for the players, and check the training schedules. The first few days were challenging because I was not used to the morning routine. Every morning I had to wake up early, arrive on time, and follow instructions carefully. I worried about making mistakes, but the coaches were kind and guided me.</p>`,
+        socialMediaHarms: `<p>In today's world, social media is a big part of many teenagers' daily lives. While it has some benefits, such as staying connected with friends, meeting new people, and learning about interesting topics, it also brings serious problems. I strongly believe that social media harms teen mental health, and we must pay more attention to this issue before it becomes even worse.</p><p>First, social media often makes teenagers compare themselves to others in an unhealthy way. When teens see pictures of people who seem perfect, they feel that they are not good enough. These feelings can lower self-esteem and lead to sadness, anxiety, or even depression. The problem is that many of these online posts are edited, filtered, or fake, but teens still feel pressure to look or live the same way. They may think that their own life is boring or not successful, which is simply not true.</p>`,
+        urbanGardening: `<p>Urban gardening is the practice of growing plants in an urban environment. With cities becoming more crowded, this practice offers a way to bring nature back into our concrete jungles. From small balcony pots to large community gardens, people are finding innovative ways to cultivate food and flowers. This trend not only beautifies the city but also provides numerous environmental and social benefits.</p><p>One of the key advantages is improved food security. Urban gardens can provide residents with fresh, locally grown produce, reducing reliance on food transported over long distances. This leads to a smaller carbon footprint and healthier eating habits. Furthermore, green spaces in cities help to mitigate the urban heat island effect, improve air quality by absorbing pollutants, and manage stormwater runoff. Community gardens also foster social cohesion, bringing neighbors together to work towards a common goal.</p>`,
+        renewableEnergy: `<p>The global shift towards renewable energy sources is one of the most critical transitions of our time. Faced with the escalating climate crisis, nations are increasingly investing in technologies like solar, wind, and hydropower. These energy sources are considered 'clean' because they do not produce greenhouse gas emissions, which are the primary drivers of global warming. The transition, however, is not without its challenges, including issues of cost, storage, and land use.</p><p>Solar power, for instance, harnesses sunlight using photovoltaic panels. Its cost has decreased dramatically over the past decade, making it more accessible. Wind energy, captured by turbines, is another major player, particularly in regions with consistent wind patterns. Despite their benefits, both sources are intermittent—they don't produce energy when the sun isn't shining or the wind isn't blowing. This necessitates the development of large-scale energy storage solutions, such as batteries, to ensure a stable power supply.</p>`,
+        fastFashion: `<p>The term "fast fashion" refers to a business model characterized by the rapid production of inexpensive clothing in response to the latest trends. While it makes trendy apparel accessible to a wider audience, this industry has profound negative consequences for the environment and human rights. Garments are often made from low-quality synthetic materials, designed to be worn only a few times before being discarded, contributing to massive textile waste.</p><p>The environmental impact is staggering. Textile dyeing is the second-largest polluter of water globally, and the industry consumes vast amounts of water and energy. Furthermore, the pressure to produce quickly and cheaply often leads to exploitative labor practices in garment factories, where workers face low wages, long hours, and unsafe conditions. As consumers become more aware of these issues, there is a growing movement towards sustainable and ethical fashion, promoting quality over quantity and transparency in the supply chain.</p>`,
+        aiInHealthcare: `<p>Artificial intelligence (AI) is revolutionizing the healthcare industry, offering powerful new tools for diagnosing diseases, personalizing treatments, and streamlining administrative tasks. AI algorithms can analyze complex medical data, such as medical images and genetic information, with a speed and accuracy that can surpass human capabilities. This can lead to earlier detection of conditions like cancer and heart disease, significantly improving patient outcomes.</p><p>Despite its potential, the integration of AI in healthcare raises important ethical and practical questions. Patient data privacy is a major concern, as AI systems require vast amounts of sensitive information to be trained effectively. There is also the risk of algorithmic bias, where an AI system may perpetuate existing health disparities if it is trained on data that is not representative of the diverse population. Ensuring fairness, accountability, and transparency is crucial as we navigate the development and deployment of these transformative technologies.</p>`,
+        spaceExploration: `<p>The future of space exploration is marked by ambitious missions and groundbreaking technologies. Governmental agencies like NASA and private companies such as SpaceX are pushing the boundaries of what is possible, with goals ranging from establishing a human presence on Mars to exploring distant exoplanets for signs of life. These endeavors are driven not only by scientific curiosity but also by the potential for resource discovery and technological innovation.</p><p>One of the primary challenges is the immense cost and technical complexity of interplanetary travel. Developing life-support systems that can sustain astronauts for years, protecting them from cosmic radiation, and designing reusable spacecraft are all critical hurdles. The psychological toll of long-duration missions in isolation is another significant factor that must be addressed. However, the potential rewards—a deeper understanding of our universe and our place within it—continue to inspire humanity to reach for the stars.</p>`,
+        biodiversityLoss: `<p>Biodiversity, the variety of life on Earth, is declining at an alarming rate. Scientists warn that we are in the midst of the planet's sixth mass extinction event, primarily driven by human activities. Habitat destruction, pollution, climate change, and the overexploitation of natural resources are the main culprits. This loss of biodiversity threatens not only individual species but also the stability of entire ecosystems and the services they provide to humanity, such as clean air, water, and pollination.</p><p>Conservation efforts are underway globally to combat this crisis. These include creating protected areas, restoring degraded habitats, and implementing policies to reduce pollution and carbon emissions. Captive breeding programs and seed banks are also used as last-resort measures to save critically endangered species. However, a fundamental shift in our relationship with the natural world is required—one that recognizes the intrinsic value of all life and promotes sustainable coexistence.</p>`,
+        gigEconomy: `<p>The rise of the "gig economy" has fundamentally reshaped the nature of work for millions of people. Characterized by short-term contracts and freelance assignments, this labor market offers flexibility and autonomy that can be highly attractive. Platforms like Uber, Upwork, and DoorDash connect independent workers with clients, allowing individuals to set their own hours and choose their projects. For many, this represents an opportunity to supplement their income or pursue a passion outside of a traditional 9-to-5 job.</p><p>However, the gig economy also faces significant criticism. Workers are typically classified as independent contractors, meaning they lack access to benefits such as health insurance, paid sick leave, and retirement savings. Job security is non-existent, and income can be highly unpredictable. This has led to debates about labor rights and the need for new regulations to protect gig workers from exploitation while preserving the flexibility that defines this sector.</p>`
+    };
+
+    const QUIZ_DATA = [
+        // Questions 1-5: Bali Wonders (Easy - Direct Retrieval)
+        {
+            passageKey: 'baliWonders',
+            type: 'pg',
+            question: "What is one of the most special sights mentioned in West Bali National Park?",
+            options: ["Colorful coral reefs", "The Bali Starling bird", "Calm mangrove swamps", "Expansive green forests", "The terraced rice fields"],
+            answer: 1,
+            analysis: {
+                explanation: "The text explicitly states, 'One of the park's most special sights is the Bali Starling—a rare white bird...'",
+                distractors: ["While reefs, swamps, and forests are mentioned as features of the park, the Bali Starling is singled out as a 'most special sight'."],
+                quote: "One of the park's most special sights is the Bali Starling...",
+                bloom: "Remembering", complexity: 1, confidence: 1.0, time: 45
+            }
+        },
+        {
+            passageKey: 'baliWonders',
+            type: 'pg',
+            question: "According to the passage, what can visitors do in West Bali National Park?",
+            options: ["Go surfing on the beaches", "Attend cultural ceremonies", "Plant rice in the paddies", "Walk along clear paths", "Visit ancient temples"],
+            answer: 3,
+            analysis: {
+                explanation: "The text directly mentions that 'Visitors can walk along clear paths and enjoy the rich variety of plants and animals...'",
+                distractors: ["The other activities are associated with Bali in general but are not mentioned in the context of the National Park in this passage."],
+                quote: "Visitors can walk along clear paths...",
+                bloom: "Remembering", complexity: 1, confidence: 1.0, time: 45
+            }
+        },
+        {
+            passageKey: 'internshipExperience',
+            type: 'pg',
+            question: "What was one of the intern's main tasks on the first day?",
+            options: ["Coaching the football team", "Handling emergency situations", "Setting up cones for drills", "Evaluating other staff members", "Designing new team uniforms"],
+            answer: 2,
+            analysis: {
+                explanation: "The text states, 'I had to set up cones for drills, bring water for the players, and check the training schedules.'",
+                distractors: ["Coaching and handling emergencies came later or were not his tasks. Evaluation and design were not mentioned at all."],
+                quote: "I had to set up cones for drills, bring water for the players...",
+                bloom: "Remembering", complexity: 1, confidence: 1.0, time: 50
+            }
+        },
+        {
+            passageKey: 'internshipExperience',
+            type: 'pgk_mcma',
+            question: "Which of the following describes the intern's feelings or challenges during the first few days? (Pilihan Ganda Kompleks - MCMA)",
+            options: ["He felt challenged by the morning routine.", "He was worried about making mistakes.", "He found the coaches to be unkind.", "He felt completely confident and relaxed.", "He had to follow instructions carefully."],
+            answer: [0, 1, 4],
+            analysis: {
+                explanation: "The text mentions the routine was 'challenging,' he 'worried about making mistakes,' and he had to 'follow instructions carefully.'",
+                distractors: ["The text explicitly states the coaches were 'kind,' and he was 'nervous,' not confident."],
+                quote: "The first few days were challenging... I worried about making mistakes... follow instructions carefully.",
+                bloom: "Understanding", complexity: 2, confidence: 0.9, time: 70
+            }
+        },
+        {
+            passageKey: 'socialMediaHarms',
+            type: 'pg',
+            question: "What is the author's main argument in the passage?",
+            options: ["Social media is beneficial for teenagers' education.", "Social media has no impact on mental health.", "The use of social media is a complex issue.", "Social media has more benefits than harms for teens.", "Social media negatively affects teen mental health."],
+            answer: 4,
+            analysis: {
+                explanation: "The thesis is clearly stated: 'I strongly believe that social media harms teen mental health...'",
+                distractors: ["The passage explicitly argues against the benefits outweighing the harms and focuses on the negative mental health impact."],
+                quote: "I strongly believe that social media harms teen mental health...",
+                bloom: "Understanding", complexity: 2, confidence: 0.9, time: 60
+            }
+        },
+        // Questions 6-10: Urban Gardening & Renewable Energy (Easy-Medium)
+        {
+            passageKey: 'urbanGardening',
+            type: 'pg',
+            question: "What is a primary benefit of urban gardening mentioned in the text?",
+            options: ["It increases property values significantly.", "It provides improved food security for residents.", "It eliminates the need for public parks.", "It is a major source of income for city dwellers.", "It helps in developing new construction sites."],
+            answer: 1,
+            analysis: {
+                explanation: "The text states, 'One of the key advantages is improved food security.'",
+                distractors: ["While property values might be affected, it's not the primary benefit mentioned. The other options are incorrect interpretations."],
+                quote: "One of the key advantages is improved food security.",
+                bloom: "Remembering", complexity: 2, confidence: 1.0, time: 50
+            }
+        },
+        {
+            passageKey: 'urbanGardening',
+            type: 'pgk_kategori',
+            question: "Based on the text, determine if the following statements about urban gardening are True or False. (Pilihan Ganda Kompleks - Kategori)",
+            statements: [
+                { no: 1, text: "Urban gardens can help reduce a city's carbon footprint." },
+                { no: 2, text: "Community gardens can weaken relationships between neighbors." },
+                { no: 3, text: "The main purpose of urban gardening is city beautification." }
+            ],
+            answer: [true, false, false],
+            analysis: {
+                explanation: "1 is true (reduces food transport). 2 is false (fosters social cohesion). 3 is false (it's a benefit, but improved food security is a key advantage mentioned).",
+                distractors: ["The text explicitly supports statement 1 and contradicts statement 2. While beautification is a benefit, it's not presented as the main purpose over food security and environmental advantages."],
+                quote: "...reducing reliance on food transported over long distances. This leads to a smaller carbon footprint... Community gardens also foster social cohesion...",
+                bloom: "Understanding", complexity: 3, confidence: 0.8, time: 80
+            }
+        },
+        {
+            passageKey: 'renewableEnergy',
+            type: 'pg',
+            question: "According to the passage, why are sources like solar and wind considered 'clean'?",
+            options: ["They are the cheapest forms of energy available.", "They do not produce greenhouse gas emissions.", "They can be installed anywhere in the world.", "They generate more power than fossil fuels.", "They require very little land to operate."],
+            answer: 1,
+            analysis: {
+                explanation: "The text defines 'clean' energy by stating 'they do not produce greenhouse gas emissions'.",
+                distractors: ["Cost, location, power output, and land use are mentioned as factors or challenges, not as the reason they are called 'clean'."],
+                quote: "...they do not produce greenhouse gas emissions, which are the primary drivers of global warming.",
+                bloom: "Understanding", complexity: 2, confidence: 1.0, time: 60
+            }
+        },
+        {
+            passageKey: 'renewableEnergy',
+            type: 'pg',
+            question: "What is the main challenge associated with solar and wind power mentioned in the text?",
+            options: ["Their technology is outdated and inefficient.", "They are more harmful to the environment than coal.", "They are intermittent and require energy storage.", "Their costs have been increasing rapidly.", "They are owned exclusively by governments."],
+            answer: 2,
+            analysis: {
+                explanation: "The passage explicitly identifies their intermittency as a key issue: 'both sources are intermittent... This necessitates the development of large-scale energy storage solutions'.",
+                distractors: ["The text states costs have decreased, not increased. Other options are contradicted by the text's positive framing of their environmental benefit."],
+                quote: "...both sources are intermittent—they don't produce energy when the sun isn't shining or the wind isn't blowing.",
+                bloom: "Analyzing", complexity: 3, confidence: 0.9, time: 65
+            }
+        },
+        {
+            passageKey: 'socialMediaHarms',
+            type: 'pg',
+            question: "What does the author suggest as a solution to the problems caused by social media?",
+            options: ["Banning all social media platforms for teenagers.", "Encouraging more time on social media for education.", "Letting teenagers figure out solutions on their own.", "Support from parents and schools to promote healthy use.", "Ignoring the problem as it will resolve itself over time."],
+            answer: 3,
+            analysis: {
+                explanation: "The conclusion clearly states, 'Teenagers need support from parents, teachers, and society to use it wisely.'",
+                distractors: ["The author advocates for wise usage and guidance, not a complete ban or ignoring the issue."],
+                quote: "Teenagers need support from parents, teachers, and society to use it wisely.",
+                bloom: "Understanding", complexity: 2, confidence: 0.9, time: 60
+            }
+        },
+        // Questions 11-15: Fast Fashion & AI in Healthcare (Medium - Analysis)
+        {
+            passageKey: 'fastFashion',
+            type: 'pg',
+            question: "The author implies that the business model of 'fast fashion' prioritizes...",
+            options: ["environmental sustainability and worker welfare.", "high-quality materials and long-lasting garments.", "speed and low cost over ethical considerations.", "traditional craftsmanship and artistic design.", "reducing textile waste through recycling programs."],
+            answer: 2,
+            analysis: {
+                explanation: "The text describes fast fashion with terms like 'rapid production,' 'inexpensive clothing,' and notes the negative consequences on the environment and workers, implying speed and cost are the priorities.",
+                distractors: ["The passage argues that fast fashion has negative effects on the environment, worker welfare, and garment quality, and contributes to waste."],
+                quote: "...rapid production of inexpensive clothing in response to the latest trends.",
+                bloom: "Analyzing", complexity: 3, confidence: 0.8, time: 70
+            }
+        },
+        {
+            passageKey: 'fastFashion',
+            type: 'pgk_mcma',
+            question: "Which of the following are identified as negative consequences of the fast fashion industry? (Pilihan Ganda Kompleks - MCMA)",
+            options: ["Water pollution from textile dyeing.", "Creation of durable, long-lasting clothing.", "Exploitative labor practices in factories.", "Reduction in overall energy consumption.", "Significant generation of textile waste."],
+            answer: [0, 2, 4],
+            analysis: {
+                explanation: "The passage explicitly mentions water pollution, exploitative labor, and textile waste as major problems.",
+                distractors: ["The text states garments are low-quality and disposable, not durable. It also mentions the industry consumes vast amounts of energy, not reduces it."],
+                quote: "Textile dyeing is the second-largest polluter of water... leads to exploitative labor practices... contributing to massive textile waste.",
+                bloom: "Understanding", complexity: 3, confidence: 0.9, time: 75
+            }
+        },
+        {
+            passageKey: 'aiInHealthcare',
+            type: 'pg',
+            question: "What is the primary function of AI in healthcare as described in the passage?",
+            options: ["Replacing doctors and nurses entirely.", "Manufacturing pharmaceutical drugs.", "Building new hospital infrastructure.", "Analyzing complex medical data for diagnosis.", "Providing health insurance to patients."],
+            answer: 3,
+            analysis: {
+                explanation: "The passage opens by stating AI's power is in 'diagnosing diseases, personalizing treatments...' by 'analyz[ing] complex medical data'.",
+                distractors: ["The passage presents AI as a tool to assist, not replace, medical professionals. Other options are not discussed in the text."],
+                quote: "AI algorithms can analyze complex medical data, such as medical images and genetic information...",
+                bloom: "Understanding", complexity: 2, confidence: 1.0, time: 60
+            }
+        },
+        {
+            passageKey: 'aiInHealthcare',
+            type: 'pg',
+            question: "What does the term 'algorithmic bias' mean in the context of the passage?",
+            options: ["The AI is programmed to prefer certain hospitals.", "The AI intentionally gives incorrect diagnoses.", "The AI's decisions may reflect and worsen health disparities.", "The AI system is too expensive for most clinics to afford.", "The AI works more slowly for specific patient groups."],
+            answer: 2,
+            analysis: {
+                explanation: "The text defines it clearly: 'where an AI system may perpetuate existing health disparities if it is trained on data that is not representative'.",
+                distractors: ["The other options are potential issues with technology but do not accurately define algorithmic bias as explained in the text."],
+                quote: "...risk of algorithmic bias, where an AI system may perpetuate existing health disparities...",
+                bloom: "Analyzing", complexity: 4, confidence: 0.8, time: 80
+            }
+        },
+        {
+            passageKey: 'baliWonders',
+            type: 'pg',
+            question: "What is the overall tone of the description of Bali's natural sites?",
+            options: ["Critical and concerned", "Neutral and objective", "Appreciative and peaceful", "Humorous and lighthearted", "Urgent and alarming"],
+            answer: 2,
+            analysis: {
+                explanation: "The author uses words like 'beautiful,' 'stunning,' 'peaceful,' 'magic,' and 'calming' to create a tone of appreciation for the natural beauty.",
+                distractors: ["The tone is overwhelmingly positive and appreciative, not critical, neutral, or alarming."],
+                quote: "Bali, a beautiful island in Indonesia, is known for its stunning landscapes...",
+                bloom: "Evaluating", complexity: 3, confidence: 0.9, time: 70
+            }
+        },
+        // Questions 16-20: Space Exploration & Biodiversity (Medium-Hard - Inference & Evaluation)
+        {
+            passageKey: 'spaceExploration',
+            type: 'pg',
+            question: "The passage suggests that the main motivation for space exploration is...",
+            options: ["solely for military and defense purposes.", "a combination of scientific curiosity and potential gains.", "primarily to establish colonies for overpopulation.", "to escape problems currently existing on planet Earth.", "a competition between private companies only."],
+            answer: 1,
+            analysis: {
+                explanation: "The text states missions are 'driven not only by scientific curiosity but also by the potential for resource discovery and technological innovation,' indicating a mix of motives.",
+                distractors: ["The passage mentions both government agencies and private companies, and focuses on science and resources, not military use or escaping Earth's problems."],
+                quote: "These endeavors are driven not only by scientific curiosity but also by the potential for resource discovery...",
+                bloom: "Analyzing", complexity: 3, confidence: 0.8, time: 75
+            }
+        },
+        {
+            passageKey: 'spaceExploration',
+            type: 'pgk_kategori',
+            question: "Based on the text, identify each of the following as either a 'Challenge' or a 'Goal' of space exploration. (Pilihan Ganda Kompleks - Kategori)",
+            statements: [
+                { no: 1, text: "Establishing a human presence on Mars." },
+                { no: 2, text: "The immense cost of interplanetary travel." },
+                { no: 3, text: "Protecting astronauts from cosmic radiation." }
+            ],
+            answer: [false, true, true], // Here, Goal=false, Challenge=true for my logic
+            analysis: {
+                explanation: "1 is a goal ('goals ranging from...'). 2 and 3 are explicitly mentioned as challenges or hurdles ('primary challenges is the immense cost', 'protecting them... are all critical hurdles').",
+                distractors: ["The classification is derived directly from the text's structure of presenting goals followed by challenges."],
+                quote: "...with goals ranging from establishing a human presence on Mars... One of the primary challenges is the immense cost... Protecting them from cosmic radiation... are all critical hurdles.",
+                bloom: "Analyzing", complexity: 4, confidence: 0.9, time: 85
+            }
+        },
+        {
+            passageKey: 'biodiversityLoss',
+            type: 'pg',
+            question: "What is the author's main purpose in this passage?",
+            options: ["To argue that biodiversity loss is a natural process.", "To describe the beauty of various endangered species.", "To inform about the causes of biodiversity loss and conservation.", "To criticize the work of conservation organizations.", "To propose a single, easy solution to the crisis."],
+            answer: 2,
+            analysis: {
+                explanation: "The passage outlines the causes ('human activities'), the effects (threatens ecosystems), and the responses ('Conservation efforts'), which serves to inform the reader about the topic.",
+                distractors: ["The author clearly states the crisis is human-driven, not natural, and presents conservation efforts positively, while acknowledging the problem's complexity."],
+                quote: "...primarily driven by human activities... Conservation efforts are underway globally to combat this crisis.",
+                bloom: "Evaluating", complexity: 4, confidence: 0.8, time: 80
+            }
+        },
+        {
+            passageKey: 'biodiversityLoss',
+            type: 'pg',
+            question: "The phrase 'a fundamental shift in our relationship with the natural world is required' suggests that...",
+            options: ["current conservation technologies are sufficient.", "the problem can be solved by governments alone.", "individual actions have no impact on biodiversity.", "technological solutions alone are not enough.", "biodiversity loss is no longer a serious issue."],
+            answer: 3,
+            analysis: {
+                explanation: "This concluding thought implies that beyond policies and technologies ('protected areas,' 'seed banks'), a deeper change in human values and behavior is necessary, meaning current solutions are insufficient on their own.",
+                distractors: ["The phrase calls for more than what is currently being done, suggesting that technology and government action alone are not enough and individual mindset is key."],
+                quote: "...a fundamental shift in our relationship with the natural world is required...",
+                bloom: "Evaluating", complexity: 5, confidence: 0.7, time: 90
+            }
+        },
+        {
+            passageKey: 'internshipExperience',
+            type: 'pg',
+            question: "What can be inferred about the intern's character development?",
+            options: ["He became less responsible over time.", "He learned the importance of preparedness.", "He decided he disliked working in sports.", "He became arrogant after receiving praise.", "He realized that rules are not important."],
+            answer: 1,
+            analysis: {
+                explanation: "The experience with the injured player 'reinforced an important lesson: staying alert and prepared,' showing growth in this area.",
+                distractors: ["The text shows he grew more responsible and proud of his improvement, and he hopes to work in a sports club again."],
+                quote: "...the experience reinforced an important lesson: staying alert and prepared during emergencies can make a big difference.",
+                bloom: "Analyzing", complexity: 3, confidence: 0.9, time: 70
+            }
+        },
+        // Questions 21-25: Gig Economy & Various Passages (Harder Analysis/Inference)
+        {
+            passageKey: 'gigEconomy',
+            type: 'pg',
+            question: "The passage presents the gig economy as...",
+            options: ["an entirely positive evolution of the modern workplace.", "a system with no significant benefits for workers.", "a flawless model for achieving work-life balance.", "a complex system with both advantages and disadvantages.", "a temporary trend that will soon disappear."],
+            answer: 3,
+            analysis: {
+                explanation: "The author presents both the pros (flexibility, autonomy) and cons (lack of benefits, job insecurity), indicating a balanced but complex view.",
+                distractors: ["The passage is structured to show both sides of the coin, avoiding an entirely positive or negative portrayal."],
+                quote: "...offers flexibility and autonomy... However, the gig economy also faces significant criticism.",
+                bloom: "Evaluating", complexity: 4, confidence: 0.8, time: 75
+            }
+        },
+        {
+            passageKey: 'gigEconomy',
+            type: 'pgk_mcma',
+            question: "Which of the following are potential drawbacks for a worker in the gig economy, according to the text? (Pilihan Ganda Kompleks - MCMA)",
+            options: ["Guaranteed high income.", "Lack of health insurance.", "Inflexible working hours.", "Unpredictable earnings.", "No access to paid sick leave."],
+            answer: [1, 3, 4],
+            analysis: {
+                explanation: "The passage explicitly lists 'lack access to benefits such as health insurance, paid sick leave' and that 'income can be highly unpredictable' as drawbacks.",
+                distractors: ["The text states income is unpredictable, not guaranteed high, and that hours are flexible, not inflexible."],
+                quote: "...they lack access to benefits such as health insurance, paid sick leave... income can be highly unpredictable.",
+                bloom: "Understanding", complexity: 3, confidence: 0.9, time: 80
+            }
+        },
+        {
+            passageKey: 'renewableEnergy',
+            type: 'pg',
+            question: "What is the most likely reason the author mentions that the cost of solar power has 'decreased dramatically'?",
+            options: ["To argue that solar is now the only viable energy source.", "To suggest that wind power is becoming obsolete.", "To highlight a factor that makes renewable energy more feasible.", "To criticize the high initial cost of renewable technologies.", "To prove that governments should stop funding solar research."],
+            answer: 2,
+            analysis: {
+                explanation: "By mentioning the cost decrease, the author is providing evidence that a major barrier to adopting this clean energy technology is being overcome, thus making it a more practical solution.",
+                distractors: ["This detail supports the overall argument for renewable energy; it is not meant to discredit other forms or stop funding."],
+                quote: "Its cost has decreased dramatically over the past decade, making it more accessible.",
+                bloom: "Evaluating", complexity: 4, confidence: 0.8, time: 85
+            }
+        },
+        {
+            passageKey: 'urbanGardening',
+            type: 'pg',
+            question: "The author uses the phrase 'concrete jungles' to...",
+            options: ["praise the efficiency of modern city design.", "describe cities as places where wild animals roam freely.", "emphasize the lack of nature in many urban areas.", "suggest that cities are the best places for gardening.", "argue that all concrete should be replaced with soil."],
+            answer: 2,
+            analysis: {
+                explanation: "This metaphor contrasts the man-made, hard environment of a city ('concrete') with the wild, natural environment of a 'jungle,' highlighting the absence of green spaces that urban gardening aims to remedy.",
+                distractors: ["The phrase is a common metaphor used critically to describe the artificiality and density of cities, not to praise them."],
+                quote: "...this practice offers a way to bring nature back into our concrete jungles.",
+                bloom: "Analyzing", complexity: 4, confidence: 0.9, time: 75
+            }
+        },
+        {
+            passageKey: 'fastFashion',
+            type: 'pg',
+            question: "What can be inferred from the mention of a 'growing movement towards sustainable and ethical fashion'?",
+            options: ["The fast fashion industry is likely to disappear completely overnight.", "Consumers are powerless to change the fashion industry.", "There is an increasing demand for alternatives to fast fashion.", "Sustainable clothing is always cheaper than fast fashion.", "All fashion brands have already become sustainable."],
+            answer: 2,
+            analysis: {
+                explanation: "The existence of a 'growing movement' implies that awareness is rising and consumers are actively seeking out and supporting brands that offer a more responsible alternative.",
+                distractors: ["A 'growing movement' suggests a gradual shift, not an overnight disappearance. It highlights consumer power, not powerlessness."],
+                quote: "...there is a growing movement towards sustainable and ethical fashion...",
+                bloom: "Analyzing", complexity: 4, confidence: 0.8, time: 80
+            }
+        },
+        // ... Continue generating questions 26-50 with increasing complexity, covering all passages and question types.
+        // For brevity, I will add the remaining questions in a more condensed format.
+        // Questions 26-30
+        {
+            passageKey: 'aiInHealthcare',
+            type: 'pgk_kategori',
+            question: "Evaluate the following statements regarding the implementation of AI in healthcare as presented in the text. (Pilihan Ganda Kompleks - Kategori)",
+            statements: [
+                { no: 1, text: "The use of AI in healthcare is free from any potential risks or ethical issues." },
+                { no: 2, text: "AI's effectiveness is partly dependent on the quality and diversity of its training data." },
+                { no: 3, text: "AI can perform some analytical tasks faster and more accurately than humans." }
+            ],
+            answer: [false, true, true],
+            analysis: { explanation: "1 is false (privacy/bias are risks). 2 is true (risk of bias from non-representative data). 3 is true (surpass human capabilities).", distractors: ["The text is balanced, showing potential and raising concerns."], quote: "...surpass human capabilities... raises important ethical and practical questions... trained on data that is not representative...", bloom: "Evaluating", complexity: 5, confidence: 0.8, time: 90 }
+        },
+        {
+            passageKey: 'spaceExploration',
+            type: 'pg',
+            question: "The author's attitude toward the future of space exploration can best be described as...",
+            options: ["pessimistic, focusing only on insurmountable challenges.", "indifferent, suggesting it is not a worthy pursuit.", "realistically optimistic, acknowledging challenges but inspired by rewards.", "deeply skeptical, questioning the motives of space agencies.", "fearful, emphasizing the dangers to astronauts above all else."],
+            answer: 2,
+            analysis: { explanation: "The passage presents significant challenges ('immense cost,' 'critical hurdles') but concludes with the inspirational 'potential rewards,' striking a balanced, optimistic tone.", distractors: ["The conclusion focuses on inspiration, ruling out pessimism, indifference, or skepticism."], quote: "However, the potential rewards... continue to inspire humanity to reach for the stars.", bloom: "Evaluating", complexity: 4, confidence: 0.8, time: 85 }
+        },
+        {
+            passageKey: 'biodiversityLoss',
+            type: 'pgk_mcma',
+            question: "Which human activities are listed as primary drivers of biodiversity loss? (Pilihan Ganda Kompleks - MCMA)",
+            options: ["The creation of protected natural areas.", "Pollution and climate change.", "Restoration of degraded habitats.", "Overexploitation of natural resources.", "Habitat destruction."],
+            answer: [1, 3, 4],
+            analysis: { explanation: "The text lists 'Habitat destruction, pollution, climate change, and the overexploitation of natural resources' as the main culprits.", distractors: ["Creating protected areas and restoring habitats are presented as solutions, not causes."], quote: "Habitat destruction, pollution, climate change, and the overexploitation of natural resources are the main culprits.", bloom: "Understanding", complexity: 3, confidence: 0.9, time: 70 }
+        },
+        {
+            passageKey: 'gigEconomy',
+            type: 'pg',
+            question: "What is the central tension discussed in the passage about the gig economy?",
+            options: ["Technology platforms versus traditional companies.", "Older workers versus younger workers.", "Flexibility and autonomy versus stability and protection.", "Urban economic growth versus rural economic decline.", "High-skilled jobs versus low-skilled assignments."],
+            answer: 2,
+            analysis: { explanation: "The passage is structured around this central conflict: the first paragraph details the benefits of flexibility, while the second outlines the drawbacks related to the lack of stability and worker protections.", distractors: ["While other tensions may exist in the economy, the passage focuses specifically on the trade-off between freedom and security for workers."], quote: "...offers flexibility and autonomy... However... workers... lack access to benefits... Job security is non-existent.", bloom: "Analyzing", complexity: 5, confidence: 0.8, time: 85 }
+        },
+        {
+            passageKey: 'socialMediaHarms',
+            type: 'pg',
+            question: "The author's claim that online posts are 'edited, filtered, or fake' serves to...",
+            options: ["prove that all teenagers are dishonest online.", "suggest that social media improves photography skills.", "highlight the unrealistic standards that cause social comparison.", "encourage teenagers to use more photo editing apps.", "criticize the technology behind social media platforms."],
+            answer: 2,
+            analysis: { explanation: "This detail explains *why* the social comparison is unhealthy—it's based on an unrealistic and often false reality, which makes teenagers feel inadequate.", distractors: ["The point is not about dishonesty in general, but about the specific effect these perfected images have on others' mental health."], quote: "The problem is that many of these online posts are edited, filtered, or fake, but teens still feel pressure to look or live the same way.", bloom: "Evaluating", complexity: 4, confidence: 0.8, time: 80 }
+        },
+        // Questions 31-35
+        {
+            passageKey: 'baliWonders',
+            type: 'pg',
+            question: "The author's primary purpose for writing about Bali is likely to...",
+            options: ["discourage tourism to protect the environment.", "provide a scientific analysis of the island's geology.", "promote Bali's natural attractions beyond its famous beaches.", "compare Bali's culture to that of other Indonesian islands.", "warn travelers about the dangers of visiting the island."],
+            answer: 2,
+            analysis: { explanation: "The opening sentence sets this up: 'While many come for the beaches and temples, the island also offers natural attractions'. The text then focuses on these lesser-known natural sites.", distractors: ["The tone is positive and inviting, not discouraging or warning. It is a travel-style text, not a scientific analysis."], quote: "While many come for the beaches and temples, the island also offers natural attractions...", bloom: "Evaluating", complexity: 4, confidence: 0.9, time: 75 }
+        },
+        {
+            passageKey: 'internshipExperience',
+            type: 'pg',
+            question: "The reflection session at the end of the internship served to...",
+            options: ["assign blame for mistakes made during the summer.", "provide the intern with constructive feedback on his performance.", "offer the intern a full-time coaching position immediately.", "criticize the sports club's management and policies.", "determine if the intern had to pay for the T-shirt."],
+            answer: 1,
+            analysis: { explanation: "The text calls it an 'evaluation and reflection session where they shared the results of their feedback,' highlighting his strengths. This is the definition of constructive feedback.", distractors: ["The session was positive, focusing on his strengths and improvement, not blame or criticism."], quote: "...the coaches held an evaluation and reflection session where they shared the results of their feedback. They highlighted my strengths...", bloom: "Analyzing", complexity: 3, confidence: 0.9, time: 70 }
+        },
+        {
+            passageKey: 'fastFashion',
+            type: 'pgk_kategori',
+            question: "Categorize the following impacts of the fast fashion industry as either 'Environmental' or 'Social'. (Pilihan Ganda Kompleks - Kategori)",
+            statements: [
+                { no: 1, text: "Textile dyeing causing water pollution." },
+                { no: 2, text: "Workers facing low wages and unsafe conditions." },
+                { no: 3, text: "Massive textile waste ending up in landfills." }
+            ],
+            answer: [true, false, true], // Environmental=true, Social=false for my logic
+            analysis: { explanation: "1 and 3 relate to the planet's health (water, waste), making them environmental. 2 relates to the well-being and rights of people, making it social.", distractors: ["The text clearly separates the environmental impacts (water, waste, energy) from the human/social ones (exploitative labor)."], quote: "The environmental impact is staggering. Textile dyeing... contributes to massive textile waste... leads to exploitative labor practices...", bloom: "Analyzing", complexity: 4, confidence: 0.9, time: 85 }
+        },
+        {
+            passageKey: 'renewableEnergy',
+            type: 'pg',
+            question: "It can be inferred that a key to advancing renewable energy is the improvement of...",
+            options: ["fossil fuel extraction techniques.", "greenhouse gas emission technology.", "energy storage solutions like batteries.", "traditional power grid infrastructure.", "nuclear power plant safety protocols."],
+            answer: 2,
+            analysis: { explanation: "The text directly links the problem of intermittency (sun not shining, wind not blowing) to the need for a solution: 'This necessitates the development of large-scale energy storage solutions, such as batteries'.", distractors: ["The passage is about moving away from fossil fuels. Storage is presented as the next step for renewables."], quote: "This necessitates the development of large-scale energy storage solutions, such as batteries, to ensure a stable power supply.", bloom: "Analyzing", complexity: 4, confidence: 0.8, time: 80 }
+        },
+        {
+            passageKey: 'urbanGardening',
+            type: 'pg',
+            question: "The passage suggests that urban gardening is a response to...",
+            options: ["an increase in agricultural jobs in cities.", "a government mandate for all citizens to farm.", "the growing disconnect between city life and nature.", "a surplus of fresh produce in urban markets.", "the decline of traditional suburban gardening."],
+            answer: 2,
+            analysis: { explanation: "The text introduces the topic by saying it's a way to 'bring nature back into our concrete jungles,' implying it's a solution for the lack of nature in increasingly crowded cities.", distractors: ["It's a grassroots trend, not a government mandate, and it addresses a lack of fresh produce, not a surplus."], quote: "...with cities becoming more crowded, this practice offers a way to bring nature back into our concrete jungles.", bloom: "Evaluating", complexity: 5, confidence: 0.8, time: 90 }
+        },
+        // Questions 36-40
+        {
+            passageKey: 'aiInHealthcare',
+            type: 'pg',
+            question: "The author's perspective on AI in healthcare can be described as...",
+            options: ["unconditionally supportive, ignoring all potential downsides.", "cautiously optimistic, acknowledging both potential and challenges.", "overtly hostile, arguing it will do more harm than good.", "purely technical, without considering ethical implications.", "dismissive, believing AI will have little real-world impact."],
+            answer: 1,
+            analysis: { explanation: "The passage is structured to first explain the huge potential ('revolutionizing,' 'improving patient outcomes') and then discuss the serious challenges ('ethical and practical questions'), which is a cautiously optimistic stance.", distractors: ["The inclusion of a full paragraph on ethics and bias rules out unconditional support or a purely technical view."], quote: "Artificial intelligence (AI) is revolutionizing the healthcare industry... Despite its potential, the integration of AI... raises important ethical and practical questions.", bloom: "Evaluating", complexity: 5, confidence: 0.8, time: 85 }
+        },
+        {
+            passageKey: 'biodiversityLoss',
+            type: 'pg',
+            question: "What is the relationship between biodiversity and ecosystem stability as described in the passage?",
+            options: ["High biodiversity leads to ecosystem instability.", "Biodiversity has no connection to ecosystem stability.", "The loss of biodiversity threatens ecosystem stability.", "Ecosystem stability is the primary cause of biodiversity loss.", "Only animal biodiversity affects ecosystem stability."],
+            answer: 2,
+            analysis: { explanation: "The text explicitly states that the 'loss of biodiversity threatens not only individual species but also the stability of entire ecosystems'.", distractors: ["The passage posits a direct, positive correlation: more biodiversity equals more stability, so loss of one leads to loss of the other."], quote: "This loss of biodiversity threatens... the stability of entire ecosystems...", bloom: "Analyzing", complexity: 4, confidence: 0.9, time: 80 }
+        },
+        {
+            passageKey: 'spaceExploration',
+            type: 'pgk_mcma',
+            question: "Which of the following are mentioned as significant hurdles in long-duration space missions? (Pilihan Ganda Kompleks - MCMA)",
+            options: ["Lack of interested astronauts.", "The psychological toll of isolation.", "Difficulty in communicating with Earth.", "The need for reusable spacecraft.", "The impact of cosmic radiation."],
+            answer: [1, 3, 4],
+            analysis: { explanation: "The passage lists 'protecting them from cosmic radiation,' 'designing reusable spacecraft,' and 'The psychological toll of long-duration missions in isolation' as critical hurdles.", distractors: ["Lack of interested astronauts or communication difficulties are not mentioned as hurdles in this text."], quote: "...protecting them from cosmic radiation, and designing reusable spacecraft are all critical hurdles. The psychological toll... is another significant factor...", bloom: "Understanding", complexity: 4, confidence: 0.9, time: 85 }
+        },
+        {
+            passageKey: 'gigEconomy',
+            type: 'pg',
+            question: "The term 'independent contractors' is critical in the gig economy debate because it...",
+            options: ["ensures workers receive generous benefits and pensions.", "refers to the high level of teamwork in freelance projects.", "legally exempts companies from providing traditional employee benefits.", "guarantees a stable and predictable income for all workers.", "means that workers are managed directly by government agencies."],
+            answer: 2,
+            analysis: { explanation: "The passage directly connects this classification to the main drawback: 'Workers are typically classified as independent contractors, meaning they lack access to benefits...'. This legal status is the root of the issue.", distractors: ["The text explains this classification has the opposite effect of ensuring benefits or stable income."], quote: "Workers are typically classified as independent contractors, meaning they lack access to benefits such as health insurance, paid sick leave, and retirement savings.", bloom: "Evaluating", complexity: 5, confidence: 0.8, time: 90 }
+        },
+        {
+            passageKey: 'fastFashion',
+            type: 'pg',
+            question: "What is the most likely long-term solution to the problems of fast fashion, according to the passage's tone?",
+            options: ["Developing faster production technologies.", "A consumer shift towards valuing quality and ethical production.", "Government subsidies to make fast fashion even cheaper.", "Increased use of synthetic materials to reduce costs.", "Banning all clothing imports from other countries."],
+            answer: 1,
+            analysis: { explanation: "The passage concludes by mentioning the 'growing movement towards sustainable and ethical fashion, promoting quality over quantity'. This points to a shift in consumer values as the key driver of change.", distractors: ["The other options represent an acceleration of the problem, not a solution."], quote: "...a growing movement towards sustainable and ethical fashion, promoting quality over quantity and transparency in the supply chain.", bloom: "Creating", complexity: 5, confidence: 0.7, time: 95 }
+        },
+        // Questions 41-45
+        {
+            passageKey: 'baliWonders',
+            type: 'pgk_kategori',
+            question: "Determine if the descriptions below apply to West Bali National Park (WBNP) or Tegalalang Rice Terraces (TRT) based on a different passage. For this question, imagine Tegalalang is described as a 'cultural landscape shaped by generations of farmers'. (Pilihan Ganda Kompleks - Kategori)",
+            statements: [
+                { no: 1, text: "Characterized by untouched scenery and diverse wildlife." },
+                { no: 2, text: "Represents a man-made agricultural system." },
+                { no: 3, text: "Primarily a site for wildlife conservation." }
+            ],
+            answer: [true, false, true], // WBNP=true, TRT=false
+            analysis: { explanation: "1 & 3 clearly describe the National Park's focus on nature and protection. 2 describes the rice terraces, which are a product of human farming.", distractors: ["This question requires categorizing features based on the distinct identities of the two locations described in the original source."], quote: "West Bali National Park, a peaceful area... enjoy the rich variety of plants and animals in this protected area.", bloom: "Analyzing", complexity: 4, confidence: 0.8, time: 90 }
+        },
+        {
+            passageKey: 'internshipExperience',
+            type: 'pg',
+            question: "What does the phrase 'jumping in to help' suggest about the later stages of the internship?",
+            options: ["The intern's tasks became more passive and observational.", "The intern was given more active and practical responsibilities.", "The intern engaged in recreational swimming activities.", "The intern's work was considered chaotic and disorganized.", "The intern frequently interrupted the coaches during games."],
+            answer: 1,
+            analysis: { explanation: "This idiomatic expression means to become actively involved. It contrasts with the initial orientation phase, implying a progression to more hands-on work.", distractors: ["The phrase implies the opposite of being passive. It's a positive idiom, not one suggesting chaos or interruption."], quote: "...starting from orientation until finally jumping in to help during practices and games.", bloom: "Analyzing", complexity: 4, confidence: 0.9, time: 80 }
+        },
+        {
+            passageKey: 'socialMediaHarms',
+            type: 'pgk_mcma',
+            question: "According to the author, which aspects of a teenager's life are negatively affected by excessive social media use? (Pilihan Ganda Kompleks - MCMA)",
+            options: ["Physical fitness and athletic ability.", "Self-esteem and body image.", "Sleep patterns and quality.", "Academic performance.", "Relationships with close family members."],
+            answer: [1, 2, 3],
+            analysis: { explanation: "The text explicitly mentions lower self-esteem from comparison, affected sleep habits from late-night use, and suffering grades due to lack of focus.", distractors: ["While physical fitness and family relationships could be affected, the text does not mention them specifically."], quote: "...lower self-esteem... affects sleep and study habits... their grades may suffer.", bloom: "Understanding", complexity: 3, confidence: 0.9, time: 75 }
+        },
+        {
+            passageKey: 'aiInHealthcare',
+            type: 'pg',
+            question: "Which of the following is the best summary of the passage about AI in healthcare?",
+            options: ["AI is a perfect technology that will solve all healthcare problems without any issues.", "AI in healthcare is a dangerous development that should be stopped immediately due to privacy risks.", "AI shows significant promise for improving medical diagnosis and treatment, but its implementation must carefully address major ethical challenges like data privacy and bias.", "The main benefit of AI in healthcare is reducing administrative costs, with minor impact on patient outcomes.", "Only wealthy countries can benefit from AI in healthcare, which will increase global health disparities."],
+            answer: 2,
+            analysis: { explanation: "This option accurately captures the two main points of the passage: the revolutionary potential (promise) and the significant ethical considerations (challenges).", distractors: ["The other options are too extreme (perfect, dangerous) or too narrow (only costs, only wealthy countries), failing to reflect the balanced view of the text."], quote: "Artificial intelligence (AI) is revolutionizing the healthcare industry... Despite its potential... raises important ethical and practical questions.", bloom: "Evaluating", complexity: 5, confidence: 0.8, time: 100 }
+        },
+        {
+            passageKey: 'biodiversityLoss',
+            type: 'pg',
+            question: "The author mentions 'captive breeding programs and seed banks' as examples of...",
+            options: ["the primary causes of biodiversity loss.", "policies that have failed to protect species.", "last-resort conservation strategies.", "methods for creating new, genetically modified species.", "profitable businesses emerging from the crisis."],
+            answer: 2,
+            analysis: { explanation: "The text explicitly frames these actions as 'last-resort measures to save critically endangered species,' indicating they are used when a species is on the brink of extinction.", distractors: ["They are solutions, not causes. The text doesn't evaluate their success rate but presents them as an existing strategy."], quote: "Captive breeding programs and seed banks are also used as last-resort measures...", bloom: "Analyzing", complexity: 4, confidence: 0.9, time: 85 }
+        },
+        // Questions 46-50
+        {
+            passageKey: 'gigEconomy',
+            type: 'pgk_kategori',
+            question: "Based on the text, determine if the following attributes are generally associated with the 'Gig Economy' or a 'Traditional Job'. (Pilihan Ganda Kompleks - Kategori)",
+            statements: [
+                { no: 1, text: "Access to employer-provided health insurance." },
+                { no: 2, text: "Flexibility to set one's own working hours." },
+                { no: 3, text: "High degree of job security and stability." }
+            ],
+            answer: [false, true, false], // Gig=true, Traditional=false for my logic
+            analysis: { explanation: "1 & 3 are hallmarks of traditional employment that the text says are lacking in the gig economy. 2 is highlighted as a primary attraction of gig work.", distractors: ["This question tests the ability to contrast the model described in the text with the implied alternative (a traditional job)."], quote: "...offers flexibility and autonomy... lack access to benefits such as health insurance... Job security is non-existent...", bloom: "Evaluating", complexity: 5, confidence: 0.8, time: 95 }
+        },
+        {
+            passageKey: 'spaceExploration',
+            type: 'pg',
+            question: "The passage implies that private companies like SpaceX are...",
+            options: ["in conflict with government agencies like NASA.", "playing a significant role alongside government agencies.", "less important than government agencies in space exploration.", "the only entities capable of funding space missions.", "focused exclusively on space tourism, not science."],
+            answer: 1,
+            analysis: { explanation: "The text mentions 'Governmental agencies like NASA and private companies such as SpaceX are pushing the boundaries,' presenting them as parallel actors working towards similar goals, not as being in conflict or of lesser importance.", distractors: ["The phrasing puts them on equal footing as key players, ruling out the other interpretations."], quote: "Governmental agencies like NASA and private companies such as SpaceX are pushing the boundaries...", bloom: "Analyzing", complexity: 4, confidence: 0.8, time: 85 }
+        },
+        {
+            passageKey: 'urbanGardening',
+            type: 'pg',
+            question: "Which of the following problems is urban gardening presented as a solution for?",
+            options: ["Overpopulation in rural areas.", "The urban heat island effect.", "Lack of technological innovation in cities.", "Insufficient space for new building construction.", "The high cost of public transportation."],
+            answer: 1,
+            analysis: { explanation: "The text explicitly states that 'green spaces in cities help to mitigate the urban heat island effect.'", distractors: ["The other options are urban issues but are not addressed by urban gardening in the passage."], quote: "...green spaces in cities help to mitigate the urban heat island effect, improve air quality...", bloom: "Understanding", complexity: 3, confidence: 0.9, time: 70 }
+        },
+        {
+            passageKey: 'socialMediaHarms',
+            type: 'pg',
+            question: "What is the most significant difference between cyberbullying and face-to-face bullying, according to the text?",
+            options: ["Cyberbullying is less harmful emotionally.", "Face-to-face bullying is more common.", "Cyberbullying is only done by adults.", "Cyberbullying can happen at any time and be widely shared.", "Face-to-face bullying is easier to report to authorities."],
+            answer: 3,
+            analysis: { explanation: "The text makes a direct comparison: 'Unlike face-to-face bullying, it can happen at any time and be shared with many people,' highlighting its pervasive and viral nature.", distractors: ["The text implies cyberbullying is very harmful and doesn't comment on frequency or reporting difficulty."], quote: "Unlike face-to-face bullying, it can happen at any time and be shared with many people.", bloom: "Analyzing", complexity: 4, confidence: 0.8, time: 80 }
+        },
+        {
+            passageKey: 'fastFashion',
+            type: 'pg',
+            question: "What is the author's likely purpose for writing this passage?",
+            options: ["To provide a guide on how to become a fast fashion designer.", "To advertise the benefits and affordability of fast fashion.", "To persuade investors to fund fast fashion companies.", "To raise consumer awareness about the hidden costs of fast fashion.", "To argue that environmental issues are not related to clothing."],
+            answer: 3,
+            analysis: { explanation: "By detailing the profound negative environmental and social consequences, the author is clearly aiming to inform and persuade consumers to think more critically about their purchasing habits.", distractors: ["The passage is a critique, not an advertisement or guide. Its purpose is to inform and raise concern."], quote: "As consumers become more aware of these issues, there is a growing movement towards sustainable and ethical fashion...", bloom: "Evaluating", complexity: 5, confidence: 0.8, time: 90 }
+        }
+    ];
+
+    // === ELEMEN DOM ===
+    const timerEl = document.getElementById('timer').querySelector('span:last-child');
+    const timerContainer = document.getElementById('timer');
+    const questionListBtn = document.getElementById('question-list-btn');
+    const questionModal = document.getElementById('question-modal');
+    const closeBtn = questionModal.querySelector('.close-btn');
+    const navGrid = document.getElementById('nav-grid');
+    
+    const quizContent = document.getElementById('quiz-content');
+    const quizFooter = document.getElementById('quiz-footer');
+    const passageContainer = document.getElementById('passage-container');
+    const questionNumberEl = document.getElementById('question-number');
+    const questionTextEl = document.getElementById('question-text');
+    const optionsEl = document.getElementById('options');
+    
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const finishBtn = document.getElementById('finish-btn');
+    const doubtCheckbox = document.getElementById('doubt-checkbox');
+    
+    const progressFill = document.getElementById('progress-fill');
+    const progressText = document.getElementById('progress-text');
+    const answeredCountEl = document.getElementById('answered-count');
+    const doubtfulCountEl = document.getElementById('doubtful-count');
+
+    const resultsContainer = document.getElementById('results-container');
+    const scoreEl = document.getElementById('score');
+    const correctCountEl = document.getElementById('correct-count');
+    const incorrectCountEl = document.getElementById('incorrect-count');
+    const unansweredCountEl = document.getElementById('unanswered-count');
+    const analysisContentEl = document.getElementById('analysis-content');
+    const restartBtn = document.getElementById('restart-btn');
+
+    const confirmModal = document.getElementById('confirm-modal');
+    const confirmOkBtn = document.getElementById('confirm-ok-btn');
+    const confirmCancelBtn = document.getElementById('confirm-cancel-btn');
+    let confirmCallback = null;
+
+    // === STATE APLIKASI ===
+    let currentQuestionIndex = 0;
+    let userAnswers = [];
+    let timerInterval;
+    let currentPassage = null;
+    
+    // === FUNGSI-FUNGSI ===
+
+    function initializeAnswers() {
+        userAnswers = QUIZ_DATA.map(q => {
+            let initialAnswer;
+            switch (q.type) {
+                case 'pgk_mcma': initialAnswer = []; break;
+                case 'pgk_kategori': initialAnswer = new Array(q.statements.length).fill(null); break;
+                default: initialAnswer = null;
+            }
+            return { answer: initialAnswer, isDoubtful: false };
+        });
+    }
+
+    function startQuiz() {
+        currentQuestionIndex = 0;
+        initializeAnswers();
+        resultsContainer.style.display = 'none';
+        quizContent.style.display = 'flex';
+        quizFooter.style.display = 'flex';
+        startTimer(initialTimeSeconds);
+        buildNavGrid();
+        showQuestion(currentQuestionIndex);
+        updateProgressAndStats();
+    }
+
+    function startTimer(duration) {
+        let timeLeft = duration;
+        clearInterval(timerInterval);
+        
+        const updateTimerDisplay = () => {
+            const hours = Math.floor(timeLeft / 3600);
+            const minutes = Math.floor((timeLeft % 3600) / 60);
+            const seconds = timeLeft % 60;
+            
+            timerEl.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            
+            timerContainer.classList.remove('warning', 'critical');
+            if (timeLeft <= 300) { timerContainer.classList.add('critical'); } 
+            else if (timeLeft <= 1800) { timerContainer.classList.add('warning'); }
+        };
+        
+        updateTimerDisplay();
+        timerInterval = setInterval(() => {
+            if (--timeLeft < 0) {
+                clearInterval(timerInterval);
+                finishQuiz();
+            } else {
+                updateTimerDisplay();
+            }
+        }, 1000);
+    }
+
+    function showQuestion(index) {
+        currentQuestionIndex = index;
+        const qData = QUIZ_DATA[index];
+
+        // Render passage jika ada
+        if (qData.passageKey && qData.passageKey !== currentPassage) {
+            currentPassage = qData.passageKey;
+            passageContainer.innerHTML = `
+                <div class="passage">
+                    <div class="passage-title">
+                        <span class="material-icons">article</span> Bacaan
+                    </div>
+                    ${passages[currentPassage]}
+                </div>`;
+            passageContainer.style.display = 'block';
+        } else if (!qData.passageKey) {
+            passageContainer.innerHTML = '';
+            passageContainer.style.display = 'none';
+            currentPassage = null;
+        }
+
+        questionNumberEl.textContent = `Soal Nomor ${index + 1}`;
+        
+        let questionHTML = `<p>${qData.question}</p>`;
+        if (qData.type === 'pgk_mcma') {
+            questionHTML += `<span class="question-type-label">Pilih satu atau lebih jawaban yang benar.</span>`;
+        } else if (qData.type === 'pgk_kategori') {
+            questionHTML += `<span class="question-type-label">Tentukan Benar/Salah untuk setiap pernyataan.</span>`;
+        }
+        questionTextEl.innerHTML = questionHTML;
+        optionsEl.innerHTML = '';
+
+        const currentAnswer = userAnswers[index].answer;
+
+        switch (qData.type) {
+            case 'pgk_mcma':
+                qData.options.forEach((option, i) => {
+                    const li = document.createElement('li');
+                    li.className = 'option';
+                    const isSelected = currentAnswer.includes(i);
+                    if (isSelected) li.classList.add('selected');
+                    li.innerHTML = `<span class="option-label" style="border-radius: 4px;">${String.fromCharCode(65 + i)}</span><div class="option-text">${option}</div>`;
+                    li.addEventListener('click', () => selectMcmaAnswer(i));
+                    optionsEl.appendChild(li);
+                });
+                break;
+            
+            case 'pgk_kategori':
+                const table = document.createElement('table');
+                table.className = 'category-table';
+                table.innerHTML = `<thead><tr><th>#</th><th>Pernyataan</th><th>Benar</th><th>Salah</th></tr></thead>`;
+                const tbody = document.createElement('tbody');
+                qData.statements.forEach((stmt, i) => {
+                    const row = document.createElement('tr');
+                    const checkedTrue = (currentAnswer[i] === true) ? 'checked' : '';
+                    const checkedFalse = (currentAnswer[i] === false) ? 'checked' : '';
+                    row.innerHTML = `
+                        <td>${stmt.no}</td>
+                        <td>${stmt.text}</td>
+                        <td><input type="radio" name="stmt-${i}" value="true" ${checkedTrue}></td>
+                        <td><input type="radio" name="stmt-${i}" value="false" ${checkedFalse}></td>
+                    `;
+                    row.querySelectorAll(`input[name="stmt-${i}"]`).forEach(radio => {
+                        radio.addEventListener('change', () => selectCategoryAnswer(i, radio.value === 'true'));
+                    });
+                    tbody.appendChild(row);
+                });
+                table.appendChild(tbody);
+                optionsEl.appendChild(table);
+                break;
+
+            default: // 'pg'
+                qData.options.forEach((option, i) => {
+                    const li = document.createElement('li');
+                    li.className = 'option';
+                    if (currentAnswer === i) li.classList.add('selected');
+                    li.innerHTML = `<span class="option-label">${String.fromCharCode(65 + i)}</span><div class="option-text">${option}</div>`;
+                    li.addEventListener('click', () => selectPgAnswer(i));
+                    optionsEl.appendChild(li);
+                });
+                break;
+        }
+        doubtCheckbox.checked = userAnswers[index].isDoubtful;
+        updateNavigationButtons();
+        updateNavGrid();
+    }
+
+    function selectPgAnswer(selectedIndex) {
+        userAnswers[currentQuestionIndex].answer = selectedIndex;
+        updateProgressAndStats();
+        setTimeout(() => {
+            if (currentQuestionIndex < QUIZ_DATA.length - 1) showQuestion(currentQuestionIndex + 1);
+            else showQuestion(currentQuestionIndex); // Re-render for visual feedback
+        }, 300);
+    }
+    
+    function selectMcmaAnswer(selectedIndex) {
+        const currentAnsArray = userAnswers[currentQuestionIndex].answer;
+        const indexInAnswer = currentAnsArray.indexOf(selectedIndex);
+        if (indexInAnswer > -1) {
+            currentAnsArray.splice(indexInAnswer, 1);
+        } else {
+            currentAnsArray.push(selectedIndex);
+        }
+        showQuestion(currentQuestionIndex); // Re-render to update selection
+        updateProgressAndStats();
+    }
+
+    function selectCategoryAnswer(statementIndex, value) {
+        userAnswers[currentQuestionIndex].answer[statementIndex] = value;
+        updateProgressAndStats();
+    }
+    
+    function updateProgressAndStats() {
+        updateNavGrid();
+        updateProgress();
+        updateStats();
+    }
+
+    function isQuestionAnswered(userAnswer, type) {
+        if (type === 'pgk_mcma') return userAnswer.answer.length > 0;
+        if (type === 'pgk_kategori') return userAnswer.answer.some(a => a !== null);
+        return userAnswer.answer !== null;
+    }
+
+    function updateNavigationButtons() {
+        prevBtn.disabled = currentQuestionIndex === 0;
+        const isLastQuestion = currentQuestionIndex === QUIZ_DATA.length - 1;
+        nextBtn.style.display = isLastQuestion ? 'none' : 'flex';
+        finishBtn.style.display = isLastQuestion ? 'flex' : 'none';
+    }
+
+    function buildNavGrid() {
+        navGrid.innerHTML = '';
+        QUIZ_DATA.forEach((_, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'nav-btn';
+            btn.textContent = index + 1;
+            btn.addEventListener('click', () => {
+                showQuestion(index);
+                closeModal(questionModal);
+            });
+            navGrid.appendChild(btn);
+        });
+    }
+    
+    function updateNavGrid() {
+        Array.from(navGrid.children).forEach((btn, index) => {
+            btn.classList.remove('answered', 'doubtful', 'active');
+            const userAnswer = userAnswers[index];
+            if (isQuestionAnswered(userAnswer, QUIZ_DATA[index].type)) btn.classList.add('answered');
+            if (userAnswer.isDoubtful) btn.classList.add('doubtful');
+            if (index === currentQuestionIndex) btn.classList.add('active');
+        });
+    }
+
+    function updateProgress() {
+        const answeredCount = userAnswers.filter((ua, i) => isQuestionAnswered(ua, QUIZ_DATA[i].type)).length;
+        const progress = (answeredCount / QUIZ_DATA.length) * 100;
+        progressFill.style.width = `${progress}%`;
+        progressText.textContent = `${answeredCount}/${QUIZ_DATA.length}`;
+    }
+
+    function updateStats() {
+        const answeredCount = userAnswers.filter((ua, i) => isQuestionAnswered(ua, QUIZ_DATA[i].type)).length;
+        const doubtfulCount = userAnswers.filter(a => a.isDoubtful).length;
+        answeredCountEl.textContent = `${answeredCount} terjawab`;
+        doubtfulCountEl.textContent = `${doubtfulCount} ragu-ragu`;
+    }
+
+    function arraysEqual(a, b) {
+        if (a === b) return true;
+        if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+        const sortedA = [...a].sort();
+        const sortedB = [...b].sort();
+        for (let i = 0; i < sortedA.length; i++) {
+            if (sortedA[i] !== sortedB[i]) return false;
+        }
+        return true;
+    }
+
+    function finishQuiz() {
+        clearInterval(timerInterval);
+        
+        let correctCount = 0, incorrectCount = 0;
+        
+        QUIZ_DATA.forEach((q, i) => {
+            const userAnswer = userAnswers[i];
+            if (!isQuestionAnswered(userAnswer, q.type)) return;
+
+            const isCorrect = (q.type === 'pg')
+                ? userAnswer.answer === q.answer
+                : arraysEqual(userAnswer.answer, q.answer);
+
+            if (isCorrect) correctCount++;
+            else incorrectCount++;
+        });
+        
+        const unansweredCount = QUIZ_DATA.length - (correctCount + incorrectCount);
+        const score = (correctCount / QUIZ_DATA.length) * 100;
+
+        scoreEl.innerHTML = `Skor Anda: <span>${score.toFixed(1)}%</span>`;
+        correctCountEl.textContent = correctCount;
+        incorrectCountEl.textContent = incorrectCount;
+        unansweredCountEl.textContent = unansweredCount;
+        
+        analysisContentEl.innerHTML = QUIZ_DATA.map((q, i) => {
+            const userAnswer = userAnswers[i].answer;
+            const correctAnswer = q.answer;
+            const isCorrect = (q.type === 'pg') ? userAnswer === correctAnswer : arraysEqual(userAnswer, correctAnswer);
+            
+            let userAnswerText = '';
+            let correctAnswerText = '';
+            let answerClass = '';
+
+            if (!isQuestionAnswered(userAnswers[i], q.type)) {
+                userAnswerText = 'Tidak Dijawab';
+                answerClass = 'unanswered';
+            } else {
+                answerClass = isCorrect ? 'correct' : 'incorrect';
+                if (q.type === 'pg') {
+                    userAnswerText = `<b>${String.fromCharCode(65 + userAnswer)}.</b> ${q.options[userAnswer]}`;
+                } else if (q.type === 'pgk_mcma') {
+                    userAnswerText = userAnswer.sort().map(ans => `<b>${String.fromCharCode(65 + ans)}.</b> ${q.options[ans]}`).join('<br>');
+                } else { // pgk_kategori
+                    userAnswerText = q.statements.map((stmt, idx) => `Pernyataan ${stmt.no}: <b>${userAnswer[idx] ? 'Benar' : 'Salah'}</b>`).join('<br>');
+                }
+            }
+
+            if (q.type === 'pg') {
+                correctAnswerText = `<b>${String.fromCharCode(65 + correctAnswer)}.</b> ${q.options[correctAnswer]}`;
+            } else if (q.type === 'pgk_mcma') {
+                correctAnswerText = correctAnswer.sort().map(ans => `<b>${String.fromCharCode(65 + ans)}.</b> ${q.options[ans]}`).join('<br>');
+            } else { // pgk_kategori
+                correctAnswerText = q.statements.map((stmt, idx) => `Pernyataan ${stmt.no}: <b>${correctAnswer[idx] ? 'Benar' : 'Salah'}</b>`).join('<br>');
+            }
+
+            let distractorHtml = '';
+            if (q.analysis.distractors && q.type === 'pg') {
+                distractorHtml += '<strong>Analisis Pengecoh:</strong><ul>';
+                q.options.forEach((opt, idx) => {
+                    if (idx !== q.answer && q.analysis.distractors[idx]) {
+                        distractorHtml += `<li><b>Opsi ${String.fromCharCode(65 + idx)}:</b> ${q.analysis.distractors[idx]}</li>`;
+                    }
+                });
+                distractorHtml += '</ul>';
+            }
+
+            let metaHtml = `
+                <div class="analysis-meta">
+                    ${q.analysis.bloom ? `<span>Taksonomi Bloom: ${q.analysis.bloom}</span>` : ''}
+                    ${q.analysis.complexity ? `<span>Kompleksitas: ${q.analysis.complexity}/5</span>` : ''}
+                    ${q.analysis.confidence ? `<span>Keyakinan: ${q.analysis.confidence}</span>` : ''}
+                </div>
+            `;
+
+            return `
+                <div class="analysis-item">
+                    <h4>Soal ${i + 1}: ${q.question}</h4>
+                    <p class="your-answer-text ${answerClass}">Jawaban Anda: <br>${userAnswerText}</p>
+                    ${!isCorrect ? `<p class="correct-answer-text">Jawaban Benar: <br>${correctAnswerText}</p>` : ''}
+                    <div class="analysis-details">
+                        <strong>Penjelasan:</strong>
+                        <p>${q.analysis.explanation || 'Analisis tidak tersedia.'}</p>
+                        ${distractorHtml}
+                        ${q.analysis.quote ? `<strong>Kutipan Pendukung:</strong><p class="quote">"${q.analysis.quote}"</p>` : ''}
+                        ${metaHtml}
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        quizContent.style.display = 'none';
+        quizFooter.style.display = 'none';
+        resultsContainer.style.display = 'block';
+    }
+
+    function openModal(modal) { modal.classList.remove('hidden'); }
+    function closeModal(modal) { modal.classList.add('hidden'); }
+    function showConfirmation(callback) {
+        confirmCallback = callback;
+        openModal(confirmModal);
+    }
+
+    // === EVENT LISTENERS ===
+    questionListBtn.addEventListener('click', () => openModal(questionModal));
+    closeBtn.addEventListener('click', () => closeModal(questionModal));
+    prevBtn.addEventListener('click', () => { if (currentQuestionIndex > 0) showQuestion(currentQuestionIndex - 1); });
+    nextBtn.addEventListener('click', () => { if (currentQuestionIndex < QUIZ_DATA.length - 1) showQuestion(currentQuestionIndex + 1); });
+    finishBtn.addEventListener('click', () => {
+        showConfirmation(confirmed => { if (confirmed) finishQuiz(); });
+    });
+    confirmOkBtn.addEventListener('click', () => {
+        closeModal(confirmModal);
+        if (confirmCallback) confirmCallback(true);
+    });
+    confirmCancelBtn.addEventListener('click', () => {
+        closeModal(confirmModal);
+        if (confirmCallback) confirmCallback(false);
+    });
+    doubtCheckbox.addEventListener('change', (e) => {
+        userAnswers[currentQuestionIndex].isDoubtful = e.target.checked;
+        updateNavGrid();
+        updateStats();
+    });
+    restartBtn.addEventListener('click', startQuiz);
+    window.addEventListener('click', (e) => {
+        if (e.target === questionModal) closeModal(questionModal);
+        if (e.target === confirmModal) closeModal(confirmModal);
+    });
+
+    startQuiz();
+});
+</script>
+</body>
+</html>

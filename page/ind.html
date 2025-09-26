@@ -1,0 +1,2183 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simulasi TKA - Bahasa Indonesia</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;600;700&family=Google+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1a73e8; /* Biru Google */
+            --primary-dark: #0d47a1;
+            --secondary-color: #34a853; /* Hijau Google */
+            --accent-color: #fbbc05; /* Kuning Google */
+            --error-color: #ea4335; /* Merah Google */
+            --background-color: #f8f9fa;
+            --surface-color: #ffffff;
+            --text-color: #202124;
+            --text-secondary: #5f6368;
+            --text-light-color: #ffffff;
+            --border-color: #dadce0;
+            --answered-color: #34a853;
+            --doubtful-color: #fbbc05;
+            --unanswered-color: #80868b;
+            --correct-color: #1e8e3e;
+            --incorrect-color: #d93025;
+            --shadow-1: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
+            --shadow-2: 0 1px 3px 0 rgba(60,64,67,0.3), 0 4px 8px 3px rgba(60,64,67,0.15);
+            --border-radius: 8px;
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            font-family: 'Google Sans', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            height: 100vh;
+            max-width: 1366px;
+            background-color: var(--surface-color);
+            box-shadow: var(--shadow-2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            background-color: var(--surface-color);
+            flex-shrink: 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .header h1 { 
+            margin: 0; 
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .header h1 .material-icons { font-size: 1.75rem; }
+        
+        .header-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        #timer {
+            font-size: 1rem;
+            font-weight: 500;
+            background-color: #f1f3f4;
+            padding: 8px 16px;
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+        }
+        
+        #timer.warning { background-color: #fef7e0; color: #f57c00; }
+        #timer.critical { background-color: #fce8e6; color: var(--error-color); animation: pulse 1s infinite; }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        
+        #question-list-btn {
+            font-family: 'Google Sans', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--primary-color);
+            color: var(--text-light-color);
+            border: none;
+            padding: 10px 16px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+        
+        #question-list-btn:hover { background-color: var(--primary-dark); box-shadow: var(--shadow-1); }
+        
+        .progress-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        .progress-bar { width: 120px; height: 8px; background-color: #e0e0e0; border-radius: 4px; overflow: hidden; }
+        .progress-fill { height: 100%; background-color: var(--primary-color); border-radius: 4px; transition: width 0.3s ease; }
+
+        /* Konten Utama */
+        .main-content { 
+            flex: 1; 
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+        }
+        
+        #question-container { flex: 1; }
+        
+        .passage {
+            background-color: #f8f9fa;
+            border-left: 4px solid var(--primary-color);
+            padding: 20px;
+            margin-bottom: 24px;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+        }
+        
+        .passage-title {
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #question-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        #question-number { 
+            font-size: 1.1rem; 
+            font-weight: 600; 
+            color: var(--primary-color); 
+        }
+        #question-stats { font-size: 0.9rem; color: var(--text-secondary); }
+        
+        #question-text { 
+            font-size: 1.2rem;
+            line-height: 1.5;
+            margin: 20px 0 28px 0;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .options { list-style: none; padding: 0; margin: 24px 0; }
+        .option {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 16px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: flex-start;
+            transition: var(--transition);
+        }
+
+        .option .option-text {
+            color: var(--text-secondary);
+            line-height: 1.5;
+            flex: 1;
+        }
+
+        .option:hover { background-color: #f8f9fa; border-color: #9ab5e9; }
+        
+        .option.selected { 
+            background-color: #e8f0fe; 
+            border-color: var(--primary-color); 
+        }
+        
+        .option.selected .option-text {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .option.correct { background-color: #e6f4ea; border-color: var(--correct-color); }
+        .option.incorrect { background-color: #fce8e6; border-color: var(--incorrect-color); }
+
+        .option-label {
+            font-weight: 600;
+            margin-right: 16px;
+            width: 32px;
+            height: 32px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+        .option.selected .option-label { background-color: var(--primary-color); color: var(--text-light-color); border-color: var(--primary-color); }
+
+        /* Gaya untuk Tipe Soal Kompleks */
+        .question-type-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 400;
+            background-color: #e8f0fe;
+            color: var(--primary-dark);
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin-top: 12px;
+        }
+
+        .category-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+        }
+        .category-table th, .category-table td {
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            text-align: left;
+        }
+        .category-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+        .category-table td:nth-child(1) { width: 40px; text-align: center; font-weight: 500; }
+        .category-table td:last-child, .category-table td:nth-last-child(2) {
+            width: 80px;
+            text-align: center;
+        }
+        .category-table input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        /* Tombol Aksi di Footer */
+        .action-buttons-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            border-top: 1px solid var(--border-color);
+            flex-shrink: 0;
+            background-color: #f8f9fa;
+        }
+        
+        .action-btn {
+            font-family: 'Google Sans', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+            padding: 12px 24px;
+            border: 1px solid transparent;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .action-btn:disabled { background-color: #f1f3f4; color: #bdc1c6; cursor: not-allowed; }
+
+        #prev-btn, #next-btn { background-color: var(--primary-color); color: var(--text-light-color); }
+        #prev-btn:hover:not(:disabled), #next-btn:hover:not(:disabled) { background-color: var(--primary-dark); }
+        
+        #finish-btn { background-color: var(--secondary-color); color: var(--text-light-color); }
+        #finish-btn:hover { background-color: #2e7d32; }
+        
+        .doubt-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .doubt-container label { cursor: pointer; font-weight: 500; color: var(--text-secondary); display: flex; align-items: center; gap: 8px; }
+        #doubt-checkbox { width: 18px; height: 18px; accent-color: var(--accent-color); }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            overflow: auto;
+            background-color: rgba(32,33,36,0.6);
+            animation: fadeIn 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        
+        .modal.hidden { display: none; }
+
+        .modal-content {
+            background-color: var(--surface-color);
+            padding: 0;
+            border-radius: var(--border-radius);
+            width: 100%;
+            max-width: 800px;
+            box-shadow: var(--shadow-2);
+            animation: slideIn 0.3s;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .modal-header h2 { margin: 0; color: var(--primary-color); font-weight: 600; display: flex; align-items: center; gap: 12px; }
+        
+        .close-btn { color: var(--text-secondary); font-size: 28px; cursor: pointer; transition: var(--transition); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
+        .close-btn:hover, .close-btn:focus { color: var(--text-color); background-color: #f1f3f4; }
+        
+        .modal-body { padding: 24px; max-height: 65vh; overflow-y: auto; }
+        .nav-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 12px; }
+        
+        .nav-btn {
+            font-family: 'Google Sans', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: var(--transition);
+            background-color: var(--surface-color);
+            color: var(--text-color);
+            position: relative;
+        }
+        
+        .nav-btn:hover { background-color: #f1f3f4; }
+        .nav-btn.answered { background-color: var(--answered-color); border-color: var(--answered-color); color: white; }
+        .nav-btn.doubtful { background-color: var(--doubtful-color); border-color: var(--doubtful-color); color: white; }
+        .nav-btn.active { outline: 3px solid var(--primary-color); transform: scale(1.05); }
+        .nav-btn .material-icons { position: absolute; bottom: 2px; right: 2px; font-size: 14px; opacity: 0.8; }
+        
+        .legend { display: flex; flex-wrap: wrap; gap: 12px 20px; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-color); }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; color: var(--text-secondary); }
+        .legend-color { width: 20px; height: 20px; border-radius: 4px; border: 1px solid var(--border-color); }
+        
+        /* Modal Konfirmasi */
+        .confirm-modal-content { max-width: 450px; }
+        .modal-footer { display: flex; justify-content: flex-end; padding: 16px 24px; border-top: 1px solid var(--border-color); background-color: #f8f9fa; gap: 12px; }
+        .action-btn.secondary { background-color: var(--surface-color); color: var(--primary-color); border-color: var(--border-color); }
+        .action-btn.secondary:hover { background-color: #f1f3f4; }
+
+        /* Halaman Hasil */
+        #results-container { display: none; padding: 24px; text-align: center; overflow-y: auto; flex: 1; }
+        #results-container h2 { color: var(--primary-color); font-size: 2rem; margin-bottom: 20px; }
+        .score-container { background-color: #f8f9fa; border-radius: var(--border-radius); padding: 24px; margin: 20px auto; max-width: 500px; }
+        #score { font-size: 1.5rem; margin: 20px 0 30px 0; }
+        #score span { font-weight: 700; color: var(--primary-color); font-size: 2rem; }
+        .score-details { display: flex; justify-content: space-around; margin-top: 20px; text-align: center; }
+        .score-item { flex: 1; }
+        .score-value { font-size: 1.8rem; font-weight: 700; margin-bottom: 8px; }
+        .score-label { font-size: 0.9rem; color: var(--text-secondary); }
+        .correct .score-value { color: var(--correct-color); }
+        .incorrect .score-value { color: var(--incorrect-color); }
+        .unanswered .score-value { color: var(--unanswered-color); }
+        
+        .analysis-section { text-align: left; max-width: 800px; margin: 30px auto; }
+        .analysis-section h3 { color: var(--primary-color); font-weight: 600; margin-bottom: 20px; }
+        .analysis-item { background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 20px; margin-bottom: 16px; }
+        .analysis-item h4 { margin-top: 0; color: var(--text-color); }
+        .analysis-item p { margin: 0.5em 0; }
+        .your-answer-text { font-weight: 500; }
+        .your-answer-text.correct { color: var(--correct-color); }
+        .your-answer-text.incorrect { color: var(--incorrect-color); }
+        .correct-answer-text { color: var(--correct-color); font-weight: 500; }
+        
+        .analysis-details { margin-top: 15px; font-size: 0.95rem; border-top: 1px solid var(--border-color); padding-top: 15px; line-height: 1.6; }
+        .analysis-details strong { display: block; margin: 10px 0 5px 0; color: var(--text-color); font-weight: 600; }
+        .analysis-details ul { padding-left: 20px; margin: 5px 0; color: var(--text-secondary); }
+        .analysis-details .quote { font-style: italic; background-color: #f8f9fa; padding: 10px; border-left: 4px solid var(--border-color); border-radius: 5px; margin-top: 10px; color: var(--text-secondary); }
+        
+        .analysis-meta { margin-top: 15px; display: flex; flex-wrap: wrap; gap: 10px; font-size: 0.8rem; color: var(--text-secondary); }
+        .analysis-meta span { background-color: #f1f3f4; padding: 5px 10px; border-radius: 15px; }
+
+        #restart-btn { padding: 15px 30px; margin: 40px auto 20px; background-color: var(--primary-color); color: white; font-size: 1.1rem; border: none; border-radius: var(--border-radius); cursor: pointer; font-weight: 600; transition: var(--transition); display: flex; align-items: center; gap: 8px; }
+        #restart-btn:hover { background-color: var(--primary-dark); transform: translateY(-2px); box-shadow: var(--shadow-1); }
+
+        /* Animasi */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { transform: translateY(-20px) scale(0.98); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+
+        /* Responsivitas */
+        @media (max-width: 768px) {
+            body { font-size: 15px; }
+            .container { height: 100%; min-height: 100vh; }
+            
+            .header { padding: 12px 16px; flex-wrap: wrap; gap: 12px; }
+            .header h1 { font-size: 1.2rem; width: 100%; text-align: center; order: 1; }
+            .header-info { width: 100%; justify-content: space-between; order: 2; }
+            
+            #question-list-btn .btn-text { display: none; }
+            #question-list-btn { padding: 10px; }
+
+            .progress-container { display: none; }
+
+            .main-content { padding: 16px; }
+            #question-text { font-size: 1.1rem; }
+            
+            .action-buttons-footer { flex-wrap: wrap; gap: 12px; justify-content: center; }
+            .action-btn { flex-grow: 1; }
+            #prev-btn { width: calc(50% - 6px); order: 2; }
+            #next-btn { width: calc(50% - 6px); order: 3; }
+            .doubt-container { width: 100%; justify-content: center; order: 1; margin: 0; }
+            #finish-btn { width: 100%; order: 4; }
+            
+            .nav-grid { grid-template-columns: repeat(auto-fill, minmax(50px, 1fr)); }
+            .score-details { flex-direction: column; gap: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header Utama -->
+        <header class="header">
+            <h1>
+                <span class="material-icons">quiz</span>
+                Simulasi TKA - Bahasa Indonesia
+            </h1>
+            <div class="header-info">
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <span id="progress-text">0/0</span>
+                </div>
+                <div id="timer">
+                    <span class="material-icons">schedule</span>
+                    <span>02:00:00</span>
+                </div>
+                <button id="question-list-btn" title="Lihat Daftar Soal">
+                    <span class="material-icons">view_list</span>
+                    <span class="btn-text">Daftar Soal</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Konten Kuis -->
+        <main id="quiz-content" class="main-content">
+            <div id="question-container">
+                <div id="passage-container"></div>
+                <div id="question-info">
+                    <p id="question-number">Soal</p>
+                    <div id="question-stats">
+                        <span id="answered-count">0 terjawab</span> • 
+                        <span id="doubtful-count">0 ragu-ragu</span>
+                    </div>
+                </div>
+                <p id="question-text">Memuat soal...</p>
+                <ul id="options" class="options"></ul>
+            </div>
+        </main>
+        
+        <!-- Footer dengan Tombol Aksi -->
+        <footer id="quiz-footer" class="action-buttons-footer">
+            <button id="prev-btn" class="action-btn">
+                <span class="material-icons">arrow_back</span>
+                Sebelumnya
+            </button>
+            <div class="doubt-container">
+                <label for="doubt-checkbox">
+                    <input type="checkbox" id="doubt-checkbox">
+                    Ragu-ragu
+                </label>
+            </div>
+            <button id="next-btn" class="action-btn">
+                Selanjutnya
+                <span class="material-icons">arrow_forward</span>
+            </button>
+            <button id="finish-btn" class="action-btn" style="display: none;">
+                <span class="material-icons">flag</span>
+                Selesaikan Ujian
+            </button>
+        </footer>
+
+        <!-- Kontainer Hasil (tersembunyi) -->
+        <div id="results-container">
+            <h2>Hasil Ujian</h2>
+            <div class="score-container">
+                <div id="score"></div>
+                <div class="score-details">
+                    <div class="score-item correct">
+                        <div class="score-value" id="correct-count">0</div>
+                        <div class="score-label">Benar</div>
+                    </div>
+                    <div class="score-item incorrect">
+                        <div class="score-value" id="incorrect-count">0</div>
+                        <div class="score-label">Salah</div>
+                    </div>
+                    <div class="score-item unanswered">
+                        <div class="score-value" id="unanswered-count">0</div>
+                        <div class="score-label">Tidak Dijawab</div>
+                    </div>
+                </div>
+            </div>
+            <div class="analysis-section">
+                <h3>Analisis Jawaban</h3>
+                <div id="analysis-content"></div>
+            </div>
+            <button id="restart-btn">
+                <span class="material-icons">replay</span>
+                Ulangi Ujian
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal Daftar Soal -->
+    <div id="question-modal" class="modal hidden">
+        <div class="modal-content">
+            <header class="modal-header">
+                <h2>
+                    <span class="material-icons">view_list</span>
+                    Daftar Soal
+                </h2>
+                <span class="close-btn">&times;</span>
+            </header>
+            <div class="modal-body">
+                <div id="nav-grid" class="nav-grid"></div>
+                <div class="legend">
+                    <div class="legend-item"><span class="legend-color" style="background-color: var(--answered-color);"></span> Terjawab</div>
+                    <div class="legend-item"><span class="legend-color" style="background-color: var(--doubtful-color);"></span> Ragu-ragu</div>
+                    <div class="legend-item"><span class="legend-color"></span> Belum Dijawab</div>
+                    <div class="legend-item"><span class="legend-color" style="outline: 2px solid var(--primary-color);"></span> Posisi Saat Ini</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal Konfirmasi -->
+    <div id="confirm-modal" class="modal hidden">
+        <div class="modal-content confirm-modal-content">
+            <header class="modal-header">
+                <h2 id="confirm-title">Selesaikan Ujian</h2>
+            </header>
+            <div class="modal-body">
+                <p id="confirm-text">Apakah Anda yakin ingin menyelesaikan ujian? Jawaban tidak dapat diubah kembali.</p>
+            </div>
+            <footer class="modal-footer">
+                <button id="confirm-cancel-btn" class="action-btn secondary">Batal</button>
+                <button id="confirm-ok-btn" class="action-btn">Yakin</button>
+            </footer>
+        </div>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // === KONFIGURASI & DATA SOAL ===
+    const initialTimeSeconds = 7200; // 2 Jam
+    
+    const passages = {
+        ekonomiDigital: `Ekonomi digital telah membawa perubahan besar dalam berbagai aspek bisnis, terutama bagi Usaha Kecil dan Menengah (UKM). Dengan adanya teknologi digital, UKM kini memiliki peluang lebih besar untuk berkembang dan bersaing di pasar yang lebih luas. Transformasi ini didorong oleh beberapa faktor utama, seperti perkembangan e-commerce, sistem pembayaran digital, dan pemasaran berbasis data. Salah satu perubahan signifikan adalah kemudahan akses ke platform e-commerce, yang memungkinkan UKM menjangkau konsumen di luar wilayah lokal. Selain itu, sistem pembayaran digital telah meningkatkan efisiensi transaksi, sementara pemasaran berbasis data memungkinkan UKM memahami tren pasar dengan lebih baik. Meskipun menawarkan banyak manfaat, transformasi ini juga menghadirkan tantangan seperti kebutuhan adaptasi teknologi dan isu keamanan data.`,
+        teknologiHijau: `Perubahan iklim yang semakin nyata menuntut kita untuk mencari solusi efektif. Salah satu solusi yang paling menjanjikan adalah penggunaan teknologi hijau, inovasi yang dirancang untuk mengatasi berbagai tantangan lingkungan global. Teknologi hijau seperti energi terbarukan (tenaga surya, angin) dapat mengurangi ketergantungan pada bahan bakar fosil, penyebab utama emisi gas rumah kaca. Selain itu, teknologi ini penting dalam upaya adaptasi terhadap dampak perubahan iklim yang tak terhindari, contohnya melalui sistem pertanian presisi dan infrastruktur tahan bencana. Dengan kondisi bumi yang semakin terancam, penerapan teknologi hijau bukan lagi pilihan, melainkan sebuah keharusan untuk keberlanjutan planet ini.`,
+        cerpenSahabat: `Hampir 25 tahun lalu kami berpisah karena keluarga saya harus boyongan ke kota tempat kerja Ayah yang baru. Bertemu dengannya setelah sekian lama, mengingatkan kembali pada pengalaman kami dahulu. Malam itu saya nekat ikut dengannya mencari jangkrik, meskipun dilarang. Ia masih mengenakan seragam Pramuka cokelat yang dipakainya sejak pagi. Tiba-tiba, sebuah kecelakaan kecil terjadi. Saat saya memegang obor, minyaknya tumpah dan api dengan cepat membakar punggung saya. Tanpa ragu, ia melepaskan seragamnya untuk memadamkan api, lalu melingkupi tubuh saya yang mulai menggigil. Dengan napas memburu, ia menggendong saya, menunjukkan rasa tanggung jawab yang luar biasa.`,
+        bahasaIndonesiaEraGlobal: `Di tengah arus globalisasi, eksistensi bahasa Indonesia menghadapi tantangan sekaligus peluang. Pengaruh bahasa asing, terutama bahasa Inggris, tak terelakkan merasuk ke dalam percakapan sehari-hari, media, dan dunia akademik. Fenomena ini, jika tidak diimbangi dengan pembinaan yang kuat, berpotensi menggerus rasa bangga dan kecakapan berbahasa Indonesia di kalangan generasi muda. Namun, di sisi lain, era digital membuka peluang bagi bahasa Indonesia untuk lebih dikenal di kancah internasional melalui konten kreatif dan platform digital. Oleh karena itu, diperlukan strategi kebahasaan yang adaptif: memperkuat fondasi bahasa Indonesia sebagai identitas bangsa seraya membuka diri terhadap fungsi bahasa sebagai alat diplomasi budaya global.`,
+        urbanisasiDanDampakSosial: `Perpindahan penduduk dari desa ke kota, atau urbanisasi, telah menjadi motor penggerak perubahan struktur sosial di banyak negara berkembang, termasuk Indonesia. Kota-kota besar menjadi magnet karena menjanjikan peluang ekonomi dan akses pendidikan yang lebih baik. Namun, arus urbanisasi yang tidak terkendali sering kali melampaui daya dukung kota, mengakibatkan berbagai masalah sosial. Kesenjangan antara si kaya dan si miskin semakin tajam, permukiman kumuh (slum) tumbuh subur, dan angka kriminalitas meningkat sebagai akibat dari persaingan hidup yang ketat. Fenomena ini menuntut perencanaan tata kota yang komprehensif, yang tidak hanya berfokus pada pembangunan fisik, tetapi juga pada pemberdayaan sosial-ekonomi warganya.`,
+        mitigasiBencanaGeologis: `Indonesia, yang terletak di Cincin Api Pasifik, memiliki kerawanan tinggi terhadap bencana geologis seperti gempa bumi, letusan gunung berapi, dan tsunami. Kondisi ini meniscayakan adanya sistem mitigasi bencana yang andal dan terintegrasi. Mitigasi bencana tidak hanya sebatas pembangunan infrastruktur fisik seperti jalur evakuasi atau sistem peringatan dini (early warning system). Aspek yang lebih krusial adalah edukasi dan penanaman budaya sadar bencana di tengah masyarakat. Ketika masyarakat memahami risiko di lingkungannya dan terlatih untuk merespons ancaman secara cepat dan tepat, jumlah korban jiwa dan kerugian material dapat ditekan secara signifikan. Sinergi antara pemerintah, ilmuwan, dan komunitas lokal menjadi kunci keberhasilan mitigasi.`,
+        sastraLisanNusantara: `Jauh sebelum budaya tulis berkembang, masyarakat Nusantara telah memiliki tradisi sastra lisan yang kaya dan beragam. Dari Sabang sampai Merauke, berbagai bentuk sastra lisan seperti dongeng, mitos, legenda, dan mantra diwariskan secara turun-temurun. Tradisi ini bukan sekadar hiburan, melainkan berfungsi sebagai medium transmisi nilai-nilai budaya, kearifan lokal, catatan sejarah kolektif, dan sistem norma sosial. Namun, di era modern, eksistensi sastra lisan kian terancam oleh dominasi media digital dan perubahan gaya hidup. Upaya revitalisasi melalui dokumentasi, pementasan, dan integrasi ke dalam kurikulum pendidikan menjadi sangat mendesak untuk menyelamatkan warisan budaya tak benda yang tak ternilai ini.`,
+        keanekaragamanHayatiLaut: `Sebagai negara kepulauan terbesar di dunia, Indonesia merupakan pusat keanekaragaman hayati laut global. Terumbu karang, hutan mangrove, dan padang lamun di perairan Indonesia menjadi rumah bagi ribuan spesies ikan dan biota laut lainnya. Ekosistem ini tidak hanya memiliki nilai ekologis yang tinggi, tetapi juga menjadi tumpuan ekonomi bagi jutaan masyarakat pesisir melalui sektor perikanan dan pariwisata bahari. Sayangnya, ekosistem vital ini menghadapi ancaman serius dari praktik penangkapan ikan yang merusak (destructive fishing), polusi plastik, dan dampak perubahan iklim seperti pemutihan karang. Konservasi laut yang efektif memerlukan penegakan hukum yang tegas dan pemberdayaan komunitas lokal sebagai garda terdepan penjaga laut.`,
+        pengaruhMediaSosial: `Kehadiran media sosial telah secara fundamental mengubah lanskap komunikasi dan interaksi sosial. Di satu sisi, platform ini memfasilitasi koneksi tanpa batas, mempercepat penyebaran informasi, dan menjadi panggung bagi aktivisme sosial. Namun, di sisi lain, penggunaan media sosial yang berlebihan membawa dampak negatif yang signifikan. Fenomena seperti polarisasi opini akibat 'ruang gema' (echo chamber), penyebaran disinformasi (hoax), perundungan siber (cyberbullying), dan masalah kesehatan mental terkait citra diri menjadi tantangan serius. Oleh karena itu, literasi digital—kemampuan untuk mengakses, menganalisis, mengevaluasi, dan menciptakan informasi secara kritis—menjadi kompetensi wajib bagi individu di abad ke-21.`,
+        transformasiPendidikanAbad21: `Pendidikan di abad ke-21 menuntut pergeseran paradigma dari model pengajaran tradisional yang berpusat pada guru (teacher-centered) menjadi model pembelajaran yang berpusat pada siswa (student-centered). Fokusnya tidak lagi sekadar transfer pengetahuan, tetapi pada pengembangan kompetensi 4C: Critical Thinking (berpikir kritis), Creativity (kreativitas), Collaboration (kolaborasi), dan Communication (komunikasi). Integrasi teknologi dalam proses belajar-mengajar menjadi alat bantu yang esensial untuk mencapai tujuan ini. Guru berperan sebagai fasilitator yang memandu siswa untuk belajar secara mandiri, memecahkan masalah kompleks di dunia nyata, dan berkolaborasi dalam proyek. Tujuannya adalah mempersiapkan generasi yang adaptif dan siap menghadapi tantangan masa depan yang dinamis dan tidak pasti.`,
+    };
+
+    const QUIZ_DATA = [
+        // PASSAGE: ekonomiDigital
+        {
+            passageKey: 'ekonomiDigital',
+            type: 'pg',
+            question: "Berdasarkan teks, faktor manakah yang paling mendasari transformasi UKM di era ekonomi digital?",
+            options: [
+                "Peningkatan jumlah toko fisik di berbagai daerah.",
+                "Adanya berbagai pendorong utama seperti e-commerce dan pembayaran digital.",
+                "Menurunnya minat konsumen terhadap produk-produk lokal.",
+                "Kebijakan pemerintah yang membatasi penggunaan teknologi.",
+                "Tingginya biaya operasional untuk membuka marketplace daring."
+            ],
+            answer: 1,
+            analysis: {
+                explanation: "Jawaban ini paling akurat karena secara eksplisit merangkum pernyataan dalam teks bahwa transformasi UKM didorong oleh beberapa faktor utama, termasuk e-commerce dan sistem pembayaran digital.",
+                distractors: [
+                    "Opsi A bertentangan dengan isi teks yang menyatakan UKM beralih dari toko fisik ke platform daring.",
+                    "Opsi C tidak disebutkan dan tidak relevan dengan fokus teks pada dampak teknologi.",
+                    "Opsi D berlawanan dengan semangat teks yang membahas peluang dari teknologi.",
+                    "Opsi E tidak akurat; teks justru menyiratkan biaya operasional lebih rendah dibandingkan toko fisik."
+                ],
+                quote: "Transformasi ini didorong oleh beberapa faktor utama, seperti perkembangan e-commerce, sistem pembayaran digital, dan pemasaran berbasis data.",
+                bloom: "Menganalisis", complexity: 1, confidence: 0.95
+            }
+        },
+        {
+            passageKey: 'ekonomiDigital',
+            type: 'pg',
+            question: "Manakah inferensi yang paling tepat mengenai dampak jangka panjang dari adopsi e-commerce oleh UKM?",
+            options: [
+                "UKM akan sepenuhnya meninggalkan model bisnis toko fisik.",
+                "Persaingan antar UKM akan menurun karena pasar semakin luas.",
+                "UKM berpotensi meningkatkan skala bisnis dari lokal menjadi global.",
+                "Kualitas produk UKM akan menurun karena fokus pada penjualan online.",
+                "UKM tidak lagi membutuhkan strategi pemasaran konvensional."
+            ],
+            answer: 2,
+            analysis: {
+                explanation: "Teks menyatakan e-commerce memungkinkan UKM menjangkau konsumen di luar wilayah lokal. Implikasi logis dari ini adalah adanya potensi ekspansi skala bisnis, bahkan hingga ke pasar internasional.",
+                distractors: [
+                    "Opsi A terlalu ekstrem; teks tidak menyatakan toko fisik akan ditinggalkan sepenuhnya.",
+                    "Opsi B tidak logis; pasar yang lebih luas justru dapat meningkatkan persaingan.",
+                    "Opsi D adalah asumsi negatif yang tidak didukung oleh teks.",
+                    "Opsi E tidak tepat, strategi pemasaran bisa jadi terintegrasi, bukan dihilangkan."
+                ],
+                quote: "...memungkinkan UKM menjangkau konsumen di luar wilayah lokal.",
+                bloom: "Mengevaluasi", complexity: 2, confidence: 0.9
+            }
+        },
+        {
+            passageKey: 'ekonomiDigital',
+            type: 'pg',
+            question: "Apa hubungan antara 'pemasaran berbasis data' dengan 'efisiensi transaksi' sebagaimana dijelaskan dalam teks?",
+            options: [
+                "Keduanya merupakan tantangan utama dalam ekonomi digital.",
+                "Pemasaran data menyebabkan efisiensi transaksi menurun.",
+                "Keduanya adalah manfaat berbeda dari ekonomi digital yang mendukung pertumbuhan UKM.",
+                "Efisiensi transaksi hanya bisa dicapai melalui pemasaran berbasis data.",
+                "Pemasaran data dan efisiensi transaksi adalah dua istilah untuk hal yang sama."
+            ],
+            answer: 2,
+            analysis: {
+                explanation: "Teks menyajikan 'sistem pembayaran digital' yang meningkatkan efisiensi transaksi dan 'pemasaran berbasis data' sebagai dua keuntungan yang berbeda, namun sama-sama mendorong pertumbuhan UKM.",
+                distractors: [
+                    "Opsi A salah, teks menyebutnya sebagai manfaat, bukan tantangan.",
+                    "Opsi B tidak didukung oleh teks.",
+                    "Opsi D adalah hubungan sebab-akibat yang tidak dinyatakan dalam teks.",
+                    "Opsi E jelas salah karena keduanya memiliki definisi yang berbeda dalam teks."
+                ],
+                quote: "Selain itu, sistem pembayaran digital telah meningkatkan efisiensi transaksi... sementara pemasaran berbasis data memungkinkan UKM memahami tren pasar...",
+                bloom: "Menganalisis", complexity: 2, confidence: 0.9
+            }
+        },
+        {
+            passageKey: 'ekonomiDigital',
+            type: 'pg',
+            question: "Jika seorang pemilik UKM menolak untuk mengadopsi teknologi digital karena khawatir dengan keamanan data, simpulan mana yang paling sesuai dengan konteks teks?",
+            options: [
+                "Kekhawatiran tersebut tidak berdasar karena teknologi digital sangat aman.",
+                "Pemilik UKM tersebut telah mengambil keputusan yang paling bijaksana.",
+                "UKM tersebut akan tetap berkembang pesat melalui toko fisiknya.",
+                "Pemilik UKM tersebut menyadari salah satu tantangan valid, namun berisiko tertinggal.",
+                "Keamanan data hanya menjadi masalah bagi perusahaan skala besar."
+            ],
+            answer: 3,
+            analysis: {
+                explanation: "Teks secara eksplisit menyebutkan 'isu keamanan data' sebagai salah satu tantangan. Jadi, kekhawatiran itu valid. Namun, teks juga menekankan bahwa adopsi digital adalah kunci untuk berkembang, sehingga menolaknya akan berisiko tertinggal.",
+                distractors: [
+                    "Opsi A salah, teks mengakui adanya risiko keamanan.",
+                    "Opsi B terlalu absolut dan mengabaikan manfaat digitalisasi yang besar.",
+                    "Opsi C bertentangan dengan premis utama teks.",
+                    "Opsi E salah, teks mengaitkan keamanan data dengan UKM."
+                ],
+                quote: "Meskipun menawarkan banyak manfaat, transformasi ini juga menghadirkan tantangan seperti... isu keamanan data.",
+                bloom: "Mengevaluasi", complexity: 3, confidence: 0.9
+            }
+        },
+        {
+            passageKey: 'ekonomiDigital',
+            type: 'pg',
+            question: "Tujuan utama penulis dalam teks ini adalah untuk...",
+            options: [
+                "Memperingatkan UKM agar tidak menggunakan teknologi digital sama sekali.",
+                "Menganalisis dampak positif dan negatif ekonomi digital pada UKM secara seimbang.",
+                "Membuat panduan teknis tentang cara menggunakan platform e-commerce.",
+                "Mempromosikan satu aplikasi pembayaran digital tertentu kepada pembaca.",
+                "Mengkritik pemerintah karena kurangnya dukungan terhadap UKM."
+            ],
+            answer: 1,
+            analysis: {
+                explanation: "Penulis secara konsisten memaparkan manfaat (peluang) dan tantangan (risiko) dari ekonomi digital bagi UKM, menunjukkan tujuan untuk memberikan gambaran yang seimbang dan komprehensif.",
+                distractors: [
+                    "Opsi A bertentangan dengan nada positif mayoritas teks.",
+                    "Opsi C dan D terlalu spesifik dan tidak mencerminkan cakupan keseluruhan teks.",
+                    "Opsi E tidak relevan karena teks tidak membahas peran pemerintah."
+                ],
+                quote: "Meskipun menawarkan banyak manfaat, transformasi ini juga menghadirkan tantangan...",
+                bloom: "Menyimpulkan", complexity: 2, confidence: 0.95
+            }
+        },
+        // PASSAGE: teknologiHijau
+        {
+            passageKey: 'teknologiHijau',
+            type: 'pg',
+            question: "Gagasan pokok yang ingin disampaikan penulis pada paragraf pertama adalah...",
+            options: [
+                "Teknologi hijau adalah satu-satunya cara mengatasi perubahan iklim.",
+                "Perubahan iklim disebabkan oleh penggunaan energi terbarukan.",
+                "Teknologi hijau merupakan sebuah inovasi yang menjanjikan untuk mengatasi tantangan lingkungan.",
+                "Sistem pertanian presisi merupakan bentuk teknologi hijau yang paling utama.",
+                "Definisi teknologi hijau masih diperdebatkan oleh para ahli lingkungan."
+            ],
+            answer: 2,
+            analysis: {
+                explanation: "Paragraf pertama memperkenalkan konsep teknologi hijau sebagai 'salah satu solusi yang paling menjanjikan' dan 'inovasi yang dirancang untuk mengatasi berbagai tantangan lingkungan global', yang dirangkum sempurna oleh opsi ini.",
+                distractors: [
+                    "Opsi A terlalu absolut ('satu-satunya'), sementara teks menyebutnya 'salah satu'.",
+                    "Opsi B salah, teks menyebut energi terbarukan sebagai solusi.",
+                    "Opsi D adalah contoh yang disebutkan di paragraf lain, bukan gagasan pokok paragraf pertama.",
+                    "Opsi E tidak disebutkan dalam teks."
+                ],
+                quote: "Salah satu solusi yang paling menjanjikan adalah penggunaan teknologi hijau, inovasi yang dirancang untuk mengatasi berbagai tantangan lingkungan global.",
+                bloom: "Memahami", complexity: 1, confidence: 0.95
+            }
+        },
+        {
+            passageKey: 'teknologiHijau',
+            type: 'pg',
+            question: "Menurut teks, apa hubungan kausal antara penggunaan bahan bakar fosil dan kebutuhan akan teknologi hijau?",
+            options: [
+                "Teknologi hijau menghasilkan bahan bakar fosil yang lebih ramah lingkungan.",
+                "Bahan bakar fosil adalah salah satu bentuk dari teknologi hijau.",
+                "Penggunaan bahan bakar fosil menyebabkan emisi gas rumah kaca, masalah yang coba diatasi oleh teknologi hijau.",
+                "Teknologi hijau meningkatkan efisiensi penggunaan bahan bakar fosil.",
+                "Ketergantungan pada bahan bakar fosil adalah akibat dari penerapan teknologi hijau."
+            ],
+            answer: 2,
+            analysis: {
+                explanation: "Teks secara jelas menyatakan bahwa teknologi hijau (seperti energi terbarukan) bertujuan 'mengurangi ketergantungan pada bahan bakar fosil' karena bahan bakar fosil adalah 'penyebab utama emisi gas rumah kaca'. Ini menunjukkan hubungan sebab-akibat yang jelas.",
+                distractors: [
+                    "Opsi A, B, dan E secara langsung bertentangan dengan informasi dalam teks.",
+                    "Opsi D tidak disebutkan; fokusnya adalah mengurangi ketergantungan, bukan meningkatkan efisiensi."
+                ],
+                quote: "...mengurangi ketergantungan pada bahan bakar fosil, penyebab utama emisi gas rumah kaca.",
+                bloom: "Menganalisis", complexity: 2, confidence: 0.9
+            }
+        },
+        {
+            passageKey: 'teknologiHijau',
+            type: 'pg',
+            question: "Manakah pernyataan yang BUKAN merupakan fungsi teknologi hijau dalam konteks adaptasi perubahan iklim menurut teks?",
+            options: [
+                "Membangun infrastruktur yang lebih tahan terhadap bencana alam.",
+                "Menerapkan sistem pertanian presisi untuk efisiensi.",
+                "Menghentikan sepenuhnya semua dampak perubahan iklim yang sudah terjadi.",
+                "Membantu masyarakat dalam menghadapi kondisi lingkungan yang berubah.",
+                "Menjadi bagian dari upaya mitigasi terhadap banjir dan kekeringan."
+            ],
+            answer: 2,
+            analysis: {
+                explanation: "Teks menyebutkan bahwa adaptasi diperlukan untuk 'dampak perubahan iklim yang tak terhindari', yang berarti teknologi hijau membantu mengelola dampak, bukan menghentikannya sepenuhnya. Menghentikan dampak adalah tujuan mitigasi, bukan adaptasi.",
+                distractors: [
+                    "Opsi A, B, D, dan E adalah contoh-contoh fungsi adaptasi yang disebutkan secara eksplisit atau implisit dalam teks.",
+                ],
+                quote: "...penting dalam upaya adaptasi terhadap dampak perubahan iklim yang tak terhindari...",
+                bloom: "Menganalisis", complexity: 3, confidence: 0.85
+            }
+        },
+        {
+            passageKey: 'teknologiHijau',
+            type: 'pg',
+            question: "Sikap penulis terhadap penerapan teknologi hijau dapat digambarkan sebagai...",
+            options: [
+                "Skeptis dan ragu-ragu terhadap efektivitasnya.",
+                "Netral dan hanya memaparkan fakta tanpa opini.",
+                "Optimistis dan mendukung penuh sebagai suatu keharusan.",
+                "Pesimistis karena menganggap sudah terlambat untuk bertindak.",
+                "Kritis karena lebih banyak menyoroti kekurangan teknologi hijau."
+            ],
+            answer: 2,
+            analysis: {
+                explanation: "Penggunaan frasa seperti 'solusi yang paling menjanjikan' dan 'penerapan teknologi hijau bukan lagi pilihan, melainkan sebuah keharusan' menunjukkan sikap penulis yang sangat mendukung dan optimistis.",
+                distractors: [
+                    "Opsi A, D, dan E bertentangan dengan nada tulisan.",
+                    "Opsi B tidak sepenuhnya akurat karena penulis jelas menunjukkan keberpihakan melalui pilihan kata yang kuat."
+                ],
+                quote: "...penerapan teknologi hijau bukan lagi pilihan, melainkan sebuah keharusan...",
+                bloom: "Mengevaluasi", complexity: 2, confidence: 0.95
+            }
+        },
+        {
+            passageKey: 'teknologiHijau',
+            type: 'pg',
+            question: "Jika sebuah negara berinvestasi besar-besaran pada pembangkit listrik tenaga surya dan angin, tindakan ini paling sesuai dengan konsep apa yang dibahas dalam teks?",
+            options: [
+                "Upaya meningkatkan ketergantungan pada bahan bakar fosil.",
+                "Implementasi teknologi hijau untuk mengurangi emisi gas rumah kaca.",
+                "Contoh kegagalan adaptasi terhadap perubahan iklim.",
+                "Sebuah bentuk infrastruktur yang tidak tahan terhadap bencana.",
+                "Penyebab utama terjadinya peningkatan suhu global."
+            ],
+            answer: 1,
+            analysis: {
+                explanation: "Teks secara spesifik menyebutkan tenaga surya dan angin sebagai contoh energi terbarukan, yang merupakan bagian dari teknologi hijau untuk mengurangi ketergantungan pada bahan bakar fosil dan emisi.",
+                distractors: [
+                    "Opsi A dan E adalah masalah yang coba diatasi, bukan hasil dari tindakan tersebut.",
+                    "Opsi C dan D adalah interpretasi negatif yang tidak sesuai dengan konteks teks."
+                ],
+                quote: "Teknologi hijau seperti energi terbarukan (tenaga surya, angin) dapat mengurangi ketergantungan pada bahan bakar fosil...",
+                bloom: "Mengaplikasikan", complexity: 2, confidence: 0.95
+            }
+        },
+        // PASSAGE: cerpenSahabat
+        {
+            passageKey: 'cerpenSahabat',
+            type: 'pg',
+            question: "Konflik utama yang dialami oleh tokoh 'saya' dalam kutipan cerpen tersebut adalah...",
+            options: [
+                "Perselisihan dengan orang tuanya karena dilarang mencari jangkrik.",
+                "Rasa penyesalan karena telah berpisah lama dengan sahabatnya.",
+                "Kecelakaan tak terduga yang menyebabkan ia terbakar oleh obor.",
+                "Ketidakmampuannya beradaptasi di kota tempat kerja ayahnya yang baru.",
+                "Kekhawatiran sahabatnya terhadap seragam Pramuka yang kotor."
+            ],
+            answer: 2,
+            analysis: {
+                explanation: "Puncak ketegangan dalam cerita terjadi ketika 'api dengan cepat membakar punggung saya!'. Ini adalah peristiwa fisik yang menjadi titik balik dalam narasi dan memicu aksi heroik dari sahabatnya.",
+                distractors: [
+                    "Opsi A adalah konflik awal yang memicu kejadian, bukan konflik utama.",
+                    "Opsi B adalah perasaan latar belakang, bukan konflik yang trejadi saat itu.",
+                    "Opsi D tidak dibahas dalam kutipan.",
+                    "Opsi E adalah detail pengamatan, bukan konflik utama."
+                ],
+                quote: "Api dengan cepat berpindah membakar punggung saya!",
+                bloom: "Menganalisis", complexity: 2, confidence: 0.9
+            }
+        },
+        {
+            passageKey: 'cerpenSahabat',
+            type: 'pg',
+            question: "Tindakan sahabat tokoh 'saya' yang melepaskan seragamnya untuk memadamkan api paling baik menunjukkan watak...",
+            options: [
+                "Ketidakpedulian terhadap harta benda.",
+                "Kepahlawanan dan pengorbanan spontan.",
+                "Ketakutan yang berlebihan terhadap api.",
+                "Keinginan untuk pamer di depan sahabatnya.",
+                "Kecerobohan dalam menangani situasi darurat."
+            ],
+            answer: 1,
+            analysis: {
+                explanation: "Tindakan melepaskan satu-satunya seragam yang mungkin ia miliki untuk menolong sahabatnya menunjukkan sifat rela berkorban dan kepahlawanan yang timbul secara spontan dalam situasi genting.",
+                distractors: [
+                    "Opsi A terlalu dangkal; tindakannya didasari oleh kepedulian, bukan ketidakpedulian.",
+                    "Opsi C dan E bertentangan dengan tindakannya yang cepat dan efektif.",
+                    "Opsi D tidak didukung oleh narasi sama sekali."
+                ],
+                quote: "Tanpa ragu, ia melepaskan seragamnya untuk memadamkan api...",
+                bloom: "Menginterpretasi", complexity: 3, confidence: 0.9
+            }
+        },
+        {
+            passageKey: 'cerpenSahabat',
+            type: 'pg',
+            question: "Frasa 'Dengan napas memburu, ia menggendong saya, menunjukkan rasa tanggung jawab yang luar biasa' berfungsi untuk...",
+            options: [
+                "Menggambarkan kondisi fisik tokoh 'saya' yang semakin lemah.",
+                "Menunjukkan bahwa lokasi kejadian sangat jauh dari pemukiman.",
+                "Menekankan betapa berat beban yang harus ditanggung oleh sahabatnya.",
+                "Memperkuat karakter sahabatnya sebagai sosok yang peduli dan bertanggung jawab.",
+                "Mengkritik tokoh 'saya' yang merepotkan sahabatnya."
+            ],
+            answer: 3,
+            analysis: {
+                explanation: "Narator secara eksplisit menafsirkan tindakan sahabatnya ('menggendong saya') sebagai bukti 'rasa tanggung jawab yang luar biasa', yang secara langsung berfungsi untuk membangun dan memperkuat karakter sahabat tersebut.",
+                distractors: [
+                    "Opsi A, B, dan C bisa jadi benar, tetapi fungsi utama frasa tersebut dalam narasi adalah untuk karakterisasi, seperti yang dijelaskan di Opsi D.",
+                    "Opsi E menyiratkan kritik, sementara nadanya lebih ke arah kekaguman."
+                ],
+                quote: "...menunjukkan rasa tanggung jawab yang luar biasa.",
+                bloom: "Menganalisis", complexity: 2, confidence: 0.95
+            }
+        },
+        {
+            passageKey: 'cerpenSahabat',
+            type: 'pg',
+            question: "Latar waktu dan suasana yang paling dominan dalam kutipan tersebut adalah...",
+            options: [
+                "Siang hari yang cerah dan penuh keceriaan.",
+                "Malam hari di perkotaan yang ramai dan sibuk.",
+                "Sore hari di sekolah dengan suasana belajar.",
+                "Malam hari di persawahan yang berubah menjadi tegang dan mencekam.",
+                "Pagi hari di rumah dengan suasana perpisahan yang haru."
+            ],
+            answer: 3,
+            analysis: {
+                explanation: "Cerita berlatar 'malam itu' saat 'mencari jangkrik'. Suasana awalnya biasa saja, namun berubah menjadi 'tegang dan mencekam' setelah insiden obor yang membakar tokoh 'saya'.",
+                distractors: [
+                    "Opsi A, B, C, dan E secara jelas tidak sesuai dengan deskripsi kejadian dalam teks.",
+                ],
+                quote: "Malam itu saya nekat ikut dengannya mencari jangkrik... Api dengan cepat berpindah membakar punggung saya!",
+                bloom: "Menyimpulkan", complexity: 1, confidence: 0.95
+            }
+        },
+        {
+            passageKey: 'cerpenSahabat',
+            type: 'pg',
+            question: "Dapat disimpulkan bahwa seragam Pramuka dalam cerita ini memiliki makna simbolis sebagai...",
+            options: [
+                "Lambang ketidakdisiplinan karena dipakai di luar acara sekolah.",
+                "Representasi kemiskinan dan keterbatasan yang dimiliki sahabatnya.",
+                "Simbol pengorbanan dan perlindungan yang diberikan kepada sahabat.",
+                "Kenang-kenangan masa kecil yang tidak berarti apa-apa.",
+                "Penyebab utama dari kecelakaan yang terjadi malam itu."
+            ],
+            answer: 2,
+            analysis: {
+                explanation: "Awalnya seragam itu menunjukkan keterbatasan ('Ia masih mengenakan seragam...'). Namun, di akhir cerita, seragam itu menjadi alat untuk menyelamatkan ('melepaskan seragamnya untuk memadamkan api'), sehingga maknanya bertransformasi menjadi simbol pengorbanan dan perlindungan.",
+                distractors: [
+                    "Opsi A dan D meremehkan peran penting seragam dalam plot.",
+                    "Opsi B hanya menangkap makna awal, bukan makna puncaknya.",
+                    "Opsi E salah; penyebabnya adalah obor, bukan seragam."
+                ],
+                quote: "...ia melepaskan seragamnya untuk memadamkan api, lalu melingkupi tubuh saya...",
+                bloom: "Mengevaluasi", complexity: 4, confidence: 0.85
+            }
+        },
+        // PASSAGE: bahasaIndonesiaEraGlobal
+        {
+            passageKey: 'bahasaIndonesiaEraGlobal',
+            type: 'pg',
+            question: "Paradoks utama yang dibahas dalam teks mengenai bahasa Indonesia di era globalisasi adalah...",
+            options: [
+                "Bahasa Indonesia semakin populer tetapi semakin sedikit penuturnya.",
+                "Era digital mengancam eksistensi bahasa Indonesia sekaligus membuka peluang untuk mendunia.",
+                "Generasi muda sangat bangga berbahasa Indonesia tetapi sering menggunakan bahasa asing.",
+                "Pemerintah mendukung penggunaan bahasa Indonesia tetapi tidak memiliki strategi kebahasaan.",
+                "Bahasa asing merusak bahasa Indonesia tetapi memperkaya kosakatanya."
+            ],
+            answer: 1,
+            analysis: {
+                explanation: "Teks ini menyajikan dua sisi dari era digital: sebagai tantangan ('berpotensi menggerus rasa bangga') dan sebagai peluang ('untuk lebih dikenal di kancah internasional'). Ini adalah inti dari paradoks yang dibahas.",
+                distractors: [
+                    "Opsi A tidak sepenuhnya akurat, penutur tidak dibahas menurun.",
+                    "Opsi C adalah contoh, bukan paradoks utamanya.",
+                    "Opsi D dan E adalah pernyataan yang tidak sepenuhnya didukung atau menjadi fokus utama teks.",
+                ],
+                quote: "...jika tidak diimbangi...berpotensi menggerus rasa bangga...di sisi lain, era digital membuka peluang...",
+                bloom: "Menganalisis", complexity: 3, confidence: 0.9
+            }
+        },
+        {
+            passageKey: 'bahasaIndonesiaEraGlobal',
+            type: 'pg',
+            question: "Menurut penulis, solusi yang paling tepat untuk menghadapi tantangan kebahasaan di era digital adalah...",
+            options: [
+                "Menolak sepenuhnya penggunaan bahasa asing dalam segala konteks.",
+                "Mengganti bahasa Indonesia dengan bahasa Inggris sebagai bahasa nasional.",
+                "Membiarkan bahasa berkembang secara alami tanpa intervensi.",
+                "Menguatkan identitas bahasa Indonesia sambil memanfaatkannya secara global.",
+                "Fokus pada pembinaan bahasa Indonesia dan mengabaikan pengaruh global."
+            ],
+            answer: 3,
+            analysis: {
+                explanation: "Jawaban ini secara akurat merangkum kalimat terakhir teks yang menyarankan 'strategi kebahasaan yang adaptif: memperkuat fondasi...seraya membuka diri terhadap fungsi...sebagai alat diplomasi budaya global'.",
+                distractors: [
+                    "Opsi A dan E terlalu tertutup dan tidak adaptif.",
+                    "Opsi B bertentangan dengan semangat nasionalisme dalam teks.",
+                    "Opsi C pasif, sementara penulis menyarankan strategi aktif."
+                ],
+                quote: "...memperkuat fondasi bahasa Indonesia sebagai identitas bangsa seraya membuka diri terhadap fungsi bahasa sebagai alat diplomasi budaya global.",
+                bloom: "Menyimpulkan", complexity: 2, confidence: 0.95
+            }
+        },
+        {
+            passageKey: 'bahasaIndonesiaEraGlobal',
+            type: 'pg',
+            question: "Istilah 'strategi kebahasaan yang adaptif' dalam konteks ini mengimplikasikan bahwa...",
+            options: [
+                "Aturan bahasa Indonesia harus diubah agar menyerupai bahasa Inggris.",
+                "Kebijakan bahasa harus fleksibel dan mampu merespons perubahan zaman.",
+                "Hanya generasi muda yang perlu beradaptasi dengan bahasa baru.",
+                "Bahasa Indonesia harus pasrah terhadap pengaruh bahasa asing.",
+                "Strategi yang ada saat ini sudah tidak relevan sama sekali."
+            ],
+            answer: 1,
+            analysis: {
+                explanation: "Kata 'adaptif' berarti mampu menyesuaikan diri dengan kondisi baru. Dalam konteks ini, artinya kebijakan atau strategi kebahasaan harus mampu menjawab tantangan dan peluang baru (era digital, globalisasi) tanpa kehilangan jati dirinya.",
+                distractors: [
+                    "Opsi A dan D menyiratkan penyerahan, bukan adaptasi yang strategis.",
+                    "Opsi C membatasi subjek adaptasi secara tidak tepat.",
+                    "Opsi E terlalu negatif; adaptif berarti menyesuaikan, bukan membuang total."
+                ],
+                quote: "...diperlukan strategi kebahasaan yang adaptif...",
+                bloom: "Menginterpretasi", complexity: 3, confidence: 0.85
+            }
+        },
+        {
+            passageKey: 'bahasaIndonesiaEraGlobal',
+            type: 'pg',
+            question: "Apa asumsi penulis mengenai 'generasi muda' dalam teks tersebut?",
+            options: [
+                "Generasi muda sama sekali tidak peduli dengan bahasa Indonesia.",
+                "Generasi muda adalah kelompok yang paling mahir berbahasa asing.",
+                "Generasi muda adalah kelompok yang paling rentan terhadap erosi kebanggaan berbahasa.",
+                "Generasi muda adalah satu-satunya harapan untuk mempromosikan bahasa Indonesia.",
+                "Generasi muda menolak menggunakan platform digital untuk berkomunikasi."
+            ],
+            answer: 2,
+            analysis: {
+                explanation: "Penulis menyatakan bahwa fenomena pengaruh bahasa asing 'berpotensi menggerus rasa bangga dan kecakapan berbahasa Indonesia di kalangan generasi muda', yang mengasumsikan bahwa mereka adalah kelompok yang paling terpengaruh atau rentan.",
+                distractors: [
+                    "Opsi A terlalu absolut.",
+                    "Opsi B bisa jadi benar tetapi bukan asumsi utama dalam argumen.",
+                    "Opsi D tidak dinyatakan secara eksplisit.",
+                    "Opsi E jelas salah."
+                ],
+                quote: "...berpotensi menggerus rasa bangga dan kecakapan berbahasa Indonesia di kalangan generasi muda.",
+                bloom: "Menganalisis", complexity: 3, confidence: 0.85
+            }
+        },
+        {
+            passageKey: 'bahasaIndonesiaEraGlobal',
+            type: 'pg',
+            question: "Tujuan utama teks ini adalah...",
+            options: [
+                "Mengajak pembaca untuk berhenti menggunakan media sosial.",
+                "Mengkritik para pembuat konten kreatif berbahasa Indonesia.",
+                "Memberikan analisis mengenai posisi bahasa Indonesia di era global dan menyarankan arah kebijakan.",
+                "Melaporkan hasil penelitian tentang jumlah penutur bahasa Indonesia di luar negeri.",
+                "Membandingkan tata bahasa Indonesia dengan tata bahasa Inggris secara mendalam."
+            ],
+            answer: 2,
+            analysis: {
+                explanation: "Secara keseluruhan, teks ini mengidentifikasi masalah (tantangan globalisasi), menimbang berbagai aspek (peluang digital), dan diakhiri dengan sebuah rekomendasi ('diperlukan strategi...'), yang mencerminkan tujuan analisis dan saran kebijakan.",
+                distractors: [
+                    "Opsi A, B, D, dan E tidak mencerminkan isi dan tujuan utama dari keseluruhan teks.",
+                ],
+                quote: "Di tengah arus globalisasi, eksistensi bahasa Indonesia menghadapi tantangan sekaligus peluang...Oleh karena itu, diperlukan strategi kebahasaan yang adaptif...",
+                bloom: "Menyimpulkan", complexity: 2, confidence: 0.9
+            }
+        },
+         // PASSAGE: urbanisasiDanDampakSosial
+        {
+            passageKey: 'urbanisasiDanDampakSosial',
+            type: 'pg',
+            question: "Hubungan antara 'magnet' ekonomi di kota dengan 'permukiman kumuh' menurut teks adalah...",
+            options: [
+                "Magnet ekonomi di kota menyebabkan berkurangnya permukiman kumuh.",
+                "Permukiman kumuh adalah pusat dari magnet ekonomi sebuah kota.",
+                "Daya tarik ekonomi kota yang kuat menarik lebih banyak pendatang daripada yang bisa ditampung, sehingga memunculkan permukiman kumuh.",
+                "Tidak ada hubungan antara daya tarik ekonomi kota dan munculnya permukiman kumuh.",
+                "Permukiman kumuh muncul karena kegagalan penduduk desa beradaptasi dengan ekonomi kota."
+            ],
+            answer: 2,
+            analysis: {
+                explanation: "Teks menjelaskan bahwa kota menjadi 'magnet' karena peluang ekonomi. Arus ini, jika 'tidak terkendali', melampaui 'daya dukung kota', yang kemudian 'mengakibatkan...permukiman kumuh (slum) tumbuh subur'. Ini menunjukkan hubungan sebab-akibat yang jelas.",
+                distractors: [
+                    "Opsi A bertentangan langsung dengan teks.",
+                    "Opsi B memutarbalikkan hubungan sebab-akibat.",
+                    "Opsi D menyangkal hubungan yang dijelaskan teks.",
+                    "Opsi E bisa menjadi faktor, tetapi Opsi C menjelaskan mekanisme utamanya sesuai teks."
+                ],
+                quote: "Kota-kota besar menjadi magnet...Namun, arus urbanisasi yang tidak terkendali sering kali melampaui daya dukung kota, mengakibatkan...permukiman kumuh (slum) tumbuh subur.",
+                bloom: "Menganalisis", complexity: 3, confidence: 0.9
+            }
+        },
+        {
+            passageKey: 'urbanisasiDanDampakSosial',
+            type: 'pg',
+            question: "Penulis menyiratkan bahwa solusi ideal untuk masalah urbanisasi adalah...",
+            options: [
+                "Melarang sepenuhnya perpindahan penduduk dari desa ke kota.",
+                "Hanya fokus membangun infrastruktur fisik seperti jalan dan gedung.",
+                "Memindahkan seluruh penduduk permukiman kumuh kembali ke desa.",
+                "Mengintegrasikan pembangunan fisik dengan program pemberdayaan sosial dan ekonomi.",
+                "Menyerahkan penanganan masalah sosial sepenuhnya kepada pihak kepolisian."
+            ],
+            answer: 3,
+            analysis: {
+                explanation: "Kalimat terakhir teks secara eksplisit menyarankan 'perencanaan tata kota yang komprehensif, yang tidak hanya berfokus pada pembangunan fisik, tetapi juga pada pemberdayaan sosial-ekonomi warganya', yang merupakan inti dari Opsi D.",
+                distractors: [
+                    "Opsi A adalah solusi ekstrem yang tidak disarankan.",
+                    "Opsi B secara eksplisit dikritik sebagai solusi yang tidak cukup ('tidak hanya berfokus pada...').",
+                    "Opsi C dan E adalah solusi parsial dan tidak komprehensif seperti yang disarankan penulis."
+                ],
+                quote: "...menuntut perencanaan tata kota yang komprehensif, yang tidak hanya berfokus pada pembangunan fisik, tetapi juga pada pemberdayaan sosial-ekonomi warganya.",
+                bloom: "Menyimpulkan", complexity: 2, confidence: 0.95
+            }
+        },
+        {
+            passageKey: 'urbanisasiDanDampakSosial',
+            type: 'pg',
+            question: "Manakah pernyataan di bawah ini yang paling melemahkan argumen penulis mengenai penyebab meningkatnya kriminalitas di kota?",
+            options: [
+                "Data statistik menunjukkan bahwa angka kriminalitas di pedesaan lebih tinggi daripada di perkotaan.",
+                "Sebuah studi membuktikan bahwa kesenjangan ekonomi tidak memiliki korelasi dengan tingkat kejahatan.",
+                "Banyak pendatang baru dari desa yang berhasil mendapatkan pekerjaan layak di kota.",
+                "Pemerintah kota berhasil menyediakan perumahan yang layak bagi semua warganya.",
+                "Tingkat pendidikan di kota dan di desa ditemukan sama rata."
+            ],
+            answer: 1,
+            analysis: {
+                explanation: "Penulis mengaitkan kriminalitas dengan 'persaingan hidup yang ketat' dan 'kesenjangan'. Jika sebuah studi membuktikan tidak ada korelasi antara kesenjangan ekonomi dan kejahatan, maka dasar argumen penulis menjadi lemah.",
+                distractors: [
+                    "Opsi A, jika benar, akan mendukung argumen sebaliknya, tetapi tidak secara langsung menyerang logika argumen penulis.",
+                    "Opsi C dan D menunjukkan adanya keberhasilan, tetapi tidak meniadakan masalah yang ada.",
+                    "Opsi E tidak secara langsung relevan dengan argumen tentang kriminalitas."
+                ],
+                quote: "...angka kriminalitas meningkat sebagai akibat dari persaingan hidup yang ketat.",
+                bloom: "Mengevaluasi", complexity: 4, confidence: 0.8
+            }
+        },
+        {
+            passageKey: 'urbanisasiDanDampakSosial',
+            type: 'pg',
+            question: "Kata 'motor' dalam frasa 'motor penggerak perubahan struktur sosial' memiliki makna kiasan yang paling dekat dengan...",
+            options: [
+                "Mesin",
+                "Kendaraan",
+                "Penyebab",
+                "Pendorong utama",
+                "Hambatan"
+            ],
+            answer: 3,
+            analysis: {
+                explanation: "Dalam konteks ini, 'motor penggerak' adalah sebuah metafora yang berarti sesuatu yang menjadi kekuatan utama yang menyebabkan atau mendorong terjadinya suatu perubahan. 'Pendorong utama' adalah padanan makna yang paling tepat.",
+                distractors: [
+                    "Opsi A dan B adalah makna harfiah.",
+                    "Opsi C benar, tetapi 'pendorong utama' lebih kuat dan lebih sesuai dengan konotasi 'motor'.",
+                    "Opsi E adalah antonimnya."
+                ],
+                quote: "...urbanisasi, telah menjadi motor penggerak perubahan struktur sosial...",
+                bloom: "Menginterpretasi", complexity: 2, confidence: 0.95
+            }
+        },
+        {
+            passageKey: 'urbanisasiDanDampakSosial',
+            type: 'pg',
+            question: "Berdasarkan teks, dapat disimpulkan bahwa urbanisasi adalah fenomena yang...",
+            options: [
+                "Sepenuhnya negatif dan harus dihentikan.",
+                "Hanya memberikan dampak positif bagi pembangunan.",
+                "Memiliki dua sisi: sebagai peluang pembangunan dan sumber masalah sosial.",
+                "Tidak lagi relevan di era digital saat ini.",
+                "Hanya terjadi di negara-negara maju di Eropa."
+            ],
+            answer: 2,
+            analysis: {
+                explanation: "Teks mengakui urbanisasi sebagai 'motor penggerak' perubahan yang menjanjikan 'peluang ekonomi', namun di sisi lain juga 'mengakibatkan berbagai masalah sosial'. Ini menunjukkan sifatnya yang bermuka dua.",
+                distractors: [
+                    "Opsi A dan B terlalu ekstrem dan hanya melihat satu sisi.",
+                    "Opsi D dan E secara faktual salah berdasarkan konteks teks.",
+                ],
+                quote: "Perpindahan penduduk...menjadi motor penggerak perubahan...Namun, arus urbanisasi yang tidak terkendali...mengakibatkan berbagai masalah sosial.",
+                bloom: "Menyimpulkan", complexity: 2, confidence: 0.9
+            }
+        },
+         // PASSAGE: mitigasiBencanaGeologis
+        {
+            passageKey: 'mitigasiBencanaGeologis',
+            type: 'pg',
+            question: "Menurut teks, komponen apakah yang dianggap lebih krusial dalam sistem mitigasi bencana dibandingkan pembangunan infrastruktur fisik?",
+            options: [
+                "Pembangunan sistem peringatan dini (early warning system).",
+                "Pembuatan jalur evakuasi di setiap wilayah rawan bencana.",
+                "Edukasi dan penanaman budaya sadar bencana di masyarakat.",
+                "Bantuan dari ilmuwan untuk memprediksi bencana secara akurat.",
+                "Sinergi antara pemerintah pusat dan pemerintah daerah."
+            ],
+            answer: 2,
+            analysis: {
+                explanation: "Teks secara eksplisit menyatakan, 'Aspek yang lebih krusial adalah edukasi dan penanaman budaya sadar bencana di tengah masyarakat.' Ini menunjukkan prioritas yang ditekankan oleh penulis.",
+                distractors: [
+                    "Opsi A dan B disebut sebagai bagian dari mitigasi fisik, yang dianggap kurang krusial.",
+                    "Opsi D dan E disebutkan sebagai bagian dari sinergi, tetapi bukan komponen yang paling krusial menurut perbandingan dalam teks.",
+                ],
+                quote: "Aspek yang lebih krusial adalah edukasi dan penanaman budaya sadar bencana di tengah masyarakat.",
+                bloom: "Memahami", complexity: 2, confidence: 0.95
+            }
+        },
+        {
+            passageKey: 'mitigasiBencanaGeologis',
+            type: 'pg',
+            question: "Apa hubungan antara pemahaman risiko oleh masyarakat dengan jumlah korban jiwa menurut alur berpikir penulis?",
+            options: [
+                "Semakin masyarakat memahami risiko, semakin tinggi jumlah korban jiwa.",
+                "Pemahaman risiko tidak memiliki pengaruh terhadap jumlah korban jiwa.",
+                "Pemahaman risiko dan pelatihan respons yang tepat dapat menekan jumlah korban jiwa.",
+                "Jumlah korban jiwa hanya dapat ditekan oleh teknologi peringatan dini.",
+                "Pemerintah bertanggung jawab penuh atas jumlah korban jiwa, bukan masyarakat."
+            ],
+            answer: 2,
+            analysis: {
+                explanation: "Teks menyatakan 'Ketika masyarakat memahami risiko...dan terlatih untuk merespons...jumlah korban jiwa dan kerugian material dapat ditekan secara signifikan'. Ini menunjukkan hubungan sebab-akibat langsung antara pemahaman/pelatihan dengan pengurangan korban.",
+                distractors: [
+                    "Opsi A adalah kebalikannya.",
+                    "Opsi B menyangkal argumen utama teks.",
+                    "Opsi D mengabaikan peran krusial masyarakat yang ditekankan penulis.",
+                    "Opsi E bertentangan dengan penekanan pada peran aktif komunitas."
+                ],
+                quote: "Ketika masyarakat memahami risiko...dan terlatih untuk merespons...jumlah korban jiwa...dapat ditekan secara signifikan.",
+                bloom: "Menganalisis", complexity: 3, confidence: 0.9
+            }
+        },
+        {
+            passageKey: 'mitigasiBencanaGeologis',
+            type: 'pg',
+            question: "Frasa 'meniscayakan adanya' dalam kalimat pertama memiliki arti yang paling dekat dengan...",
+            options: [
+                "Menyebabkan ketidakpastian",
+                "Mengharuskan atau mewajibkan keberadaan",
+                "Mempertanyakan kemungkinan adanya",
+                "Menghilangkan kebutuhan akan",
+                "Menganjurkan secara tidak langsung"
+            ],
+            answer: 1,
+            analysis: {
+                explanation: "Kata 'niscaya' berarti 'pasti' atau 'tentu'. 'Meniscayakan' berarti membuat sesuatu menjadi suatu kepastian atau keharusan. Dalam konteks kerawanan bencana, kondisi tersebut 'mewajibkan' adanya sistem mitigasi.",
+                distractors: [
+                    "Opsi A dan C menunjukkan keraguan, berlawanan dengan makna 'niscaya'.",
+                    "Opsi D adalah antonimnya.",
+                    "Opsi E kurang kuat; 'meniscayakan' lebih dari sekadar anjuran."
+                ],
+                quote: "Kondisi ini meniscayakan adanya sistem mitigasi bencana yang andal...",
+                bloom: "Menginterpretasi", complexity: 4, confidence: 0.8
+            }
+        },
+        {
+            passageKey: 'mitigasiBencanaGeologis',
+            type: 'pg',
+            question: "Jika pemerintah hanya membangun banyak sirine tsunami tetapi tidak pernah mengadakan latihan evakuasi bagi warga pesisir, tindakan ini dapat dinilai sebagai...",
+            options: [
+                "Sistem mitigasi bencana yang paling ideal dan efektif.",
+                "Implementasi mitigasi yang tidak lengkap karena mengabaikan aspek edukasi.",
+                "Contoh sempurna dari sinergi antara pemerintah dan ilmuwan.",
+                "Sebuah program yang sudah pasti berhasil menekan jumlah korban.",
+                "Tindakan yang tidak relevan dengan mitigasi bencana geologis."
+            ],
+            answer: 1,
+            analysis: {
+                explanation: "Menurut teks, mitigasi bukan hanya infrastruktur (sirine) tetapi juga edukasi (latihan). Dengan hanya fokus pada infrastruktur, pemerintah telah mengabaikan 'aspek yang lebih krusial' yaitu kesiapan masyarakat, sehingga implementasinya tidak lengkap.",
+                distractors: [
+                    "Opsi A, C, dan D adalah penilaian yang terlalu positif dan bertentangan dengan argumen teks.",
+                    "Opsi E salah, karena sirine tsunami sangat relevan.",
+                ],
+                quote: "Mitigasi bencana tidak hanya sebatas pembangunan infrastruktur fisik...Aspek yang lebih krusial adalah edukasi...",
+                bloom: "Mengevaluasi", complexity: 3, confidence: 0.9
+            }
+        },
+        {
+            passageKey: 'mitigasiBencanaGeologis',
+            type: 'pg',
+            question: "Siapa saja pemangku kepentingan yang menurut teks harus bersinergi untuk keberhasilan mitigasi bencana?",
+            options: [
+                "Hanya pemerintah dan komunitas lokal.",
+                "Hanya ilmuwan dan lembaga swadaya masyarakat.",
+                "Pemerintah, ilmuwan, dan komunitas lokal.",
+                "Pemerintah, pihak swasta, dan media massa.",
+                "Komunitas lokal, relawan, dan organisasi internasional."
+            ],
+            answer: 2,
+            analysis: {
+                explanation: "Kalimat terakhir teks secara eksplisit menyebutkan, 'Sinergi antara pemerintah, ilmuwan, dan komunitas lokal menjadi kunci keberhasilan mitigasi'.",
+                distractors: [
+                    "Opsi A, B, D, dan E menyebutkan beberapa komponen yang benar tetapi tidak selengkap dan seakurat Opsi C sesuai dengan pernyataan eksplisit di dalam teks.",
+                ],
+                quote: "Sinergi antara pemerintah, ilmuwan, dan komunitas lokal menjadi kunci keberhasilan mitigasi.",
+                bloom: "Memahami", complexity: 1, confidence: 0.95
+            }
+        },
+        // PASSAGE: sastraLisanNusantara
+        {
+            passageKey: 'sastraLisanNusantara',
+            type: 'pg',
+            question: "Fungsi utama sastra lisan dalam masyarakat Nusantara pramodern, sebagaimana dijelaskan dalam teks, adalah...",
+            options: [
+                "Sebagai satu-satunya bentuk hiburan bagi masyarakat desa.",
+                "Sebagai alat untuk mendokumentasikan hukum secara tertulis.",
+                "Sebagai sarana transmisi nilai, sejarah, dan norma sosial.",
+                "Untuk menggantikan peran pendidikan formal di sekolah.",
+                "Sebagai bukti bahwa budaya tulis tidak pernah berkembang di Nusantara."
+            ],
+            answer: 2,
+            analysis: {
+                explanation: "Teks menyatakan bahwa sastra lisan berfungsi 'sebagai medium transmisi nilai-nilai budaya, kearifan lokal, catatan sejarah kolektif, dan sistem norma sosial', yang dirangkum dengan baik oleh Opsi C.",
+                distractors: [
+                    "Opsi A terlalu menyederhanakan; teks menyebutnya lebih dari sekadar hiburan.",
+                    "Opsi B bertentangan dengan konteks 'pramodern' dan 'lisan'.",
+                    "Opsi D tidak dinyatakan.",
+                    "Opsi E adalah kesimpulan yang salah."
+                ],
+                quote: "...berfungsi sebagai medium transmisi nilai-nilai budaya, kearifan lokal, catatan sejarah kolektif, dan sistem norma sosial.",
+                bloom: "Memahami", complexity: 2, confidence: 0.95
+            }
+        },
+        {
+            passageKey: 'sastraLisanNusantara',
+            type: 'pg',
+            question: "Ancaman utama terhadap eksistensi sastra lisan di era modern menurut teks adalah...",
+            options: [
+                "Kurangnya minat generasi tua untuk mewariskan cerita.",
+                "Dominasi media digital dan perubahan gaya hidup masyarakat.",
+                "Biaya yang mahal untuk melakukan pementasan sastra lisan.",
+                "Peraturan pemerintah yang melarang tradisi lisan.",
+                "Munculnya bentuk-bentuk sastra tulis yang lebih menarik."
+            ],
+            answer: 1,
+            analysis: {
+                explanation: "Teks secara lugas menyebutkan bahwa eksistensi sastra lisan 'kian terancam oleh dominasi media digital dan perubahan gaya hidup'.",
+                distractors: [
+                    "Opsi A, C, dan D tidak disebutkan sebagai ancaman utama dalam teks.",
+                    "Opsi E bisa menjadi faktor, tetapi teks secara spesifik menunjuk media digital dan gaya hidup sebagai ancaman utama.",
+                ],
+                quote: "...eksistensi sastra lisan kian terancam oleh dominasi media digital dan perubahan gaya hidup.",
+                bloom: "Menganalisis", complexity: 2, confidence: 0.9
+            }
+        },
+        {
+            passageKey: 'sastraLisanNusantara',
+            type: 'pg',
+            question: "Istilah 'revitalisasi' dalam konteks ini paling tepat diartikan sebagai...",
+            options: [
+                "Proses melupakan tradisi lama yang sudah tidak relevan.",
+                "Upaya untuk menghidupkan kembali dan menguatkan kembali tradisi yang terancam.",
+                "Penggantian total sastra lisan dengan bentuk sastra modern.",
+                "Pendokumentasian sastra lisan untuk disimpan di museum.",
+                "Kritik terhadap sastra lisan karena tidak sesuai dengan zaman."
+            ],
+            answer: 1,
+            analysis: {
+                explanation: "'Re-' berarti kembali, dan 'vitalitas' berarti kehidupan atau kekuatan. Jadi, 'revitalisasi' adalah upaya untuk memberikan kehidupan atau kekuatan kembali kepada sesuatu yang melemah, dalam hal ini sastra lisan. Contohnya (dokumentasi, pementasan) mendukung makna ini.",
+                distractors: [
+                    "Opsi A dan C adalah kebalikannya.",
+                    "Opsi D (hanya dokumentasi) adalah bagian dari revitalisasi, tetapi tidak mencakup keseluruhan maknanya yang lebih aktif (menghidupkan kembali).",
+                    "Opsi E adalah sikap, bukan proses revitalisasi."
+                ],
+                quote: "Upaya revitalisasi melalui dokumentasi, pementasan, dan integrasi...",
+                bloom: "Menginterpretasi", complexity: 3, confidence: 0.9
+            }
+        },
+        {
+            passageKey: 'sastraLisanNusantara',
+            type: 'pg',
+            question: "Jika sebuah sekolah memasukkan cerita legenda lokal ke dalam mata pelajaran muatan lokal, tindakan ini sejalan dengan solusi yang diusulkan teks, yaitu...",
+            options: [
+                "Mendominasi media digital dengan konten sastra.",
+                "Mengubah gaya hidup masyarakat agar kembali seperti dulu.",
+                "Mendokumentasikan seluruh warisan budaya tak benda.",
+                "Mengintegrasikan sastra lisan ke dalam kurikulum pendidikan.",
+                "Mengadakan pementasan dongeng setiap hari di sekolah."
+            ],
+            answer: 3,
+            analysis: {
+                explanation: "Tindakan memasukkan legenda lokal ke dalam mata pelajaran adalah contoh konkret dari 'integrasi ke dalam kurikulum pendidikan', yang merupakan salah satu upaya revitalisasi yang disarankan oleh penulis.",
+                distractors: [
+                    "Opsi A, B, dan E adalah tindakan yang mungkin sulit atau tidak praktis.",
+                    "Opsi C adalah salah satu solusi, tetapi Opsi D lebih spesifik dan tepat untuk contoh yang diberikan."
+                ],
+                quote: "Upaya revitalisasi melalui...integrasi ke dalam kurikulum pendidikan menjadi sangat mendesak...",
+                bloom: "Mengaplikasikan", complexity: 2, confidence: 0.95
+            }
+        },
+        {
+            passageKey: 'sastraLisanNusantara',
+            type: 'pg',
+            question: "Sikap penulis terhadap sastra lisan Nusantara adalah...",
+            options: [
+                "Menganggapnya sebagai tradisi usang yang harus ditinggalkan.",
+                "Menilainya sebagai warisan budaya berharga yang perlu diselamatkan.",
+                "Netral dan tidak menunjukkan keberpihakan apapun.",
+                "Pesimistis karena yakin sastra lisan tidak akan bisa bertahan.",
+                "Kritis karena sastra lisan seringkali tidak akurat secara historis."
+            ],
+            answer: 1,
+            analysis: {
+                explanation: "Penggunaan frasa seperti 'kaya dan beragam', 'kearifan lokal', 'warisan budaya tak benda yang tak ternilai', dan seruan 'sangat mendesak untuk menyelamatkan' menunjukkan sikap penulis yang sangat menghargai dan peduli terhadap kelestarian sastra lisan.",
+                distractors: [
+                    "Opsi A, C, D, dan E tidak sejalan dengan nada dan pilihan kata yang digunakan penulis dalam teks.",
+                ],
+                quote: "...menyelamatkan warisan budaya tak benda yang tak ternilai ini.",
+                bloom: "Mengevaluasi", complexity: 2, confidence: 0.95
+            }
+        },
+        // PASSAGE: keanekaragamanHayatiLaut
+        {
+            passageKey: 'keanekaragamanHayatiLaut',
+            type: 'pg',
+            question: "Mengapa keanekaragaman hayati laut Indonesia dianggap memiliki nilai ekologis dan ekonomis sekaligus?",
+            options: [
+                "Karena hanya para ahli ekologi yang dapat memanfaatkannya secara ekonomi.",
+                "Karena ekosistem laut menjadi rumah bagi biota (ekologis) dan mendukung perikanan serta pariwisata (ekonomis).",
+                "Karena nilai tukar biota laut langka sangat tinggi di pasar internasional.",
+                "Karena pemerintah mengenakan pajak tinggi pada sektor perikanan dan pariwisata.",
+                "Karena kerusakan ekologis selalu membawa keuntungan ekonomis bagi masyarakat."
+            ],
+            answer: 1,
+            analysis: {
+                explanation: "Teks dengan jelas memisahkan kedua nilai tersebut. Nilai ekologis datang dari fungsinya sebagai 'rumah bagi ribuan spesies'. Nilai ekonomis datang dari perannya sebagai 'tumpuan ekonomi bagi jutaan masyarakat pesisir melalui sektor perikanan dan pariwisata bahari'.",
+                distractors: [
+                    "Opsi A dan D tidak disebutkan dalam teks.",
+                    "Opsi C terlalu spesifik dan tidak mencakup keseluruhan nilai ekonomi yang dijelaskan (perikanan, pariwisata).",
+                    "Opsi E secara logis salah dan bertentangan dengan semangat konservasi dalam teks."
+                ],
+                quote: "Ekosistem ini tidak only memiliki nilai ekologis yang tinggi, tetapi juga menjadi tumpuan ekonomi...",
+                bloom: "Menganalisis", complexity: 3, confidence: 0.9
+            }
+        },
+        {
+            passageKey: 'keanekaragamanHayatiLaut',
+            type: 'pg',
+            question: "Manakah dari berikut ini yang BUKAN merupakan ancaman langsung terhadap ekosistem laut Indonesia menurut teks?",
+            options: [
+                "Penggunaan bom ikan oleh nelayan.",
+                "Sampah plastik yang dibuang ke laut.",
+                "Kenaikan suhu air laut akibat perubahan iklim.",
+                "Praktik pariwisata bahari yang berkelanjutan.",
+                "Perusakan terumbu karang secara sengaja."
+            ],
+            answer: 3,
+            analysis: {
+                explanation: "Teks menyebutkan 'praktik penangkapan ikan yang merusak (destructive fishing)', 'polusi plastik', dan 'dampak perubahan iklim' sebagai ancaman. 'Pariwisata bahari yang berkelanjutan' justru merupakan pemanfaatan yang positif, bukan ancaman.",
+                distractors: [
+                    "Opsi A dan E termasuk dalam kategori 'destructive fishing'.",
+                    "Opsi B secara eksplisit disebut sebagai 'polusi plastik'.",
+                    "Opsi C adalah contoh 'dampak perubahan iklim'."
+                ],
+                quote: "...ancaman serius dari praktik penangkapan ikan yang merusak...polusi plastik, dan dampak perubahan iklim...",
+                bloom: "Memahami", complexity: 2, confidence: 0.95
+            }
+        },
+        {
+            passageKey: 'keanekaragamanHayatiLaut',
+            type: 'pg',
+            question: "Penulis berpendapat bahwa kunci dari konservasi laut yang efektif adalah...",
+            options: [
+                "Menutup total semua wilayah laut dari aktivitas manusia.",
+                "Hanya mengandalkan teknologi canggih untuk memantau laut.",
+                "Kombinasi antara penegakan hukum yang kuat dan keterlibatan komunitas lokal.",
+                "Memberikan bantuan finansial kepada seluruh masyarakat pesisir.",
+                "Fokus pada satu jenis ancaman saja, misalnya polusi plastik."
+            ],
+            answer: 2,
+            analysis: {
+                explanation: "Kalimat terakhir teks secara eksplisit menyimpulkan bahwa konservasi yang efektif memerlukan 'penegakan hukum yang tegas dan pemberdayaan komunitas lokal'.",
+                distractors: [
+                    "Opsi A adalah solusi ekstrem yang tidak disarankan.",
+                    "Opsi B, D, dan E adalah pendekatan parsial yang tidak selengkap solusi yang ditawarkan teks.",
+                ],
+                quote: "Konservasi laut yang efektif memerlukan penegakan hukum yang tegas dan pemberdayaan komunitas lokal sebagai garda terdepan...",
+                bloom: "Menyimpulkan", complexity: 2, confidence: 0.9
+            }
+        },
+        {
+            passageKey: 'keanekaragamanHayatiLaut',
+            type: 'pg',
+            question: "Frasa 'garda terdepan' dalam konteks 'pemberdayaan komunitas lokal sebagai garda terdepan' menyiratkan bahwa komunitas lokal memiliki peran sebagai...",
+            options: [
+                "Satu-satunya pihak yang bertanggung jawab.",
+                "Kelompok yang paling merasakan dampak kerusakan.",
+                "Pihak yang paling pertama dan langsung berhadapan dengan masalah konservasi.",
+                "Pengamat yang hanya bertugas melaporkan kerusakan.",
+                "Penerima manfaat utama dari program konservasi."
+            ],
+            answer: 2,
+            analysis: {
+                explanation: "'Garda terdepan' adalah metafora militer untuk barisan paling depan dalam pertempuran. Dalam konteks ini, artinya komunitas lokal adalah pihak yang berada di lokasi, berinteraksi langsung dengan ekosistem setiap hari, dan menjadi ujung tombak dalam upaya penjagaan laut.",
+                distractors: [
+                    "Opsi A terlalu membebani.",
+                    "Opsi B dan E benar, tetapi tidak menangkap makna 'garda terdepan' sebagai pelaku aktif.",
+                    "Opsi D terlalu pasif."
+                ],
+                quote: "...pemberdayaan komunitas lokal sebagai garda terdepan penjaga laut.",
+                bloom: "Menginterpretasi", complexity: 4, confidence: 0.85
+            }
+        },
+        {
+            passageKey: 'keanekaragamanHayatiLaut',
+            type: 'pg',
+            question: "Tujuan utama penulisan teks ini adalah...",
+            options: [
+                "Mempromosikan paket wisata menyelam di perairan Indonesia.",
+                "Menjelaskan secara detail klasifikasi biota laut di Indonesia.",
+                "Meningkatkan kesadaran tentang pentingnya, ancaman, dan solusi konservasi laut Indonesia.",
+                "Mengkritik pemerintah karena kegagalannya dalam menjaga ekosistem laut.",
+                "Memberikan panduan cara menangkap ikan tanpa merusak lingkungan."
+            ],
+            answer: 2,
+            analysis: {
+                explanation: "Teks ini secara berurutan membahas: (1) Pentingnya laut Indonesia, (2) Ancaman yang dihadapinya, dan (3) Solusi yang diperlukan. Ini menunjukkan tujuan yang jelas untuk membangun kesadaran pembaca secara komprehensif.",
+                distractors: [
+                    "Opsi A, B, dan E terlalu spesifik dan tidak mewakili keseluruhan isi.",
+                    "Opsi D mungkin tersirat, tetapi tujuan utamanya adalah membangun kesadaran, bukan sekadar mengkritik."
+                ],
+                quote: "Sebagai negara kepulauan...Indonesia merupakan pusat keanekaragaman hayati laut...Sayangnya, ekosistem vital ini menghadapi ancaman serius...Konservasi laut yang efektif memerlukan...",
+                bloom: "Menyimpulkan", complexity: 2, confidence: 0.9
+            }
+        },
+        // PASSAGE: pengaruhMediaSosial
+        {
+            passageKey: 'pengaruhMediaSosial',
+            type: 'pg',
+            question: "Apa yang dimaksud dengan 'ruang gema' (echo chamber) berdasarkan konteks teks?",
+            options: [
+                "Sebuah fitur di media sosial untuk merekam suara.",
+                "Sebuah grup diskusi yang anggotanya memiliki beragam pandangan.",
+                "Sebuah lingkungan informasi di mana seseorang hanya terpapar pada opini yang sama dengan opininya sendiri, sehingga keyakinannya semakin menguat.",
+                "Kecenderungan seseorang untuk menyuarakan opininya sekeras mungkin di media sosial.",
+                "Penyebaran informasi yang salah dan tidak dapat diverifikasi."
+            ],
+            answer: 2,
+            analysis: {
+                explanation: "Teks mengaitkan 'ruang gema' dengan 'polarisasi opini'. Polarisasi terjadi ketika kelompok-kelompok dengan pandangan berbeda semakin terpisah. 'Ruang gema' adalah mekanisme penyebabnya, di mana algoritma atau pilihan pertemanan membuat kita hanya melihat konten yang kita setujui, yang memperkuat pandangan kita dan membuat kita kurang toleran terhadap pandangan lain.",
+                distractors: [
+                    "Opsi A adalah interpretasi harfiah.",
+                    "Opsi B adalah kebalikan dari ruang gema.",
+                    "Opsi D tidak menangkap esensi 'gema' atau pengulangan.",
+                    "Opsi E adalah 'disinformasi', fenomena lain yang disebutkan."
+                ],
+                quote: "...polarisasi opini akibat 'ruang gema' (echo chamber)...",
+                bloom: "Menginterpretasi", complexity: 4, confidence: 0.85
+            }
+        },
+        {
+            passageKey: 'pengaruhMediaSosial',
+            type: 'pg',
+            question: "Menurut teks, literasi digital dianggap sebagai kompetensi wajib karena...",
+            options: [
+                "Setiap orang diwajibkan oleh hukum untuk memiliki akun media sosial.",
+                "Media sosial hanya berisi informasi yang benar dan bermanfaat.",
+                "Dapat membantu pengguna membedakan informasi yang kredibel dari disinformasi dan hoaks.",
+                "Dapat meningkatkan jumlah pengikut (followers) secara signifikan.",
+                "Merupakan satu-satunya cara untuk menghindari perundungan siber."
+            ],
+            answer: 2,
+            analysis: {
+                explanation: "Definisi literasi digital yang diberikan ('kemampuan untuk mengakses, menganalisis, mengevaluasi...informasi secara kritis') secara langsung menjawab tantangan yang disebutkan sebelumnya, seperti 'penyebaran disinformasi (hoax)'. Kemampuan ini memungkinkan pengguna untuk tidak mudah percaya pada informasi yang salah.",
+                distractors: [
+                    "Opsi A dan B jelas salah.",
+                    "Opsi D tidak relevan dengan definisi kompetensi kritis.",
+                    "Opsi E terlalu absolut; literasi digital membantu, tetapi bukan satu-satunya cara."
+                ],
+                quote: "Oleh karena itu, literasi digital—kemampuan untuk...menganalisis, mengevaluasi...informasi secara kritis—menjadi kompetensi wajib...",
+                bloom: "Menganalisis", complexity: 3, confidence: 0.9
+            }
+        },
+        {
+            passageKey: 'pengaruhMediaSosial',
+            type: 'pg',
+            question: "Sikap penulis terhadap media sosial dapat dideskripsikan sebagai...",
+            options: [
+                "Sangat positif, menganggapnya sebagai solusi semua masalah.",
+                "Sangat negatif, menyerukan untuk menutup semua platform media sosial.",
+                "Seimbang, mengakui adanya manfaat besar sekaligus dampak negatif yang serius.",
+                "Acuh tak acuh, tidak peduli dengan perkembangan media sosial.",
+                "Bingung, tidak dapat memutuskan apakah media sosial itu baik atau buruk."
+            ],
+            answer: 2,
+            analysis: {
+                explanation: "Penulis secara jelas menggunakan struktur 'Di satu sisi... Di sisi lain...', memaparkan manfaat ('memfasilitasi koneksi', 'aktivisme sosial') dan dampak negatif ('polarisasi', 'disinformasi', 'kesehatan mental'). Ini menunjukkan pendekatan yang seimbang.",
+                distractors: [
+                    "Opsi A dan B hanya melihat satu sisi.",
+                    "Opsi D dan E tidak mencerminkan analisis terstruktur yang disajikan dalam teks.",
+                ],
+                quote: "Di satu sisi, platform ini memfasilitasi... Namun, di sisi lain, penggunaan media sosial yang berlebihan membawa dampak negatif...",
+                bloom: "Mengevaluasi", complexity: 2, confidence: 0.95
+            }
+        },
+        {
+            passageKey: 'pengaruhMediaSosial',
+            type: 'pg',
+            question: "Manakah dari skenario berikut yang merupakan contoh 'polarisasi opini' seperti yang dijelaskan dalam teks?",
+            options: [
+                "Dua orang teman berdebat tentang tim sepak bola favorit mereka, tetapi tetap berteman baik.",
+                "Sebuah komunitas online tentang resep masakan, di mana semua anggota saling berbagi tips.",
+                "Pendukung calon presiden A hanya berteman dan berinteraksi dengan sesama pendukung A, dan menganggap pendukung calon B sebagai musuh.",
+                "Seseorang berhenti menggunakan media sosial karena merasa cemas melihat kehidupan orang lain.",
+                "Sebuah berita hoaks tentang kesehatan menjadi viral dan dipercaya oleh banyak orang."
+            ],
+            answer: 2,
+            analysis: {
+                explanation: "Skenario ini dengan sempurna menggambarkan bagaimana orang mengelompokkan diri berdasarkan opini yang sama ('hanya berteman dengan sesama pendukung'), memperkuat keyakinan internal, dan mengembangkan permusuhan terhadap kelompok dengan pandangan berbeda ('menganggap...sebagai musuh'). Ini adalah inti dari polarisasi.",
+                distractors: [
+                    "Opsi A menunjukkan perbedaan pendapat yang sehat, bukan polarisasi.",
+                    "Opsi B adalah contoh komunitas, bukan polarisasi.",
+                    "Opsi D adalah contoh masalah kesehatan mental.",
+                    "Opsi E adalah contoh disinformasi."
+                ],
+                quote: "...polarisasi opini akibat 'ruang gema' (echo chamber)...",
+                bloom: "Mengaplikasikan", complexity: 3, confidence: 0.9
+            }
+        },
+        {
+            passageKey: 'pengaruhMediaSosial',
+            type: 'pg',
+            question: "Gagasan utama yang ingin disampaikan oleh penulis dalam teks ini adalah...",
+            options: [
+                "Media sosial adalah penemuan teknologi yang paling berbahaya.",
+                "Aktivisme sosial tidak akan ada tanpa kehadiran media sosial.",
+                "Walaupun memiliki manfaat, media sosial membawa tantangan serius yang menuntut kompetensi literasi digital dari penggunanya.",
+                "Kesehatan mental adalah satu-satunya dampak negatif dari penggunaan media sosial.",
+                "Pemerintah harus mengatur secara ketat konten di semua platform media sosial."
+            ],
+            answer: 2,
+            analysis: {
+                explanation: "Teks ini membangun argumen dari pengenalan dua sisi media sosial menuju kesimpulan bahwa untuk menavigasi sisi negatifnya (disinformasi, polarisasi, dll.), kompetensi literasi digital menjadi sangat penting. Opsi ini merangkum alur argumen tersebut dengan paling baik.",
+                distractors: [
+                    "Opsi A dan D terlalu ekstrem dan menyederhanakan.",
+                    "Opsi B adalah klaim yang tidak dibuat oleh penulis.",
+                    "Opsi E adalah solusi yang tidak disarankan dalam teks; penulis lebih menekankan pada pemberdayaan individu."
+                ],
+                quote: "Kehadiran media sosial telah...mengubah...[manfaat]...Namun...[dampak negatif]...Oleh karena itu, literasi digital...menjadi kompetensi wajib...",
+                bloom: "Menyimpulkan", complexity: 3, confidence: 0.95
+            }
+        },
+        // PASSAGE: transformasiPendidikanAbad21
+        {
+            passageKey: 'transformasiPendidikanAbad21',
+            type: 'pg',
+            question: "Perbedaan mendasar antara model pengajaran tradisional dengan pembelajaran abad ke-21 menurut teks adalah...",
+            options: [
+                "Penggunaan teknologi di kelas.",
+                "Peran guru sebagai satu-satunya sumber pengetahuan.",
+                "Fokus pada hafalan materi pelajaran.",
+                "Pergeseran pusat pembelajaran dari guru ke siswa.",
+                "Jumlah siswa dalam satu kelas."
+            ],
+            answer: 3,
+            analysis: {
+                explanation: "Teks secara eksplisit menyatakan adanya 'pergeseran paradigma dari model pengajaran tradisional yang berpusat pada guru (teacher-centered) menjadi model pembelajaran yang berpusat pada siswa (student-centered)'. Ini adalah perbedaan yang paling fundamental.",
+                distractors: [
+                    "Opsi A (teknologi) disebut sebagai alat, bukan perbedaan mendasarnya.",
+                    "Opsi B dan C adalah ciri khas model tradisional yang digantikan, tetapi Opsi D menjelaskan perubahan paradigmanya secara keseluruhan.",
+                    "Opsi E tidak dibahas."
+                ],
+                quote: "...pergeseran paradigma dari model pengajaran...berpusat pada guru...menjadi model pembelajaran yang berpusat pada siswa...",
+                bloom: "Menganalisis", complexity: 2, confidence: 0.95
+            }
+        },
+        {
+            passageKey: 'transformasiPendidikanAbad21',
+            type: 'pg',
+            question: "Manakah dari kegiatan berikut yang paling mencerminkan penerapan kompetensi 'Collaboration' dan 'Critical Thinking'?",
+            options: [
+                "Siswa secara individu menghafal nama-nama ibu kota negara di dunia.",
+                "Siswa secara berkelompok menganalisis studi kasus masalah polusi di lingkungan mereka dan merumuskan usulan solusi.",
+                "Guru memberikan ceramah selama dua jam tentang sejarah kemerdekaan.",
+                "Siswa menyalin catatan dari papan tulis ke buku catatan mereka masing-masing.",
+                "Siswa menonton video tutorial tentang cara menggunakan perangkat lunak baru."
+            ],
+            answer: 1,
+            analysis: {
+                explanation: "Kegiatan ini memerlukan siswa untuk bekerja sama ('berkelompok' - Collaboration) dan melakukan lebih dari sekadar menerima informasi; mereka harus 'menganalisis' masalah dan 'merumuskan solusi', yang merupakan inti dari Berpikir Kritis (Critical Thinking).",
+                distractors: [
+                    "Opsi A adalah hafalan (model tradisional).",
+                    "Opsi C adalah model teacher-centered.",
+                    "Opsi D adalah kegiatan pasif.",
+                    "Opsi E adalah pembelajaran individu dan belum tentu melibatkan berpikir kritis."
+                ],
+                quote: "...pengembangan kompetensi 4C: Critical Thinking...Collaboration...",
+                bloom: "Mengaplikasikan", complexity: 3, confidence: 0.9
+            }
+        },
+        {
+            passageKey: 'transformasiPendidikanAbad21',
+            type: 'pg',
+            question: "Peran guru dalam model pembelajaran abad ke-21 digambarkan sebagai...",
+            options: [
+                "Pemberi instruksi utama dan penentu kebenaran mutlak.",
+                "Pengawas ujian yang memastikan tidak ada yang mencontek.",
+                "Fasilitator yang membimbing dan memandu proses belajar siswa.",
+                "Pakar teknologi yang memperbaiki masalah teknis di kelas.",
+                "Sumber tunggal dari semua materi pembelajaran."
+            ],
+            answer: 2,
+            analysis: {
+                explanation: "Teks dengan jelas menyatakan, 'Guru berperan sebagai fasilitator yang memandu siswa untuk belajar secara mandiri...'. Ini berbeda dari peran tradisional sebagai sumber utama pengetahuan.",
+                distractors: [
+                    "Opsi A dan E menggambarkan peran guru tradisional.",
+                    "Opsi B dan D adalah peran teknis, bukan peran pedagogis utama yang dimaksud.",
+                ],
+                quote: "Guru berperan sebagai fasilitator yang memandu siswa untuk belajar secara mandiri...",
+                bloom: "Memahami", complexity: 1, confidence: 0.95
+            }
+        },
+        {
+            passageKey: 'transformasiPendidikanAbad21',
+            type: 'pg',
+            question: "Tujuan akhir dari transformasi pendidikan yang dijelaskan dalam teks adalah untuk...",
+            options: [
+                "Menciptakan siswa yang patuh dan hanya mengikuti perintah.",
+                "Menghasilkan lulusan yang hanya terampil dalam satu bidang spesifik.",
+                "Mempersiapkan generasi yang mampu beradaptasi dengan masa depan yang dinamis.",
+                "Menghapus peran guru sepenuhnya dari proses pendidikan.",
+                "Memastikan semua siswa mendapatkan nilai ujian yang sempurna."
+            ],
+            answer: 2,
+            analysis: {
+                explanation: "Kalimat terakhir teks menyimpulkan tujuan utamanya: 'mempersiapkan generasi yang adaptif dan siap menghadapi tantangan masa depan yang dinamis dan tidak pasti'.",
+                distractors: [
+                    "Opsi A bertentangan dengan semangat berpikir kritis.",
+                    "Opsi B bertentangan dengan kebutuhan akan adaptabilitas.",
+                    "Opsi D salah, peran guru berubah, bukan hilang.",
+                    "Opsi E tidak realistis dan bukan fokus utama dari pengembangan kompetensi."
+                ],
+                quote: "Tujuannya adalah mempersiapkan generasi yang adaptif dan siap menghadapi tantangan masa depan yang dinamis dan tidak pasti.",
+                bloom: "Menyimpulkan", complexity: 2, confidence: 0.9
+            }
+        },
+        {
+            passageKey: 'transformasiPendidikanAbad21',
+            type: 'pg',
+            question: "Mengapa integrasi teknologi dianggap 'esensial' dalam pendidikan abad ke-21?",
+            options: [
+                "Karena teknologi dapat sepenuhnya menggantikan fungsi guru.",
+                "Karena sekolah diwajibkan oleh pemerintah untuk membeli gawai mahal.",
+                "Karena teknologi adalah satu-satunya cara siswa bisa belajar.",
+                "Karena teknologi dapat menjadi alat bantu yang efektif untuk mengembangkan kompetensi 4C.",
+                "Karena siswa modern tidak mau belajar tanpa menggunakan teknologi."
+            ],
+            answer: 3,
+            analysis: {
+                explanation: "Teks memposisikan teknologi sebagai 'alat bantu yang esensial untuk mencapai tujuan ini', di mana 'tujuan ini' merujuk pada pengembangan kompetensi 4C. Ini berarti teknologi bukan tujuan itu sendiri, melainkan sarana penting untuk memfasilitasi model pembelajaran baru.",
+                distractors: [
+                    "Opsi A dan C terlalu ekstrem.",
+                    "Opsi B adalah alasan administratif, bukan pedagogis.",
+                    "Opsi E adalah generalisasi yang tidak didukung teks."
+                ],
+                quote: "Integrasi teknologi dalam proses belajar-mengajar menjadi alat bantu yang esensial untuk mencapai tujuan ini.",
+                bloom: "Menganalisis", complexity: 3, confidence: 0.9
+            }
+        }
+    ];
+
+    // === ELEMEN DOM ===
+    const timerEl = document.getElementById('timer').querySelector('span:last-child');
+    const timerContainer = document.getElementById('timer');
+    const questionListBtn = document.getElementById('question-list-btn');
+    const questionModal = document.getElementById('question-modal');
+    const closeBtn = questionModal.querySelector('.close-btn');
+    const navGrid = document.getElementById('nav-grid');
+    
+    const quizContent = document.getElementById('quiz-content');
+    const quizFooter = document.getElementById('quiz-footer');
+    const passageContainer = document.getElementById('passage-container');
+    const questionNumberEl = document.getElementById('question-number');
+    const questionTextEl = document.getElementById('question-text');
+    const optionsEl = document.getElementById('options');
+    
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const finishBtn = document.getElementById('finish-btn');
+    const doubtCheckbox = document.getElementById('doubt-checkbox');
+    
+    const progressFill = document.getElementById('progress-fill');
+    const progressText = document.getElementById('progress-text');
+    const answeredCountEl = document.getElementById('answered-count');
+    const doubtfulCountEl = document.getElementById('doubtful-count');
+
+    const resultsContainer = document.getElementById('results-container');
+    const scoreEl = document.getElementById('score');
+    const correctCountEl = document.getElementById('correct-count');
+    const incorrectCountEl = document.getElementById('incorrect-count');
+    const unansweredCountEl = document.getElementById('unanswered-count');
+    const analysisContentEl = document.getElementById('analysis-content');
+    const restartBtn = document.getElementById('restart-btn');
+
+    const confirmModal = document.getElementById('confirm-modal');
+    const confirmOkBtn = document.getElementById('confirm-ok-btn');
+    const confirmCancelBtn = document.getElementById('confirm-cancel-btn');
+    let confirmCallback = null;
+
+    // === STATE APLIKASI ===
+    let currentQuestionIndex = 0;
+    let userAnswers = [];
+    let timerInterval;
+    let currentPassage = null;
+    
+    // === FUNGSI-FUNGSI ===
+
+    function initializeAnswers() {
+        userAnswers = QUIZ_DATA.map(q => {
+            let initialAnswer;
+            switch (q.type) {
+                case 'pgk_mcma': initialAnswer = []; break;
+                case 'pgk_kategori': initialAnswer = new Array(q.statements.length).fill(null); break;
+                default: initialAnswer = null;
+            }
+            return { answer: initialAnswer, isDoubtful: false };
+        });
+    }
+
+    function startQuiz() {
+        currentQuestionIndex = 0;
+        initializeAnswers();
+        resultsContainer.style.display = 'none';
+        quizContent.style.display = 'flex';
+        quizFooter.style.display = 'flex';
+        startTimer(initialTimeSeconds);
+        buildNavGrid();
+        showQuestion(currentQuestionIndex);
+        updateProgressAndStats();
+    }
+
+    function startTimer(duration) {
+        let timeLeft = duration;
+        clearInterval(timerInterval);
+        
+        const updateTimerDisplay = () => {
+            const hours = Math.floor(timeLeft / 3600);
+            const minutes = Math.floor((timeLeft % 3600) / 60);
+            const seconds = timeLeft % 60;
+            
+            timerEl.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            
+            timerContainer.classList.remove('warning', 'critical');
+            if (timeLeft <= 300) { timerContainer.classList.add('critical'); } 
+            else if (timeLeft <= 1800) { timerContainer.classList.add('warning'); }
+        };
+        
+        updateTimerDisplay();
+        timerInterval = setInterval(() => {
+            if (--timeLeft < 0) {
+                clearInterval(timerInterval);
+                finishQuiz();
+            } else {
+                updateTimerDisplay();
+            }
+        }, 1000);
+    }
+
+    function showQuestion(index) {
+        currentQuestionIndex = index;
+        const qData = QUIZ_DATA[index];
+
+        // Render passage jika ada
+        if (qData.passageKey && qData.passageKey !== currentPassage) {
+            currentPassage = qData.passageKey;
+            passageContainer.innerHTML = `
+                <div class="passage">
+                    <div class="passage-title">
+                        <span class="material-icons">article</span> Bacaan
+                    </div>
+                    ${passages[currentPassage]}
+                </div>`;
+            passageContainer.style.display = 'block';
+        } else if (!qData.passageKey) {
+            passageContainer.innerHTML = '';
+            passageContainer.style.display = 'none';
+            currentPassage = null;
+        }
+
+        questionNumberEl.textContent = `Soal Nomor ${index + 1}`;
+        
+        let questionHTML = `<p>${qData.question}</p>`;
+        if (qData.type === 'pgk_mcma') {
+            questionHTML += `<span class="question-type-label">Pilih satu atau lebih jawaban yang benar.</span>`;
+        } else if (qData.type === 'pgk_kategori') {
+            questionHTML += `<span class="question-type-label">Tentukan Benar/Salah untuk setiap pernyataan.</span>`;
+        }
+        questionTextEl.innerHTML = questionHTML;
+        optionsEl.innerHTML = '';
+
+        const currentAnswer = userAnswers[index].answer;
+
+        switch (qData.type) {
+            case 'pgk_mcma':
+                qData.options.forEach((option, i) => {
+                    const li = document.createElement('li');
+                    li.className = 'option';
+                    const isSelected = currentAnswer.includes(i);
+                    if (isSelected) li.classList.add('selected');
+                    li.innerHTML = `<span class="option-label" style="border-radius: 4px;">${String.fromCharCode(65 + i)}</span><div class="option-text">${option}</div>`;
+                    li.addEventListener('click', () => selectMcmaAnswer(i));
+                    optionsEl.appendChild(li);
+                });
+                break;
+            
+            case 'pgk_kategori':
+                const table = document.createElement('table');
+                table.className = 'category-table';
+                table.innerHTML = `<thead><tr><th>#</th><th>Pernyataan</th><th>Benar</th><th>Salah</th></tr></thead>`;
+                const tbody = document.createElement('tbody');
+                qData.statements.forEach((stmt, i) => {
+                    const row = document.createElement('tr');
+                    const checkedTrue = (currentAnswer[i] === true) ? 'checked' : '';
+                    const checkedFalse = (currentAnswer[i] === false) ? 'checked' : '';
+                    row.innerHTML = `
+                        <td>${stmt.no}</td>
+                        <td>${stmt.text}</td>
+                        <td><input type="radio" name="stmt-${i}" value="true" ${checkedTrue}></td>
+                        <td><input type="radio" name="stmt-${i}" value="false" ${checkedFalse}></td>
+                    `;
+                    row.querySelectorAll(`input[name="stmt-${i}"]`).forEach(radio => {
+                        radio.addEventListener('change', () => selectCategoryAnswer(i, radio.value === 'true'));
+                    });
+                    tbody.appendChild(row);
+                });
+                table.appendChild(tbody);
+                optionsEl.appendChild(table);
+                break;
+
+            default: // 'pg'
+                qData.options.forEach((option, i) => {
+                    const li = document.createElement('li');
+                    li.className = 'option';
+                    if (currentAnswer === i) li.classList.add('selected');
+                    li.innerHTML = `<span class="option-label">${String.fromCharCode(65 + i)}</span><div class="option-text">${option}</div>`;
+                    li.addEventListener('click', () => selectPgAnswer(i));
+                    optionsEl.appendChild(li);
+                });
+                break;
+        }
+        doubtCheckbox.checked = userAnswers[index].isDoubtful;
+        updateNavigationButtons();
+        updateNavGrid();
+    }
+
+    function selectPgAnswer(selectedIndex) {
+        userAnswers[currentQuestionIndex].answer = selectedIndex;
+        updateProgressAndStats();
+        setTimeout(() => {
+            if (currentQuestionIndex < QUIZ_DATA.length - 1) showQuestion(currentQuestionIndex + 1);
+            else showQuestion(currentQuestionIndex); // Re-render for visual feedback
+        }, 300);
+    }
+    
+    function selectMcmaAnswer(selectedIndex) {
+        const currentAnsArray = userAnswers[currentQuestionIndex].answer;
+        const indexInAnswer = currentAnsArray.indexOf(selectedIndex);
+        if (indexInAnswer > -1) {
+            currentAnsArray.splice(indexInAnswer, 1);
+        } else {
+            currentAnsArray.push(selectedIndex);
+        }
+        showQuestion(currentQuestionIndex); // Re-render to update selection
+        updateProgressAndStats();
+    }
+
+    function selectCategoryAnswer(statementIndex, value) {
+        userAnswers[currentQuestionIndex].answer[statementIndex] = value;
+        updateProgressAndStats();
+    }
+    
+    function updateProgressAndStats() {
+        updateNavGrid();
+        updateProgress();
+        updateStats();
+    }
+
+    function isQuestionAnswered(userAnswer, type) {
+        if (type === 'pgk_mcma') return userAnswer.answer.length > 0;
+        if (type === 'pgk_kategori') return userAnswer.answer.some(a => a !== null);
+        return userAnswer.answer !== null;
+    }
+
+    function updateNavigationButtons() {
+        prevBtn.disabled = currentQuestionIndex === 0;
+        const isLastQuestion = currentQuestionIndex === QUIZ_DATA.length - 1;
+        nextBtn.style.display = isLastQuestion ? 'none' : 'flex';
+        finishBtn.style.display = isLastQuestion ? 'flex' : 'none';
+    }
+
+    function buildNavGrid() {
+        navGrid.innerHTML = '';
+        QUIZ_DATA.forEach((_, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'nav-btn';
+            btn.textContent = index + 1;
+            btn.addEventListener('click', () => {
+                showQuestion(index);
+                closeModal(questionModal);
+            });
+            navGrid.appendChild(btn);
+        });
+    }
+    
+    function updateNavGrid() {
+        Array.from(navGrid.children).forEach((btn, index) => {
+            btn.classList.remove('answered', 'doubtful', 'active');
+            const userAnswer = userAnswers[index];
+            if (isQuestionAnswered(userAnswer, QUIZ_DATA[index].type)) btn.classList.add('answered');
+            if (userAnswer.isDoubtful) btn.classList.add('doubtful');
+            if (index === currentQuestionIndex) btn.classList.add('active');
+        });
+    }
+
+    function updateProgress() {
+        const answeredCount = userAnswers.filter((ua, i) => isQuestionAnswered(ua, QUIZ_DATA[i].type)).length;
+        const progress = (answeredCount / QUIZ_DATA.length) * 100;
+        progressFill.style.width = `${progress}%`;
+        progressText.textContent = `${answeredCount}/${QUIZ_DATA.length}`;
+    }
+
+    function updateStats() {
+        const answeredCount = userAnswers.filter((ua, i) => isQuestionAnswered(ua, QUIZ_DATA[i].type)).length;
+        const doubtfulCount = userAnswers.filter(a => a.isDoubtful).length;
+        answeredCountEl.textContent = `${answeredCount} terjawab`;
+        doubtfulCountEl.textContent = `${doubtfulCount} ragu-ragu`;
+    }
+
+    function arraysEqual(a, b) {
+        if (a === b) return true;
+        if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+        const sortedA = [...a].sort();
+        const sortedB = [...b].sort();
+        for (let i = 0; i < sortedA.length; i++) {
+            if (sortedA[i] !== sortedB[i]) return false;
+        }
+        return true;
+    }
+
+    function finishQuiz() {
+        clearInterval(timerInterval);
+        
+        let correctCount = 0, incorrectCount = 0;
+        
+        QUIZ_DATA.forEach((q, i) => {
+            const userAnswer = userAnswers[i];
+            if (!isQuestionAnswered(userAnswer, q.type)) return;
+
+            const isCorrect = (q.type === 'pg')
+                ? userAnswer.answer === q.answer
+                : arraysEqual(userAnswer.answer, q.answer);
+
+            if (isCorrect) correctCount++;
+            else incorrectCount++;
+        });
+        
+        const unansweredCount = QUIZ_DATA.length - (correctCount + incorrectCount);
+        const score = (correctCount / QUIZ_DATA.length) * 100;
+
+        scoreEl.innerHTML = `Skor Anda: <span>${score.toFixed(1)}%</span>`;
+        correctCountEl.textContent = correctCount;
+        incorrectCountEl.textContent = incorrectCount;
+        unansweredCountEl.textContent = unansweredCount;
+        
+        analysisContentEl.innerHTML = QUIZ_DATA.map((q, i) => {
+            const userAnswer = userAnswers[i].answer;
+            const correctAnswer = q.answer;
+            const isCorrect = (q.type === 'pg') ? userAnswer === correctAnswer : arraysEqual(userAnswer, correctAnswer);
+            
+            let userAnswerText = '';
+            let correctAnswerText = '';
+            let answerClass = '';
+
+            if (!isQuestionAnswered(userAnswers[i], q.type)) {
+                userAnswerText = 'Tidak Dijawab';
+                answerClass = 'unanswered';
+            } else {
+                answerClass = isCorrect ? 'correct' : 'incorrect';
+                if (q.type === 'pg') {
+                    userAnswerText = `<b>${String.fromCharCode(65 + userAnswer)}.</b> ${q.options[userAnswer]}`;
+                } else if (q.type === 'pgk_mcma') {
+                    userAnswerText = userAnswer.sort().map(ans => `<b>${String.fromCharCode(65 + ans)}.</b> ${q.options[ans]}`).join('<br>');
+                } else { // pgk_kategori
+                    userAnswerText = q.statements.map((stmt, idx) => `Pernyataan ${stmt.no}: <b>${userAnswer[idx] ? 'Benar' : 'Salah'}</b>`).join('<br>');
+                }
+            }
+
+            if (q.type === 'pg') {
+                correctAnswerText = `<b>${String.fromCharCode(65 + correctAnswer)}.</b> ${q.options[correctAnswer]}`;
+            } else if (q.type === 'pgk_mcma') {
+                correctAnswerText = correctAnswer.sort().map(ans => `<b>${String.fromCharCode(65 + ans)}.</b> ${q.options[ans]}`).join('<br>');
+            } else { // pgk_kategori
+                correctAnswerText = q.statements.map((stmt, idx) => `Pernyataan ${stmt.no}: <b>${correctAnswer[idx] ? 'Benar' : 'Salah'}</b>`).join('<br>');
+            }
+
+            let distractorHtml = '';
+            if (q.analysis.distractors && q.type === 'pg') {
+                distractorHtml += '<strong>Analisis Pengecoh:</strong><ul>';
+                q.options.forEach((opt, idx) => {
+                    if (idx !== q.answer && q.analysis.distractors[idx]) {
+                        distractorHtml += `<li><b>Opsi ${String.fromCharCode(65 + idx)}:</b> ${q.analysis.distractors[idx]}</li>`;
+                    }
+                });
+                distractorHtml += '</ul>';
+            }
+
+            let metaHtml = `
+                <div class="analysis-meta">
+                    ${q.analysis.bloom ? `<span>Taksonomi Bloom: ${q.analysis.bloom}</span>` : ''}
+                    ${q.analysis.complexity ? `<span>Kompleksitas: ${q.analysis.complexity}/5</span>` : ''}
+                    ${q.analysis.confidence ? `<span>Keyakinan: ${q.analysis.confidence}</span>` : ''}
+                </div>
+            `;
+
+            return `
+                <div class="analysis-item">
+                    <h4>Soal ${i + 1}: ${q.question}</h4>
+                    <p class="your-answer-text ${answerClass}">Jawaban Anda: <br>${userAnswerText}</p>
+                    ${!isCorrect ? `<p class="correct-answer-text">Jawaban Benar: <br>${correctAnswerText}</p>` : ''}
+                    <div class="analysis-details">
+                        <strong>Penjelasan:</strong>
+                        <p>${q.analysis.explanation || 'Analisis tidak tersedia.'}</p>
+                        ${distractorHtml}
+                        ${q.analysis.quote ? `<strong>Kutipan Pendukung:</strong><p class="quote">"${q.analysis.quote}"</p>` : ''}
+                        ${metaHtml}
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        quizContent.style.display = 'none';
+        quizFooter.style.display = 'none';
+        resultsContainer.style.display = 'block';
+    }
+
+    function openModal(modal) { modal.classList.remove('hidden'); }
+    function closeModal(modal) { modal.classList.add('hidden'); }
+    function showConfirmation(callback) {
+        confirmCallback = callback;
+        openModal(confirmModal);
+    }
+
+    // === EVENT LISTENERS ===
+    questionListBtn.addEventListener('click', () => openModal(questionModal));
+    closeBtn.addEventListener('click', () => closeModal(questionModal));
+    prevBtn.addEventListener('click', () => { if (currentQuestionIndex > 0) showQuestion(currentQuestionIndex - 1); });
+    nextBtn.addEventListener('click', () => { if (currentQuestionIndex < QUIZ_DATA.length - 1) showQuestion(currentQuestionIndex + 1); });
+    finishBtn.addEventListener('click', () => {
+        showConfirmation(confirmed => { if (confirmed) finishQuiz(); });
+    });
+    confirmOkBtn.addEventListener('click', () => {
+        closeModal(confirmModal);
+        if (confirmCallback) confirmCallback(true);
+    });
+    confirmCancelBtn.addEventListener('click', () => {
+        closeModal(confirmModal);
+        if (confirmCallback) confirmCallback(false);
+    });
+    doubtCheckbox.addEventListener('change', (e) => {
+        userAnswers[currentQuestionIndex].isDoubtful = e.target.checked;
+        updateNavGrid();
+        updateStats();
+    });
+    restartBtn.addEventListener('click', startQuiz);
+    window.addEventListener('click', (e) => {
+        if (e.target === questionModal) closeModal(questionModal);
+        if (e.target === confirmModal) closeModal(confirmModal);
+    });
+
+    startQuiz();
+});
+</script>
+</body>
+</html>

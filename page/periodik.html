@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabel Periodik Interaktif (Final)</title>
+    
+    <!-- Memuat Tailwind CSS untuk styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Memuat Google Fonts (Inter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Style dasar untuk body dengan font-smoothing untuk teks yang lebih tajam */
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Menyembunyikan scrollbar horizontal secara visual tapi tetap fungsional */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Style untuk highlight area drop saat drag over */
+        .drag-over { background-color: #1e3a8a; border-style: solid; }
+
+        /* Animasi umum */
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .animate-fade-in-scale { animation: fadeInScale 0.5s ease-out forwards; }
+        
+        /* Grid untuk Tabel Periodik: Dibuat agar responsif */
+        #periodic-table-grid {
+            display: grid;
+            grid-template-columns: repeat(18, minmax(0, 1fr));
+            gap: 2px; /* Gap lebih kecil untuk layar mobile */
+        }
+        @media (min-width: 640px) { /* sm breakpoint */
+             #periodic-table-grid { gap: 4px; }
+        }
+
+        /* Style untuk unsur yang difilter/tidak cocok */
+        .element-dimmed { opacity: 0.25; transform: scale(0.95); }
+        .no-match { opacity: 0.15 !important; transform: scale(0.9) !important; }
+        
+        /* Style untuk highlight */
+        .highlight {
+            transform: scale(1.15);
+            box-shadow: 0 0 15px 3px rgba(99, 102, 241, 0.8); /* Indigo-500 glow */
+            z-index: 10;
+            opacity: 1 !important;
+        }
+        
+        /* Animasi Peluruhan Inti */
+        @keyframes decay-flash {
+            0%, 100% { box-shadow: 0 0 15px 3px rgba(236, 72, 153, 0); }
+            50% { box-shadow: 0 0 25px 8px rgba(236, 72, 153, 0.9); }
+        }
+        .decaying { animation: decay-flash 0.8s ease-in-out; }
+
+        @keyframes particle-emission {
+            from { transform: translate(0, 0) scale(0.5); opacity: 1; }
+            to { transform: translate(40px, -40px) scale(1); opacity: 0; }
+        }
+        .particle {
+            position: absolute; width: 16px; height: 16px;
+            background-color: #fde047; /* yellow-300 */
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 10px; font-weight: bold; color: black; z-index: 20;
+            animation: particle-emission 0.8s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200 min-h-screen flex flex-col items-center p-2 sm:p-4">
+
+    <div class="container mx-auto w-full max-w-screen-xl">
+        <!-- Header -->
+        <header class="text-center mb-6">
+            <h1 class="text-3xl md:text-4xl font-bold text-white tracking-tight">Tabel Periodik Interaktif</h1>
+            <p class="text-gray-400 mt-2 text-sm md:text-base">Eksplorasi unsur, reaksi kimia, dan peluruhan inti.</p>
+        </header>
+
+        <!-- Kontrol Utama -->
+        <div class="bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 mb-6 space-y-4">
+            <!-- Pencarian -->
+            <div class="relative max-w-lg mx-auto">
+                <input type="text" id="search-input" placeholder="Cari unsur (nama, simbol, nomor)..." class="w-full bg-gray-700 text-white placeholder-gray-400 rounded-lg py-2.5 pl-4 pr-10 border border-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            </div>
+            
+            <!-- Kontrol Suhu -->
+            <div class="max-w-lg mx-auto p-4 bg-gray-900/50 rounded-lg">
+                <label for="temp-slider" class="block text-center text-sm font-medium text-gray-300 mb-2">Kontrol Suhu</label>
+                <div class="flex items-center gap-4">
+                    <input id="temp-slider" type="range" min="0" max="6000" value="298" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                    <span id="temp-display" class="font-semibold text-lg text-white w-24 text-center">298 K</span>
+                </div>
+            </div>
+
+            <!-- Filter Tipe & Legenda -->
+            <div class="border-t border-gray-700 pt-4 space-y-4">
+                <div id="type-filter-controls" class="flex flex-wrap justify-center gap-2"></div>
+                <div id="legend-display" class="flex flex-wrap justify-center gap-x-4 gap-y-2 text-xs"></div>
+            </div>
+        </div>
+
+        <!-- Tampilan Tabel Periodik -->
+        <main class="mb-6 overflow-x-auto no-scrollbar p-2 bg-gray-900/30 rounded-lg">
+            <!-- PERBAIKAN: Diberi min-width agar sel tidak terlalu gepeng di layar sempit -->
+            <div id="periodic-table-grid" class="min-w-[800px]"></div>
+        </main>
+        
+        <!-- Layout utama diubah menjadi grid, kolom akan bertambah seiring lebar layar -->
+        <!-- PERBAIKAN: Gap diperkecil di mobile -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+            <!-- Pojok Jembatan Keledai -->
+            <section class="bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 sm:p-6">
+                <h2 class="text-xl sm:text-2xl font-bold text-white mb-4 text-center">🧠 Pojok Jembatan Keledai 🧠</h2>
+                <p class="text-center text-gray-400 text-sm mb-4">Klik golongan untuk melihat mnemonik.</p>
+                <div id="mnemonic-buttons" class="flex flex-wrap justify-center gap-2 mb-4"></div>
+                <div id="mnemonic-display" class="min-h-[6rem] bg-gray-800 rounded-lg p-4 flex flex-col items-center justify-center text-center transition-all">
+                    <p class="text-gray-500">Pilih salah satu golongan di atas.</p>
+                </div>
+            </section>
+
+            <!-- Reaktor Inti -->
+            <section class="bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 sm:p-6">
+                <h2 class="text-xl sm:text-2xl font-bold text-white mb-4 text-center">☢️ Reaktor Inti ☢️</h2>
+                <div id="isotope-selector" class="flex flex-wrap justify-center gap-2 mb-4"></div>
+                <div class="flex flex-col items-center gap-4">
+                    <div id="decay-display" class="w-full min-h-[8rem] bg-gray-800 rounded-lg p-4 flex items-center justify-center gap-4 relative">
+                        <p id="decay-placeholder" class="text-gray-500 text-center text-sm">Pilih isotop untuk memulai.</p>
+                    </div>
+                    <button id="start-decay-btn" class="px-6 py-2 bg-pink-600 hover:bg-pink-700 text-white font-semibold rounded-lg transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed" disabled>Mulai Meluruh</button>
+                    <div id="decay-info" class="text-center text-sm text-gray-400 min-h-[3rem]"></div>
+                </div>
+            </section>
+            
+            <!-- Laboratorium Alkimia -->
+            <section class="lg:col-span-2 bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 sm:p-6">
+                <h2 class="text-xl sm:text-2xl font-bold text-white mb-4 text-center">🌡️ Lab Al-Kimia 🌡️</h2>
+                <div class="grid md:grid-cols-3 gap-4 items-center">
+                    <div id="reaction-canvas" class="md:col-span-2 min-h-[10rem] bg-gray-800 rounded-lg border-2 border-dashed border-gray-600 flex flex-wrap items-center justify-center p-4 gap-2 transition-colors duration-300">
+                        <span id="canvas-placeholder" class="text-gray-500 text-center">Seret & lepaskan unsur ke sini...</span>
+                    </div>
+                    <div class="flex flex-col gap-4 text-center">
+                        <div id="molecule-result" class="min-h-[4rem] flex flex-col items-center justify-center p-2 text-white bg-gray-900/50 rounded-lg">
+                            <span class="text-gray-400">Hasil reaksi.</span>
+                        </div>
+                        <button id="reset-canvas-btn" class="w-full px-6 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors">Reset</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Modal untuk Detail Unsur -->
+    <div id="element-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50 hidden">
+        <div id="modal-content" class="bg-gray-800 text-white rounded-lg shadow-xl p-6 w-full max-w-md relative transform transition-all scale-95 opacity-0">
+            <button id="close-modal-btn" class="absolute top-3 right-3 text-gray-400 hover:text-white text-2xl">&times;</button>
+            <div id="modal-body" class="text-center"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- DATA & KONFIGURASI (Sama seperti sebelumnya) ---
+        const elements = [ { number: 1, symbol: 'H', name: 'Hidrogen', category: 'nonmetal', row: 1, col: 1, mass: '1.008', phase: 'Gas', electron_configuration: '1s¹', electronegativity_pauling: 2.20, melting_point: 13.99, boiling_point: 20.271 }, { number: 2, symbol: 'He', name: 'Helium', category: 'noble', row: 1, col: 18, mass: '4.003', phase: 'Gas', electron_configuration: '1s²', electronegativity_pauling: null, melting_point: null, boiling_point: 4.224 }, { number: 3, symbol: 'Li', name: 'Litium', category: 'alkali', row: 2, col: 1, mass: '6.94', phase: 'Solid', electron_configuration: '[He] 2s¹', electronegativity_pauling: 0.98, melting_point: 453.65, boiling_point: 1615 }, { number: 4, symbol: 'Be', name: 'Berilium', category: 'alkaline', row: 2, col: 2, mass: '9.012', phase: 'Solid', electron_configuration: '[He] 2s²', electronegativity_pauling: 1.57, melting_point: 1560, boiling_point: 2742 }, { number: 5, symbol: 'B', name: 'Boron', category: 'metalloid', row: 2, col: 13, mass: '10.81', phase: 'Solid', electron_configuration: '[He] 2s² 2p¹', electronegativity_pauling: 2.04, melting_point: 2349, boiling_point: 4200 }, { number: 6, symbol: 'C', name: 'Karbon', category: 'nonmetal', row: 2, col: 14, mass: '12.011', phase: 'Solid', electron_configuration: '[He] 2s² 2p²', electronegativity_pauling: 2.55, melting_point: 3800, boiling_point: 5100 }, { number: 7, symbol: 'N', name: 'Nitrogen', category: 'nonmetal', row: 2, col: 15, mass: '14.007', phase: 'Gas', electron_configuration: '[He] 2s² 2p³', electronegativity_pauling: 3.04, melting_point: 63.15, boiling_point: 77.355 }, { number: 8, symbol: 'O', name: 'Oksigen', category: 'nonmetal', row: 2, col: 16, mass: '15.999', phase: 'Gas', electron_configuration: '[He] 2s² 2p⁴', electronegativity_pauling: 3.44, melting_point: 54.36, boiling_point: 90.188 }, { number: 9, symbol: 'F', name: 'Fluorin', category: 'halogen', row: 2, col: 17, mass: '18.998', phase: 'Gas', electron_configuration: '[He] 2s² 2p⁵', electronegativity_pauling: 3.98, melting_point: 53.53, boiling_point: 85.03 }, { number: 10, symbol: 'Ne', name: 'Neon', category: 'noble', row: 2, col: 18, mass: '20.18', phase: 'Gas', electron_configuration: '[He] 2s² 2p⁶', electronegativity_pauling: null, melting_point: 24.56, boiling_point: 27.07 }, { number: 11, symbol: 'Na', name: 'Natrium', category: 'alkali', row: 3, col: 1, mass: '22.99', phase: 'Solid', electron_configuration: '[Ne] 3s¹', electronegativity_pauling: 0.93, melting_point: 370.944, boiling_point: 1156.09 }, { number: 12, symbol: 'Mg', name: 'Magnesium', category: 'alkaline', row: 3, col: 2, mass: '24.305', phase: 'Solid', electron_configuration: '[Ne] 3s²', electronegativity_pauling: 1.31, melting_point: 923, boiling_point: 1363 }, { number: 13, symbol: 'Al', name: 'Aluminium', category: 'post-transition', row: 3, col: 13, mass: '26.982', phase: 'Solid', electron_configuration: '[Ne] 3s² 3p¹', electronegativity_pauling: 1.61, melting_point: 933.47, boiling_point: 2792 }, { number: 14, symbol: 'Si', name: 'Silikon', category: 'metalloid', row: 3, col: 14, mass: '28.085', phase: 'Solid', electron_configuration: '[Ne] 3s² 3p²', electronegativity_pauling: 1.90, melting_point: 1687, boiling_point: 3538 }, { number: 15, symbol: 'P', name: 'Fosfor', category: 'nonmetal', row: 3, col: 15, mass: '30.974', phase: 'Solid', electron_configuration: '[Ne] 3s² 3p³', electronegativity_pauling: 2.19, melting_point: 317.3, boiling_point: 553.7 }, { number: 16, symbol: 'S', name: 'Belerang', category: 'nonmetal', row: 3, col: 16, mass: '32.06', phase: 'Solid', electron_configuration: '[Ne] 3s² 3p⁴', electronegativity_pauling: 2.58, melting_point: 388.36, boiling_point: 717.8 }, { number: 17, symbol: 'Cl', name: 'Klorin', category: 'halogen', row: 3, col: 17, mass: '35.45', phase: 'Gas', electron_configuration: '[Ne] 3s² 3p⁵', electronegativity_pauling: 3.16, melting_point: 171.6, boiling_point: 239.11 }, { number: 18, symbol: 'Ar', name: 'Argon', category: 'noble', row: 3, col: 18, mass: '39.948', phase: 'Gas', electron_configuration: '[Ne] 3s² 3p⁶', electronegativity_pauling: null, melting_point: 83.81, boiling_point: 87.302 }, { number: 19, symbol: 'K', name: 'Kalium', category: 'alkali', row: 4, col: 1, mass: '39.098', phase: 'Solid', electron_configuration: '[Ar] 4s¹', electronegativity_pauling: 0.82, melting_point: 336.53, boiling_point: 1032 }, { number: 20, symbol: 'Ca', name: 'Kalsium', category: 'alkaline', row: 4, col: 2, mass: '40.078', phase: 'Solid', electron_configuration: '[Ar] 4s²', electronegativity_pauling: 1.00, melting_point: 1115, boiling_point: 1757 }, { number: 21, symbol: 'Sc', name: 'Skandium', category: 'transition', row: 4, col: 3, mass: '44.956', phase: 'Solid', electron_configuration: '[Ar] 3d¹ 4s²', electronegativity_pauling: 1.36, melting_point: 1814, boiling_point: 3109 }, { number: 22, symbol: 'Ti', name: 'Titanium', category: 'transition', row: 4, col: 4, mass: '47.867', phase: 'Solid', electron_configuration: '[Ar] 3d² 4s²', electronegativity_pauling: 1.54, melting_point: 1941, boiling_point: 3560 }, { number: 23, symbol: 'V', name: 'Vanadium', category: 'transition', row: 4, col: 5, mass: '50.942', phase: 'Solid', electron_configuration: '[Ar] 3d³ 4s²', electronegativity_pauling: 1.63, melting_point: 2183, boiling_point: 3680 }, { number: 24, symbol: 'Cr', name: 'Kromium', category: 'transition', row: 4, col: 6, mass: '51.996', phase: 'Solid', electron_configuration: '[Ar] 3d⁵ 4s¹', electronegativity_pauling: 1.66, melting_point: 2180, boiling_point: 2944 }, { number: 25, symbol: 'Mn', name: 'Mangan', category: 'transition', row: 4, col: 7, mass: '54.938', phase: 'Solid', electron_configuration: '[Ar] 3d⁵ 4s²', electronegativity_pauling: 1.55, melting_point: 1519, boiling_point: 2334 }, { number: 26, symbol: 'Fe', name: 'Besi', category: 'transition', row: 4, col: 8, mass: '55.845', phase: 'Solid', electron_configuration: '[Ar] 3d⁶ 4s²', electronegativity_pauling: 1.83, melting_point: 1811, boiling_point: 3134 }, { number: 27, symbol: 'Co', name: 'Kobalt', category: 'transition', row: 4, col: 9, mass: '58.933', phase: 'Solid', electron_configuration: '[Ar] 3d⁷ 4s²', electronegativity_pauling: 1.88, melting_point: 1768, boiling_point: 3200 }, { number: 28, symbol: 'Ni', name: 'Nikel', category: 'transition', row: 4, col: 10, mass: '58.693', phase: 'Solid', electron_configuration: '[Ar] 3d⁸ 4s²', electronegativity_pauling: 1.91, melting_point: 1728, boiling_point: 3186 }, { number: 29, symbol: 'Cu', name: 'Tembaga', category: 'transition', row: 4, col: 11, mass: '63.546', phase: 'Solid', electron_configuration: '[Ar] 3d¹⁰ 4s¹', electronegativity_pauling: 1.90, melting_point: 1357.77, boiling_point: 2835 }, { number: 30, symbol: 'Zn', name: 'Seng', category: 'transition', row: 4, col: 12, mass: '65.38', phase: 'Solid', electron_configuration: '[Ar] 3d¹⁰ 4s²', electronegativity_pauling: 1.65, melting_point: 692.68, boiling_point: 1180 }, { number: 31, symbol: 'Ga', name: 'Galium', category: 'post-transition', row: 4, col: 13, mass: '69.723', phase: 'Solid', electron_configuration: '[Ar] 3d¹⁰ 4s² 4p¹', electronegativity_pauling: 1.81, melting_point: 302.9146, boiling_point: 2673 }, { number: 32, symbol: 'Ge', name: 'Germanium', category: 'metalloid', row: 4, col: 14, mass: '72.63', phase: 'Solid', electron_configuration: '[Ar] 3d¹⁰ 4s² 4p²', electronegativity_pauling: 2.01, melting_point: 1211.4, boiling_point: 3106 }, { number: 33, symbol: 'As', name: 'Arsen', category: 'metalloid', row: 4, col: 15, mass: '74.922', phase: 'Solid', electron_configuration: '[Ar] 3d¹⁰ 4s² 4p³', electronegativity_pauling: 2.18, melting_point: 1090, boiling_point: 887 }, { number: 34, symbol: 'Se', name: 'Selenium', category: 'nonmetal', row: 4, col: 16, mass: '78.96', phase: 'Solid', electron_configuration: '[Ar] 3d¹⁰ 4s² 4p⁴', electronegativity_pauling: 2.55, melting_point: 494, boiling_point: 958 }, { number: 35, symbol: 'Br', name: 'Bromin', category: 'halogen', row: 4, col: 17, mass: '79.904', phase: 'Liquid', electron_configuration: '[Ar] 3d¹⁰ 4s² 4p⁵', electronegativity_pauling: 2.96, melting_point: 265.8, boiling_point: 332 }, { number: 36, symbol: 'Kr', name: 'Kripton', category: 'noble', row: 4, col: 18, mass: '83.798', phase: 'Gas', electron_configuration: '[Ar] 3d¹⁰ 4s² 4p⁶', electronegativity_pauling: 3.00, melting_point: 115.78, boiling_point: 119.93 }, { number: 37, symbol: 'Rb', name: 'Rubidium', category: 'alkali', row: 5, col: 1, mass: '85.468', phase: 'Solid', electron_configuration: '[Kr] 5s¹', electronegativity_pauling: 0.82, melting_point: 312.46, boiling_point: 961 }, { number: 38, symbol: 'Sr', name: 'Stronsium', category: 'alkaline', row: 5, col: 2, mass: '87.62', phase: 'Solid', electron_configuration: '[Kr] 5s²', electronegativity_pauling: 0.95, melting_point: 1050, boiling_point: 1655 }, { number: 39, symbol: 'Y', name: 'Itrium', category: 'transition', row: 5, col: 3, mass: '88.906', phase: 'Solid', electron_configuration: '[Kr] 4d¹ 5s²', electronegativity_pauling: 1.22, melting_point: 1799, boiling_point: 3609 }, { number: 40, symbol: 'Zr', name: 'Zirkonium', category: 'transition', row: 5, col: 4, mass: '91.224', phase: 'Solid', electron_configuration: '[Kr] 4d² 5s²', electronegativity_pauling: 1.33, melting_point: 2128, boiling_point: 4682 }, { number: 41, symbol: 'Nb', name: 'Niobium', category: 'transition', row: 5, col: 5, mass: '92.906', phase: 'Solid', electron_configuration: '[Kr] 4d⁴ 5s¹', electronegativity_pauling: 1.6, melting_point: 2750, boiling_point: 5017 }, { number: 42, symbol: 'Mo', name: 'Molibdenum', category: 'transition', row: 5, col: 6, mass: '95.96', phase: 'Solid', electron_configuration: '[Kr] 4d⁵ 5s¹', electronegativity_pauling: 2.16, melting_point: 2896, boiling_point: 4912 }, { number: 43, symbol: 'Tc', name: 'Teknesium', category: 'transition', row: 5, col: 7, mass: '(98)', phase: 'Solid', electron_configuration: '[Kr] 4d⁵ 5s²', electronegativity_pauling: 1.9, melting_point: 2430, boiling_point: 4538 }, { number: 44, symbol: 'Ru', name: 'Rutenium', category: 'transition', row: 5, col: 8, mass: '101.07', phase: 'Solid', electron_configuration: '[Kr] 4d⁷ 5s¹', electronegativity_pauling: 2.2, melting_point: 2607, boiling_point: 4423 }, { number: 45, symbol: 'Rh', name: 'Rodium', category: 'transition', row: 5, col: 9, mass: '102.906', phase: 'Solid', electron_configuration: '[Kr] 4d⁸ 5s¹', electronegativity_pauling: 2.28, melting_point: 2237, boiling_point: 3968 }, { number: 46, symbol: 'Pd', name: 'Paladium', category: 'transition', row: 5, col: 10, mass: '106.42', phase: 'Solid', electron_configuration: '[Kr] 4d¹⁰', electronegativity_pauling: 2.20, melting_point: 1828.05, boiling_point: 3236 }, { number: 47, symbol: 'Ag', name: 'Perak', category: 'transition', row: 5, col: 11, mass: '107.868', phase: 'Solid', electron_configuration: '[Kr] 4d¹⁰ 5s¹', electronegativity_pauling: 1.93, melting_point: 1234.93, boiling_point: 2435 }, { number: 48, symbol: 'Cd', name: 'Kadmium', category: 'transition', row: 5, col: 12, mass: '112.411', phase: 'Solid', electron_configuration: '[Kr] 4d¹⁰ 5s²', electronegativity_pauling: 1.69, melting_point: 594.22, boiling_point: 1040 }, { number: 49, symbol: 'In', name: 'Indium', category: 'post-transition', row: 5, col: 13, mass: '114.818', phase: 'Solid', electron_configuration: '[Kr] 4d¹⁰ 5s² 5p¹', electronegativity_pauling: 1.78, melting_point: 429.75, boiling_point: 2345 }, { number: 50, symbol: 'Sn', name: 'Timah', category: 'post-transition', row: 5, col: 14, mass: '118.71', phase: 'Solid', electron_configuration: '[Kr] 4d¹⁰ 5s² 5p²', electronegativity_pauling: 1.96, melting_point: 505.08, boiling_point: 2875 }, { number: 51, symbol: 'Sb', name: 'Antimon', category: 'metalloid', row: 5, col: 15, mass: '121.76', phase: 'Solid', electron_configuration: '[Kr] 4d¹⁰ 5s² 5p³', electronegativity_pauling: 2.05, melting_point: 903.78, boiling_point: 1860 }, { number: 52, symbol: 'Te', name: 'Telurium', category: 'metalloid', row: 5, col: 16, mass: '127.6', phase: 'Solid', electron_configuration: '[Kr] 4d¹⁰ 5s² 5p⁴', electronegativity_pauling: 2.1, melting_point: 722.66, boiling_point: 1261 }, { number: 53, symbol: 'I', name: 'Iodin', category: 'halogen', row: 5, col: 17, mass: '126.904', phase: 'Solid', electron_configuration: '[Kr] 4d¹⁰ 5s² 5p⁵', electronegativity_pauling: 2.66, melting_point: 386.85, boiling_point: 457.4 }, { number: 54, symbol: 'Xe', name: 'Xenon', category: 'noble', row: 5, col: 18, mass: '131.293', phase: 'Gas', electron_configuration: '[Kr] 4d¹⁰ 5s² 5p⁶', electronegativity_pauling: 2.6, melting_point: 161.4, boiling_point: 165.051 }, { number: 55, symbol: 'Cs', name: 'Sesium', category: 'alkali', row: 6, col: 1, mass: '132.905', phase: 'Solid', electron_configuration: '[Xe] 6s¹', electronegativity_pauling: 0.79, melting_point: 301.59, boiling_point: 944 }, { number: 56, symbol: 'Ba', name: 'Barium', category: 'alkaline', row: 6, col: 2, mass: '137.327', phase: 'Solid', electron_configuration: '[Xe] 6s²', electronegativity_pauling: 0.89, melting_point: 1000, boiling_point: 2170 }, { number: 57, symbol: 'La', name: 'Lantanum', category: 'lanthanide', row: 8, col: 3, mass: '138.905', phase: 'Solid', electron_configuration: '[Xe] 5d¹ 6s²', electronegativity_pauling: 1.1, melting_point: 1193, boiling_point: 3737 }, { number: 58, symbol: 'Ce', name: 'Serium', category: 'lanthanide', row: 8, col: 4, mass: '140.116', phase: 'Solid', electron_configuration: '[Xe] 4f¹ 5d¹ 6s²', electronegativity_pauling: 1.12, melting_point: 1068, boiling_point: 3716 }, { number: 59, symbol: 'Pr', name: 'Praseodimium', category: 'lanthanide', row: 8, col: 5, mass: '140.908', phase: 'Solid', electron_configuration: '[Xe] 4f³ 6s²', electronegativity_pauling: 1.13, melting_point: 1208, boiling_point: 3793 }, { number: 60, symbol: 'Nd', name: 'Neodimium', category: 'lanthanide', row: 8, col: 6, mass: '144.242', phase: 'Solid', electron_configuration: '[Xe] 4f⁴ 6s²', electronegativity_pauling: 1.14, melting_point: 1297, boiling_point: 3347 }, { number: 61, symbol: 'Pm', name: 'Prometium', category: 'lanthanide', row: 8, col: 7, mass: '(145)', phase: 'Solid', electron_configuration: '[Xe] 4f⁵ 6s²', electronegativity_pauling: 1.13, melting_point: 1315, boiling_point: 3273 }, { number: 62, symbol: 'Sm', name: 'Samarium', category: 'lanthanide', row: 8, col: 8, mass: '150.36', phase: 'Solid', electron_configuration: '[Xe] 4f⁶ 6s²', electronegativity_pauling: 1.17, melting_point: 1345, boiling_point: 2067 }, { number: 63, symbol: 'Eu', name: 'Europium', category: 'lanthanide', row: 8, col: 9, mass: '151.964', phase: 'Solid', electron_configuration: '[Xe] 4f⁷ 6s²', electronegativity_pauling: 1.2, melting_point: 1099, boiling_point: 1802 }, { number: 64, symbol: 'Gd', name: 'Gadolinium', category: 'lanthanide', row: 8, col: 10, mass: '157.25', phase: 'Solid', electron_configuration: '[Xe] 4f⁷ 5d¹ 6s²', electronegativity_pauling: 1.2, melting_point: 1585, boiling_point: 3546 }, { number: 65, symbol: 'Tb', name: 'Terbium', category: 'lanthanide', row: 8, col: 11, mass: '158.925', phase: 'Solid', electron_configuration: '[Xe] 4f⁹ 6s²', electronegativity_pauling: 1.1, melting_point: 1629, boiling_point: 3503 }, { number: 66, symbol: 'Dy', name: 'Disprosium', category: 'lanthanide', row: 8, col: 12, mass: '162.5', phase: 'Solid', electron_configuration: '[Xe] 4f¹⁰ 6s²', electronegativity_pauling: 1.22, melting_point: 1680, boiling_point: 2840 }, { number: 67, symbol: 'Ho', name: 'Holmium', category: 'lanthanide', row: 8, col: 13, mass: '164.93', phase: 'Solid', electron_configuration: '[Xe] 4f¹¹ 6s²', electronegativity_pauling: 1.23, melting_point: 1734, boiling_point: 2993 }, { number: 68, symbol: 'Er', name: 'Erbium', category: 'lanthanide', row: 8, col: 14, mass: '167.259', phase: 'Solid', electron_configuration: '[Xe] 4f¹² 6s²', electronegativity_pauling: 1.24, melting_point: 1802, boiling_point: 3141 }, { number: 69, symbol: 'Tm', name: 'Tulium', category: 'lanthanide', row: 8, col: 15, mass: '168.934', phase: 'Solid', electron_configuration: '[Xe] 4f¹³ 6s²', electronegativity_pauling: 1.25, melting_point: 1818, boiling_point: 2223 }, { number: 70, symbol: 'Yb', name: 'Iterbium', category: 'lanthanide', row: 8, col: 16, mass: '173.054', phase: 'Solid', electron_configuration: '[Xe] 4f¹⁴ 6s²', electronegativity_pauling: 1.1, melting_point: 1097, boiling_point: 1469 }, { number: 71, symbol: 'Lu', name: 'Lutetium', category: 'lanthanide', row: 8, col: 17, mass: '174.967', phase: 'Solid', electron_configuration: '[Xe] 4f¹⁴ 5d¹ 6s²', electronegativity_pauling: 1.27, melting_point: 1925, boiling_point: 3675 }, { number: 72, symbol: 'Hf', name: 'Hafnium', category: 'transition', row: 6, col: 4, mass: '178.49', phase: 'Solid', electron_configuration: '[Xe] 4f¹⁴ 5d² 6s²', electronegativity_pauling: 1.3, melting_point: 2506, boiling_point: 4876 }, { number: 73, symbol: 'Ta', name: 'Tantalum', category: 'transition', row: 6, col: 5, mass: '180.948', phase: 'Solid', electron_configuration: '[Xe] 4f¹⁴ 5d³ 6s²', electronegativity_pauling: 1.5, melting_point: 3290, boiling_point: 5731 }, { number: 74, symbol: 'W', name: 'Tungsten', category: 'transition', row: 6, col: 6, mass: '183.84', phase: 'Solid', electron_configuration: '[Xe] 4f¹⁴ 5d⁴ 6s²', electronegativity_pauling: 2.36, melting_point: 3695, boiling_point: 5828 }, { number: 75, symbol: 'Re', name: 'Renium', category: 'transition', row: 6, col: 7, mass: '186.207', phase: 'Solid', electron_configuration: '[Xe] 4f¹⁴ 5d⁵ 6s²', electronegativity_pauling: 1.9, melting_point: 3459, boiling_point: 5869 }, { number: 76, symbol: 'Os', name: 'Osmium', category: 'transition', row: 6, col: 8, mass: '190.23', phase: 'Solid', electron_configuration: '[Xe] 4f¹⁴ 5d⁶ 6s²', electronegativity_pauling: 2.2, melting_point: 3306, boiling_point: 5285 }, { number: 77, symbol: 'Ir', name: 'Iridium', category: 'transition', row: 6, col: 9, mass: '192.217', phase: 'Solid', electron_configuration: '[Xe] 4f¹⁴ 5d⁷ 6s²', electronegativity_pauling: 2.20, melting_point: 2719, boiling_point: 4701 }, { number: 78, symbol: 'Pt', name: 'Platinum', category: 'transition', row: 6, col: 10, mass: '195.084', phase: 'Solid', electron_configuration: '[Xe] 4f¹⁴ 5d⁹ 6s¹', electronegativity_pauling: 2.28, melting_point: 2041.4, boiling_point: 4098 }, { number: 79, symbol: 'Au', name: 'Emas', category: 'transition', row: 6, col: 11, mass: '196.967', phase: 'Solid', electron_configuration: '[Xe] 4f¹⁴ 5d¹⁰ 6s¹', electronegativity_pauling: 2.54, melting_point: 1337.33, boiling_point: 3129 }, { number: 80, symbol: 'Hg', name: 'Raksa', category: 'post-transition', row: 6, col: 12, mass: '200.59', phase: 'Liquid', electron_configuration: '[Xe] 4f¹⁴ 5d¹⁰ 6s²', electronegativity_pauling: 2.00, melting_point: 234.321, boiling_point: 629.88 }, { number: 81, symbol: 'Tl', name: 'Talium', category: 'post-transition', row: 6, col: 13, mass: '204.383', phase: 'Solid', electron_configuration: '[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p¹', electronegativity_pauling: 1.62, melting_point: 577, boiling_point: 1746 }, { number: 82, symbol: 'Pb', name: 'Timbal', category: 'post-transition', row: 6, col: 14, mass: '207.2', phase: 'Solid', electron_configuration: '[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p²', electronegativity_pauling: 1.87, melting_point: 600.61, boiling_point: 2022 }, { number: 83, symbol: 'Bi', name: 'Bismut', category: 'post-transition', row: 6, col: 15, mass: '208.98', phase: 'Solid', electron_configuration: '[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p³', electronegativity_pauling: 2.02, melting_point: 544.7, boiling_point: 1837 }, { number: 84, symbol: 'Po', name: 'Polonium', category: 'metalloid', row: 6, col: 16, mass: '(209)', phase: 'Solid', electron_configuration: '[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p⁴', electronegativity_pauling: 2.0, melting_point: 527, boiling_point: 1235 }, { number: 85, symbol: 'At', name: 'Astatin', category: 'halogen', row: 6, col: 17, mass: '(210)', phase: 'Solid', electron_configuration: '[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p⁵', electronegativity_pauling: 2.2, melting_point: 575, boiling_point: 610 }, { number: 86, symbol: 'Rn', name: 'Radon', category: 'noble', row: 6, col: 18, mass: '(222)', phase: 'Gas', electron_configuration: '[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p⁶', electronegativity_pauling: 2.2, melting_point: 202, boiling_point: 211.5 }, { number: 87, symbol: 'Fr', name: 'Fransium', category: 'alkali', row: 7, col: 1, mass: '(223)', phase: 'Solid', electron_configuration: '[Rn] 7s¹', electronegativity_pauling: 0.7, melting_point: 300, boiling_point: 950 }, { number: 88, symbol: 'Ra', name: 'Radium', category: 'alkaline', row: 7, col: 2, mass: '(226)', phase: 'Solid', electron_configuration: '[Rn] 7s²', electronegativity_pauling: 0.9, melting_point: 973, boiling_point: 2010 }, { number: 89, symbol: 'Ac', name: 'Aktinium', category: 'actinide', row: 9, col: 3, mass: '(227)', phase: 'Solid', electron_configuration: '[Rn] 6d¹ 7s²', electronegativity_pauling: 1.1, melting_point: 1323, boiling_point: 3471 }, { number: 90, symbol: 'Th', name: 'Torium', category: 'actinide', row: 9, col: 4, mass: '232.038', phase: 'Solid', electron_configuration: '[Rn] 6d² 7s²', electronegativity_pauling: 1.3, melting_point: 2023, boiling_point: 5061 }, { number: 91, symbol: 'Pa', name: 'Protaktinium', category: 'actinide', row: 9, col: 5, mass: '231.036', phase: 'Solid', electron_configuration: '[Rn] 5f² 6d¹ 7s²', electronegativity_pauling: 1.5, melting_point: 1841, boiling_point: 4300 }, { number: 92, symbol: 'U', name: 'Uranium', category: 'actinide', row: 9, col: 6, mass: '238.029', phase: 'Solid', electron_configuration: '[Rn] 5f³ 6d¹ 7s²', electronegativity_pauling: 1.38, melting_point: 1405.3, boiling_point: 4404 }, { number: 93, symbol: 'Np', name: 'Neptunium', category: 'actinide', row: 9, col: 7, mass: '(237)', phase: 'Solid', electron_configuration: '[Rn] 5f⁴ 6d¹ 7s²', electronegativity_pauling: 1.36, melting_point: 917, boiling_point: 4273 }, { number: 94, symbol: 'Pu', name: 'Plutonium', category: 'actinide', row: 9, col: 8, mass: '(244)', phase: 'Solid', electron_configuration: '[Rn] 5f⁶ 7s²', electronegativity_pauling: 1.28, melting_point: 912.5, boiling_point: 3501 }, { number: 95, symbol: 'Am', name: 'Amerisium', category: 'actinide', row: 9, col: 9, mass: '(243)', phase: 'Solid', electron_configuration: '[Rn] 5f⁷ 7s²', electronegativity_pauling: 1.13, melting_point: 1449, boiling_point: 2284 }, { number: 96, symbol: 'Cm', name: 'Kurium', category: 'actinide', row: 9, col: 10, mass: '(247)', phase: 'Solid', electron_configuration: '[Rn] 5f⁷ 6d¹ 7s²', electronegativity_pauling: 1.28, melting_point: 1613, boiling_point: 3383 }, { number: 97, symbol: 'Bk', name: 'Berkelium', category: 'actinide', row: 9, col: 11, mass: '(247)', phase: 'Solid', electron_configuration: '[Rn] 5f⁹ 7s²', electronegativity_pauling: 1.3, melting_point: 1259, boiling_point: 2900 }, { number: 98, symbol: 'Cf', name: 'Kalifornium', category: 'actinide', row: 9, col: 12, mass: '(251)', phase: 'Solid', electron_configuration: '[Rn] 5f¹⁰ 7s²', electronegativity_pauling: 1.3, melting_point: 1173, boiling_point: 1743 }, { number: 99, symbol: 'Es', name: 'Einsteinium', category: 'actinide', row: 9, col: 13, mass: '(252)', phase: 'Solid', electron_configuration: '[Rn] 5f¹¹ 7s²', electronegativity_pauling: 1.3, melting_point: 1133, boiling_point: 1269 }, { number: 100, symbol: 'Fm', name: 'Fermium', category: 'actinide', row: 9, col: 14, mass: '(257)', phase: 'Solid', electron_configuration: '[Rn] 5f¹² 7s²', electronegativity_pauling: 1.3, melting_point: 1800, boiling_point: null }, { number: 101, symbol: 'Md', name: 'Mendelevium', category: 'actinide', row: 9, col: 15, mass: '(258)', phase: 'Solid', electron_configuration: '[Rn] 5f¹³ 7s²', electronegativity_pauling: 1.3, melting_point: 1100, boiling_point: null }, { number: 102, symbol: 'No', name: 'Nobelium', category: 'actinide', row: 9, col: 16, mass: '(259)', phase: 'Solid', electron_configuration: '[Rn] 5f¹⁴ 7s²', electronegativity_pauling: 1.3, melting_point: 1100, boiling_point: null }, { number: 103, symbol: 'Lr', name: 'Lawrensium', category: 'actinide', row: 9, col: 17, mass: '(262)', phase: 'Solid', electron_configuration: '[Rn] 5f¹⁴ 7s² 7p¹', electronegativity_pauling: 1.3, melting_point: 1900, boiling_point: null }, { number: 104, symbol: 'Rf', name: 'Ruterfordium', category: 'transition', row: 7, col: 4, mass: '(267)', phase: 'Solid', electron_configuration: '[Rn] 5f¹⁴ 6d² 7s²', electronegativity_pauling: null, melting_point: 2400, boiling_point: 5800 }, { number: 105, symbol: 'Db', name: 'Dubnium', category: 'transition', row: 7, col: 5, mass: '(268)', phase: 'Solid', electron_configuration: '[Rn] 5f¹⁴ 6d³ 7s²', electronegativity_pauling: null, melting_point: null, boiling_point: null }, { number: 106, symbol: 'Sg', name: 'Seaborgium', category: 'transition', row: 7, col: 6, mass: '(271)', phase: 'Solid', electron_configuration: '[Rn] 5f¹⁴ 6d⁴ 7s²', electronegativity_pauling: null, melting_point: null, boiling_point: null }, { number: 107, symbol: 'Bh', name: 'Bohrium', category: 'transition', row: 7, col: 7, mass: '(272)', phase: 'Solid', electron_configuration: '[Rn] 5f¹⁴ 6d⁵ 7s²', electronegativity_pauling: null, melting_point: null, boiling_point: null }, { number: 108, symbol: 'Hs', name: 'Hasium', category: 'transition', row: 7, col: 8, mass: '(270)', phase: 'Solid', electron_configuration: '[Rn] 5f¹⁴ 6d⁶ 7s²', electronegativity_pauling: null, melting_point: null, boiling_point: null }, { number: 109, symbol: 'Mt', name: 'Meitnerium', category: 'unknown', row: 7, col: 9, mass: '(276)', phase: 'Solid', electron_configuration: '[Rn] 5f¹⁴ 6d⁷ 7s²', electronegativity_pauling: null, melting_point: null, boiling_point: null }, { number: 110, symbol: 'Ds', name: 'Darmstadtium', category: 'unknown', row: 7, col: 10, mass: '(281)', phase: 'Solid', electron_configuration: '[Rn] 5f¹⁴ 6d⁸ 7s²', electronegativity_pauling: null, melting_point: null, boiling_point: null }, { number: 111, symbol: 'Rg', name: 'Roentgenium', category: 'unknown', row: 7, col: 11, mass: '(280)', phase: 'Solid', electron_configuration: '[Rn] 5f¹⁴ 6d⁹ 7s²', electronegativity_pauling: null, melting_point: null, boiling_point: null }, { number: 112, symbol: 'Cn', name: 'Kopernisium', category: 'transition', row: 7, col: 12, mass: '(285)', phase: 'Gas', electron_configuration: '[Rn] 5f¹⁴ 6d¹⁰ 7s²', electronegativity_pauling: null, melting_point: null, boiling_point: 357 }, { number: 113, symbol: 'Nh', name: 'Nihonium', category: 'unknown', row: 7, col: 13, mass: '(286)', phase: 'Solid', electron_configuration: '[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p¹', electronegativity_pauling: null, melting_point: 700, boiling_point: 1400 }, { number: 114, symbol: 'Fl', name: 'Flerovium', category: 'post-transition', row: 7, col: 14, mass: '(289)', phase: 'Solid', electron_configuration: '[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p²', electronegativity_pauling: null, melting_point: null, boiling_point: 210 }, { number: 115, symbol: 'Mc', name: 'Moskovium', category: 'unknown', row: 7, col: 15, mass: '(290)', phase: 'Solid', electron_configuration: '[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p³', electronegativity_pauling: null, melting_point: 700, boiling_point: 1400 }, { number: 116, symbol: 'Lv', name: 'Livermorium', category: 'unknown', row: 7, col: 16, mass: '(293)', phase: 'Solid', electron_configuration: '[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p⁴', electronegativity_pauling: null, melting_point: 700, boiling_point: 1100 }, { number: 117, symbol: 'Ts', name: 'Tenesin', category: 'unknown', row: 7, col: 17, mass: '(294)', phase: 'Solid', electron_configuration: '[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p⁵', electronegativity_pauling: null, melting_point: 700, boiling_point: 883 }, { number: 118, symbol: 'Og', name: 'Oganeson', category: 'unknown', row: 7, col: 18, mass: '(294)', phase: 'Gas', electron_configuration: '[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p⁶', electronegativity_pauling: null, melting_point: null, boiling_point: 350 }, ];
+        const categoryClasses = { 'alkali': { bg: 'bg-red-700', text: 'text-red-100', name: 'Logam Alkali' }, 'alkaline': { bg: 'bg-orange-600', text: 'text-orange-100', name: 'Alkali Tanah' }, 'transition': { bg: 'bg-yellow-500', text: 'text-yellow-900', name: 'Logam Transisi' }, 'post-transition': { bg: 'bg-green-600', text: 'text-green-100', name: 'Pasca-Transisi' }, 'lanthanide': { bg: 'bg-rose-800', text: 'text-rose-100', name: 'Lantanida' }, 'actinide': { bg: 'bg-pink-800', text: 'text-pink-100', name: 'Aktinida' }, 'metalloid': { bg: 'bg-teal-600', text: 'text-teal-100', name: 'Metaloid' }, 'nonmetal': { bg: 'bg-sky-500', text: 'text-sky-900', name: 'Nonlogam' }, 'halogen': { bg: 'bg-indigo-500', text: 'text-indigo-100', name: 'Halogen' }, 'noble': { bg: 'bg-purple-600', text: 'text-purple-100', name: 'Gas Mulia' }, 'unknown': { bg: 'bg-gray-600', text: 'text-gray-200', name: 'Tidak Diketahui' }, };
+        const elementTypes = { 'logam': ['alkali', 'alkaline', 'transition', 'post-transition', 'lanthanide', 'actinide'], 'nonlogam': ['nonmetal', 'halogen', 'noble'], 'metaloid': ['metalloid'] };
+        const recipes = { 'H₂O': { name: 'Air', atoms: ['H', 'H', 'O'], emoji: '💧' }, 'CO₂': { name: 'Karbon Dioksida', atoms: ['C', 'O', 'O'], emoji: '💨' }, 'NaCl': { name: 'Garam Dapur', atoms: ['Na', 'Cl'], emoji: '🧂' }, 'O₂': { name: 'Oksigen', atoms: ['O', 'O'], emoji: '😮‍💨' }, 'CH₄': { name: 'Metana', atoms: ['C', 'H', 'H', 'H', 'H'], emoji: '🔥' }, 'NH₃': { name: 'Amonia', atoms: ['N', 'H', 'H', 'H'], emoji: '👃' }, };
+        const mnemonics = { 'IA': { name: 'Golongan IA', sentence: '"Hari Libur Nanti Kita Robohkan Castle Francis"', elements: ['H', 'Li', 'Na', 'K', 'Rb', 'Cs', 'Fr'] }, 'IIA': { name: 'Golongan IIA', sentence: '"Beli Mangga Campur Sirsak Bawa Rambutan"', elements: ['Be', 'Mg', 'Ca', 'Sr', 'Ba', 'Ra'] }, 'IIIA': { name: 'Golongan IIIA', sentence: '"Bang Ali Ganteng Ingin Telanjang"', elements: ['B', 'Al', 'Ga', 'In', 'Tl', 'Nh'] }, 'IVA': { name: 'Golongan IVA', sentence: '"Cewek Sinting Gemar Senang Pub"', elements: ['C', 'Si', 'Ge', 'Sn', 'Pb', 'Fl'] }, 'VA': { name: 'Golongan VA', sentence: '"Nembak Pacar Asal Sabar Bisa"', elements: ['N', 'P', 'As', 'Sb', 'Bi', 'Mc'] }, 'VIA': { name: 'Golongan VIA', sentence: '"Orang Sinting Senang Tengok Ponari"', elements: ['O', 'S', 'Se', 'Te', 'Po', 'Lv'] }, 'VIIA': { name: 'Golongan VIIA', sentence: '"Film Cinema Brazil Itu Asyik"', elements: ['F', 'Cl', 'Br', 'I', 'At', 'Ts'] }, 'VIIIA': { name: 'Golongan VIIIA', sentence: '"Heboh Negara Arab Karena Xenophobic Run"', elements: ['He', 'Ne', 'Ar', 'Kr', 'Xe', 'Rn', 'Og'] } };
+        const radioactiveIsotopes = { 'U-238': { name: 'Uranium-238', parentSymbol: 'U', daughterSymbol: 'Th', decayType: 'α', halfLife: '4.468 miliar tahun', equation: '²³⁸U ⟶ ²³⁴Th + ⁴He' }, 'C-14': { name: 'Karbon-14', parentSymbol: 'C', daughterSymbol: 'N', decayType: 'β', halfLife: '5,730 tahun', equation: '¹⁴C ⟶ ¹⁴N + e⁻' }, 'K-40': { name: 'Kalium-40', parentSymbol: 'K', daughterSymbol: 'Ar', decayType: 'β', halfLife: '1.251 miliar tahun', equation: '⁴⁰K ⟶ ⁴⁰Ar + e⁻' }, 'Ra-226': { name: 'Radium-226', parentSymbol: 'Ra', daughterSymbol: 'Rn', decayType: 'α', halfLife: '1,600 tahun', equation: '²²⁶Ra ⟶ ²²²Rn + ⁴He' } };
+
+        // --- ELEMEN DOM ---
+        const tableGrid = document.getElementById('periodic-table-grid');
+        const typeFilterControls = document.getElementById('type-filter-controls');
+        const legendDisplay = document.getElementById('legend-display');
+        const modal = document.getElementById('element-modal');
+        const modalContent = document.getElementById('modal-content');
+        const modalBody = document.getElementById('modal-body');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const reactionCanvas = document.getElementById('reaction-canvas');
+        const moleculeResult = document.getElementById('molecule-result');
+        const resetCanvasBtn = document.getElementById('reset-canvas-btn');
+        const canvasPlaceholder = document.getElementById('canvas-placeholder');
+        const searchInput = document.getElementById('search-input');
+        const tempSlider = document.getElementById('temp-slider');
+        const tempDisplay = document.getElementById('temp-display');
+        const mnemonicButtons = document.getElementById('mnemonic-buttons');
+        const mnemonicDisplay = document.getElementById('mnemonic-display');
+        const isotopeSelector = document.getElementById('isotope-selector');
+        const decayDisplay = document.getElementById('decay-display');
+        const decayPlaceholder = document.getElementById('decay-placeholder');
+        const startDecayBtn = document.getElementById('start-decay-btn');
+        const decayInfo = document.getElementById('decay-info');
+
+        // --- STATE APLIKASI ---
+        let canvasElements = [];
+        let allElementDivs = [];
+        let activeIsotopeKey = null;
+
+        // --- FUNGSI UTAMA ---
+
+        function getPhase(element, tempK) {
+            if (element.melting_point == null) return 'S';
+            if (tempK < element.melting_point) return 'S';
+            if (element.boiling_point == null) return 'L';
+            if (tempK < element.boiling_point) return 'L';
+            return 'G';
+        }
+
+        function showModal(element) {
+            const classes = categoryClasses[element.category];
+            const currentTemp = tempSlider.value;
+            const currentPhase = getPhase(element, currentTemp);
+            const phaseName = { 'S': 'Padat', 'L': 'Cair', 'G': 'Gas' };
+
+            modalBody.innerHTML = `
+                <div class="flex flex-col items-center">
+                    <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-lg flex flex-col justify-center items-center ${classes.bg} ${classes.text} mb-4 text-xs relative">
+                        <div class="absolute top-1.5 left-2 opacity-80">${element.number}</div>
+                        <div class="text-3xl sm:text-4xl font-bold">${element.symbol}</div>
+                        <div>${element.name}</div>
+                         <div class="absolute top-1.5 right-2 font-bold opacity-70">${currentPhase}</div>
+                    </div>
+                    <h2 class="text-2xl font-bold mb-1">${element.name}</h2>
+                    <p class="text-sm text-gray-400 mb-4">${classes.name}</p>
+                    <div class="text-left w-full text-xs sm:text-sm">
+                        <p class="flex justify-between py-1.5 border-b border-gray-700"><span>Nomor Atom:</span> <span class="font-semibold">${element.number}</span></p>
+                        <p class="flex justify-between py-1.5 border-b border-gray-700"><span>Massa Atom:</span> <span class="font-semibold">${element.mass} u</span></p>
+                        <p class="flex justify-between py-1.5 border-b border-gray-700"><span>Konfigurasi Elektron:</span> <span class="font-semibold break-all">${element.electron_configuration || 'N/A'}</span></p>
+                        <p class="flex justify-between py-1.5 border-b border-gray-700"><span>Elektronegativitas:</span> <span class="font-semibold">${element.electronegativity_pauling || 'N/A'}</span></p>
+                        <p class="flex justify-between py-1.5"><span>Fase pada ${currentTemp} K:</span> <span class="font-semibold">${phaseName[currentPhase]}</span></p>
+                    </div>
+                </div>`;
+            modal.classList.remove('hidden');
+            setTimeout(() => modalContent.classList.remove('scale-95', 'opacity-0'), 10);
+        }
+
+        function closeModal() {
+            modalContent.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => modal.classList.add('hidden'), 200);
+        }
+
+        function renderPeriodicTable() {
+            tableGrid.innerHTML = '';
+            allElementDivs = []; 
+            elements.forEach(el => {
+                const classes = categoryClasses[el.category];
+                const elDiv = document.createElement('div');
+                // PERBAIKAN: Ukuran font dan posisi dioptimalkan lebih lanjut
+                elDiv.className = `p-0.5 sm:p-1 rounded flex flex-col items-center justify-center cursor-pointer transition-all duration-300 ${classes.bg} ${classes.text} relative text-center`;
+                elDiv.style.gridRow = el.row;
+                elDiv.style.gridColumn = el.col;
+                elDiv.dataset.symbol = el.symbol;
+                elDiv.dataset.category = el.category;
+                elDiv.draggable = true;
+                
+                const phase = getPhase(el, 298);
+                elDiv.innerHTML = `
+                    <div class="absolute top-1 left-1 text-[10px] sm:text-[0.6rem] opacity-80">${el.number}</div>
+                    <div class="text-sm sm:text-lg font-bold leading-tight">${el.symbol}</div>
+                    <div class="hidden sm:block text-[10px] leading-tight whitespace-nowrap">${el.name}</div>
+                    <div class="phase-indicator absolute top-1 right-1 text-[10px] sm:text-[0.6rem] font-bold opacity-70">${phase}</div>
+                `;
+                
+                elDiv.addEventListener('click', () => showModal(el));
+                elDiv.addEventListener('dragstart', (e) => { e.dataTransfer.setData('text/plain', el.symbol); e.target.style.opacity = '0.5'; });
+                elDiv.addEventListener('dragend', (e) => e.target.style.opacity = '1');
+                
+                tableGrid.appendChild(elDiv);
+                allElementDivs.push(elDiv);
+            });
+        }
+        
+        function applyFilter(filterType, value) {
+            allElementDivs.forEach(div => {
+                let match = false;
+                if (filterType === 'all') match = true;
+                else if (filterType === 'type') match = elementTypes[value]?.includes(div.dataset.category);
+                else if (filterType === 'category') match = div.dataset.category === value;
+                
+                div.classList.toggle('element-dimmed', !match);
+            });
+            
+            document.querySelectorAll('#type-filter-controls button, #legend-display > div').forEach(el => {
+                el.classList.remove('bg-indigo-600', 'text-white', 'ring-2', 'ring-offset-2', 'ring-offset-gray-900', 'ring-white');
+                if (el.matches('button')) el.classList.add('bg-gray-700', 'text-gray-300');
+            });
+            
+            const activeEl = document.querySelector(`[data-filter-value='${value}'], [data-category-filter='${value}']`);
+            if (activeEl) {
+                if (activeEl.matches('button')) {
+                    activeEl.classList.add('bg-indigo-600', 'text-white');
+                    activeEl.classList.remove('bg-gray-700', 'text-gray-300');
+                } else {
+                    activeEl.classList.add('ring-2', 'ring-offset-2', 'ring-offset-gray-900', 'ring-white');
+                }
+            }
+        }
+        
+        function handleSearch(e) {
+            const searchTerm = e.target.value.toLowerCase().trim();
+            allElementDivs.forEach(div => {
+                div.classList.remove('highlight', 'no-match');
+                if (searchTerm) {
+                    const element = elements.find(el => el.symbol === div.dataset.symbol);
+                    const isMatch = element.name.toLowerCase().includes(searchTerm) || element.symbol.toLowerCase().includes(searchTerm) || element.number.toString() === searchTerm;
+                    div.classList.toggle('highlight', isMatch);
+                    div.classList.toggle('no-match', !isMatch);
+                }
+            });
+        }
+
+        function updateTemperature(e) {
+            const tempK = e.target.value;
+            tempDisplay.textContent = `${tempK} K`;
+            allElementDivs.forEach(div => {
+                const element = elements.find(el => el.symbol === div.dataset.symbol);
+                const phase = getPhase(element, tempK);
+                div.querySelector('.phase-indicator').textContent = phase;
+            });
+        }
+
+        function createControls() {
+            const allBtn = document.createElement('button');
+            allBtn.innerText = 'Semua';
+            allBtn.dataset.filterType = 'all';
+            allBtn.dataset.filterValue = 'all';
+            allBtn.className = 'px-3 py-1.5 text-sm font-medium transition-colors bg-indigo-600 text-white rounded-md';
+            typeFilterControls.appendChild(allBtn);
+            
+            Object.keys(elementTypes).forEach(type => {
+                const btn = document.createElement('button');
+                btn.innerText = type.charAt(0).toUpperCase() + type.slice(1);
+                btn.dataset.filterType = 'type';
+                btn.dataset.filterValue = type;
+                btn.className = 'px-3 py-1.5 text-sm font-medium transition-colors bg-gray-700 text-gray-300 hover:bg-gray-600 rounded-md';
+                typeFilterControls.appendChild(btn);
+            });
+
+            document.querySelectorAll('#type-filter-controls button').forEach(button => {
+                button.addEventListener('click', () => {
+                    searchInput.value = ''; 
+                    handleSearch({target: {value: ''}});
+                    applyFilter(button.dataset.filterType, button.dataset.filterValue);
+                });
+            });
+        }
+
+        function createLegend() {
+            for (const category in categoryClasses) {
+                const item = categoryClasses[category];
+                const legendItem = document.createElement('div');
+                legendItem.className = 'flex items-center gap-2 cursor-pointer p-1 rounded-md transition-all hover:bg-gray-700/50';
+                legendItem.dataset.categoryFilter = category;
+                legendItem.innerHTML = `<div class="w-3 h-3 rounded-full ${item.bg}"></div><span>${item.name}</span>`;
+                legendItem.addEventListener('click', () => {
+                     searchInput.value = '';
+                     handleSearch({target: {value: ''}});
+                     applyFilter('category', category);
+                });
+                legendDisplay.appendChild(legendItem);
+            }
+        }
+
+        function createMnemonicControls() {
+            Object.keys(mnemonics).forEach(key => {
+                const btn = document.createElement('button');
+                btn.innerText = key;
+                btn.title = mnemonics[key].name;
+                btn.dataset.group = key;
+                btn.className = 'px-3 py-1.5 text-xs sm:text-sm font-medium transition-colors bg-gray-700 text-gray-300 hover:bg-gray-600 rounded-md';
+                btn.addEventListener('click', handleMnemonicClick);
+                mnemonicButtons.appendChild(btn);
+            });
+        }
+
+        function handleMnemonicClick(e) {
+            const groupKey = e.currentTarget.dataset.group;
+            const mnemonicData = mnemonics[groupKey];
+            mnemonicDisplay.innerHTML = `<p class="text-base sm:text-lg italic text-indigo-300 mb-2">"${mnemonicData.sentence}"</p><p class="font-mono text-sm sm:text-base tracking-widest">${mnemonicData.elements.join(' - ')}</p>`;
+            
+            allElementDivs.forEach(div => {
+                const isMatch = mnemonicData.elements.includes(div.dataset.symbol);
+                div.classList.toggle('highlight', isMatch);
+                div.classList.toggle('no-match', !isMatch);
+            });
+
+            document.querySelectorAll('#mnemonic-buttons button').forEach(button => {
+                button.classList.remove('bg-indigo-600', 'text-white');
+                button.classList.add('bg-gray-700', 'text-gray-300');
+            });
+            e.currentTarget.classList.add('bg-indigo-600', 'text-white');
+            e.currentTarget.classList.remove('bg-gray-700', 'text-gray-300');
+        }
+
+        // --- LOGIKA ALKIMIA ---
+        function updateCanvas() {
+            reactionCanvas.innerHTML = ''; 
+            if (canvasElements.length === 0) {
+                reactionCanvas.appendChild(canvasPlaceholder);
+                canvasPlaceholder.style.display = 'block';
+            } else {
+                canvasPlaceholder.style.display = 'none';
+                canvasElements.forEach(symbol => {
+                    const elData = elements.find(e => e.symbol === symbol);
+                    const classes = categoryClasses[elData.category];
+                    const elDiv = document.createElement('div');
+                    elDiv.className = `w-14 h-14 sm:w-16 sm:h-16 rounded-lg flex flex-col justify-center items-center ${classes.bg} ${classes.text}`;
+                    elDiv.innerHTML = `<div class="text-xl font-bold">${symbol}</div>`;
+                    reactionCanvas.appendChild(elDiv);
+                });
+            }
+        }
+        function checkRecipe() {
+            const sortedCanvas = [...canvasElements].sort().join('');
+            for (const formula in recipes) {
+                if (sortedCanvas === [...recipes[formula].atoms].sort().join('')) {
+                    showMolecule(formula, recipes[formula]);
+                    return;
+                }
+            }
+             if(canvasElements.length > 0) {
+                 moleculeResult.innerHTML = `<div class="animate-fade-in-scale text-center"><p class="text-gray-400">Kombinasi tidak dikenal.</p></div>`;
+             }
+        }
+        function showMolecule(formula, data) {
+            moleculeResult.innerHTML = `<div class="animate-fade-in-scale text-center"><p class="text-5xl sm:text-7xl mb-1">${data.emoji}</p><p class="text-lg sm:text-2xl font-bold">${formula}</p><p class="text-base sm:text-xl text-gray-300">${data.name}</p><p class="text-sm text-green-400 font-semibold mt-1">Berhasil!</p></div>`;
+            setTimeout(() => { canvasElements = []; updateCanvas(); }, 1500); 
+        }
+        function resetCanvas() {
+            canvasElements = [];
+            moleculeResult.innerHTML = '<span class="text-gray-400">Hasil reaksi.</span>';
+            updateCanvas();
+        }
+        
+        // --- FUNGSI REAKTOR INTI ---
+        function createIsotopeButtons() {
+            Object.keys(radioactiveIsotopes).forEach(key => {
+                const data = radioactiveIsotopes[key];
+                const btn = document.createElement('button');
+                btn.innerText = key;
+                btn.title = data.name;
+                btn.dataset.isotopeKey = key;
+                btn.className = 'px-3 py-1.5 text-xs sm:text-sm font-medium transition-colors bg-gray-700 text-gray-300 hover:bg-gray-600 rounded-md';
+                btn.addEventListener('click', selectIsotope);
+                isotopeSelector.appendChild(btn);
+            });
+        }
+        function createElementCard(symbol, label) {
+            const elData = elements.find(e => e.symbol === symbol);
+            if (!elData) return '';
+            const classes = categoryClasses[elData.category];
+            return `<div class="w-20 h-20 sm:w-24 sm:h-24 rounded-lg flex flex-col justify-center items-center ${classes.bg} ${classes.text} relative transition-all duration-500"><div class="text-xs absolute top-1.5 left-2">${label}</div><div class="text-2xl sm:text-3xl font-bold">${elData.symbol}</div><div class="text-xs sm:text-sm">${elData.name}</div></div>`;
+        }
+        function selectIsotope(e) {
+            activeIsotopeKey = e.currentTarget.dataset.isotopeKey;
+            const isotopeData = radioactiveIsotopes[activeIsotopeKey];
+            decayPlaceholder.style.display = 'none';
+            decayDisplay.innerHTML = createElementCard(isotopeData.parentSymbol, 'Induk');
+            decayInfo.innerHTML = '';
+            startDecayBtn.disabled = false;
+            document.querySelectorAll('#isotope-selector button').forEach(button => {
+                button.classList.remove('bg-indigo-600', 'text-white');
+                button.classList.add('bg-gray-700', 'text-gray-300');
+            });
+            e.currentTarget.classList.add('bg-indigo-600', 'text-white');
+        }
+        function startDecay() {
+            if (!activeIsotopeKey) return;
+            const isotopeData = radioactiveIsotopes[activeIsotopeKey];
+            startDecayBtn.disabled = true;
+            
+            const parentCard = createElementCard(isotopeData.parentSymbol, 'Induk');
+            const arrow = `<div class="text-3xl font-light text-gray-400 animate-fade-in-scale" style="animation-delay: 0.5s;">→</div>`;
+            const daughterCard = createElementCard(isotopeData.daughterSymbol, 'Anakan');
+            
+            decayDisplay.innerHTML = parentCard;
+            decayDisplay.querySelector('div').classList.add('decaying');
+            
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.textContent = isotopeData.decayType;
+            decayDisplay.appendChild(particle);
+
+            setTimeout(() => {
+                decayDisplay.innerHTML = parentCard + arrow + daughterCard;
+                decayInfo.innerHTML = `<p class="font-mono text-indigo-300">${isotopeData.equation}</p><p>Waktu Paruh: ${isotopeData.halfLife}</p>`;
+            }, 800);
+        }
+
+        // --- INISIALISASI ---
+        function init() {
+            closeModalBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+            document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+            searchInput.addEventListener('input', handleSearch);
+            tempSlider.addEventListener('input', updateTemperature);
+            
+            reactionCanvas.addEventListener('dragover', (e) => { e.preventDefault(); reactionCanvas.classList.add('drag-over'); });
+            reactionCanvas.addEventListener('dragleave', () => reactionCanvas.classList.remove('drag-over'));
+            reactionCanvas.addEventListener('drop', (e) => {
+                e.preventDefault();
+                reactionCanvas.classList.remove('drag-over');
+                const symbol = e.dataTransfer.getData('text/plain');
+                if (symbol && canvasElements.length < 8) {
+                    canvasElements.push(symbol);
+                    moleculeResult.innerHTML = '';
+                    updateCanvas();
+                    checkRecipe();
+                }
+            });
+            resetCanvasBtn.addEventListener('click', resetCanvas);
+            startDecayBtn.addEventListener('click', startDecay);
+
+            renderPeriodicTable();
+            createControls();
+            createLegend();
+            createMnemonicControls();
+            updateCanvas();
+            createIsotopeButtons();
+        }
+        
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

@@ -1,32 +1,114 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Laporan Keuangan (Mockup)</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="description" content="eLKa - Platform Laporan Keuangan" />
+  <meta name="keywords" content="eLKa, Laporan Keuangan, Flatform" />
+  <meta name="author" content="Dede Basuni" />
+  <meta name="theme-color" content="#3f51b5" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="eLKa" />
+  <meta property="og:description" content="Platform Laporan Keuangan" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="dedebasuni.github.io" />
+  <meta property="og:image" content="https://www.google.com/s2/favicons?domain=google.com&sz=192" />
+
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="eLKa" />
+  <meta name="twitter:description" content="Platform Laporan Keuangan" />
+  <meta name="twitter:image" content="https://www.google.com/s2/favicons?domain=google.com&sz=192" />
+
+  <title>eLKa - Platform Laporan Keuangan</title>
+  <link rel="icon" href="https://www.google.com/s2/favicons?domain=google.com&sz=128" type="image/png">
+  <link rel="apple-touch-icon" href="https://www.google.com/s2/favicons?domain=google.com&sz=192">
   
-  <!-- Muat Tailwind CSS dari CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Ikon Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <!-- ======================================================== -->
-  <!-- KONTEN DARI 'styles.html' -->
-  <!-- ======================================================== -->
   <style>
-    /**
-     * @file styles.html
-     * @description Berisi style CSS kustom untuk aplikasi.
-     * Ini melengkapi kelas-kelas utility dari Tailwind CSS
-     * untuk komponen seperti spinner, toast, modal, dan aturan cetak.
-     */
-
-    /* ========================================================
-       UTILITAS GLOBAL & KOMPONEN
-       ======================================================== */
-
+    /* CSS Reset */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+    
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: #a8a8a8;
+    }
+    
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Google Sans', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background-color: #f5f5f5;
+    }
+    
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #3f51b5 0%, #1a237e 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease-out;
+    }
+    
+    .logo-container {
+      margin-bottom: 2rem;
+      text-align: center;
+      animation: fadeIn 1s ease;
+    }
+    
+    .logo-container img {
+      width: 80px;
+      height: 80px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .logo-container h1 {
+      color: white;
+      font-size: 1.8rem;
+      margin-top: 1rem;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+    
+    .logo-container p {
+      color: rgba(255, 255, 255, 0.8);
+      margin-top: 0.5rem;
+      font-size: 1rem;
+    }
+    
     /* --- Animasi Loading Spinner --- */
     .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
       border-top-color: #3498db;
       animation: spin 1s linear infinite;
     }
@@ -35,2121 +117,304 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-
-    /* Logika visibilitas untuk tombol loading */
-    .spinner, .loading-text {
-      display: none;
+    
+    .progress-container {
+      width: 240px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 2px;
+      margin-top: 1rem;
+      overflow: hidden;
     }
-    button:disabled .spinner {
-      display: inline-block;
+    
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: #fff;
+      border-radius: 2px;
+      transition: width 0.3s ease;
     }
-    button:disabled .original-text {
-      display: none;
-    }
-    button:disabled .loading-text {
-      display: inline-block;
-    }
-
-    /* --- Notifikasi Toast --- */
-    #toast {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      padding: 1rem 2rem;
-      border-radius: 0.5rem;
-      color: white;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.3s, visibility 0.3s;
-      z-index: 100;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-    #toast.show {
-      opacity: 1;
-      visibility: visible;
-    }
-    #toast.success { background-color: #10b981; }
-    #toast.error   { background-color: #ef4444; }
-    #toast.info    { background-color: #3b82f6; }
-
-    /* --- Utilitas Animasi & Efek --- */
+    
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    .fade-in {
-      animation: fadeIn 0.3s ease-out;
+    
+    .loading-text {
+      color: white;
+      margin-top: 1rem;
+      font-size: 1rem;
     }
-
-    /* Efek shadow default untuk card */
-    .card {
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    
+    .iframe-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: none;
     }
-
-    /* --- Scrollbar Kustom --- */
-    .custom-scrollbar::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
+    
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
     }
-    .custom-scrollbar::-webkit-scrollbar-track {
-      background: #f1f5f9;
-      border-radius: 10px;
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-      border-radius: 10px;
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-      background: #94a3b8;
-    }
-
-    /* ========================================================
-       MODAL LAPORAN & CETAK
-       ======================================================== */
-      
-    /* --- Latar Belakang Overlay --- */
-    #print-modal-overlay {
+    
+    .error-message {
+      display: none;
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0, 0, 0, 0.6);
-      z-index: 190; /* Di bawah modal */
-      display: none;
-    }
-
-    /* --- Konten Modal --- */
-    #print-modal-content {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 90%;
-      max-width: 1100px;
-      height: 90vh;
-      background-color: white;
-      border-radius: 0.75rem;
-      z-index: 200; /* Paling atas */
-      display: none;
-      overflow: hidden;
-      flex-direction: column;
-    }
-
-    /* Tampilkan modal */
-    #print-modal-overlay.show,
-    #print-modal-content.show {
-      display: flex;
-    }
-
-    /* Layout Modal (Header, Body, Footer) */
-    #print-modal-header {
-      padding: 1rem 1.5rem;
-      border-bottom: 1px solid #e5e7eb;
-      display: flex;
-      justify-content: space-between;
+      background-color: #f5f5f5;
+      justify-content: center;
       align-items: center;
-    }
-
-    #print-modal-body {
-      padding: 1.5rem;
-      overflow-y: auto; /* Penting agar body modal bisa di-scroll */
-      flex-grow: 1;
-    }
-
-    #print-modal-footer {
-      padding: 1rem 1.5rem;
-      border-top: 1px solid #e5e7eb;
-      background-color: #f9fafb;
-      display: flex;
-      justify-content: flex-end;
-      gap: 0.75rem;
+      flex-direction: column;
+      text-align: center;
+      padding: 2rem;
+      z-index: 10000;
     }
     
-    /* --- Tabel di Dalam Modal --- */
-    #print-report-table {
-      width: 100%;
-      border-collapse: collapse;
+    .error-icon {
+      font-size: 3rem;
+      color: #d32f2f;
+      margin-bottom: 1rem;
+    }
+    
+    .error-message h2 {
+      color: #d32f2f;
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+    }
+    
+    .error-message p {
+      margin-bottom: 1.5rem;
+      color: #424242;
+      max-width: 500px;
+      line-height: 1.5;
+    }
+    
+    .retry-button {
+      background-color: #3f51b5;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.3s;
+    }
+    
+    .retry-button:hover {
+      background-color: #303f9f;
+    }
+    
+    /* Logika visibilitas untuk tombol loading */
+    .retry-button .spinner {
+      display: none;
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+    }
+    
+    .retry-button .loading-text {
+      display: none;
+      color: white;
+      margin: 0;
+      font-size: 1rem;
+    }
+    
+    .retry-button:disabled {
+      background-color: #9e9e9e;
+      cursor: not-allowed;
+    }
+    
+    .retry-button:disabled .spinner {
+      display: inline-block;
+    }
+    
+    .retry-button:disabled .original-text {
+      display: none;
+    }
+    
+    .retry-button:disabled .loading-text {
+      display: inline-block;
+    }
+      
+    .connection-status {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 8px 12px;
+      border-radius: 20px;
       font-size: 0.875rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      display: none;
     }
-    #print-report-table th,
-    #print-report-table td {
-      border: 1px solid #ddd;
-      padding: 0.5rem;
-      text-align: left;
+    
+    .online {
+      background: #4caf50;
+      color: white;
     }
-    #print-report-table th {
-      background-color: #f9fafb;
-    }
-    #print-report-table .text-right {
-      text-align: right;
-    }
-
-
-    /* ========================================================
-       ATURAN KHUSUS CETAK (@media print)
-       ======================================================== */
-    @media print {
-      /* Sembunyikan semua elemen di body */
-      body * {
-        visibility: hidden;
-      }
-
-      /* Tampilkan body (sebagai kontainer) */
-      body {
-        visibility: visible;
-        background-color: white;
-      }
-      
-      /* Tampilkan HANYA body modal dan isinya */
-      #print-modal-body, #print-modal-body * {
-        visibility: visible;
-      }
-      
-      /* Posisikan body modal agar memenuhi halaman cetak */
-      #print-modal-body {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: auto;
-        padding: 20px;
-        margin: 0;
-        border: none;
-        overflow-y: visible; /* Tampilkan semua konten (bukan di-scroll) */
-      }
-
-      /* Sembunyikan header & footer modal saat mencetak */
-      #print-modal-header, #print-modal-footer {
-        display: none;
-      }
+    
+    .offline {
+      background: #f44336;
+      color: white;
     }
   </style>
 </head>
-<body class="bg-gray-50 font-sans leading-normal tracking-normal">
-
-  <!-- ======================================================== -->
-  <!-- KONTEN DARI 'index.html' -->
-  <!-- ======================================================== -->
-
-  <!-- 1. LAYAR LOADER APLIKASI -->
-  <div id="app-loader" class="flex flex-col justify-center items-center min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-    <div class="spinner w-16 h-16 border-4 border-blue-500 rounded-full mb-4"></div>
-    <p class="text-gray-600">Memuat aplikasi...</p>
-  </div>
-
-  <!-- 2. LAYAR LOGIN -->
-  <div id="login-screen" class="hidden min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-indigo-100">
-    <div class="bg-white p-8 rounded-2xl card max-w-md w-full fade-in">
-      
-      <!-- Header Login -->
-      <div class="text-center mb-8">
-        <div class="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
-          <i class="fas fa-chart-line text-white text-2xl"></i>
-        </div>
-        <h2 class="text-3xl font-bold text-gray-800">Laporan Keuangan</h2>
-        <p class="text-gray-600 mt-2">Masuk (Mockup): [001/admin] atau [002/kasir]</p>
-      </div>
-      
-      <!-- Form Login -->
-      <form id="login-form">
-        <div class="mb-4">
-          <label for="login-id" class="block text-sm font-medium text-gray-700 mb-1">ID User</label>
-          <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <i class="fas fa-user text-gray-400"></i>
-            </div>
-            <input type="text" id="login-id" name="login-id" required 
-                   class="pl-10 block w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
-                   placeholder="Contoh: 001" value="001">
-          </div>
-        </div>
-        <div class="mb-6">
-          <label for="login-password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-          <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <i class="fas fa-lock text-gray-400"></i>
-            </div>
-            <input type="password" id="login-password" name="login-password" required 
-                   class="pl-10 block w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
-                   placeholder="******" value="admin">
-          </div>
-        </div>
-        <button type="submit" id="login-btn" 
-                class="w-full inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:from-gray-400 disabled:to-gray-500 transition-all duration-200">
-          <span class="original-text">Masuk</span>
-          <span class="loading-text">Memproses...</span>
-          <div class="spinner w-4 h-4 ml-2 border-2 border-white rounded-full"></div>
-        </button>
-      </form>
-      <p id="login-error" class="text-red-500 text-sm text-center mt-4"></p>
+<body>
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="logo-container">
+      <span class="material-icons-outlined" style="font-size: 3rem; color: white;">store</span>
+      <h1>eLKa</h1>
+      <p>Platform Laporan Keuangan</p>
     </div>
+    <div class="spinner"></div>
+    <div class="progress-container">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <p class="loading-text">Memuat data eLKa...</p>
+  </div>
+  
+  <div class="error-message" id="errorMessage">
+    <span class="material-icons-outlined error-icon">error_outline</span>
+    <h2>Gagal Memuat Konten</h2>
+    <p>Terjadi kendala saat memuat eLKa. Pastikan Anda terhubung ke internet dan coba lagi. Jika masalah berlanjut, silakan hubungi administrator.</p>
+    <button class="retry-button" id="retryButton">
+      <span class="original-text">Coba Lagi</span>
+      <span class="loading-text">Memuat ulang...</span>
+      <div class="spinner"></div>
+    </button>
+  </div>
+  
+  <div class="connection-status" id="connectionStatus">
+    <span class="material-icons-outlined" id="connectionIcon">wifi_off</span>
+    <span id="connectionText">Tidak terhubung</span>
+  </div>
+  
+  <div class="iframe-container" id="iframeContainer">
+    <iframe 
+      src="https://script.google.com/macros/s/AKfycbwZN6RE_lGujFe1tApvOCGFwDjhXDOXecG8mUmHCYKljHHrLG-sHAECYMbc8yA3Pjd1/exec"
+      style="border:none;" 
+      allow="autoplay; camera; encrypted-media; geolocation; microphone; midi; payment; usb; accelerometer; gyroscope; magnetometer; screen-wake-lock; clipboard-read; clipboard-write; web-share; fullscreen"
+      id="contentFrame"
+      onload="hideLoading()">
+    </iframe>
   </div>
 
-  <!-- 3. APLIKASI UTAMA (DEFAULT VIEW) -->
-  <div id="main-app" class="hidden min-h-screen bg-gray-50">
-    
-    <!-- 3a. Header Aplikasi Utama -->
-    <header class="bg-white shadow-sm sticky top-0 z-10">
-      <div class="container mx-auto px-4 py-3">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-          <!-- Info Aplikasi & User -->
-          <div class="flex items-center">
-            <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
-              <i class="fas fa-chart-line text-white"></i>
-            </div>
-            <div>
-              <h1 class="text-xl font-bold text-gray-800">Laporan Keuangan</h1>
-              <p id="user-info" class="text-xs text-gray-600">Memuat...</p>
-            </div>
-          </div>
-          <!-- Tombol Aksi Header -->
-          <div class="flex items-center space-x-2">
-            <button id="admin-panel-btn" class="hidden px-3 py-2 text-sm font-medium text-green-700 bg-green-100 rounded-lg hover:bg-green-200 focus:outline-none transition-colors">
-              <i class="fas fa-cog mr-1"></i> Admin
-            </button>
-            <button id="logout-btn" class="px-3 py-2 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg hover:bg-blue-200 focus:outline-none transition-colors">
-              <i class="fas fa-sign-out-alt mr-1"></i> Keluar
-            </button>
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <!-- 3b. Konten Aplikasi Utama -->
-    <main class="container mx-auto px-4 py-6">
-      
-      <!-- Dashboard Ringkas -->
-      <div id="dashboard" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <!-- Card Total Toko -->
-        <div class="bg-white p-4 rounded-xl card">
-          <div class="flex items-center">
-            <div class="p-3 rounded-lg bg-blue-100 text-blue-600 mr-4">
-              <i class="fas fa-store text-lg"></i>
-            </div>
-            <div>
-              <p class="text-sm text-gray-500">Total Toko</p>
-              <h3 id="total-toko" class="text-xl font-bold text-gray-800">-</h3>
-            </div>
-          </div>
-        </div>
-        <!-- Card Transaksi Hari Ini -->
-        <div class="bg-white p-4 rounded-xl card">
-          <div class="flex items-center">
-            <div class="p-3 rounded-lg bg-green-100 text-green-600 mr-4">
-              <i class="fas fa-exchange-alt text-lg"></i>
-            </div>
-            <div>
-              <p class="text-sm text-gray-500">Transaksi Hari Ini</p>
-              <h3 id="transaksi-hari-ini" class="text-xl font-bold text-gray-800">-</h3>
-            </div>
-          </div>
-        </div>
-        <!-- Card Total Penjualan -->
-        <div class="bg-white p-4 rounded-xl card">
-          <div class="flex items-center">
-            <div class="p-3 rounded-lg bg-purple-100 text-purple-600 mr-4">
-              <i class="fas fa-money-bill-wave text-lg"></i>
-            </div>
-            <div>
-              <p class="text-sm text-gray-500">Total Penjualan (Hari Ini)</p>
-              <h3 id="total-penjualan" class="text-xl font-bold text-gray-800">-</h3>
-            </div>
-          </div>
-        </div>
-        <!-- Card Total Pengguna -->
-        <div class="bg-white p-4 rounded-xl card">
-          <div class="flex items-center">
-            <div class="p-3 rounded-lg bg-yellow-100 text-yellow-600 mr-4">
-              <i class="fas fa-users text-lg"></i>
-            </div>
-            <div>
-              <p class="text-sm text-gray-500">Total Pengguna</p>
-              <h3 id="total-pengguna" class="text-xl font-bold text-gray-800">-</h3>
-            </div>
-          </div>
-        </div>
-      </div> <!-- Penutup #dashboard -->
-
-      <!-- Rincian Penjualan per Toko (filtered by role) -->
-      <div id="rincian-penjualan-wrapper" class="bg-white p-6 rounded-xl card mb-6 fade-in hidden">
-        <div class="flex items-center mb-4">
-          <div class="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center mr-3">
-            <i class="fas fa-chart-pie text-white text-sm"></i>
-          </div>
-          <h2 class="text-xl font-semibold text-gray-800">Rincian Penjualan per Toko (Hari Ini)</h2>
-        </div>
-        <div id="rincian-penjualan-list" class="space-y-3">
-          <p class="text-gray-500 text-center">Memuat rincian...</p>
-        </div>
-      </div>
-
-      <!-- Form Tambah Transaksi -->
-      <div class="bg-white p-6 rounded-xl card mb-8 fade-in">
-        <div class="flex items-center mb-4">
-          <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
-            <i class="fas fa-plus text-white text-sm"></i>
-          </div>
-          <h2 class="text-xl font-semibold text-gray-800">Tambah Transaksi Baru</h2>
-        </div>
-        
-        <form id="transaksi-form" class="space-y-4">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Kolom Kiri -->
-            <div class="space-y-4">
-              <div>
-                <label for="toko" class="block text-sm font-medium text-gray-700 mb-1">Toko</label>
-                <select id="toko" name="toko" required 
-                        class="block w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                  <option value="">Memuat toko...</option>
-                </select>
-              </div>
-              
-              <div>
-                <label for="jenis-transaksi" class="block text-sm font-medium text-gray-700 mb-1">Jenis Transaksi</label>
-                <select id="jenis-transaksi" name="jenis-transaksi" required 
-                        class="block w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                  <option value="Penjualan">Penjualan</option>
-                  <option value="Refund">Refund</option>
-                  <option value="Void">Void</option>
-                </select>
-              </div>
-            </div>
-
-            <!-- Kolom Kanan -->
-            <div class="space-y-4">
-              <div>
-                <label for="metode-pembayaran" class="block text-sm font-medium text-gray-700 mb-1">Metode Pembayaran</label>
-                <select id="metode-pembayaran" name="metode-pembayaran" required 
-                        class="block w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                  <option value="Tunai">Tunai</option>
-                  <option value="Kartu Kredit">Kartu Kredit</option>
-                  <option value="Transfer Bank">Transfer Bank</option>
-                  <option value="E-Wallet">E-Wallet</option>
-                </select>
-              </div>
-
-              <div>
-                <label for="penjualan" class="block text-sm font-medium text-gray-700 mb-1">Nominal (Rp)</label>
-                <input type="number" id="penjualan" name="penjualan" required min="0" step="100" 
-                       class="block w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
-                       placeholder="0">
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <label for="catatan" class="block text-sm font-medium text-gray-700 mb-1">Catatan (Opsional)</label>
-            <textarea id="catatan" name="catatan" rows="2" 
-                      class="block w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
-                      placeholder="Tambahkan catatan jika diperlukan"></textarea>
-          </div>
-
-          <div class="flex justify-end pt-2">
-            <button type="submit" id="submit-btn" 
-                    class="inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:from-gray-400 disabled:to-gray-500 transition-all duration-200">
-              <span class="original-text">Simpan Transaksi</span>
-              <span class="loading-text">Menyimpan...</span>
-              <div class="spinner w-4 h-4 ml-2 border-2 border-white rounded-full"></div>
-            </button>
-          </div>
-        </form>
-      </div>
-
-      <!-- Tabel Riwayat Transaksi (Main App) -->
-      <div class="bg-white p-6 rounded-xl card fade-in">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
-          <!-- Judul Tabel -->
-          <div class="flex items-center">
-            <div class="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center mr-3">
-              <i class="fas fa-history text-white text-sm"></i>
-            </div>
-            <h2 class="text-xl font-semibold text-gray-800">Riwayat Transaksi Terbaru</h2>
-          </div>
-          <!-- Aksi Tabel -->
-          <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-            <div class="relative">
-              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <i class="fas fa-search text-gray-400"></i>
-              </div>
-              <input type="text" id="search-transaksi" placeholder="Cari transaksi..." 
-                     class="pl-10 block w-full sm:w-48 px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-            </div>
-            <button id="refresh-btn" class="px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg hover:bg-blue-200 focus:outline-none transition-colors flex items-center justify-center">
-              <i class="fas fa-sync-alt mr-2"></i> Muat Ulang
-            </button>
-          </div>
-        </div>
-        
-        <!-- Wrapper Tabel (untuk scroll horizontal) -->
-        <div class="overflow-x-auto custom-scrollbar">
-          <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-              <tr>
-                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
-                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Waktu</th>
-                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Toko</th>
-                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kasir</th>
-                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jenis</th>
-                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pembayaran</th>
-                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nominal (Rp)</th>
-                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Catatan</th>
-              </tr>
-            </thead>
-            <tbody id="transaksi-tbody" class="bg-white divide-y divide-gray-200">
-              <!-- Data dimuat di sini -->
-              <tr>
-                <td colspan="9" class="px-6 py-12 text-center text-gray-500">
-                  <i class="fas fa-inbox text-4xl text-gray-300 mb-2 block"></i>
-                  <p>Belum ada data transaksi</p>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div> <!-- Penutup card tabel -->
-    </main>
-  </div> <!-- Penutup #main-app -->
-
-  <!-- 4. PANEL ADMIN -->
-  <div id="admin-panel" class="hidden min-h-screen bg-gray-50">
-    
-    <!-- 4a. Header Panel Admin -->
-    <header class="bg-white shadow-sm sticky top-0 z-10">
-      <div class="container mx-auto px-4 py-3">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-          <!-- Info Admin & Tombol Kembali -->
-          <div class="flex items-center">
-            <button id="back-to-app-btn" class="mr-3 p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 transition-colors">
-              <i class="fas fa-arrow-left"></i>
-            </button>
-            <div class="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center mr-3">
-              <i class="fas fa-cog text-white"></i>
-            </div>
-            <div>
-              <h1 class="text-xl font-bold text-gray-800">Panel Admin</h1>
-              <p id="admin-user-info" class="text-xs text-gray-600">Memuat...</p>
-            </div>
-          </div>
-          <!-- Tombol Aksi Admin -->
-          <div class="flex items-center space-x-2">
-            <button id="admin-logout-btn" class="px-3 py-2 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg hover:bg-blue-200 focus:outline-none transition-colors">
-              <i class="fas fa-sign-out-alt mr-1"></i> Keluar
-            </button>
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <!-- 4b. Konten Panel Admin -->
-    <main class="container mx-auto px-4 py-6">
-      
-      <!-- Navigasi Tab Admin -->
-      <div class="bg-white rounded-xl card mb-6 overflow-hidden">
-        <div class="border-b border-gray-200">
-          <nav class="flex overflow-x-auto custom-scrollbar">
-            <button id="tab-users" class="tab-button active px-6 py-3 text-sm font-medium text-center border-b-2 border-blue-500 text-blue-600 whitespace-nowrap">
-              <i class="fas fa-users mr-2"></i>Pengguna
-            </button>
-            <button id="tab-stores" class="tab-button px-6 py-3 text-sm font-medium text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
-              <i class="fas fa-store mr-2"></i>Toko
-            </button>
-            <button id="tab-transactions" class="tab-button px-6 py-3 text-sm font-medium text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
-              <i class="fas fa-exchange-alt mr-2"></i>Transaksi
-            </button>
-          </nav>
-        </div>
-      </div>
-
-      <!-- 4c. Konten Tab: Pengguna -->
-      <div id="tab-content-users" class="tab-content active fade-in">
-        
-        <!-- Form Pengguna (Tambah/Edit) -->
-        <div class="bg-white p-6 rounded-xl card mb-6">
-          <h2 class="text-xl font-semibold text-gray-800 mb-4">
-            <i class="fas fa-user-plus mr-2 text-blue-500"></i>
-            <span id="user-form-title">Tambah Pengguna Baru</span>
-          </h2>
-          
-          <form id="user-form" class="space-y-4">
-            <input type="hidden" id="user-id-field" value="">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label for="user-id" class="block text-sm font-medium text-gray-700 mb-1">ID User</label>
-                <input type="text" id="user-id" required 
-                       class="block w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
-                       placeholder="Contoh: 003">
-              </div>
-              <div>
-                <label for="user-nama" class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
-                <input type="text" id="user-nama" required 
-                       class="block w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
-                       placeholder="Nama lengkap pengguna">
-              </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label for="user-peran" class="block text-sm font-medium text-gray-700 mb-1">Peran</label>
-                <select id="user-peran" required 
-                        class="block w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                  <option value="Admin">Admin</option>
-                  <option value="Kasir">Kasir</option>
-                  <option value="Manager">Manager</option>
-                </select>
-              </div>
-              <div>
-                <label for="user-password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                <input type="password" id="user-password" 
-                       class="block w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
-                       placeholder="Kosongkan jika tidak ganti">
-              </div>
-            </div>
-            <div>
-              <label for="user-kontak" class="block text-sm font-medium text-gray-700 mb-1">Kontak</label>
-              <input type="text" id="user-kontak" 
-                     class="block w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
-                     placeholder="Email atau nomor telepon">
-            </div>
-            <div class="flex justify-end space-x-3 pt-2">
-              <button type="button" id="user-form-clear" 
-                      class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none transition-colors">
-                <i class="fas fa-times mr-1"></i>Bersihkan
-              </button>
-              <button type="submit" id="user-form-submit" 
-                      class="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none transition-colors flex items-center">
-                <i class="fas fa-save mr-1"></i>
-                <span>Simpan Pengguna</span>
-              </button>
-            </div>
-          </form>
-        </div>
-        
-        <!-- Tabel Daftar Pengguna -->
-        <div class="bg-white p-6 rounded-xl card">
-          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
-            <h2 class="text-xl font-semibold text-gray-800">
-              <i class="fas fa-list mr-2 text-blue-500"></i>
-              Daftar Pengguna
-            </h2>
-            <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-              <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <i class="fas fa-search text-gray-400"></i>
-                </div>
-                <input type="text" id="search-users" placeholder="Cari pengguna..." 
-                       class="pl-10 block w-full sm:w-48 px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-              </div>
-              <button id="refresh-users" class="px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg hover:bg-blue-200 focus:outline-none transition-colors flex items-center justify-center">
-                <i class="fas fa-sync-alt mr-2"></i> Muat Ulang
-              </button>
-            </div>
-          </div>
-          
-          <div class="overflow-x-auto custom-scrollbar">
-            <table class="min-w-full divide-y divide-gray-200">
-              <thead class="bg-gray-50">
-                <tr>
-                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
-                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Peran</th>
-                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kontak</th>
-                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
-                </tr>
-              </thead>
-              <tbody id="users-tbody" class="bg-white divide-y divide-gray-200">
-                <tr>
-                  <td colspan="5" class="px-6 py-12 text-center text-gray-500">
-                    <i class="fas fa-users text-4xl text-gray-300 mb-2 block"></i>
-                    <p>Belum ada data pengguna</p>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <!-- Pagination Pengguna -->
-          <div id="users-pagination" class="flex justify-between items-center mt-4 pt-4 border-t border-gray-200">
-            <button id="users-prev" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed">
-              <i class="fas fa-arrow-left mr-1"></i> Sebelumnya
-            </button>
-            <span id="users-page-info" class="text-sm text-gray-600">Halaman 1 dari 1</span>
-            <button id="users-next" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed">
-              Berikutnya <i class="fas fa-arrow-right ml-1"></i>
-            </button>
-          </div>
-        </div>
-      </div> <!-- Penutup #tab-content-users -->
-
-      <!-- 4d. Konten Tab: Toko -->
-      <div id="tab-content-stores" class="tab-content hidden fade-in">
-        
-        <!-- Form Toko (Tambah/Edit) -->
-        <div class="bg-white p-6 rounded-xl card mb-6">
-          <h2 class="text-xl font-semibold text-gray-800 mb-4">
-            <i class="fas fa-store-alt mr-2 text-green-500"></i>
-            <span id="store-form-title">Tambah Toko Baru</span>
-          </h2>
-          
-          <form id="store-form" class="space-y-4">
-            <input type="hidden" id="store-id-field" value="">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label for="store-id" class="block text-sm font-medium text-gray-700 mb-1">ID Toko</label>
-                <input type="text" id="store-id" required 
-                       class="block w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
-                       placeholder="Contoh: T003">
-              </div>
-              <div>
-                <label for="store-nama" class="block text-sm font-medium text-gray-700 mb-1">Nama Toko</label>
-                <input type="text" id="store-nama" required 
-                       class="block w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
-                       placeholder="Nama toko">
-              </div>
-            </div>
-            <div>
-              <label for="store-alamat" class="block text-sm font-medium text-gray-700 mb-1">Alamat</label>
-              <textarea id="store-alamat" rows="2" 
-                        class="block w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
-                        placeholder="Alamat lengkap toko"></textarea>
-            </div>
-            <div class="flex justify-end space-x-3 pt-2">
-              <button type="button" id="store-form-clear" 
-                      class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none transition-colors">
-                <i class="fas fa-times mr-1"></i>Bersihkan
-              </button>
-              <button type="submit" id="store-form-submit" 
-                      class="px-4 py-2 text-sm font-medium text-white bg-green-500 rounded-lg hover:bg-green-600 focus:outline-none transition-colors flex items-center">
-                <i class="fas fa-save mr-1"></i>
-                <span>Simpan Toko</span>
-              </button>
-            </div>
-          </form>
-        </div>
-        
-        <!-- Tabel Daftar Toko -->
-        <div class="bg-white p-6 rounded-xl card">
-          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
-            <h2 class="text-xl font-semibold text-gray-800">
-              <i class="fas fa-list mr-2 text-green-500"></i>
-              Daftar Toko
-            </h2>
-            <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-              <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <i class="fas fa-search text-gray-400"></i>
-                </div>
-                <input type="text" id="search-stores" placeholder="Cari toko..." 
-                       class="pl-10 block w-full sm:w-48 px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-              </div>
-              <button id="refresh-stores" class="px-4 py-2 text-sm font-medium text-green-700 bg-green-100 rounded-lg hover:bg-green-200 focus:outline-none transition-colors flex items-center justify-center">
-                <i class="fas fa-sync-alt mr-2"></i> Muat Ulang
-              </button>
-            </div>
-          </div>
-          
-          <div class="overflow-x-auto custom-scrollbar">
-            <table class="min-w-full divide-y divide-gray-200">
-              <thead class="bg-gray-50">
-                <tr>
-                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
-                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Alamat</th>
-                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
-                </tr>
-              </thead>
-              <tbody id="stores-tbody" class="bg-white divide-y divide-gray-200">
-                <tr>
-                  <td colspan="4" class="px-6 py-12 text-center text-gray-500">
-                    <i class="fas fa-store text-4xl text-gray-300 mb-2 block"></i>
-                    <p>Belum ada data toko</p>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <!-- Pagination Toko -->
-          <div id="stores-pagination" class="flex justify-between items-center mt-4 pt-4 border-t border-gray-200">
-            <button id="stores-prev" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed">
-              <i class="fas fa-arrow-left mr-1"></i> Sebelumnya
-            </button>
-            <span id="stores-page-info" class="text-sm text-gray-600">Halaman 1 dari 1</span>
-            <button id="stores-next" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed">
-              Berikutnya <i class="fas fa-arrow-right ml-1"></i>
-            </button>
-          </div>
-        </div>
-      </div> <!-- Penutup #tab-content-stores -->
-
-      <!-- 4e. Konten Tab: Transaksi -->
-      <div id="tab-content-transactions" class="tab-content hidden fade-in">
-        
-        <!-- Panel Cetak Laporan Keuangan -->
-        <div class="bg-white p-6 rounded-xl card mb-6">
-          <h2 class="text-xl font-semibold text-gray-800 mb-4">
-            <i class="fas fa-print mr-2 text-blue-500"></i>
-            Cetak Laporan Keuangan
-          </h2>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-            <div>
-              <label for="laporan-tgl-mulai" class="block text-sm font-medium text-gray-700 mb-1">Tanggal Mulai</label>
-              <input type="date" id="laporan-tgl-mulai" class="block w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm">
-            </div>
-            <div>
-              <label for="laporan-tgl-selesai" class="block text-sm font-medium text-gray-700 mb-1">Tanggal Selesai</label>
-              <input type="date" id="laporan-tgl-selesai" class="block w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm">
-            </div>
-            <!-- Tombol Preset Tanggal -->
-            <div class="flex items-end space-x-2">
-              <button id="laporan-hari-ini" class="flex-1 px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">Hari Ini</button>
-              <button id="laporan-bulan-ini" class="flex-1 px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">Bulan Ini</button>
-              <button id="laporan-tahun-ini" class="flex-1 px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">Tahun Ini</button>
-            </div>
-          </div>
-          <div class="flex justify-end">
-            <button type="button" id="generate-report-btn" 
-                    class="inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:from-gray-400 disabled:to-gray-500 transition-all duration-200">
-              <span class="original-text"><i class="fas fa-cogs mr-2"></i>Buat Laporan</span>
-              <span class="loading-text">Memproses...</span>
-              <div class="spinner w-4 h-4 ml-2 border-2 border-white rounded-full"></div>
-            </button>
-          </div>
-        </div>
-
-        <!-- Tabel Transaksi Admin (Semua Transaksi) -->
-        <div class="bg-white p-6 rounded-xl card">
-          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
-            <h2 class="text-xl font-semibold text-gray-800">
-              <i class="fas fa-exchange-alt mr-2 text-purple-500"></i>
-              Semua Transaksi
-            </h2>
-            <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-              <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <i class="fas fa-search text-gray-400"></i>
-                </div>
-                <input type="text" id="search-admin-transactions" placeholder="Cari transaksi..." 
-                       class="pl-10 block w-full sm:w-48 px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-              </div>
-              <button id="admin-refresh-btn" class="px-4 py-2 text-sm font-medium text-purple-700 bg-purple-100 rounded-lg hover:bg-purple-200 focus:outline-none transition-colors flex items-center justify-center">
-                <i class="fas fa-sync-alt mr-2"></i> Muat Ulang
-              </button>
-            </div>
-          </div>
-          
-          <div class="overflow-x-auto custom-scrollbar">
-            <table class="min-w-full divide-y divide-gray-200">
-              <thead class="bg-gray-50">
-                <tr>
-                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
-                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Waktu</th>
-                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Toko</th>
-                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kasir</th>
-                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jenis</th>
-                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pembayaran</th>
-                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nominal (Rp)</th>
-                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Catatan</th>
-                </tr>
-              </thead>
-              <tbody id="admin-transaksi-tbody" class="bg-white divide-y divide-gray-200">
-                <tr>
-                  <td colspan="9" class="px-6 py-12 text-center text-gray-500">
-                    <i class="fas fa-exchange-alt text-4xl text-gray-300 mb-2 block"></i>
-                    <p>Belum ada data transaksi</p>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <!-- Pagination Transaksi -->
-          <div id="transactions-pagination" class="flex justify-between items-center mt-4 pt-4 border-t border-gray-200">
-            <button id="transactions-prev" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed">
-              <i class="fas fa-arrow-left mr-1"></i> Sebelumnya
-            </button>
-            <span id="transactions-page-info" class="text-sm text-gray-600">Halaman 1 dari 1</span>
-            <button id="transactions-next" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed">
-              Berikutnya <i class="fas fa-arrow-right ml-1"></i>
-            </button>
-          </div>
-        </div>
-      </div> <!-- Penutup #tab-content-transactions -->
-    </main>
-  </div> <!-- Penutup #admin-panel -->
-
-  <!-- 5. ELEMEN UI GLOBAL (Toast & Modal) -->
-
-  <!-- Notifikasi Toast -->
-  <div id="toast"></div>
-
-  <!-- Modal Laporan (untuk Pratinjau & Cetak) -->
-  <div id="print-modal-overlay"></div>
-  
-  <div id="print-modal-content" class="flex-col">
-    <!-- Header Modal -->
-    <header id="print-modal-header">
-      <div>
-        <h3 class="text-xl font-semibold text-gray-900">Pratinjau Laporan</h3>
-        <p id="print-report-periode" class="text-sm text-gray-600">Periode laporan</p>
-      </div>
-      <button id="print-modal-close-top" class="p-2 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700">
-        <i class="fas fa-times fa-lg"></i>
-      </button>
-    </header>
-
-    <!-- Body Modal (yang akan dicetak) -->
-    <main id="print-modal-body" class="custom-scrollbar">
-      <!-- Judul untuk Halaman Cetak -->
-      <div class="print-header mb-6">
-        <h1 class="text-3xl font-bold text-center">Laporan Keuangan</h1>
-        <h2 id="print-report-title" class="text-xl text-center text-gray-700">Periode</h2>
-      </div>
-
-      <!-- Ringkasan Laporan -->
-      <div id="print-report-summary" class="grid grid-cols-2 gap-4 mb-6 p-4 bg-gray-50 rounded-lg">
-        <div>
-          <p class="text-sm text-gray-500">Total Transaksi</p>
-          <h3 id="print-summary-tx" class="text-2xl font-bold text-gray-800">-</h3>
-        </div>
-        <div>
-          <p class="text-sm text-gray-500">Total Penjualan</p>
-          <h3 id="print-summary-penjualan" class="text-2xl font-bold text-gray-800">-</h3>
-        </div>
-      </div>
-
-      <!-- Tabel Data Rinci Laporan -->
-      <table id="print-report-table" class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-50">
-          <tr>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Toko</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kasir</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jenis</th>
-            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Nominal (Rp)</th>
-          </tr>
-        </thead>
-        <tbody id="print-report-tbody" class="bg-white divide-y divide-gray-200">
-          <tr>
-            <td colspan="6" class="px-6 py-12 text-center text-gray-500">Tidak ada data untuk periode ini.</td>
-          </tr>
-        </tbody>
-      </table>
-    </main>
-
-    <!-- Footer Modal -->
-    <footer id="print-modal-footer">
-      <button type="button" id="print-modal-close-bottom" 
-              class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none">
-        Tutup
-      </button>
-      <button type="button" id="print-modal-trigger-btn" 
-              class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none flex items-center">
-        <i class="fas fa-print mr-2"></i>
-        Cetak Laporan Ini
-      </button>
-    </footer>
-  </div> <!-- Penutup #print-modal-content -->
-  
-  <!-- ======================================================== -->
-  <!-- 6. MEMUAT SCRIPT APLIKASI (MODIFIED FOR MOCKUP) -->
-  <!-- ======================================================== -->
   <script>
-  /**
-   * @file scripts.html (MODIFIED FOR MOCKUP)
-   * @description Logika JavaScript (frontend) untuk Aplikasi Laporan Keuangan.
-   * SEMUA PANGGILAN 'google.script.run' TELAH DIHAPUS
-   * dan diganti dengan 'MOCK_SERVER_API' untuk simulasi.
-   */
-
-  // ========================================================
-  // 0. MOCK SERVER API (SERVER PALSU)
-  // ========================================================
-  // Ini menggantikan google.script.run
-  
-  const MOCK_SERVER_API = {
-    // Kumpulan data palsu
-    _db: {
-      users: [
-        // 0:ID, 1:Nama, 2:Peran, 3:Password, 4:Kontak
-        ['001', 'Admin Utama (Mock)', 'Admin', 'admin', 'admin@example.com'],
-        ['002', 'Kasir (Mock)', 'Kasir', 'kasir', '08123456'],
-        ['003', 'Manager (Mock)', 'Manager', 'manager', '08987654']
-      ],
-      stores: [
-        // 0:ID, 1:Nama, 2:Alamat
-        ['T001', 'Toko Mockup A', 'Jl. Mockup No. 1'],
-        ['T002', 'Toko Mockup B', 'Jl. Palsu No. 2'],
-        ['T003', 'Toko Mockup C', 'Jl. Simulasi No. 3']
-      ],
-      transactions: [
-        // 0:ID, 1:Tgl, 2:Waktu, 3:IDToko, 4:Toko, 5:IDKasir, 6:Kasir, 7:Jenis, 8:Metode, 9:Penjualan, 10:Catatan
-        ['TRX-1005', '2025-11-15', '14:30:00', 'T001', 'Toko Mockup A', '002', 'Kasir (Mock)', 'Penjualan', 'Tunai', 50000, 'Mock 5'],
-        ['TRX-1004', '2025-11-15', '11:15:00', 'T002', 'Toko Mockup B', '001', 'Admin Utama (Mock)', 'Penjualan', 'E-Wallet', 120000, 'Mock 4'],
-        ['TRX-1003', '2025-11-14', '16:00:00', 'T001', 'Toko Mockup A', '002', 'Kasir (Mock)', 'Refund', 'Tunai', -25000, 'Mock 3'],
-        ['TRX-1002', '2025-11-14', '12:30:00', 'T001', 'Toko Mockup A', '002', 'Kasir (Mock)', 'Penjualan', 'Kartu Kredit', 75000, 'Mock 2'],
-        ['TRX-1001', '2025-11-13', '09:05:00', 'T002', 'Toko Mockup B', '001', 'Admin Utama (Mock)', 'Penjualan', 'Tunai', 250000, 'Mock 1']
-      ]
-    },
-
-    // Fungsi helper promise
-    _mockCall: (data, delay = 500) => {
-      return new Promise((resolve, reject) => {
-        setTimeout(() => {
-          if (data instanceof Error) {
-            reject(data);
-          } else {
-            resolve(data);
-          }
-        }, delay);
-      });
-    },
-
-    // --- FUNGSI API PALSU ---
-
-    loginUser: function(idUser, password) {
-      const user = this._db.users.find(u => u[0] === idUser && u[3] === password);
-      if (user) {
-        return this._mockCall({ id: user[0], nama: user[1], peran: user[2] });
-      } else {
-        return this._mockCall(null); // Gagal login
-      }
-    },
-
-    getDropdownData: function() {
-      const tokos = this._db.stores.map(s => [s[0], s[1]]); // Hanya ID dan Nama
-      return this._mockCall({ tokos: tokos });
-    },
-
-    addTransaction: function(formData) {
-      const newId = "TRX-" + new Date().getTime();
-      const today = new Date();
-      const tgl = today.toISOString().split('T')[0];
-      const waktu = today.toTimeString().split(' ')[0];
+    // Variabel global
+    let progressInterval;
+    let isOnline = navigator.onLine;
+    
+    // Fungsi untuk menyembunyikan loading overlay
+    function hideLoading() {
+      clearInterval(progressInterval);
+      document.getElementById('progressBar').style.width = '100%';
       
-      this._db.transactions.unshift([
-        newId, tgl, waktu, formData.idToko, formData.namaToko, formData.idKasir, formData.namaKasir,
-        formData.jenisTransaksi, formData.metodePembayaran, parseFloat(formData.penjualan), formData.catatan
-      ]);
-      return this._mockCall({ status: "success", message: "Transaksi (Mock) berhasil ditambahkan." });
-    },
-
-    getRecentTransactions: function(userObject, page = 1, pageSize = 50) {
-      let data = this._db.transactions;
-      
-      if (userObject && userObject.peran.toLowerCase() !== 'admin') {
-        data = data.filter(tx => tx[5] === userObject.id); // Filter by ID Kasir
-      }
-
-      const totalRows = data.length;
-      const totalPages = Math.ceil(totalRows / pageSize);
-      const offset = (page - 1) * pageSize;
-      const paginatedData = data.slice(offset, offset + pageSize);
-
-      return this._mockCall({
-        data: paginatedData,
-        currentPage: page,
-        totalPages: totalPages
-      });
-    },
-
-    getDashboardSummary: function(userObject) {
-      let dataTx = this._db.transactions;
-      if (userObject && userObject.peran.toLowerCase() !== 'admin') {
-        dataTx = dataTx.filter(tx => tx[5] === userObject.id);
-      }
-
-      const today = new Date().toISOString().split('T')[0];
-      let txHariIni = 0;
-      let totalPenjualan = 0;
-      let penjualanPerToko = {};
-
-      dataTx.forEach(row => {
-        const nominal = parseFloat(row[9]);
-        const namaToko = row[4];
-
-        if (row[1] === today) {
-          txHariIni++;
-          totalPenjualan += nominal; // Asumsi sederhana
-        }
-        if (!penjualanPerToko[namaToko]) penjualanPerToko[namaToko] = 0;
-        penjualanPerToko[namaToko] += nominal;
-      });
-
-      const detailPenjualan = Object.keys(penjualanPerToko).map(nama => ({
-        nama: nama,
-        total: "Rp " + penjualanPerToko[nama].toLocaleString('id-ID')
-      }));
-
-      return this._mockCall({
-        totalToko: this._db.stores.length,
-        totalPengguna: this._db.users.length,
-        transaksiHariIni: txHariIni,
-        totalKeseluruhanPenjualan: "Rp " + totalPenjualan.toLocaleString('id-ID'),
-        detailPenjualan: detailPenjualan
-      });
-    },
-
-    getUsers: function(page = 1, pageSize = 10) {
-      const data = this._db.users;
-      const totalRows = data.length;
-      const totalPages = Math.ceil(totalRows / pageSize);
-      const offset = (page - 1) * pageSize;
-      const paginatedData = data.slice(offset, offset + pageSize);
-      return this._mockCall({ data: paginatedData, currentPage: page, totalPages: totalPages });
-    },
-    
-    addUser: function(data) {
-      if (this._db.users.some(u => u[0] === data.id)) {
-        return this._mockCall(new Error("ID User sudah ada."));
-      }
-      this._db.users.push([data.id, data.nama, data.peran, data.password, data.kontak]);
-      return this._mockCall({ status: "success", message: "Pengguna (Mock) berhasil ditambahkan." });
-    },
-    
-    updateUser: function(data) {
-      const index = this._db.users.findIndex(u => u[0] === data.id);
-      if (index === -1) return this._mockCall(new Error("ID User tidak ditemukan."));
-      this._db.users[index] = [data.id, data.nama, data.peran, data.password, data.kontak];
-      return this._mockCall({ status: "success", message: "Pengguna (Mock) berhasil diperbarui." });
-    },
-    
-    deleteUser: function(id) {
-      this._db.users = this._db.users.filter(u => u[0] !== id);
-      return this._mockCall({ status: "success", message: "Pengguna (Mock) berhasil dihapus." });
-    },
-
-    getStores: function(page = 1, pageSize = 10) {
-      const data = this._db.stores;
-      const totalRows = data.length;
-      const totalPages = Math.ceil(totalRows / pageSize);
-      const offset = (page - 1) * pageSize;
-      const paginatedData = data.slice(offset, offset + pageSize);
-      return this._mockCall({ data: paginatedData, currentPage: page, totalPages: totalPages });
-    },
-    
-    addStore: function(data) {
-      if (this._db.stores.some(s => s[0] === data.id)) {
-        return this._mockCall(new Error("ID Toko sudah ada."));
-      }
-      this._db.stores.push([data.id, data.nama, data.alamat]);
-      return this._mockCall({ status: "success", message: "Toko (Mock) berhasil ditambahkan." });
-    },
-
-    updateStore: function(data) {
-      const index = this._db.stores.findIndex(s => s[0] === data.id);
-      if (index === -1) return this._mockCall(new Error("ID Toko tidak ditemukan."));
-      this._db.stores[index] = [data.id, data.nama, data.alamat];
-      return this._mockCall({ status: "success", message: "Toko (Mock) berhasil diperbarui." });
-    },
-    
-    deleteStore: function(id) {
-      this._db.stores = this._db.stores.filter(s => s[0] !== id);
-      return this._mockCall({ status: "success", message: "Toko (Mock) berhasil dihapus." });
-    },
-
-    getTransactionsByDateRange: function(userObject, startDateString, endDateString) {
-      // Fungsi ini adalah PUSAT MASALAH ANDA. Mari kita mock dengan benar.
-      const startDate = new Date(startDateString);
-      const endDate = new Date(endDateString);
-      endDate.setHours(23, 59, 59); // Pastikan akhir hari
-      
-      let dataToProcess = this._db.transactions;
-      if (userObject && userObject.peran.toLowerCase() !== 'admin') {
-        dataToProcess = dataToProcess.filter(tx => tx[5] === userObject.id);
-      }
-      
-      let filteredData = [];
-      let totalPenjualan = 0;
-
-      dataToProcess.forEach(row => {
-        const tglTransaksi = new Date(row[1]);
-        if (tglTransaksi >= startDate && tglTransaksi <= endDate) {
-          const nominal = parseFloat(row[9]);
-          filteredData.push([
-            row[0], row[1], row[2], row[4], row[6], row[7], row[8], nominal, row[10]
-          ]);
-          totalPenjualan += nominal;
-        }
-      });
-      
-      const response = {
-        data: filteredData,
-        summary: {
-          totalPenjualan: "Rp " + totalPenjualan.toLocaleString('id-ID'),
-          totalTransaksi: filteredData.length,
-          periode: `${startDateString} - ${endDateString}`
-        }
-      };
-      
-      // Simulasikan panggilan sukses
-      return this._mockCall(response, 1000); // delay 1 detik
-    }
-  };
-  
-  // ========================================================
-  // 1. VARIABEL GLOBAL (dari scripts.html)
-  // ========================================================
-  // (Variabel tetap sama)
-  let form;
-  let submitBtn;
-  let refreshBtn;
-  let tokoSelect;
-  let tableBody;
-  let toast;
-  let toastTimer;
-  let appLoader;
-  let loginScreen;
-  let mainApp;
-  let loginForm;
-  let loginBtn;
-  let loginIdInput;
-  let loginError;
-  let userInfo;
-  let logoutBtn;
-  let adminPanelBtn;
-  let adminPanel;
-  let backToAppBtn;
-  let userForm;
-  let userFormClearBtn;
-  let userIdField;
-  let userIdInput;
-  let userNamaInput;
-  let userPeranInput;
-  let userPasswordInput;
-  let userKontakInput;
-  let usersTbody;
-  let allUsersData = [];
-  let originalUserPassword = "";
-  let storeForm;
-  let storeFormClearBtn;
-  let storeIdField;
-  let storeIdInput;
-  let storeNamaInput;
-  let storeAlamatInput;
-  let storesTbody;
-  let allStoresData = [];
-  let adminTbody;
-  let tabUsers;
-  let tabStores;
-  let tabTransactions;
-  let contentUsers;
-  let contentStores;
-  let contentTransactions;
-  let tglMulaiInput;
-  let tglSelesaiInput;
-  let btnHariIni;
-  let btnBulanIni;
-  let btnTahunIni;
-  let generateReportBtn;
-  let printModalOverlay;
-  let printModalContent;
-  let printModalCloseTop;
-  let printModalCloseBottom;
-  let printModalTriggerBtn;
-  let printReportPeriode;
-  let printReportTitle;
-  let printSummaryTx;
-  let printSummaryPenjualan;
-  let printReportTbody;
-  let currentUserPage = 1;
-  let currentStorePage = 1;
-  let currentTxPage = 1;
-  const PAGE_SIZE = 10;
-
-  // ========================================================
-  // 2. FUNGSI UTILITAS & HELPER (dari scripts.html)
-  // ========================================================
-  // (Fungsi-fungsi ini tetap sama, KECUALI 'handleFailure' yang dimodifikasi)
-
-  /**
-   * Menangani kegagalan panggilan MOCK API.
-   * @param {Error} error Objek error dari server.
-   */
-  function handleFailure(error) {
-    console.error(error);
-    // Cek jika 'error' adalah objek Error atau hanya string
-    const message = (error && error.message) ? error.message : String(error);
-    showToast('Terjadi error: ' + message, 'error');
-    
-    // Aktifkan kembali tombol-tombol
-    if(submitBtn) submitBtn.disabled = false;
-    if(loginBtn) loginBtn.disabled = false;
-    if(generateReportBtn) generateReportBtn.disabled = false;
-    
-    const userSubmitBtn = document.getElementById('user-form-submit');
-    if(userSubmitBtn) userSubmitBtn.disabled = false;
-    const storeSubmitBtn = document.getElementById('store-form-submit');
-    if(storeSubmitBtn) storeSubmitBtn.disabled = false;
-    
-    const paginBtns = ['users-prev', 'users-next', 'stores-prev', 'stores-next', 'transactions-prev', 'transactions-next'];
-    paginBtns.forEach(id => {
-      const btn = document.getElementById(id);
-      if(btn) btn.disabled = false;
-    });
-  }
-
-  function showToast(message, type = 'info') {
-    clearTimeout(toastTimer);
-    if (toast) { 
-      toast.textContent = message;
-      toast.className = type;
-      toast.classList.add(type, 'show');
-      
-      toastTimer = setTimeout(() => {
-        toast.classList.remove('show');
-      }, 3000);
-    }
-  }
-
-  function getISODateString(date) {
-    return date.getFullYear() + '-' + 
-           ('0' + (date.getMonth() + 1)).slice(-2) + '-' + 
-           ('0' + date.getDate()).slice(-2);
-  }
-  
-  function setDateHariIni() {
-    const today = getISODateString(new Date());
-    tglMulaiInput.value = today;
-    tglSelesaiInput.value = today;
-  }
-  
-  function setDateBulanIni() {
-    const now = new Date();
-    const tglAwalBulan = getISODateString(new Date(now.getFullYear(), now.getMonth(), 1));
-    const tglAkhirBulan = getISODateString(new Date(now.getFullYear(), now.getMonth() + 1, 0));
-    tglMulaiInput.value = tglAwalBulan;
-    tglSelesaiInput.value = tglAkhirBulan;
-  }
-
-  function setDateTahunIni() {
-    const now = new Date();
-    const tglAwalTahun = getISODateString(new Date(now.getFullYear(), 0, 1));
-    const tglAkhirTahun = getISODateString(new Date(now.getFullYear(), 11, 31));
-    tglMulaiInput.value = tglAwalTahun;
-    tglSelesaiInput.value = tglAkhirTahun;
-  }
-
-  function filterTable(searchInput, tbody) {
-    const searchTerm = searchInput.value.toLowerCase();
-    const rows = tbody.getElementsByTagName('tr');
-    
-    for (let i = 0; i < rows.length; i++) {
-      const row = rows[i];
-      if (row.getElementsByTagName('td').length === 1 && row.getElementsByTagName('td')[0].colSpan > 1) {
-        continue; 
-      }
-      const rowText = row.textContent.toLowerCase();
-      if (rowText.includes(searchTerm)) {
-        row.style.display = "";
-      } else {
-        row.style.display = "none";
-      }
-    }
-  }
-
-  // ========================================================
-  // 3. LOGIKA LOGIN & APLIKASI UTAMA (MODIFIKASI)
-  // ========================================================
-
-  function handleLoginSubmit(e) {
-    e.preventDefault();
-    const idUser = loginIdInput.value.trim();
-    const password = document.getElementById('login-password').value;
-    if (!idUser || !password) {
-      loginError.textContent = 'ID User dan Password harus diisi.';
-      return;
-    }
-    loginBtn.disabled = true;
-    loginError.textContent = '';
-
-    // MODIFIKASI: Ganti google.script.run
-    MOCK_SERVER_API.loginUser(idUser, password)
-      .then(onLoginSuccess)
-      .catch(onLoginFailure);
-  }
-
-  function onLoginSuccess(userObject) {
-    loginBtn.disabled = false;
-    if (userObject) {
-      sessionStorage.setItem('loggedInUser', JSON.stringify(userObject));
-      showMainApp(userObject);
-    } else {
-      loginError.textContent = 'ID User atau Password salah.';
-    }
-  }
-
-  function onLoginFailure(error) {
-    loginBtn.disabled = false;
-    loginError.textContent = 'Error: ' + (error.message || error);
-    handleFailure(error);
-  }
-
-  function showMainApp(userObject) {
-    appLoader.classList.add('hidden');
-    loginScreen.classList.add('hidden');
-    adminPanel.classList.add('hidden');
-    mainApp.classList.remove('hidden');
-
-    const userInfoText = `Login sebagai: ${userObject.nama} (${userObject.peran})`;
-    userInfo.textContent = userInfoText;
-    document.getElementById('admin-user-info').textContent = userInfoText;
-
-    if (userObject.peran.toLowerCase() === 'admin') {
-      adminPanelBtn.classList.remove('hidden');
-    } else {
-      adminPanelBtn.classList.add('hidden');
-    }
-
-    loadDropdownData();
-    loadTransactions();
-    loadDashboardData();
-  }
-
-  function handleLogout() {
-    sessionStorage.removeItem('loggedInUser');
-    mainApp.classList.add('hidden');
-    adminPanel.classList.add('hidden');
-    loginScreen.classList.remove('hidden');
-    loginError.textContent = '';
-    loginForm.reset();
-  }
-
-  function loadDropdownData() {
-    // MODIFIKASI: Ganti google.script.run
-    MOCK_SERVER_API.getDropdownData()
-      .then(populateDropdowns)
-      .catch(handleFailure);
-  }
-
-  function populateDropdowns(data) {
-    tokoSelect.innerHTML = '<option value="" disabled selected>-- Pilih Toko --</option>';
-    data.tokos.forEach(toko => {
-      const option = document.createElement('option');
-      option.value = toko[0];
-      option.textContent = toko[1];
-      option.dataset.nama = toko[1];
-      tokoSelect.appendChild(option);
-    });
-  }
-
-  function loadDashboardData() {
-    document.getElementById('total-toko').textContent = '...';
-    document.getElementById('transaksi-hari-ini').textContent = '...';
-    document.getElementById('total-penjualan').textContent = '...';
-    document.getElementById('total-pengguna').textContent = '...';
-
-    const listWrapper = document.getElementById('rincian-penjualan-wrapper');
-    if (listWrapper) listWrapper.classList.add('hidden');
-    const listElement = document.getElementById('rincian-penjualan-list');
-    if (listElement) listElement.innerHTML = '<p class="text-gray-500 text-center">Memuat rincian...</p>';
-      
-    const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
-    if (!loggedInUser) {
-      handleLogout();
-      return;
-    }
-
-    // MODIFIKASI: Ganti google.script.run
-    MOCK_SERVER_API.getDashboardSummary(loggedInUser)
-      .then(populateDashboard)
-      .catch(handleFailure);
-  }
-
-  function populateDashboard(summary) {
-    document.getElementById('total-toko').textContent = summary.totalToko;
-    document.getElementById('transaksi-hari-ini').textContent = summary.transaksiHariIni;
-    document.getElementById('total-pengguna').textContent = summary.totalPengguna;
-    document.getElementById('total-penjualan').textContent = summary.totalKeseluruhanPenjualan;
-
-    const listWrapper = document.getElementById('rincian-penjualan-wrapper');
-    const listElement = document.getElementById('rincian-penjualan-list');
-    
-    if (!listElement || !listWrapper) return;
-    const details = summary.detailPenjualan;
-
-    if (details && details.length > 0) {
-      listElement.innerHTML = '';
-      details.forEach(item => {
-        const div = document.createElement('div');
-        div.className = 'flex justify-between items-center p-3 bg-gray-50 rounded-lg';
-        div.innerHTML = `
-          <span class="text-sm font-medium text-gray-700">${item.nama}</span>
-          <span class="text-sm font-semibold text-gray-900 font-mono">${item.total}</span>
-        `;
-        listElement.appendChild(div);
-      });
-      listWrapper.classList.remove('hidden');
-    } else {
-      listElement.innerHTML = '';
-      listWrapper.classList.add('hidden');
-    }
-  }
-
-  function loadTransactions() {
-    tableBody.innerHTML = `<tr><td colspan="9" class="px-6 py-12 text-center text-gray-500">Memuat data transaksi...</td></tr>`;
-    refreshBtn.disabled = true;
-
-    const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
-    if (!loggedInUser) {
-      handleLogout();
-      return;
-    }
-
-    // MODIFIKASI: Ganti google.script.run
-    MOCK_SERVER_API.getRecentTransactions(loggedInUser, 1, 50)
-      .then(populateTable)
-      .catch(handleFailure);
-  }
-
-  function populateTable(response) {
-    const data = response.data;
-    tableBody.innerHTML = '';
-    refreshBtn.disabled = false;
-
-    if (!data || data.length === 0) {
-      tableBody.innerHTML = `<tr><td colspan="9" class="px-6 py-12 text-center text-gray-500"><i class="fas fa-inbox text-4xl text-gray-300 mb-2 block"></i><p>Belum ada data transaksi.</p></td></tr>`;
-      return;
-    }
-
-    data.forEach(row => {
-      const tr = document.createElement('tr');
-      // 0:ID, 1:Tgl, 2:Waktu, 4:Toko, 6:Kasir, 7:Jenis, 8:Metode, 9:Penjualan, 10:Catatan
-      const columnsToShow = [
-        row[0], row[1], row[2], row[4], row[6], row[7], row[8], row[9], row[10]
-      ];
-      
-      columnsToShow.forEach((cellData, index) => {
-        const td = document.createElement('td');
-        td.className = 'px-4 py-3 whitespace-nowrap text-sm text-gray-700';
-        if (index === 7) {
-          td.classList.add('text-right', 'font-mono');
-          // Format nominal
-          cellData = parseFloat(cellData).toLocaleString('id-ID');
-        }
-        td.textContent = cellData;
-        tr.appendChild(td);
-      });
-
-      tableBody.appendChild(tr);
-    });
-  }
-
-  function handleFormSubmit(e) {
-    e.preventDefault();
-    submitBtn.disabled = true;
-
-    const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
-    if (!loggedInUser) {
-      handleLogout();
-      return;
-    }
-
-    const tokoOption = tokoSelect.options[tokoSelect.selectedIndex];
-    const formData = {
-      idToko: tokoSelect.value,
-      namaToko: tokoOption ? tokoOption.dataset.nama : '',
-      idKasir: loggedInUser.id,
-      namaKasir: loggedInUser.nama,
-      jenisTransaksi: document.getElementById('jenis-transaksi').value,
-      metodePembayaran: document.getElementById('metode-pembayaran').value,
-      penjualan: document.getElementById('penjualan').value,
-      catatan: document.getElementById('catatan').value
-    };
-    
-    if (!formData.idToko || !formData.penjualan) {
-      showToast("Toko dan Nominal harus diisi.", "error");
-      submitBtn.disabled = false;
-      return;
-    }
-
-    // MODIFIKASI: Ganti google.script.run
-    MOCK_SERVER_API.addTransaction(formData)
-      .then(onFormSuccess)
-      .catch(handleFailure);
-  }
-
-  function onFormSuccess(response) {
-    showToast(response.message, 'success');
-    form.reset();
-    submitBtn.disabled = false;
-    loadTransactions();
-    loadDashboardData();
-  }
-
-  // ========================================================
-  // 4. LOGIKA PANEL ADMIN (MODIFIKASI)
-  // ========================================================
-
-  // --- 4a. Navigasi Admin ---
-  function showAdminPanel() {
-    mainApp.classList.add('hidden');
-    adminPanel.classList.remove('hidden');
-    loadUsers(1); 
-    loadStores(1);
-    loadAllTransactionsForAdmin(1);
-  }
-
-  function showAppFromAdmin() {
-    adminPanel.classList.add('hidden');
-    mainApp.classList.remove('hidden');
-    loadTransactions();
-    loadDropdownData();
-    loadDashboardData();
-  }
-
-  function switchTab(activeTab, activeContent) {
-    [tabUsers, tabStores, tabTransactions].forEach(tab => {
-      tab.classList.remove('active', 'border-blue-500', 'text-blue-600');
-      tab.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700');
-    });
-    [contentUsers, contentStores, contentTransactions].forEach(content => {
-      content.classList.remove('active');
-      content.classList.add('hidden');
-    });
-    activeTab.classList.add('active', 'border-blue-500', 'text-blue-600');
-    activeTab.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700');
-    activeContent.classList.remove('hidden');
-    activeContent.classList.add('active');
-  }
-
-  function updatePaginationControls(prefix, currentPage, totalPages) {
-    const prevBtn = document.getElementById(prefix + '-prev');
-    const nextBtn = document.getElementById(prefix + '-next');
-    const pageInfo = document.getElementById(prefix + '-page-info');
-
-    if (!prevBtn) return; // Pengaman jika elemen tidak ada
-
-    pageInfo.textContent = `Halaman ${currentPage} dari ${totalPages}`;
-    prevBtn.disabled = (currentPage <= 1);
-    nextBtn.disabled = (currentPage >= totalPages);
-  }
-
-  // --- 4b. CRUD Pengguna ---
-  function loadUsers(page = 1) {
-    usersTbody.innerHTML = `<tr><td colspan="5" class="px-6 py-12 text-center text-gray-500">Memuat pengguna...</td></tr>`;
-    document.getElementById('users-prev').disabled = true;
-    document.getElementById('users-next').disabled = true;
-    currentUserPage = page;
-    
-    // MODIFIKASI: Ganti google.script.run
-    MOCK_SERVER_API.getUsers(page, PAGE_SIZE)
-      .then(populateUsersTable)
-      .catch(handleFailure);
-  }
-
-  function populateUsersTable(response) {
-    const users = response.data;
-    allUsersData = users;
-    usersTbody.innerHTML = '';
-    
-    if (!users || users.length === 0) {
-      usersTbody.innerHTML = `<tr><td colspan="5" class="px-6 py-12 text-center text-gray-500"><i class="fas fa-users text-4xl text-gray-300 mb-2 block"></i><p>Tidak ada data pengguna.</p></td></tr>`;
-    } else {
-      users.forEach(user => {
-        const tr = document.createElement('tr');
-        // 0:ID, 1:Nama, 2:Peran, 3:Password (DITUTUPI), 4:Kontak
-        tr.innerHTML = `
-          <td class="px-4 py-3 text-sm text-gray-700">${user[0]}</td>
-          <td class="px-4 py-3 text-sm text-gray-700">${user[1]}</td>
-          <td class="px-4 py-3 text-sm text-gray-700">${user[2]}</td>
-          <td class="px-4 py-3 text-sm text-gray-700">${user[4]}</td>
-          <td class="px-4 py-3 text-sm space-x-2 whitespace-nowrap">
-            <button onclick="editUser('${user[0]}')" class="text-blue-600 hover:text-blue-800">Edit</button>
-            <button onclick="deleteUser('${user[0]}')" class="text-red-600 hover:text-red-800">Hapus</button>
-          </td>
-        `;
-        usersTbody.appendChild(tr);
-      });
-    }
-    updatePaginationControls('users', response.currentPage, response.totalPages);
-  }
-
-  function handleUserSubmit(e) {
-    e.preventDefault();
-    document.getElementById('user-form-submit').disabled = true;
-    
-    const data = {
-      id: userIdInput.value,
-      nama: userNamaInput.value,
-      peran: userPeranInput.value,
-      password: (userPasswordInput.value === '' && userIdField.value !== '') ? originalUserPassword : userPasswordInput.value,
-      kontak: userKontakInput.value
-    };
-
-    if (!data.id || !data.nama) {
-      showToast("ID User dan Nama harus diisi.", "error");
-      document.getElementById('user-form-submit').disabled = false;
-      return;
-    }
-    if (!userIdField.value && !data.password) {
-      showToast("Password harus diisi untuk pengguna baru.", "error");
-      document.getElementById('user-form-submit').disabled = false;
-      return;
-    }
-
-    // MODIFIKASI: Ganti google.script.run
-    let apiCall;
-    if (userIdField.value) { // Mode Update
-      apiCall = MOCK_SERVER_API.updateUser(data);
-    } else { // Mode Add
-      apiCall = MOCK_SERVER_API.addUser(data);
-    }
-    apiCall.then(onUserSubmitSuccess).catch(handleFailure);
-  }
-
-  function onUserSubmitSuccess(response) {
-    showToast(response.message, 'success');
-    clearUserForm();
-    loadUsers(userIdField.value ? currentUserPage : 1);
-    document.getElementById('user-form-submit').disabled = false;
-    loadDashboardData();
-  }
-
-  function clearUserForm() {
-    userForm.reset();
-    userIdField.value = '';
-    userIdInput.disabled = false;
-    document.getElementById('user-form-title').textContent = "Tambah Pengguna Baru";
-    document.getElementById('user-form-submit').innerHTML = '<i class="fas fa-save mr-1"></i><span>Simpan Pengguna</span>';
-    userPasswordInput.placeholder = "Password wajib diisi";
-    originalUserPassword = "";
-  }
-
-  function editUser(id) {
-    const user = allUsersData.find(u => u[0].toString() === id.toString());
-    if (user) {
-      userIdField.value = user[0];
-      userIdInput.value = user[0];
-      userIdInput.disabled = true;
-      userNamaInput.value = user[1];
-      userPeranInput.value = user[2];
-      userPasswordInput.value = '';
-      originalUserPassword = user[3];
-      userKontakInput.value = user[4];
-      
-      document.getElementById('user-form-title').textContent = "Edit Pengguna";
-      document.getElementById('user-form-submit').innerHTML = '<i class="fas fa-save mr-1"></i><span>Perbarui Pengguna</span>';
-      userPasswordInput.placeholder = "Kosongkan jika tidak ganti";
-      
-      userForm.scrollIntoView({ behavior: 'smooth' });
-    } else {
-      showToast("Gagal menemukan data pengguna. Silakan muat ulang.", "error");
-    }
-  }
-
-  function deleteUser(id) {
-    const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
-    if (loggedInUser.id.toString() === id.toString()) {
-      showToast("Anda tidak dapat menghapus akun Anda sendiri.", "error");
-      return;
-    }
-    showToast("Menghapus pengguna...", "info");
-    
-    // MODIFIKASI: Ganti google.script.run
-    MOCK_SERVER_API.deleteUser(id)
-      .then(onUserSubmitSuccess)
-      .catch(handleFailure);
-  }
-
-  // --- 4c. CRUD Toko ---
-  function loadStores(page = 1) { 
-    storesTbody.innerHTML = '<tr><td colspan="4" class="px-6 py-12 text-center text-gray-500">Memuat...</td></tr>';
-    document.getElementById('stores-prev').disabled = true;
-    document.getElementById('stores-next').disabled = true;
-    currentStorePage = page;
-    
-    // MODIFIKASI: Ganti google.script.run
-    MOCK_SERVER_API.getStores(page, PAGE_SIZE)
-      .then(populateStoresTable)
-      .catch(handleFailure);
-  }
-
-  function populateStoresTable(response) { 
-    const stores = response.data;
-    allStoresData = stores;
-    storesTbody.innerHTML = '';
-    
-    if (!stores || stores.length === 0) {
-      storesTbody.innerHTML = '<tr><td colspan="4" class="px-6 py-12 text-center text-gray-500"><i class="fas fa-store text-4xl text-gray-300 mb-2 block"></i><p>Tidak ada data toko.</p></td></tr>';
-    } else {
-      stores.forEach(store => {
-        const tr = document.createElement('tr');
-        // 0:ID, 1:Nama, 2:Alamat
-        tr.innerHTML = `
-          <td class="px-4 py-3 text-sm text-gray-700">${store[0]}</td>
-          <td class="px-4 py-3 text-sm text-gray-700">${store[1]}</td>
-          <td class="px-4 py-3 text-sm text-gray-700">${store[2]}</td>
-          <td class="px-4 py-3 text-sm space-x-2 whitespace-nowrap">
-            <button onclick="editStore('${store[0]}')" class="text-blue-600 hover:text-blue-800">Edit</button>
-            <button onclick="deleteStore('${store[0]}')" class="text-red-600 hover:text-red-800">Hapus</button>
-          </td>
-        `;
-        storesTbody.appendChild(tr);
-      });
-    }
-    updatePaginationControls('stores', response.currentPage, response.totalPages);
-  }
-
-  function handleStoreSubmit(e) {
-    e.preventDefault();
-    document.getElementById('store-form-submit').disabled = true;
-    
-    const data = {
-      id: storeIdInput.value,
-      nama: storeNamaInput.value,
-      alamat: storeAlamatInput.value
-    };
-
-    if (!data.id || !data.nama) {
-      showToast("ID Toko dan Nama Toko harus diisi.", "error");
-      document.getElementById('store-form-submit').disabled = false;
-      return;
-    }
-
-    // MODIFIKASI: Ganti google.script.run
-    let apiCall;
-    if (storeIdField.value) { // Mode Update
-      apiCall = MOCK_SERVER_API.updateStore(data);
-    } else { // Mode Add
-      apiCall = MOCK_SERVER_API.addStore(data);
-    }
-    apiCall.then(onStoreSubmitSuccess).catch(handleFailure);
-  }
-
-  function onStoreSubmitSuccess(response) {
-    showToast(response.message, 'success');
-    clearStoreForm();
-    loadStores(storeIdField.value ? currentStorePage : 1); 
-    document.getElementById('store-form-submit').disabled = false;
-    loadDropdownData();
-    loadDashboardData();
-  }
-
-  function clearStoreForm() {
-    storeForm.reset();
-    storeIdField.value = '';
-    storeIdInput.disabled = false;
-    document.getElementById('store-form-title').textContent = "Tambah Toko Baru";
-    document.getElementById('store-form-submit').innerHTML = '<i class="fas fa-save mr-1"></i><span>Simpan Toko</span>';
-  }
-
-  function editStore(id) {
-    const store = allStoresData.find(s => s[0].toString() === id.toString());
-    if (store) {
-      storeIdField.value = store[0];
-      storeIdInput.value = store[0];
-      storeIdInput.disabled = true;
-      storeNamaInput.value = store[1];
-      storeAlamatInput.value = store[2];
-      
-      document.getElementById('store-form-title').textContent = "Edit Toko";
-      document.getElementById('store-form-submit').innerHTML = '<i class="fas fa-save mr-1"></i><span>Perbarui Toko</span>';
-      
-      storeForm.scrollIntoView({ behavior: 'smooth' });
-    } else {
-      showToast("Gagal menemukan data toko. Silakan muat ulang.", "error");
-    }
-  }
-
-  function deleteStore(id) {
-    showToast("Menghapus toko...", "info");
-    // MODIFIKASI: Ganti google.script.run
-    MOCK_SERVER_API.deleteStore(id)
-      .then(onStoreSubmitSuccess)
-      .catch(handleFailure);
-  }
-
-  // --- 4d. Tab Transaksi Admin ---
-  function loadAllTransactionsForAdmin(page = 1) {
-    adminTbody.innerHTML = '<tr><td colspan="9" class="px-6 py-12 text-center text-gray-500">Memuat...</td></tr>';
-    document.getElementById('transactions-prev').disabled = true;
-    document.getElementById('transactions-next').disabled = true;
-    currentTxPage = page; 
-    
-    const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
-    if (!loggedInUser || loggedInUser.peran.toLowerCase() !== 'admin') {
-      adminTbody.innerHTML = '<tr><td colspan="9" class="px-6 py-12 text-center text-red-500">Akses ditolak.</td></tr>';
-      return;
-    }
-
-    // MODIFIKASI: Ganti google.script.run
-    MOCK_SERVER_API.getRecentTransactions(loggedInUser, page, PAGE_SIZE)
-      .then(populateAdminTransactionsTable)
-      .catch(handleFailure);
-  }
-
-  function populateAdminTransactionsTable(response) {
-    const data = response.data;
-    adminTbody.innerHTML = '';
-    
-    if (!data || data.length === 0) {
-      adminTbody.innerHTML = `<tr><td colspan="9" class="px-6 py-12 text-center text-gray-500"><i class="fas fa-exchange-alt text-4xl text-gray-300 mb-2 block"></i><p>Belum ada data transaksi.</p></td></tr>`;
-      return;
-    }
-
-    data.forEach(row => {
-      const tr = document.createElement('tr');
-      // 0:ID, 1:Tgl, 2:Waktu, 4:Toko, 6:Kasir, 7:Jenis, 8:Metode, 9:Penjualan, 10:Catatan
-      const columnsToShow = [
-        row[0], row[1], row[2], row[4], row[6], row[7], row[8], row[9], row[10]
-      ];
-      
-      columnsToShow.forEach((cellData, index) => {
-        const td = document.createElement('td');
-        td.className = 'px-4 py-3 whitespace-nowrap text-sm text-gray-700';
-        if (index === 7) {
-          td.classList.add('text-right', 'font-mono');
-          // Format nominal
-          cellData = parseFloat(cellData).toLocaleString('id-ID');
-        }
-        td.textContent = cellData;
-        tr.appendChild(td);
-      });
-      adminTbody.appendChild(tr);
-    });
-    updatePaginationControls('transactions', response.currentPage, response.totalPages);
-  }
-
-  // ========================================================
-  // 5. LOGIKA LAPORAN & CETAK (MODIFIKASI)
-  // ========================================================
-
-  function handleGenerateReport() {
-    const tglMulai = tglMulaiInput.value;
-    const tglSelesai = tglSelesaiInput.value;
-
-    if (!tglMulai || !tglSelesai) {
-      showToast("Tanggal Mulai dan Tanggal Selesai harus diisi.", "error");
-      return;
-    }
-    
-    const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
-    if (!loggedInUser) {
-      handleLogout();
-      return;
-    }
-    
-    generateReportBtn.disabled = true;
-    showToast("Membuat laporan (mock)...", "info"); // Info
-
-    // MODIFIKASI: Ganti google.script.run
-    // Ini adalah fungsi yang GAGAL di proyek Anda
-    MOCK_SERVER_API.getTransactionsByDateRange(loggedInUser, tglMulai, tglSelesai)
-      .then(populatePrintModal) // Harusnya sukses sekarang
-      .catch(handleFailure);
-  }
-
-  /**
-   * Mengisi modal pratinjau cetak dengan data dari server.
-   * @param {object} response Objek berisi { data: [], summary: {} }.
-   */
-  function populatePrintModal(response) {
-    // Pengecekan ini SAMA, tapi sekarang harusnya 'response' tidak null
-    if (!response || !response.summary) {
-      showToast("Gagal memuat data laporan. Coba refresh & deploy ulang.", "error");
-      console.error("populatePrintModal menerima respon:", response); // Ini tidak akan 'null' lagi
-      generateReportBtn.disabled = false;
-      return;
-    }
-
-    // Ini akan dieksekusi sekarang
-    console.log("populatePrintModal SUKSES menerima:", response);
-    
-    const data = response.data;
-    const summary = response.summary;
-
-    printReportPeriode.textContent = `Periode: ${summary.periode}`;
-    printReportTitle.textContent = `Periode: ${summary.periode}`;
-    printSummaryTx.textContent = summary.totalTransaksi;
-    printSummaryPenjualan.textContent = summary.totalPenjualan;
-    
-    printReportTbody.innerHTML = '';
-
-    if (!data || data.length === 0) {
-      printReportTbody.innerHTML = `<tr><td colspan="6" class="px-6 py-12 text-center text-gray-500">Tidak ada data transaksi untuk periode ini.</td></tr>`;
-    } else {
-      data.forEach(row => {
-        const tr = document.createElement('tr');
-        // 0:ID, 1:Tgl, 3:Toko, 4:Kasir, 5:Jenis, 7:Nominal
-        const nominal = parseFloat(row[7]); 
+      setTimeout(() => {
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        loadingOverlay.style.opacity = '0';
         
-        tr.innerHTML = `
-          <td class="px-4 py-3 text-sm text-gray-700">${row[0]}</td>
-          <td class="px-4 py-3 text-sm text-gray-700">${row[1]}</td>
-          <td class="px-4 py-3 text-sm text-gray-700">${row[3]}</td>
-          <td class="px-4 py-3 text-sm text-gray-700">${row[4]}</td>
-          <td class="px-4 py-3 text-sm text-gray-700">${row[5]}</td>
-          <td class="px-4 py-3 text-sm text-gray-700 text-right font-mono">${nominal.toLocaleString('id-ID')}</td>
-        `;
-        printReportTbody.appendChild(tr);
-      });
+        setTimeout(() => {
+          loadingOverlay.style.display = 'none';
+          document.getElementById('iframeContainer').style.display = 'block';
+          updateConnectionStatus();
+        }, 500);
+      }, 300);
     }
-
-    printModalOverlay.classList.add('show');
-    printModalContent.classList.add('show');
-    generateReportBtn.disabled = false;
-  }
-  
-  function hidePrintModal() {
-    printModalOverlay.classList.remove('show');
-    printModalContent.classList.remove('show');
-  }
-  
-  function triggerPrint() {
-    window.print();
-  }
-
-  // ========================================================
-  // 6. EVENT LISTENER UTAMA (DOMContentLoaded)
-  // ========================================================
-
-  document.addEventListener('DOMContentLoaded', () => {
     
-    // --- 6a. Inisialisasi Variabel Global ---
-    // (Tidak ada perubahan di sini)
-    form = document.getElementById('transaksi-form');
-    submitBtn = document.getElementById('submit-btn');
-    refreshBtn = document.getElementById('refresh-btn');
-    tokoSelect = document.getElementById('toko');
-    tableBody = document.getElementById('transaksi-tbody');
-    toast = document.getElementById('toast');
-    appLoader = document.getElementById('app-loader');
-    loginScreen = document.getElementById('login-screen');
-    mainApp = document.getElementById('main-app');
-    loginForm = document.getElementById('login-form');
-    loginBtn = document.getElementById('login-btn');
-    loginIdInput = document.getElementById('login-id');
-    loginError = document.getElementById('login-error');
-    userInfo = document.getElementById('user-info');
-    logoutBtn = document.getElementById('logout-btn');
-    adminPanelBtn = document.getElementById('admin-panel-btn');
-    adminPanel = document.getElementById('admin-panel');
-    backToAppBtn = document.getElementById('back-to-app-btn');
-    userForm = document.getElementById('user-form');
-    userFormClearBtn = document.getElementById('user-form-clear');
-    userIdField = document.getElementById('user-id-field');
-    userIdInput = document.getElementById('user-id');
-    userNamaInput = document.getElementById('user-nama');
-    userPeranInput = document.getElementById('user-peran');
-    userPasswordInput = document.getElementById('user-password');
-    userKontakInput = document.getElementById('user-kontak');
-    usersTbody = document.getElementById('users-tbody');
-    storeForm = document.getElementById('store-form');
-    storeFormClearBtn = document.getElementById('store-form-clear');
-    storeIdField = document.getElementById('store-id-field');
-    storeIdInput = document.getElementById('store-id');
-    storeNamaInput = document.getElementById('store-nama');
-    storeAlamatInput = document.getElementById('store-alamat');
-    storesTbody = document.getElementById('stores-tbody');
-    adminTbody = document.getElementById('admin-transaksi-tbody');
-    tabUsers = document.getElementById('tab-users');
-    tabStores = document.getElementById('tab-stores');
-    tabTransactions = document.getElementById('tab-transactions');
-    contentUsers = document.getElementById('tab-content-users');
-    contentStores = document.getElementById('tab-content-stores');
-    contentTransactions = document.getElementById('tab-content-transactions');
-    tglMulaiInput = document.getElementById('laporan-tgl-mulai');
-    tglSelesaiInput = document.getElementById('laporan-tgl-selesai');
-    btnHariIni = document.getElementById('laporan-hari-ini');
-    btnBulanIni = document.getElementById('laporan-bulan-ini');
-    btnTahunIni = document.getElementById('laporan-tahun-ini');
-    generateReportBtn = document.getElementById('generate-report-btn');
-    printModalOverlay = document.getElementById('print-modal-overlay');
-    printModalContent = document.getElementById('print-modal-content');
-    printModalCloseTop = document.getElementById('print-modal-close-top');
-    printModalCloseBottom = document.getElementById('print-modal-close-bottom');
-    printModalTriggerBtn = document.getElementById('print-modal-trigger-btn');
-    printReportPeriode = document.getElementById('print-report-periode');
-    printReportTitle = document.getElementById('print-report-title');
-    printSummaryTx = document.getElementById('print-summary-tx');
-    printSummaryPenjualan = document.getElementById('print-summary-penjualan');
-    printReportTbody = document.getElementById('print-report-tbody');
-
-    // --- 6b. Cek Sesi Login ---
-    const storedUser = sessionStorage.getItem('loggedInUser');
-    if (storedUser) {
-      try {
-        showMainApp(JSON.parse(storedUser));
-      } catch (e) {
-        sessionStorage.removeItem('loggedInUser');
-        location.reload();
+    // Fungsi untuk menangani error
+    function showError() {
+      clearInterval(progressInterval);
+      document.getElementById('loadingOverlay').style.display = 'none';
+      document.getElementById('errorMessage').style.display = 'flex';
+    }
+    
+    // Fungsi untuk mensimulasikan progress loading
+    function simulateProgress() {
+      const progressBar = document.getElementById('progressBar');
+      let width = 0;
+      
+      progressInterval = setInterval(() => {
+        if (width >= 90) {
+          clearInterval(progressInterval);
+        } else {
+          width += Math.random() * 5;
+          progressBar.style.width = width + '%';
+        }
+      }, 300);
+    }
+    
+    // Fungsi untuk memeriksa status koneksi
+    function checkConnection() {
+      isOnline = navigator.onLine;
+      updateConnectionStatus();
+      
+      if (isOnline && document.getElementById('errorMessage').style.display === 'flex') {
+        document.getElementById('retryButton').click();
       }
-    } else {
-      appLoader.classList.add('hidden');
-      loginScreen.classList.remove('hidden');
     }
-  
-    // --- 6c. Pemasangan Event Listener ---
-    // (Tidak ada perubahan di sini)
-    form.addEventListener('submit', handleFormSubmit);
-    refreshBtn.addEventListener('click', loadTransactions);
-    loginForm.addEventListener('submit', handleLoginSubmit);
-    logoutBtn.addEventListener('click', handleLogout);
-    adminPanelBtn.addEventListener('click', showAdminPanel);
-    backToAppBtn.addEventListener('click', showAppFromAdmin);
-    document.getElementById('admin-logout-btn').addEventListener('click', handleLogout);
-    tabUsers.addEventListener('click', () => switchTab(tabUsers, contentUsers));
-    tabStores.addEventListener('click', () => switchTab(tabStores, contentStores));
-    tabTransactions.addEventListener('click', () => switchTab(tabTransactions, contentTransactions));
-    userForm.addEventListener('submit', handleUserSubmit);
-    userFormClearBtn.addEventListener('click', clearUserForm);
-    storeForm.addEventListener('submit', handleStoreSubmit);
-    storeFormClearBtn.addEventListener('click', clearStoreForm);
-    document.getElementById('users-prev').addEventListener('click', () => {
-      if (currentUserPage > 1) loadUsers(currentUserPage - 1);
-    });
-    document.getElementById('users-next').addEventListener('click', () => {
-      loadUsers(currentUserPage + 1);
+    
+    // Fungsi untuk memperbarui tampilan status koneksi
+    function updateConnectionStatus() {
+      const statusElement = document.getElementById('connectionStatus');
+      const iconElement = document.getElementById('connectionIcon');
+      const textElement = document.getElementById('connectionText');
+      
+      if (isOnline) {
+        statusElement.className = 'connection-status online';
+        iconElement.textContent = 'wifi';
+        textElement.textContent = 'Terhubung';
+        
+        // Sembunyikan status online setelah 3 detik
+        setTimeout(() => {
+          if (isOnline) {
+            statusElement.style.display = 'none';
+          }
+        }, 3000);
+      } else {
+        statusElement.className = 'connection-status offline';
+        statusElement.style.display = 'flex';
+        iconElement.textContent = 'wifi_off';
+        textElement.textContent = 'Tidak terhubung';
+      }
+    }
+        
+    // Deteksi jika iframe gagal dimuat
+    document.getElementById('contentFrame').addEventListener('error', showError);
+    
+    // Event listener untuk perubahan koneksi
+    window.addEventListener('online', checkConnection);
+    window.addEventListener('offline', checkConnection);
+    
+    // Event listener untuk tombol retry
+    document.getElementById('retryButton').addEventListener('click', function() {
+      const button = this;
+      button.disabled = true;
+      
+      setTimeout(() => {
+        location.reload();
+      }, 1000);
     });
     
-    document.getElementById('stores-prev').addEventListener('click', () => {
-      if (currentStorePage > 1) loadStores(currentStorePage - 1);
+    // Inisialisasi saat halaman dimuat
+    window.addEventListener('load', function() {
+      simulateProgress();
+      checkConnection();
+      
+      // Sembunyikan loading setelah 15 detik (fallback)
+      setTimeout(hideLoading, 15000);
     });
-    document.getElementById('stores-next').addEventListener('click', () => {
-      loadStores(currentStorePage + 1);
-    });
-    
-    document.getElementById('transactions-prev').addEventListener('click', () => {
-      if (currentTxPage > 1) loadAllTransactionsForAdmin(currentTxPage - 1);
-    });
-    document.getElementById('transactions-next').addEventListener('click', () => {
-      loadAllTransactionsForAdmin(currentTxPage + 1);
-    });
-
-    // Listener Tombol Refresh Admin
-    document.getElementById('admin-refresh-btn').addEventListener('click', () => loadAllTransactionsForAdmin(1));
-    document.getElementById('refresh-users').addEventListener('click', () => loadUsers(1));
-    document.getElementById('refresh-stores').addEventListener('click', () => loadStores(1));
-    
-    // Listener Pencarian (Search)
-    document.getElementById('search-transaksi').addEventListener('keyup', () => {
-      filterTable(document.getElementById('search-transaksi'), tableBody);
-    });
-    document.getElementById('search-admin-transactions').addEventListener('keyup', () => {
-      filterTable(document.getElementById('search-admin-transactions'), adminTbody);
-    });
-    document.getElementById('search-users').addEventListener('keyup', (e) => {
-      filterTable(e.target, usersTbody);
-    });
-    document.getElementById('search-stores').addEventListener('keyup', (e) => {
-      filterTable(e.target, storesTbody);
-    });
-    btnHariIni.addEventListener('click', setDateHariIni);
-    btnBulanIni.addEventListener('click', setDateBulanIni);
-    btnTahunIni.addEventListener('click', setDateTahunIni);
-    generateReportBtn.addEventListener('click', handleGenerateReport);
-    printModalTriggerBtn.addEventListener('click', triggerPrint);
-    printModalCloseTop.addEventListener('click', hidePrintModal);
-    printModalCloseBottom.addEventListener('click', hidePrintModal);
-    printModalOverlay.addEventListener('click', hidePrintModal);
-    
-    // Set tanggal default untuk laporan agar mudah di-test
-    setDateHariIni();
-    
-  }); // Penutup DOMContentLoaded
-
-</script>
-
+  </script>
 </body>
 </html>

@@ -1,1782 +1,1751 @@
 <!doctype html>
-<html lang="id">
+<html lang="id" data-theme="dark">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#0f1119">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="description" content="Web Radio Player - MiniAmp">
-    <title>MiniAmp — Radio Streaming Player</title>
+    <title>MiniAmp</title>
+    <meta name="description" content="Pemutar Musik Web Hibrida dengan Rekam, Visualizer dan EQ">
     <link rel="icon" href="https://www.google.com/s2/favicons?domain=google.com&sz=128" type="image/png">
     <link rel="apple-touch-icon" href="https://www.google.com/s2/favicons?domain=google.com&sz=192">
-    
-    <!-- Phosphor Icons (Modern Icon Set) -->
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
     <style>
-        /**
-         * MiniAmp Styles
-         * Tema: Midnight Cyberpunk
-         */
-
+        /* =========================================
+           VARIBEL CSS & TEMA
+           ========================================= */
         :root {
-            /* -- Palet Warna -- */
-            --bg-dark: #050508;
-            --bg-panel: #13141c;
-            --bg-surface: #1c1e2a;
+            /* --- Variabel Dasar (Mode Gelap Default) --- */
+            --bg-body: #0f172a;
+            --bg-gradient: radial-gradient(circle at 50% 0%, #1e293b 0%, #0f172a 70%);
+            --surface: rgba(30, 41, 59, 0.7);
+            --surface-hover: rgba(51, 65, 85, 0.8);
+            --border: rgba(255, 255, 255, 0.1);
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
             
-            --txt-primary: #ffffff;
-            --txt-secondary: #949aa6;
-            --txt-tertiary: #585d6b;
+            --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.3);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
             
-            --accent-primary: #8b5cf6; /* Violet */
-            --accent-secondary: #3b82f6; /* Blue */
-            --accent-glow: rgba(139, 92, 246, 0.4);
+            --radius-lg: 20px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
             
-            --status-ok: #10b981;
-            --status-warn: #f59e0b;
-            --status-err: #ef4444;
-            
-            /* -- Dimensi -- */
-            --radius-lg: 24px;
-            --radius-md: 16px;
-            --font-main: 'Inter', system-ui, -apple-system, sans-serif;
+            --font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --shadow: 0 10px 40px -10px rgba(0,0,0,0.5);
         }
 
-        /* -- Reset & Base -- */
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
+        /* --- Mode Terang --- */
+        [data-theme="light"] {
+            --bg-body: #f1f5f9;
+            --bg-gradient: radial-gradient(circle at 50% 0%, #ffffff 0%, #f1f5f9 70%);
+            --surface: rgba(255, 255, 255, 0.8);
+            --surface-hover: rgba(248, 250, 252, 0.9);
+            --border: rgba(0, 0, 0, 0.08);
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            
+            --accent: #2563eb;
+            --accent-glow: rgba(37, 99, 235, 0.2);
+            --shadow: 0 10px 30px -10px rgba(0,0,0,0.1);
+        }
+        
+        /* --- Mode Trippy (Neon) --- */
+        [data-theme="trippy"] {
+            --bg-body: #0f0f23;
+            --bg-gradient: radial-gradient(circle at 50% 0%, #1a1a2e 0%, #0f0f23 70%);
+            --surface: rgba(26, 26, 46, 0.7);
+            --surface-hover: rgba(42, 42, 74, 0.8);
+            --border: rgba(255, 0, 255, 0.2);
+            --text-main: #e2e8f0;
+            --text-muted: #a78bfa;
+            --accent: #8b5cf6;
+            --accent-glow: rgba(139, 92, 246, 0.4);
+        }
+        
+        /* =========================================
+           RESET & LAYOUT UTAMA
+           ========================================= */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        html, body { height: 100%; overflow: hidden; }
         
         body {
             margin: 0;
-            height: 100dvh;
-            background-color: var(--bg-dark);
-            background-image: 
-                radial-gradient(circle at 0% 0%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 100% 100%, rgba(59, 130, 246, 0.15) 0%, transparent 50%);
-            color: var(--txt-primary);
-            font-family: var(--font-main);
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        /* -- Container Utama -- */
-        .app-container {
-            width: 100%;
-            height: 100%;
-            max-width: 500px;
-            display: flex;
-            flex-direction: column;
+            color: var(--text-main);
+            background: var(--bg-body);
+            background-image: var(--bg-gradient);
+            font-family: var(--font-stack);
+            display: grid;
+            place-items: center;
+            transition: background 0.3s ease, color 0.3s ease;
             position: relative;
-            background: rgba(19, 20, 28, 0.6);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             overflow: hidden;
         }
 
-        @media (min-width: 768px) {
-            .app-container {
-                height: 90vh;
-                max-height: 850px;
-                border-radius: var(--radius-lg);
-                border: 1px solid rgba(255,255,255,0.08);
-                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            }
-        }
-
-        /* -- Header & Visualizer -- */
-        .deck {
-            flex: 0 0 auto;
-            padding: 20px 20px 10px 20px;
+        svg { width: 20px; height: 20px; stroke-width: 2; stroke: currentColor; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+        
+        /* Kontainer Aplikasi */
+        .app {
+            width: min(94vw, 500px);
+            height: min(92vh, 800px);
             display: flex;
             flex-direction: column;
             gap: 16px;
-            z-index: 10;
+            padding: 24px;
+            background: var(--surface);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            position: relative;
+            transition: all 0.3s ease;
+            z-index: 1;
         }
 
-        .deck-header {
+        /* =========================================
+           HEADER & DECK VISUAL
+           ========================================= */
+        .top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
         }
 
         .brand {
             font-weight: 800;
-            font-size: 1.2rem;
-            background: linear-gradient(135deg, #fff, #a78bfa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: 18px;
+            letter-spacing: -0.5px;
             display: flex;
             align-items: center;
             gap: 8px;
+        }
+        .brand svg { color: var(--accent); }
+
+        .theme-toggle {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+        .theme-toggle:hover { color: var(--text-main); background: var(--border); }
+
+        /* Area Visualizer & Info */
+        .deck {
+            background: rgba(0,0,0,0.03);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            min-height: 140px;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .viz-canvas {
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 100%; height: 60px;
+            opacity: 0.4;
+            pointer-events: none;
+            border-radius: 0 0 var(--radius-md) var(--radius-md);
+        }
+
+        .viz-interactive {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            cursor: pointer;
+            z-index: 2;
         }
 
         .status-badge {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.75rem;
-            padding: 4px 10px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 99px;
-            border: 1px solid rgba(255,255,255,0.05);
-            color: var(--txt-secondary);
+            font-size: 10px; text-transform: uppercase; letter-spacing: 1px;
+            font-weight: 700; color: var(--text-muted);
+            display: flex; align-items: center; gap: 6px;
+            margin-bottom: 4px; z-index: 2;
         }
 
         .status-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--txt-tertiary);
-            transition: 0.3s;
+            width: 8px; height: 8px; border-radius: 50%;
+            background: var(--text-muted); transition: 0.3s;
+        }
+        .status-dot.active { background: var(--success); box-shadow: 0 0 12px var(--success); animation: pulse 2s infinite; }
+        .status-dot.warn { background: var(--warning); box-shadow: 0 0 12px var(--warning); }
+        .status-dot.error { background: var(--danger); }
+
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+        .title-display {
+            font-size: 16px; font-weight: 600; line-height: 1.4;
+            color: var(--text-main); width: 100%;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            z-index: 2; text-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
         
-        /* Animasi Status */
-        @keyframes pulse { 0% { opacity: 0.5; transform: scale(1); } 50% { opacity: 1; transform: scale(1.2); } 100% { opacity: 0.5; transform: scale(1); } }
-        .connecting .status-dot { background: var(--status-warn); animation: pulse 1s infinite; }
-        .playing .status-dot { background: var(--status-ok); box-shadow: 0 0 8px var(--status-ok); }
-        .error .status-dot { background: var(--status-err); }
-
-        .visualizer-wrapper {
-            position: relative;
+        .tech-info {
+            font-size: 11px; color: var(--text-muted);
+            font-family: monospace; opacity: 0.7; z-index: 2;
         }
 
-        .visualizer-card {
-            position: relative;
-            height: 160px;
-            background: linear-gradient(180deg, #1e202e, #101116);
-            border-radius: var(--radius-md);
-            border: 1px solid rgba(255,255,255,0.08);
-            overflow: hidden;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 10px 30px rgba(0,0,0,0.3);
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            transition: transform 0.2s;
-        }
-        
-        /* Tombol ganti mode visualizer */
-        .viz-toggle {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            z-index: 5;
-            background: rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.1);
-            color: var(--txt-secondary);
-            border-radius: 8px;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            backdrop-filter: blur(4px);
-        }
-        .viz-toggle:hover { color: white; background: rgba(255,255,255,0.1); }
-
-        .sleep-indicator {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            z-index: 5;
-            background: rgba(139, 92, 246, 0.2);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            color: #d8b4fe;
-            border-radius: 6px;
-            padding: 4px 8px;
-            font-size: 0.7rem;
-            display: none; /* Hidden by default */
-            align-items: center;
-            gap: 4px;
-            backdrop-filter: blur(4px);
-        }
-
-        canvas#visualizer {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0.8;
-            mix-blend-mode: screen;
-        }
-
-        .track-info {
-            position: relative;
-            z-index: 2;
-            padding: 16px;
-            background: linear-gradient(0deg, rgba(5,5,8,0.9) 0%, transparent 100%);
-        }
-
-        #nowTitle {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 4px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-        }
-
-        .track-meta {
-            display: flex;
+        /* =========================================
+           KONTROL AUDIO
+           ========================================= */
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
             gap: 8px;
-            font-size: 0.8rem;
-            color: var(--txt-secondary);
+            align-items: center;
         }
+        
+        .btn {
+            appearance: none; border: none; cursor: pointer;
+            background: var(--surface); border: 1px solid var(--border);
+            color: var(--text-main); height: 44px;
+            border-radius: var(--radius-md);
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative; overflow: hidden;
+        }
+        .btn:hover { background: var(--surface-hover); transform: translateY(-2px); border-color: var(--accent); }
+        .btn:active { transform: translateY(0); }
+        
+        .btn.primary {
+            background: var(--accent); color: white;
+            border-color: transparent; box-shadow: 0 4px 12px var(--accent-glow);
+        }
+        .btn.active { background: var(--surface-hover); color: var(--accent); border-color: var(--accent); }
 
-        /* -- Playlist Section -- */
+        .btn-large { grid-column: span 1; height: 50px; }
+        .btn-play { grid-column: span 1; height: 56px; border-radius: 28px; }
+
+        /* Volume & EQ */
+        .volume-container {
+            grid-column: span 5;
+            display: flex; align-items: center; gap: 12px;
+            padding: 8px 12px;
+            background: rgba(0,0,0,0.02);
+            border-radius: var(--radius-md);
+            margin-top: 8px;
+        }
+        
+        .vol-label { font-size: 12px; font-weight: 600; min-width: 36px; text-align: center; }
+        
+        .tool-select {
+            background: transparent; color: var(--text-muted);
+            border: 1px solid var(--border); border-radius: 20px;
+            padding: 6px 12px; font-size: 11px; font-weight: 600;
+            outline: none; cursor: pointer; text-align: center;
+        }
+        .tool-select option { background: var(--bg-body); color: var(--text-main); }
+
+        /* =========================================
+           PLAYLIST & NAVIGASI
+           ========================================= */
         .playlist-container {
-            flex: 1;
-            overflow: hidden;
-            position: relative;
-            background: rgba(0,0,0,0.2);
-            margin: 0 10px;
-            border-radius: var(--radius-md);
-            display: flex;
-            flex-direction: column;
-            border: 1px solid rgba(255,255,255,0.03);
-        }
-
-        .search-container {
-            padding: 10px;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            display: flex;
+            flex: 1; 
+            min-height: 0;
+            border-top: 1px solid var(--border);
+            padding-top: 12px;
+            display: flex; 
+            flex-direction: column; 
             gap: 8px;
+            overflow: hidden;
         }
 
         .search-box {
-            width: 100%;
-            padding: 10px 14px;
-            border-radius: 10px;
-            background: rgba(0,0,0,0.2);
-            border: 1px solid rgba(255,255,255,0.1);
-            color: var(--txt-primary);
-            font-size: 0.9rem;
-            font-family: inherit;
+            background: var(--surface); border: 1px solid var(--border);
+            color: var(--text-main); padding: 8px 12px;
+            border-radius: var(--radius-sm); width: 100%;
+            font-size: 13px; outline: none; transition: 0.2s;
+            flex-shrink: 0;
         }
-        .search-box:focus { outline: none; border-color: var(--accent-primary); background: rgba(0,0,0,0.4); }
-        .search-box::placeholder { color: var(--txt-tertiary); }
+        .search-box:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
 
-        .plist-body {
-            flex: 1;
-            overflow-y: auto;
-            padding-bottom: 10px;
-            scrollbar-width: thin;
-            scrollbar-color: var(--bg-surface) transparent;
+        .playlist-scroll {
+            flex: 1; 
+            overflow-y: auto; 
+            padding-right: 4px;
+            min-height: 0;
         }
+        /* Custom Scrollbar */
+        .playlist-scroll::-webkit-scrollbar { width: 4px; }
+        .playlist-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+        .playlist-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 10px 12px; border-radius: var(--radius-sm);
+            cursor: pointer; transition: all 0.2s;
+            border: 1px solid transparent; position: relative;
+        }
+        .playlist-item:hover { background: rgba(0,0,0,0.03); }
+        .playlist-item.active {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: rgba(59, 130, 246, 0.2);
+        }
+        .playlist-item.active .item-title { color: var(--accent); font-weight: 600; }
+
+        .item-num { font-size: 11px; color: var(--text-muted); width: 20px; }
+        .item-title { font-size: 13px; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
-        ul#playlist { list-style: none; margin: 0; padding: 0; }
+        .item-actions { display: flex; gap: 4px; opacity: 0; transition: opacity 0.2s; }
+        .playlist-item:hover .item-actions { opacity: 1; }
+        
+        .btn-mini {
+            width: 24px; height: 24px; padding: 0;
+            border-radius: 6px; background: transparent;
+            color: var(--text-muted); border: none; cursor: pointer;
+        }
+        .btn-mini:hover { color: var(--danger); background: rgba(239, 68, 68, 0.1); }
 
-        #playlist li {
-            display: flex;
-            align-items: center;
-            padding: 14px 16px;
-            cursor: pointer;
-            border-bottom: 1px solid rgba(255,255,255,0.03);
-            transition: 0.2s;
+        /* =========================================
+           TOOLBAR COMPACT - MOBILE RESPONSIVE
+           ========================================= */
+        .toolbar-compact {
             position: relative;
-            overflow: hidden;
-        }
-        #playlist li:hover { background: rgba(255,255,255,0.03); }
-        
-        #playlist li.active { 
-            background: rgba(139, 92, 246, 0.1); 
-        }
-        #playlist li.active::before {
-            content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
-            background: var(--accent-primary);
-            box-shadow: 2px 0 8px var(--accent-primary);
-        }
-        
-        #playlist li.active .title { color: var(--accent-primary); font-weight: 700; }
-        #playlist li.active .num { color: var(--accent-primary); opacity: 1; }
-
-        #playlist li .num {
-            font-size: 0.8rem; color: var(--txt-tertiary);
-            width: 28px; margin-right: 8px; text-align: center; font-variant-numeric: tabular-nums;
-        }
-        #playlist li .title {
-            flex: 1; font-size: 0.95rem;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-            color: var(--txt-secondary);
-        }
-        #playlist li .actions {
-            display: flex; gap: 4px;
-            opacity: 0.4; transition: 0.2s;
-        }
-        #playlist li:hover .actions { opacity: 1; }
-
-        .mini-btn {
-            background: transparent; border: none; color: var(--txt-tertiary);
-            padding: 6px; cursor: pointer; border-radius: 6px; display: flex;
-        }
-        .mini-btn:hover { color: var(--txt-primary); background: rgba(255,255,255,0.1); }
-        .mini-btn.danger:hover { color: var(--status-err); background: rgba(239, 68, 68, 0.1); }
-
-        /* -- Controls Area -- */
-        .controls-area {
-            flex: 0 0 auto;
-            background: rgba(19, 20, 28, 0.9);
-            backdrop-filter: blur(15px);
-            padding: 16px 20px 30px;
-            border-top: 1px solid rgba(255,255,255,0.05);
             display: flex;
             flex-direction: column;
-            gap: 16px;
-            z-index: 20;
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.3);
-        }
-
-        .utility-bar { display: flex; justify-content: space-between; align-items: center; }
-
-        .volume-group {
-            display: flex; align-items: center; gap: 10px;
-            flex: 1; max-width: 140px;
-            background: rgba(0,0,0,0.2);
-            padding: 8px 12px; border-radius: 99px;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-        .volume-slider {
-            flex: 1; -webkit-appearance: none; height: 4px;
-            background: rgba(255,255,255,0.1); border-radius: 2px; cursor: pointer;
-        }
-        .volume-slider::-webkit-slider-thumb {
-            -webkit-appearance: none; width: 12px; height: 12px;
-            border-radius: 50%; background: #fff; cursor: pointer;
-            box-shadow: 0 0 10px rgba(255,255,255,0.5);
-        }
-
-        .tools-group { display: flex; gap: 8px; }
-        .tool-btn {
-            width: 38px; height: 38px; border-radius: 10px;
-            border: 1px solid rgba(255,255,255,0.08);
-            background: rgba(255,255,255,0.03);
-            color: var(--txt-secondary);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 18px; cursor: pointer; transition: 0.2s;
-        }
-        .tool-btn:hover { background: rgba(255,255,255,0.08); color: #fff; }
-        .tool-btn.active {
-            background: var(--accent-primary); color: #fff;
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 15px var(--accent-glow);
-        }
-
-        .primary-controls {
-            display: flex; justify-content: center; align-items: center; gap: 24px;
-        }
-        .c-btn {
-            border: none; background: transparent; color: var(--txt-primary);
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            transition: transform 0.1s;
-        }
-        .c-btn:active { transform: scale(0.9); }
-        
-        .c-btn.play {
-            width: 68px; height: 68px; border-radius: 50%;
-            background: linear-gradient(135deg, #fff, #e0e7ff);
-            color: var(--bg-dark);
-            box-shadow: 0 8px 25px rgba(255,255,255,0.2);
-        }
-        .c-btn.play i { font-size: 32px; margin-left: 2px; }
-        .c-btn.play.playing i { margin-left: 0; }
-        
-        .c-btn.secondary {
-            width: 48px; height: 48px; border-radius: 50%;
-            background: rgba(255,255,255,0.05);
-        }
-        .c-btn.secondary i { font-size: 24px; color: var(--txt-secondary); }
-        .c-btn.secondary:hover { background: rgba(255,255,255,0.1); }
-        .c-btn.secondary:hover i { color: #fff; }
-
-        /* -- Overlays -- */
-        .menu-overlay {
-            position: absolute; bottom: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6);
-            z-index: 90; opacity: 0; pointer-events: none; transition: 0.3s;
-            backdrop-filter: blur(4px);
-        }
-        .menu-overlay.show { opacity: 1; pointer-events: auto; }
-
-        .overlay-panel {
-            position: absolute; bottom: 0; left: 0; width: 100%;
-            background: #13141c;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            border-top-left-radius: 24px;
-            border-top-right-radius: 24px;
-            padding: 24px;
-            transform: translateY(100%);
-            transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-            display: flex; flex-direction: column; gap: 8px;
-            max-height: 80%; overflow-y: auto;
-            z-index: 100;
-        }
-        .menu-overlay.show .overlay-panel { transform: translateY(0); }
-
-        .menu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-        .menu-header h3 { margin: 0; font-size: 1.1rem; }
-
-        .menu-btn {
-            width: 100%; padding: 14px; border-radius: 12px;
-            background: rgba(255,255,255,0.03); border: none;
-            color: var(--txt-secondary); font-size: 0.95rem; text-align: left;
-            display: flex; align-items: center; gap: 14px;
-            cursor: pointer; transition: 0.2s;
-            font-family: inherit;
-        }
-        .menu-btn:hover { background: rgba(255,255,255,0.08); color: #fff; padding-left: 18px; }
-        .menu-btn i { font-size: 1.2rem; color: var(--txt-tertiary); }
-        .menu-btn:hover i { color: var(--accent-primary); }
-
-        /* Toast Notification */
-        .toast {
-            position: fixed; top: 20px; left: 50%;
-            transform: translateX(-50%) translateY(-150%);
-            background: rgba(28, 30, 42, 0.95); 
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 12px 24px; border-radius: 99px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            z-index: 200; transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            font-size: 0.9rem; display: flex; align-items: center; gap: 10px;
-            pointer-events: none;
-        }
-        .toast.show { transform: translateX(-50%) translateY(0); }
-        .toast.ok i { color: var(--status-ok); }
-        .toast.err i { color: var(--status-err); }
-
-        /* -- Info Panel -- */
-        .info-panel {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            z-index: 5;
-            background: rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.1);
-            color: var(--txt-secondary);
-            border-radius: 8px;
-            padding: 8px 12px;
-            font-size: 0.75rem;
-            display: none;
-            align-items: center;
-            gap: 6px;
-            backdrop-filter: blur(4px);
-        }
-        
-        .info-panel.show {
-            display: flex;
-        }
-        
-        .info-panel i {
-            font-size: 0.9rem;
-        }
-        
-        /* -- Stats Panel -- */
-        .stats-panel {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            z-index: 5;
-            background: rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.1);
-            color: var(--txt-secondary);
-            border-radius: 8px;
-            padding: 6px 10px;
-            font-size: 0.7rem;
-            display: none;
             gap: 8px;
-            backdrop-filter: blur(4px);
-        }
-        
-        .stats-panel.show {
-            display: flex;
-        }
-        
-        .stat-item {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        
-        /* -- Progress Bar -- */
-        .progress-container {
-            position: absolute;
-            bottom: 0;
-            left: 0;
+            margin-top: auto;
             width: 100%;
-            height: 4px;
-            background: rgba(255,255,255,0.05);
-            z-index: 10;
-            display: none;
+            flex-shrink: 0;
         }
-        
-        .progress-container.show {
-            display: block;
-        }
-        
-        .progress-bar {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
-            transition: width 0.3s ease;
-        }
-        
-        /* -- Tooltips -- */
-        .tooltip {
-            position: absolute;
-            background: rgba(28, 30, 42, 0.95);
-            border: 1px solid rgba(255,255,255,0.1);
-            color: var(--txt-primary);
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            z-index: 1000;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.2s;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            max-width: 200px;
-            text-align: center;
-        }
-        
-        .tooltip.show {
-            opacity: 1;
-        }
-        
-        /* -- Help Overlay -- */
-        .help-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(5, 5, 8, 0.9);
-            z-index: 150;
+
+        .toolbar-main {
             display: flex;
-            flex-direction: column;
+            gap: 12px;
             justify-content: center;
             align-items: center;
-            padding: 20px;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
-        }
-        
-        .help-overlay.show {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        
-        .help-content {
-            background: var(--bg-panel);
-            border-radius: var(--radius-md);
-            padding: 24px;
-            max-width: 400px;
+            padding: 8px;
             width: 100%;
-            max-height: 80%;
-            overflow-y: auto;
-            border: 1px solid rgba(255,255,255,0.1);
         }
-        
-        .help-header {
+
+        .tool-btn {
+            appearance: none;
+            border: none;
+            cursor: pointer;
+            background: transparent;
+            color: var(--text-muted);
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            justify-content: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            -webkit-tap-highlight-color: transparent;
         }
-        
-        .help-section {
-            margin-bottom: 20px;
+
+        .tool-btn.danger {
+            color: var(--danger);
+            background: transparent;
         }
-        
-        .help-section h4 {
-            margin: 0 0 10px 0;
-            color: var(--accent-primary);
-            font-size: 1rem;
+
+        .tool-btn.danger:hover {
+            background: var(--danger);
+            color: white;
+            transform: translateY(-1px);
         }
-        
-        .help-section p {
-            margin: 0 0 8px 0;
-            font-size: 0.9rem;
-            color: var(--txt-secondary);
+
+        /* Efek tombol recording */
+        #recordBtn.recording {
+            background: var(--danger);
+            color: white;
+            animation: pulse-rec 1s infinite;
         }
-        
-        .help-section ul {
-            margin: 0;
-            padding-left: 20px;
+
+        @keyframes pulse-rec {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
         }
-        
-        .help-section li {
-            margin-bottom: 6px;
-            font-size: 0.9rem;
-            color: var(--txt-secondary);
+
+        /* Ikon dalam tombol */
+        .tool-btn svg {
+            width: 18px;
+            height: 18px;
+            stroke-width: 2;
         }
+
+        /* Notifikasi */
+        .notification {
+            position: absolute; bottom: 24px; left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--text-main); color: var(--bg-body);
+            padding: 10px 20px; border-radius: 30px;
+            font-size: 13px; font-weight: 600;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 100; white-space: nowrap;
+        }
+        .notification.show { transform: translateX(-50%) translateY(0); }
+        .notification.error { background: var(--danger); color: white; }
+
+        /* Komponen Overlay (Game & Skin) */
+        .overlay-modal {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(5px);
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            z-index: 1000; opacity: 0; pointer-events: none;
+            transition: opacity 0.3s; color: white;
+        }
+        .overlay-modal.active { opacity: 1; pointer-events: all; }
+
+        .game-canvas { background: rgba(255,255,255,0.1); border-radius: 10px; margin-bottom: 20px; }
         
-        .key-shortcut {
-            display: inline-block;
-            background: rgba(255,255,255,0.1);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            margin-right: 4px;
+        .skin-panel {
+            background: var(--surface); padding: 24px;
+            border-radius: var(--radius-lg); width: 300px;
+            box-shadow: var(--shadow); border: 1px solid var(--border);
+        }
+        .skin-preview {
+            width: 100%; height: 120px; background-color: #333;
+            border-radius: var(--radius-sm); margin-bottom: 15px;
+            background-size: cover; background-position: center;
+        }
+
+        /* =========================================
+           RESPONSIVE BREAKPOINTS
+           ========================================= */
+        @media (max-width: 480px) {
+            .app {
+                width: 100%; 
+                height: 100%; 
+                border: none; 
+                border-radius: 0; 
+                padding: 16px;
+                gap: 12px;
+            }
+
+            .toolbar-compact {
+                gap: 6px;
+                margin-top: auto;
+                padding-top: 12px;
+                border-top: 1px solid var(--border);
+            }
+
+            .toolbar-main {
+                gap: 10px;
+                padding: 6px 4px;
+            }
+
+            .playlist-container {
+                flex: 1;
+                min-height: 0;
+                display: flex;
+                flex-direction: column;
+                overflow: hidden;
+            }
+
+            .playlist-scroll {
+                flex: 1;
+                overflow-y: auto;
+                padding-right: 4px;
+                margin-bottom: 0;
+            }
         }
     </style>
 </head>
 <body>
 
-    <div class="app-container">
+    <div class="app" role="application">
         
-        <!-- 1. Top Section: Deck & Visualizer -->
+        <!-- Header -->
+        <div class="top-bar">
+            <div class="brand">
+                <svg viewBox="0 0 24 24"><path d="M12 2c-5.5 0-10 4.5-10 10s4.5 10 10 10 10-4.5 10-10-5.5-10-10-10zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8z"/><path d="M10 16.5l6-4.5-6-4.5v9zM12 2a10 10 0 0 1 10 10 10 10 0 0 1-10 10 10 10 0 0 1-10-10 10 10 0 0 1-10-10z" fill="currentColor"/></svg>
+                MiniAmp
+            </div>
+            <button id="themeToggle" class="theme-toggle" title="Ganti Tema">
+                <svg id="iconMoon" style="display:none" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                <svg id="iconSun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+            </button>
+        </div>
+
+        <!-- Deck Informasi & Visualizer -->
         <div class="deck">
-            <div class="deck-header">
-                <div class="brand">
-                    <i class="ph-fill ph-radio"></i> MiniAmp <span style="font-size:0.7em; opacity:0.5; font-weight:400;">v3</span>
-                </div>
-                <div class="status-badge">
-                    <div id="statusDot" class="status-dot"></div>
-                    <span id="statusText">Siap</span>
-                </div>
+            <canvas id="vizCanvas" class="viz-canvas"></canvas>
+            <canvas id="vizInteractive" class="viz-interactive" title="Sentuh untuk ubah EQ"></canvas>
+            <div class="status-badge">
+                <div id="statusDot" class="status-dot"></div>
+                <span id="statusText">IDLE</span>
             </div>
-
-            <div class="visualizer-wrapper">
-                <div class="visualizer-card">
-                    <div id="vizToggle" class="viz-toggle" title="Ganti Visualizer">
-                        <i class="ph ph-chart-bar"></i>
-                    </div>
-                    <div id="sleepIndicator" class="sleep-indicator">
-                        <i class="ph-fill ph-moon"></i> <span id="sleepTimerDisplay">00:00</span>
-                    </div>
-                    
-                    <!-- Info Panel -->
-                    <div id="infoPanel" class="info-panel">
-                        <i class="ph ph-info"></i> <span id="infoText">Info</span>
-                    </div>
-                    
-                    <!-- Stats Panel -->
-                    <div id="statsPanel" class="stats-panel">
-                        <div class="stat-item">
-                            <i class="ph ph-clock"></i> <span id="uptimeDisplay">00:00</span>
-                        </div>
-                        <div class="stat-item">
-                            <i class="ph ph-trend-up"></i> <span id="bitrateDisplay">-</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Progress Bar -->
-                    <div id="progressContainer" class="progress-container">
-                        <div id="progressBar" class="progress-bar"></div>
-                    </div>
-                    
-                    <canvas id="visualizer"></canvas>
-                    <div class="track-info">
-                        <div id="nowTitle">Pilih Stasiun Radio</div>
-                        <div class="track-meta">
-                            <span id="techInfo">44.1kHz • Stereo</span>
-                        </div>
-                    </div>
-                </div>
+            <div id="nowTitle" class="title-display" title="Sedang Diputar">Pilih stasiun</div>
+            <div class="tech-info">
+                <span id="featureBadge">Audio Init</span> • <span id="corsBadge">CORS Ready</span>
             </div>
         </div>
 
-        <!-- 2. Middle Section: Playlist -->
-        <div class="playlist-container" id="dropZone">
-            <div class="search-container">
-                <input type="text" id="searchBox" class="search-box" placeholder="Cari stasiun radio...">
-            </div>
-            <div class="plist-body">
-                <ul id="playlist">
-                    <!-- Playlist injected via JS -->
-                </ul>
-                
-                <!-- Empty State / Drop Hint -->
-                <div id="emptyHint" style="display:none; padding: 30px; text-align: center; color: var(--txt-tertiary); font-size: 0.9rem;">
-                    <i class="ph ph-radio" style="font-size: 32px; margin-bottom: 10px; opacity:0.5;"></i><br>
-                    Tidak ada stasiun.<br>Tarik file .m3u atau Reset.
-                </div>
-            </div>
-        </div>
+        <!-- Kontrol Utama -->
+        <div class="controls-grid">
+            <button id="prevBtn" class="btn btn-large" title="Sebelumnya">
+                <svg viewBox="0 0 24 24"><polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" y1="19" x2="5" y2="5"></line></svg>
+            </button>
+            <button id="stopBtn" class="btn btn-large" title="Berhenti">
+                <svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12"></rect></svg>
+            </button>
+            <button id="playBtn" class="btn btn-primary btn-play" title="Putar">
+                <svg id="iconPlay" viewBox="0 0 24 24" style="fill: currentColor; stroke: none;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                <svg id="iconPause" viewBox="0 0 24 24" style="display:none; fill: currentColor; stroke: none;"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+            </button>
+            <button id="nextBtn" class="btn btn-large" title="Berikutnya">
+                <svg viewBox="0 0 24 24"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"></line></svg>
+            </button>
+            <button id="shuffleBtn" class="btn btn-large" title="Acak">
+                <svg viewBox="0 0 24 24"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>
+            </button>
 
-        <!-- 3. Bottom Section: Controls -->
-        <div class="controls-area">
-            <!-- Sliders & Toggles -->
-            <div class="utility-bar">
-                <div class="volume-group">
-                    <i class="ph ph-speaker-high" id="muteIcon"></i>
-                    <input type="range" id="volSlider" class="volume-slider" min="0" max="100" value="90">
-                </div>
-                
-                <div class="tools-group">
-                    <button id="shuffleBtn" class="tool-btn" title="Acak"><i class="ph ph-shuffle"></i></button>
-                    <button id="normBtn" class="tool-btn active" title="Auto Gain (Normalizer)"><i class="ph ph-faders"></i></button>
-                    <button id="helpBtn" class="tool-btn" title="Bantuan"><i class="ph ph-question"></i></button>
-                    <button id="menuToggleBtn" class="tool-btn" title="Menu"><i class="ph ph-list"></i></button>
-                </div>
-            </div>
-
-            <!-- Playback Controls -->
-            <div class="primary-controls">
-                <button id="prevBtn" class="c-btn secondary"><i class="ph-fill ph-skip-back"></i></button>
-                <button id="playBtn" class="c-btn play"><i class="ph-fill ph-play"></i></button>
-                <button id="nextBtn" class="c-btn secondary"><i class="ph-fill ph-skip-forward"></i></button>
-            </div>
-        </div>
-
-        <!-- 4. Overlay Menus -->
-        <div id="menuOverlay" class="menu-overlay">
-            <div class="overlay-panel">
-                <div class="menu-header">
-                    <h3>Menu</h3>
-                    <button id="menuCloseBtn" class="mini-btn"><i class="ph ph-x" style="font-size: 24px;"></i></button>
-                </div>
-                
-                <button id="sleepTimerBtn" class="menu-btn"><i class="ph ph-moon"></i> Sleep Timer: <span id="sleepStatusText" style="margin-left:auto; font-size:0.8em; opacity:0.7;">Off</span></button>
-                <button id="addStreamBtn" class="menu-btn"><i class="ph ph-link"></i> Tambah Link Stream</button>
-                <button id="loadFileBtn" class="menu-btn"><i class="ph ph-folder-open"></i> Buka File Playlist</button>
-                <button id="pasteBtn" class="menu-btn"><i class="ph ph-clipboard-text"></i> Paste dari Clipboard</button>
-                <button id="exportBtn" class="menu-btn"><i class="ph ph-export"></i> Export Playlist</button>
-                <button id="resetBtn" class="menu-btn" style="color: var(--accent-secondary);"><i class="ph ph-arrows-clockwise"></i> Reset ke Default (Indo)</button>
-                <button id="clearBtn" class="menu-btn" style="color: var(--status-err);"><i class="ph ph-trash"></i> Hapus Semua</button>
-            </div>
-        </div>
+            <!-- Volume & EQ -->
+            <div class="volume-container">
+                <button id="muteBtn" class="btn btn-mini" title="Bisukan">
+                    <svg viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg>
+                </button>
+                <button id="volDown" class="btn btn-mini" title="Vol -">-</button>
+                <div id="volNum" class="vol-label">50%</div>
+                <button id="volUp" class="btn btn-mini" title="Vol +">+</button>
         
-        <!-- 5. Help Overlay -->
-        <div id="helpOverlay" class="help-overlay">
-            <div class="help-content">
-                <div class="help-header">
-                    <h3>Bantuan MiniAmp</h3>
-                    <button id="helpCloseBtn" class="mini-btn"><i class="ph ph-x" style="font-size: 24px;"></i></button>
-                </div>
-                
-                <div class="help-section">
-                    <h4>Kontrol Pemutaran</h4>
-                    <p>Gunakan tombol di bagian bawah untuk mengontrol pemutaran:</p>
-                    <ul>
-                        <li><span class="key-shortcut">⏮️</span> Sebelumnya</li>
-                        <li><span class="key-shortcut">▶️/⏸️</span> Putar/Jeda</li>
-                        <li><span class="key-shortcut">⏭️</span> Selanjutnya</li>
-                    </ul>
-                </div>
-                
-                <div class="help-section">
-                    <h4>Fitur Utama</h4>
-                    <ul>
-                        <li><strong>Auto Gain Control:</strong> Menormalkan volume semua stasiun</li>
-                        <li><strong>Shuffle:</strong> Memutar stasiun secara acak</li>
-                        <li><strong>Sleep Timer:</strong> Matikan pemutaran otomatis setelah waktu tertentu</li>
-                        <li><strong>Visualizer:</strong> Tampilan visual audio dengan dua mode</li>
-                    </ul>
-                </div>
-                
-                <div class="help-section">
-                    <h4>Shortcut Keyboard</h4>
-                    <ul>
-                        <li><span class="key-shortcut">Spasi</span> Putar/Jeda</li>
-                        <li><span class="key-shortcut">→</span> Stasiun berikutnya</li>
-                        <li><span class="key-shortcut">←</span> Stasiun sebelumnya</li>
-                        <li><span class="key-shortcut">↑</span> Volume naik</li>
-                        <li><span class="key-shortcut">↓</span> Volume turun</li>
-                        <li><span class="key-shortcut">M</span> Mute/Unmute</li>
-                        <li><span class="key-shortcut">S</span> Shuffle On/Off</li>
-                        <li><span class="key-shortcut">N</span> Normalizer On/Off</li>
-                    </ul>
-                </div>
-                
-                <div class="help-section">
-                    <h4>Manajemen Playlist</h4>
-                    <ul>
-                        <li><strong>Tambah Stasiun:</strong> Gunakan menu untuk menambah stasiun baru</li>
-                        <li><strong>Import:</strong> Drag & drop file M3U atau gunakan menu Buka File</li>
-                        <li><strong>Export:</strong> Simpan playlist Anda ke file M3U</li>
-                        <li><strong>Reset:</strong> Kembali ke playlist default</li>
-                    </ul>
-                </div>
+                <!-- Tombol REC -->
+                <button id="recordBtn" class="btn btn-mini" title="Rekam ke MP3">
+                    <svg id="iconRec" viewBox="0 0 24 24" style="fill: currentColor; stroke: none;">
+                        <circle cx="12" cy="12" r="6"/>
+                    </svg>
+                    <svg id="iconRecStop" viewBox="0 0 24 24" style="display:none; fill: currentColor; stroke: none;">
+                       <rect x="6" y="6" width="12" height="12"/>
+                    </svg>
+                </button>
+        
+                <div style="flex:1"></div>
+        
+                <!-- Pilihan EQ -->
+                <select id="eqSelect" class="tool-select" title="Preset Equalizer">
+                    <option value="flat">EQ: Flat</option>
+                    <option value="bass">EQ: Bass</option>
+                    <option value="treble">EQ: Treble</option>
+                    <option value="vocal">EQ: Vokal</option>
+                    <option value="rock">EQ: Rock</option>
+                </select>
+        
+                <button id="normBtn" class="tool-btn active" title="Auto Gain Control (Penyeimbang Volume)">AGC ON</button>
             </div>
         </div>
 
-        <div id="toast" class="toast"><i class="ph-fill ph-info"></i> <span>Notification</span></div>
-        
-        <!-- Tooltip Element -->
-        <div id="tooltip" class="tooltip"></div>
+        <!-- Playlist & Pencarian -->
+        <div class="playlist-container">
+            <input type="text" id="searchInput" class="search-box" placeholder="Cari stasiun...">
+            
+            <div style="display: flex; justify-content: space-between; padding: 0 4px; font-size: 12px; color: var(--text-muted); font-weight: 600;">
+                <span id="stationCount">0 STASIUN</span>
+                <button id="loadPresetBtn" class="tool-btn" style="padding: 2px 8px; font-size: 10px;">+ DEMO</button>
+            </div>
+            
+            <div class="playlist-scroll">
+                <ul id="playlist" style="list-style:none; padding:0; margin:0;"></ul>
+            </div>
+        </div>
+
+        <!-- Toolbar Bawah -->
+        <div class="toolbar-compact">
+            <div class="toolbar-main">
+                <button id="addStreamBtn" class="tool-btn" title="URL">
+                    <svg viewBox="0 0 24 24" width="14" height="14"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg>
+                </button>
+                <button id="loadUrlBtn" class="tool-btn" title="M3U">
+                    <svg viewBox="0 0 24 24" width="14" height="14"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                </button>
+                <button id="loadFileBtn" class="tool-btn" title="File">
+                    <svg viewBox="0 0 24 24" width="14" height="14"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+                </button>
+                <button id="gameBtn" class="tool-btn" title="Game">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="8" width="18" height="10" rx="3" />
+                        <circle cx="9" cy="13" r="1.5" />
+                        <circle cx="15" cy="13" r="1.5" />
+                    </svg>
+                </button>
+                <button id="skinBtn" class="tool-btn" title="Tema">
+                    <svg viewBox="0 0 24 24" width="16" height="16"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+                </button>
+                <button id="clearBtn" class="tool-btn danger" title="Hapus">
+                    <svg viewBox="0 0 24 24" width="14" height="14"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                </button>
+            </div>
+        </div>
+
     </div>
 
-    <!-- Hidden Input/Audio -->
-    <input id="fileInput" type="file" accept=".m3u,.m3u8,.txt" hidden>
+    <!-- Elemen Tersembunyi & Overlay -->
+    <div id="notification" class="notification"></div>
+    <input id="fileInput" type="file" accept="audio/*,.m3u,.m3u8,.txt" multiple hidden>
     <audio id="audio" crossorigin="anonymous"></audio>
+    
+    <!-- Overlay: Mini Game -->
+    <div id="miniGame" class="overlay-modal">
+        <h2 style="margin-bottom: 20px;">Beat Tap Challenge</h2>
+        <canvas id="gameCanvas" class="game-canvas" width="300" height="400"></canvas>
+        <div style="font-size: 18px; margin-bottom: 20px;">Skor: <span id="gameScore">0</span></div>
+        <button id="gameClose" class="btn primary" style="padding: 0 20px;">Tutup Game</button>
+    </div>
+    
+    <!-- Overlay: Upload Skin -->
+    <div id="skinOverlay" class="overlay-modal">
+        <div class="skin-panel">
+            <h3 style="margin-top:0; color: var(--text-main);">Kustomisasi Latar</h3>
+            <div id="skinPreview" class="skin-preview"></div>
+            <input type="file" id="skinFile" accept="image/*" style="width:100%; margin-bottom:15px; color: var(--text-muted);">
+            <div style="display:flex; gap:10px;">
+                <button id="skinApply" class="btn primary" style="flex:1">Terapkan</button>
+                <button id="skinReset" class="btn" style="flex:1">Reset</button>
+                <button id="skinCancel" class="btn" style="flex:1">Batal</button>
+            </div>
+        </div>
+    </div>
 
     <script>
         (function() {
             "use strict";
-            
-            // --- Default Stations (Indonesia Popular) ---
-            const defaultStations = [
-                { title: "Ardan Radio 105.9 FM", url: "https://stream.rcs.revma.com/ugpyzu9n5k3vv" },
-                { title: "Dahlia 101.5 FM", url: "https://svara-stream.radioddns.net/bandung_dahliafm" },
-                { title: "Urban Radio Bandung", url: "https://a1.siar.us/listen/urbanradio/stream" },
-                { title: "Hard Rock FM Bandung", url: "http://stream.radiojar.com/fnex9bkswk8uv" },
-                { title: "Hits Unikom Radio 103.9 FM", url: "https://streaming.hitsunikomradio.com/" },
-                { title: "B Radio 95.6 FM (Bandung)", url: "https://stream.rcs.revma.com/9yp8b9pd6k3vv" },
-                { title: "KLCBS Bandung", url: "https://streaming.klcbsofficial.com/listen/klcbs/klcbs" },
-                { title: "iRadio Bandung", url: "https://stream.radiojar.com/u6ppe6hswk8uv" },
-                { title: "PRFM 107.5 News Channel (Bandung)", url: "https://radio.idh.am/prfm" },
-                { title: "Maya FM Bandung", url: "https://svara-stream.radioddns.net/bandung_mayafm_mono" },
-                { title: "K-Lite FM Bandung", url: "https://svara-stream.radioddns.net/bandung_klitefm_acc" },
-                { title: "Mara FM Bandung", url: "https://svara-stream.radioddns.net/bandung_marafm" },
-                { title: "Radio Suara Indah 92.1 FM (Bandung)", url: "https://suaraindahfm.com:8443/live" },
-                { title: "Maestro FM Bandung", url: "http://maestro.skyline.net.id:10925/radio.maestro" },
-                { title: "102.7 MQFM Bandung", url: "https://mqfmstreaming.kamil.web.id/;" },
-                { title: "96.5 Persib Radio", url: "https://s3.vinhostmedia.com:10945/;stream" },
-                { title: "Raka FM Bandung", url: "https://cast2.my-control-panel.com/proxy/radioso5/stream" },
 
-                { title: "Brava Radio", url: "https://stream.radiojar.com/5k7t0rq3bnzuv.mp3" },
-                { title: "Cosmopolitan Radio", url: "https://stream.radiojar.com/u7d8heq3bnzuv.mp3" },
-                { title: "Delta FM 99.1 (Jakarta)", url: "https://s1.cloudmu.id/listen/delta_fm/stream" },
-                { title: "Elshinta Jakarta", url: "https://stream-ssl.arenastreaming.com:8000/jakarta" },
-                { title: "Female Radio 97.9 FM Jakarta", url: "https://s1.cloudmu.id/listen/female_radio/stream" },
-                { title: "Global Radio Jakarta", url: "http://202.147.199.98/;stream.mp3" },
-                { title: "Hard Rock FM Jakarta", url: "https://stream-ssl.arenastreaming.com:8004/hardrock" },
-                { title: "I-Radio Jakarta", url: "https://n10.radiojar.com/4ywdgup3bnzuv" },
-                { title: "RDI Jakarta", url: "http://202.147.199.99:8000/;" },
-                { title: "V Radio Jakarta", url: "http://202.147.199.100:8000/;" },
-                { title: "Heartline Karawaci", url: "https://svara-stream.radioddns.net/karawaci_heartline_stereo" },
-                { title: "OZ Radio Jakarta 90.8 FM", url: "https://streaming.ozradiojakarta.com:8443/ozjakarta" },
-                { title: "Smooth 99.5 Jakarta", url: "https://svara-stream.radioddns.net/jakarta_smoothfm_mp3" },
-                { title: "Suara Dangdut RRI Jakarta", url: "https://stream-node2.rri.co.id/streaming/40/9340/dangdut.mp3" },
-                { title: "Trax FM Palembang (Jakarta Network)", url: "https://stream.radiojar.com/qv4muvhswk8uv" },
-                { title: "TRAX FM Semarang (Jakarta Network)", url: "https://stream.radiojar.com/fr9zqhv80k8uv" },
-                { title: "PAS FM Jakarta", url: "https://i.klikhost.com/8266/stream" },
-                { title: "POP FM Jakarta", url: "https://i.klikhost.com/8272/stream" },
-                { title: "Radio Samhan Jakarta", url: "https://a8.siar.us/listen/samhanjakarta/radio.mp3" },
-                { title: "Z 99.9 Jakarta", url: "https://svara-stream.radioddns.net/jakarta_z999fm_aac" },
-                { title: "Kanal BC Jakarta", url: "https://stream01-ssl.arenastreaming.com:8057/live" }
-            ];
-
-            // --- Config & State ---
-            const config = {
-                fadeIn: 0.8,
-                fadeOut: 0.5,
-                targetDb: -16,
-                limiter: -3
-            };
-            
-            // Elements
-            const el = {
-                audio: document.getElementById('audio'),
-                playBtn: document.getElementById('playBtn'),
-                prevBtn: document.getElementById('prevBtn'),
-                nextBtn: document.getElementById('nextBtn'),
-                shuffleBtn: document.getElementById('shuffleBtn'),
-                normBtn: document.getElementById('normBtn'),
-                volSlider: document.getElementById('volSlider'),
-                muteIcon: document.getElementById('muteIcon'),
-                searchBox: document.getElementById('searchBox'),
-                
-                nowTitle: document.getElementById('nowTitle'),
-                statusDot: document.getElementById('statusDot'),
-                statusText: document.getElementById('statusText'),
-                playlist: document.getElementById('playlist'),
-                dropZone: document.getElementById('dropZone'),
-                emptyHint: document.getElementById('emptyHint'),
-                visualizer: document.getElementById('visualizer'),
-                vizToggle: document.getElementById('vizToggle'),
-                
-                // Info & Stats
-                infoPanel: document.getElementById('infoPanel'),
-                infoText: document.getElementById('infoText'),
-                statsPanel: document.getElementById('statsPanel'),
-                uptimeDisplay: document.getElementById('uptimeDisplay'),
-                bitrateDisplay: document.getElementById('bitrateDisplay'),
-                progressContainer: document.getElementById('progressContainer'),
-                progressBar: document.getElementById('progressBar'),
-                
-                // Menu
-                menuOverlay: document.getElementById('menuOverlay'),
-                menuToggleBtn: document.getElementById('menuToggleBtn'),
-                menuCloseBtn: document.getElementById('menuCloseBtn'),
-                
-                // Help
-                helpOverlay: document.getElementById('helpOverlay'),
-                helpBtn: document.getElementById('helpBtn'),
-                helpCloseBtn: document.getElementById('helpCloseBtn'),
-                
-                // Actions
-                sleepTimerBtn: document.getElementById('sleepTimerBtn'),
-                sleepIndicator: document.getElementById('sleepIndicator'),
-                sleepTimerDisplay: document.getElementById('sleepTimerDisplay'),
-                sleepStatusText: document.getElementById('sleepStatusText'),
-                
-                addStreamBtn: document.getElementById('addStreamBtn'),
-                loadFileBtn: document.getElementById('loadFileBtn'),
-                fileInput: document.getElementById('fileInput'),
-                pasteBtn: document.getElementById('pasteBtn'),
-                exportBtn: document.getElementById('exportBtn'),
-                resetBtn: document.getElementById('resetBtn'),
-                clearBtn: document.getElementById('clearBtn'),
-                toast: document.getElementById('toast'),
-                tooltip: document.getElementById('tooltip')
+            /* =========================================
+               MODUL: KONFIGURASI (Config)
+               Pengaturan dasar aplikasi
+               ========================================= */
+            const Config = {
+                fadeIn: 0.7,
+                fadeOut: 0.6,
+                targetDb: -18,
+                limiter: -14,
+                maxRetries: 6,
+                storageKey: "miniamp.state",
+                skinKey: "miniamp.skin"
             };
 
-            // State
-            let state = {
+            /* =========================================
+               MODUL: STATE APLIKASI (AppState)
+               Menyimpan status runtime
+               ========================================= */
+            const AppState = {
                 playlist: [],
-                filteredPlaylist: [], // For search
-                index: -1,
-                volume: 0.9,
-                shuffled: false,
-                normalized: true,
-                muted: false,
-                vizMode: 0, // 0: Bars, 1: Wave
-                sleepTimeLeft: 0, // Seconds
-                filterText: "",
-                startTime: Date.now(),
-                bitrate: 0,
-                buffering: false
+                displayPlaylist: [],
+                currentIndex: -1,
+                isShuffled: false,
+                isNormalized: true,
+                volume: 0.5,
+                currentEq: "flat",
+                currentMetadata: "",
+                isStopped: false,
+                isRecording: false,
+                metadataTimeout: null,
+                retryCount: 0,
+                retryTimeout: null
             };
 
-            // Audio Globals
-            let audioCtx, sourceNode, gainNode, analyserNode, compressorNode, volumeNode, fadeNode;
-            let retryTimeout = null;
-            let sleepInterval = null;
-            let isAudioInit = false;
-            let uptimeInterval = null;
-            let tooltipTimeout = null;
+            /* =========================================
+               MODUL: MESIN AUDIO (AudioEngine)
+               Menangani Web Audio API, Node, dan Efek
+               ========================================= */
+            const AudioEngine = {
+                ctx: null,
+                nodes: {},
+                eqFilters: [],
 
-            // --- Initialization ---
-            function init() {
-                loadStorage();
-                
-                // Load default if empty
-                if (state.playlist.length === 0) {
-                    state.playlist = [...defaultStations];
-                    saveStorage();
-                }
-                
-                setupEventListeners();
-                setupVisualizer();
-                applyFilter(); // Render playlist
-                
-                // Set initial UI
-                el.volSlider.value = state.volume * 100;
-                updateVolumeUI();
-                el.shuffleBtn.classList.toggle("active", state.shuffled);
-                el.normBtn.classList.toggle("active", state.normalized);
-                
-                // Start uptime counter
-                startUptimeCounter();
-            }
-
-            // --- Audio Engine ---
-            function initAudio() {
-                if (isAudioInit) return;
-                
-                try {
-                    const AudioContext = window.AudioContext || window.webkitAudioContext;
-                    audioCtx = new AudioContext();
-                    
-                    sourceNode = audioCtx.createMediaElementSource(el.audio);
-                    gainNode = audioCtx.createGain(); // AGC
-                    analyserNode = audioCtx.createAnalyser();
-                    compressorNode = audioCtx.createDynamicsCompressor();
-                    fadeNode = audioCtx.createGain(); 
-                    volumeNode = audioCtx.createGain(); 
-
-                    // Signal Chain: Source -> Gain(AGC) -> Analyser -> Compressor -> Fade -> Volume -> Out
-                    sourceNode.connect(gainNode);
-                    gainNode.connect(analyserNode);
-                    analyserNode.connect(compressorNode);
-                    compressorNode.connect(fadeNode);
-                    fadeNode.connect(volumeNode);
-                    volumeNode.connect(audioCtx.destination);
-
-                    // Defaults
-                    analyserNode.fftSize = 1024;
-                    analyserNode.smoothingTimeConstant = 0.85;
-                    
-                    // Limiter/Compressor Settings
-                    compressorNode.threshold.value = config.limiter;
-                    compressorNode.knee.value = 30;
-                    compressorNode.ratio.value = 12;
-                    compressorNode.attack.value = 0.003;
-                    compressorNode.release.value = 0.25;
-
-                    gainNode.gain.value = 1;
-                    fadeNode.gain.value = 1;
-                    volumeNode.gain.value = state.volume;
-
-                    isAudioInit = true;
-                    startAgcLoop();
-                    startVisualizerLoop();
-                } catch(e) {
-                    console.error("Audio Init Failed:", e);
-                }
-            }
-
-            // --- Playback Logic ---
-            async function playStation(realIndex) {
-                if (!state.playlist[realIndex]) return;
-                
-                initAudio();
-                if (audioCtx && audioCtx.state === 'suspended') await audioCtx.resume();
-
-                stopRetry();
-                
-                // Update State
-                state.index = realIndex;
-                const station = state.playlist[realIndex];
-                
-                el.nowTitle.textContent = station.title;
-                setStatus("Menghubungkan...", "warn");
-                highlightPlaylist();
-                
-                // Show info panel
-                showInfoPanel(`Memuat: ${station.title}`);
-                showProgressBar(true);
-
-                // Crossfade Out
-                if (audioCtx) {
-                    const now = audioCtx.currentTime;
-                    fadeNode.gain.cancelScheduledValues(now);
-                    fadeNode.gain.setValueAtTime(fadeNode.gain.value, now);
-                    fadeNode.gain.linearRampToValueAtTime(0, now + 0.2);
-                }
-
-                setTimeout(async () => {
-                    try {
-                        el.audio.src = station.url;
-                        el.audio.load();
+                async init() {
+                    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                    if (!this.ctx) {
+                        this.ctx = new AudioContextClass();
+                        const elAudio = document.getElementById('audio');
+                        elAudio.volume = AppState.volume;
                         
-                        await el.audio.play();
+                        // Membuat Node
+                        this.nodes.source = this.ctx.createMediaElementSource(elAudio);
+                        this.nodes.gain = this.ctx.createGain();
+                        this.nodes.analyser = this.ctx.createAnalyser();
+                        this.nodes.compressor = this.ctx.createDynamicsCompressor();
+                        this.nodes.fadeIn = this.ctx.createGain();
+                        this.nodes.masterVol = this.ctx.createGain();
                         
-                        // Crossfade In
-                        if (audioCtx) {
-                            const later = audioCtx.currentTime;
-                            fadeNode.gain.cancelScheduledValues(later);
-                            fadeNode.gain.setValueAtTime(0, later);
-                            fadeNode.gain.linearRampToValueAtTime(1, later + config.fadeIn);
-                        }
+                        // Konfigurasi EQ
+                        this.eqFilters = [100, 1000, 5000].map(freq => {
+                            const f = this.ctx.createBiquadFilter();
+                            f.type = 'peaking';
+                            f.frequency.value = freq;
+                            f.Q.value = 1;
+                            return f;
+                        });
+
+                        // Konfigurasi Analyser & Kompresor
+                        this.nodes.analyser.fftSize = 256;
+                        this.nodes.compressor.threshold.value = Config.limiter;
+                        this.nodes.compressor.ratio.value = 12;
+
+                        // Rantai Koneksi
+                        let lastNode = this.nodes.source;
+                        this.eqFilters.forEach(node => {
+                            lastNode.connect(node);
+                            lastNode = node;
+                        });
                         
-                        setStatus("Streaming", "playing");
-                        updatePlayBtn(true);
-                        hideInfoPanel();
-                        showStatsPanel(true);
+                        lastNode.connect(this.nodes.gain);
+                        this.nodes.gain.connect(this.nodes.analyser);
+                        this.nodes.analyser.connect(this.nodes.compressor);
+                        this.nodes.compressor.connect(this.nodes.fadeIn);
+                        this.nodes.fadeIn.connect(this.nodes.masterVol);
+                        this.nodes.masterVol.connect(this.ctx.destination);
+
+                        // Mulai sistem pendukung
+                        this.startAGC();
+                        Visualizer.start(this.nodes.analyser);
+                        Visualizer.initInteractive();
+                        this.applyEq(AppState.currentEq);
+                        this.setVolume(AppState.volume);
                         
-                    } catch (e) {
-                        console.error("Play error:", e);
-                        setStatus("Error Stream", "err");
-                        hideInfoPanel();
-                        showProgressBar(false);
-                        // Auto retry logic
-                        startRetry();
+                        document.getElementById('featureBadge').textContent = "Audio: Aktif";
                     }
-                }, 250);
-            }
+                    if (this.ctx.state === 'suspended') await this.ctx.resume();
+                },
 
-            function togglePlay() {
-                if (!state.playlist.length) return showToast("Playlist kosong!", "err");
-                
-                initAudio();
-                if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-
-                if (el.audio.paused) {
-                    if (state.index === -1) state.index = 0;
-                    playStation(state.index);
-                } else {
-                    el.audio.pause();
-                    setStatus("Jeda", "warn");
-                    updatePlayBtn(false);
-                }
-            }
-
-            function playNext() {
-                if (!state.playlist.length) return;
-                let next;
-                if (state.shuffled) {
-                    next = Math.floor(Math.random() * state.playlist.length);
-                } else {
-                    next = state.index + 1;
-                    if (next >= state.playlist.length) next = 0;
-                }
-                playStation(next);
-            }
-
-            function playPrev() {
-                if (!state.playlist.length) return;
-                let prev = state.index - 1;
-                if (prev < 0) prev = state.playlist.length - 1;
-                playStation(prev);
-            }
-
-            function startRetry() {
-                clearTimeout(retryTimeout);
-                retryTimeout = setTimeout(() => {
-                    if (!el.audio.paused) return; // Already playing
-                    setStatus("Mencoba lagi...", "warn");
-                    playStation(state.index);
-                }, 3000);
-            }
-
-            function stopRetry() {
-                clearTimeout(retryTimeout);
-            }
-
-            // --- Sleep Timer ---
-            function toggleSleepTimer() {
-                const options = [0, 15, 30, 60]; // minutes
-                const currentMin = state.sleepTimeLeft / 60;
-                
-                // Find next option
-                let nextIdx = options.findIndex(m => m > currentMin);
-                if (nextIdx === -1) nextIdx = 0; // Reset to 0 if max reached
-                
-                const minutes = options[nextIdx];
-                state.sleepTimeLeft = minutes * 60;
-                
-                clearInterval(sleepInterval);
-                
-                if (state.sleepTimeLeft > 0) {
-                    el.sleepIndicator.style.display = "flex";
-                    el.sleepStatusText.textContent = `${minutes} min`;
-                    showToast(`Sleep timer: ${minutes} menit`, "ok");
+                applyEq(presetName) {
+                    const presets = {
+                        flat: { bass: 1.0, mid: 1.0, treble: 1.0 },
+                        bass: { bass: 1.5, mid: 1.0, treble: 0.8 },
+                        treble: { bass: 0.8, mid: 1.0, treble: 1.5 },
+                        vocal: { bass: 0.9, mid: 1.4, treble: 1.1 },
+                        rock: { bass: 1.3, mid: 0.8, treble: 1.3 }
+                    };
+                    const p = presets[presetName] || presets.flat;
+                    AppState.currentEq = presetName;
                     
-                    sleepInterval = setInterval(() => {
-                        state.sleepTimeLeft--;
-                        if (state.sleepTimeLeft <= 0) {
-                            clearInterval(sleepInterval);
-                            el.audio.pause();
-                            updatePlayBtn(false);
-                            setStatus("Tidur", "warn");
-                            el.sleepIndicator.style.display = "none";
-                            el.sleepStatusText.textContent = "Off";
-                            state.sleepTimeLeft = 0;
+                    if (this.ctx && this.eqFilters.length === 3) {
+                        const now = this.ctx.currentTime;
+                        this.eqFilters[0].gain.setTargetAtTime(p.bass, now, 0.1);
+                        this.eqFilters[1].gain.setTargetAtTime(p.mid, now, 0.1);
+                        this.eqFilters[2].gain.setTargetAtTime(p.treble, now, 0.1);
+                    }
+                    Storage.save();
+                },
+
+                startAGC() {
+                    const buffer = new Float32Array(256);
+                    let gainVal = 0;
+                    
+                    const loop = () => {
+                        if (!this.ctx || AppState.isStopped) { requestAnimationFrame(loop); return; }
+                        
+                        if (AppState.isNormalized && !document.getElementById('audio').paused) {
+                            this.nodes.analyser.getFloatTimeDomainData(buffer);
+                            let sum = 0;
+                            for(let i=0; i<buffer.length; i++) sum += buffer[i]*buffer[i];
+                            const rms = Math.sqrt(sum/buffer.length) || 1e-6;
+                            const db = 20 * Math.log10(rms);
+                            
+                            const adj = Math.max(-8, Math.min(8, Config.targetDb - db));
+                            gainVal = gainVal + (adj - gainVal) * 0.08;
+                            
+                            this.nodes.gain.gain.setTargetAtTime(Math.pow(10, gainVal/20), this.ctx.currentTime, 0.12);
+                        } else {
+                            this.nodes.gain.gain.setTargetAtTime(1, this.ctx.currentTime, 0.15);
                         }
-                        updateSleepDisplay();
-                    }, 1000);
-                } else {
-                    el.sleepIndicator.style.display = "none";
-                    el.sleepStatusText.textContent = "Off";
-                    showToast("Sleep timer mati");
-                }
-                updateSleepDisplay();
-            }
-
-            function updateSleepDisplay() {
-                const m = Math.floor(state.sleepTimeLeft / 60);
-                const s = state.sleepTimeLeft % 60;
-                el.sleepTimerDisplay.textContent = `${m}:${s.toString().padStart(2,'0')}`;
-            }
-
-            // --- Volume & AGC ---
-            function setVolume(val) {
-                state.volume = val;
-                state.muted = false;
-                if (volumeNode) {
-                    volumeNode.gain.setTargetAtTime(val, audioCtx.currentTime, 0.1);
-                }
-                updateVolumeUI();
-                saveStorage();
-            }
-
-            function toggleMute() {
-                state.muted = !state.muted;
-                if (volumeNode) {
-                    volumeNode.gain.setTargetAtTime(state.muted ? 0 : state.volume, audioCtx.currentTime, 0.1);
-                }
-                updateVolumeUI();
-            }
-
-            function updateVolumeUI() {
-                const val = state.muted ? 0 : state.volume * 100;
-                el.volSlider.value = val;
-                
-                if (state.muted || val === 0) el.muteIcon.className = "ph ph-speaker-x";
-                else if (val < 50) el.muteIcon.className = "ph ph-speaker-low";
-                else el.muteIcon.className = "ph ph-speaker-high";
-            }
-
-            function startAgcLoop() {
-                const dataArray = new Float32Array(analyserNode.fftSize);
-                function loop() {
-                    if (!state.normalized || el.audio.paused) {
                         requestAnimationFrame(loop);
+                    };
+                    loop();
+                },
+
+                setVolume(val) {
+                    const safeVal = Math.max(0, Math.min(0.8, val));
+                    AppState.volume = safeVal;
+
+                    if (this.nodes.masterVol) {
+                        this.nodes.masterVol.gain.setTargetAtTime(AppState.volume, this.ctx.currentTime, 0.05);
+                    }
+
+                    const elAudio = document.getElementById('audio');
+                    elAudio.volume = AppState.volume;
+
+                    UI.updateVolumeDisplay();
+                    Storage.save();
+                },
+
+                fade(target, duration) {
+                    if (!this.ctx || !this.nodes.fadeIn) return;
+                    const now = this.ctx.currentTime;
+                    this.nodes.fadeIn.gain.cancelScheduledValues(now);
+                    this.nodes.fadeIn.gain.setValueAtTime(this.nodes.fadeIn.gain.value, now);
+                    this.nodes.fadeIn.gain.linearRampToValueAtTime(target, now + duration);
+                }
+            };
+
+            /* =========================================
+               MODUL: RECORDER (Rekam Audio ke MP3)
+               Menangani Rekaman dan download MP3 Audio
+               ========================================= */
+            const Recorder = {
+                isRecording: false,
+                mediaRecorder: null,
+                audioChunks: [],
+                audioContext: null,
+                scriptProcessor: null,
+                lameWorker: null,
+                mp3Encoder: null,
+                startTime: 0,
+
+                async start() {
+                    if (typeof lamejs === 'undefined') {
+                        UI.notify("Error: Library MP3 encoder tidak tersedia", "error");
+                        console.error("lamejs not found");
                         return;
                     }
-                    
-                    analyserNode.getFloatTimeDomainData(dataArray);
-                    let sum = 0;
-                    // RMS calculation
-                    for(let i = 0; i < dataArray.length; i++) sum += dataArray[i] * dataArray[i];
-                    let rms = Math.sqrt(sum / dataArray.length);
-                    let db = 20 * Math.log10(rms || 0.0001);
 
-                    // Makeup Gain logic
-                    let targetGain = 1;
-                    if (db < config.targetDb) {
-                        targetGain = Math.pow(10, (config.targetDb - db) / 20);
-                        targetGain = Math.min(targetGain, 3.5); // Max boost limit
+                    if (!AudioEngine.ctx) {
+                        UI.notify("Audio engine belum siap", "error");
+                        return;
+                    }
+
+                    this.isRecording = true;
+                    this.audioChunks = [];
+                    this.startTime = Date.now();
+
+                    try {
+                        if (!lamejs || !lamejs.Mp3Encoder) {
+                            throw new Error("MP3 encoder tidak tersedia");
+                        }
+            
+                        this.mp3Encoder = new lamejs.Mp3Encoder(2, 44100, 128);
+
+                        this.scriptProcessor = AudioEngine.ctx.createScriptProcessor(4096, 2, 2);
+
+                        AudioEngine.nodes.masterVol.connect(this.scriptProcessor);
+                        this.scriptProcessor.connect(AudioEngine.ctx.destination);
+
+                        this.scriptProcessor.onaudioprocess = (event) => {
+                            if (!this.isRecording || !this.mp3Encoder) return;
+
+                            const left = event.inputBuffer.getChannelData(0);
+                            const right = event.inputBuffer.getChannelData(1);
+
+                            const leftInt16 = this.floatTo16BitPCM(left);
+                            const rightInt16 = this.floatTo16BitPCM(right);
+
+                            try {
+                                const mp3Buffer = this.mp3Encoder.encodeBuffer(leftInt16, rightInt16);
+                                if (mp3Buffer.length > 0) {
+                                    this.audioChunks.push(new Int8Array(mp3Buffer));
+                                }
+                            } catch (encodeError) {
+                                console.error("Encoding error:", encodeError);
+                            }
+                        };
+
+                        UI.setStatus("REC", "error");
+                        UI.updateRecordButton();
+                        UI.notify("🟥 Recording dimulai...");
+
+                    } catch (error) {
+                        console.error("Error starting recording:", error);
+                        UI.notify("Gagal memulai recording: " + error.message, "error");
+                        this.stop();
+                    }
+                },
+
+                stop() {
+                    if (!this.isRecording) return;
+
+                    this.isRecording = false;
+
+                    if (this.scriptProcessor) {
+                        this.scriptProcessor.disconnect();
+                        this.scriptProcessor.onaudioprocess = null;
+                    }
+
+                    if (this.mp3Encoder) {
+                        try {
+                            const finalBuffer = this.mp3Encoder.flush();
+                            if (finalBuffer.length > 0) {
+                                this.audioChunks.push(new Int8Array(finalBuffer));
+                            }
+                        } catch (flushError) {
+                            console.error("Flush error:", flushError);
+                        }
+                    }
+
+                    this.createMP3File();
+
+                    UI.setStatus("ON AIR", "ok");
+                    UI.updateRecordButton();
+                },
+
+                floatTo16BitPCM(input) {
+                    const output = new Int16Array(input.length);
+                    for (let i = 0; i < input.length; i++) {
+                        const s = Math.max(-1, Math.min(1, input[i]));
+                        output[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+                    }
+                    return output;
+                },
+
+                createMP3File() {
+                    if (this.audioChunks.length === 0) {
+                        UI.notify("Tidak ada data audio yang direkam", "warn");
+                        return;
+                    }
+
+                    try {
+                        const totalLength = this.audioChunks.reduce((total, chunk) => total + chunk.length, 0);
+                        const mp3Data = new Int8Array(totalLength);
+
+                        let offset = 0;
+                        for (const chunk of this.audioChunks) {
+                            mp3Data.set(chunk, offset);
+                            offset += chunk.length;
+                        }
+
+                        const now = new Date();
+                        const timestamp = now.toISOString().slice(0, 19).replace(/[:.]/g, '-');
+                        const stationName = AppState.playlist[AppState.currentIndex]?.title || 'Unknown';
+                        const filename = `MiniAmp_${stationName}_${timestamp}.mp3`;
+
+                        const blob = new Blob([mp3Data], { type: 'audio/mpeg' });
+                        const url = URL.createObjectURL(blob);
+
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = filename;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+
+                        const duration = Math.round((Date.now() - this.startTime) / 1000);
+                        UI.notify(`✅ Rekaman selesai: ${filename} (${duration} detik)`);
+
+                    } catch (error) {
+                        console.error("Error creating MP3 file:", error);
+                        UI.notify("Error membuat file MP3", "error");
+                    }
+                },
+
+                toggle() {
+                    if (this.isRecording) {
+                        this.stop();
+                    } else {
+                        this.start();
+                    }
+                }
+            };
+
+            /* =========================================
+               MODUL: UTILIITAS (Utils)
+               Fungsi bantu umum
+               ========================================= */
+            const Utils = {
+                getNameFromUrl(url) {
+                    try {
+                        const u = new URL(url);
+                        const path = u.pathname.split("/").pop() || "";
+                        return decodeURIComponent(path).replace(/\.(mp3|aac|ogg|m4a)$/i, "") || u.hostname;
+                    } catch { return url; }
+                },
+
+                async fetchLiveMetadata(url) {
+                    if (url.startsWith('blob:') || AppState.isStopped) return;
+                    
+                    try {
+                        const u = new URL(url);
+                        const statusUrl = u.origin + "/status-json.xsl";
+                        
+                        const controller = new AbortController();
+                        const id = setTimeout(() => controller.abort(), 2000);
+
+                        const res = await fetch(statusUrl, { signal: controller.signal });
+                        clearTimeout(id);
+
+                        if (res.ok) {
+                            const data = await res.json();
+                            const src = [].concat(data.icestats?.source || [])
+                                .find(s => s.listenurl?.includes(u.pathname)) || data.icestats?.source?.[0];
+                                
+                            if (src && (src.title || src.yp_currently_playing)) {
+                                const meta = src.title || src.yp_currently_playing;
+                                if (meta !== AppState.currentMetadata) {
+                                    AppState.currentMetadata = meta;
+                                    UI.updateNowPlaying();
+                                }
+                            }
+                        }
+                    } catch (e) { }
+                    
+                    if(AppState.playlist[AppState.currentIndex]?.url === url && !AppState.isStopped) {
+                         AppState.metadataTimeout = setTimeout(() => this.fetchLiveMetadata(url), 15000);
+                    }
+                },
+
+                parseM3U(content) {
+                    const stations = [];
+                    let currentTitle = null;
+                    const lines = content.replace(/^\uFEFF/, "").split(/\r?\n/);
+                    
+                    lines.forEach(line => {
+                        const t = line.trim();
+                        if (!t || t.startsWith("#EXTM3U")) return;
+                        
+                        if (t.startsWith("#EXTINF")) {
+                            const parts = t.split(",");
+                            currentTitle = parts.length > 1 ? parts.slice(1).join(",").trim() : null;
+                        } else if (!t.startsWith("#")) {
+                            stations.push({ title: currentTitle || this.getNameFromUrl(t), url: t });
+                            currentTitle = null;
+                        }
+                    });
+                    return stations;
+                }
+            };
+
+            /* =========================================
+               MODUL: VISUALIZER
+               Menangani Canvas dan animasi
+               ========================================= */
+            const Visualizer = {
+                frameId: 0,
+                start(analyser) {
+                    if (this.frameId) cancelAnimationFrame(this.frameId);
+                    const canvas = document.getElementById('vizCanvas');
+                    const ctx = canvas.getContext('2d');
+                    const bufferLen = analyser.frequencyBinCount;
+                    const dataArray = new Uint8Array(bufferLen);
+                    
+                    const draw = () => {
+                        this.frameId = requestAnimationFrame(draw);
+                        if (document.getElementById('audio').paused) return;
+
+                        if (canvas.width !== canvas.offsetWidth) {
+                            canvas.width = canvas.offsetWidth;
+                            canvas.height = canvas.offsetHeight;
+                        }
+
+                        const w = canvas.width;
+                        const h = canvas.height;
+                        ctx.clearRect(0, 0, w, h);
+                        analyser.getByteFrequencyData(dataArray);
+                        
+                        const barWidth = w / 64;
+                        let x = 0;
+                        const isTrippy = document.documentElement.getAttribute('data-theme') === 'trippy';
+                        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                        let baseColor = isDark ? '240, 240, 255' : '37, 99, 235';
+
+                        if (isTrippy) baseColor = `hsl(${(Date.now()/50)%360}, 100%, 70%)`;
+
+                        for(let i = 0; i < 64; i++) {
+                            const index = Math.floor(i * (bufferLen / 128));
+                            const val = dataArray[index];
+                            const barH = (val / 255) * h;
+                            
+                            ctx.fillStyle = isTrippy ? baseColor : `rgba(${baseColor}, ${val/400})`;
+                            ctx.fillRect(x, h - barH, barWidth - 1, barH);
+                            x += barWidth;
+                        }
+                    };
+                    draw();
+                },
+
+                initInteractive() {
+                    const canvas = document.getElementById('vizInteractive');
+                    let isDragging = false;
+                    let lastX = 0;
+
+                    const start = (e) => { isDragging = true; lastX = (e.touches ? e.touches[0].clientX : e.offsetX); };
+                    const end = () => { isDragging = false; };
+                    const move = (e) => {
+                        if (!isDragging || AudioEngine.eqFilters.length < 3) return;
+                        e.preventDefault();
+                        const clientX = e.touches ? e.touches[0].clientX : e.offsetX;
+                        const delta = clientX - lastX;
+                        
+                        if (Math.abs(delta) > 2) {
+                            const node = delta > 0 ? AudioEngine.eqFilters[2] : AudioEngine.eqFilters[0];
+                            const current = node.gain.value;
+                            node.gain.setTargetAtTime(Math.max(0.2, Math.min(2.5, current + delta/200)), AudioEngine.ctx.currentTime, 0.1);
+                            lastX = clientX;
+                        }
+                    };
+
+                    canvas.addEventListener('mousedown', start);
+                    canvas.addEventListener('touchstart', start);
+                    window.addEventListener('mousemove', move);
+                    window.addEventListener('touchmove', move, {passive: false});
+                    window.addEventListener('mouseup', end);
+                    window.addEventListener('touchend', end);
+                }
+            };
+
+            /* =========================================
+               MODUL: ANTARMUKA PENGGUNA (UI)
+               Interaksi DOM, Playlist, dan Kontrol
+               ========================================= */
+            const UI = {
+                el: {},
+
+                init() {
+                    const ids = ['audio', 'playBtn', 'stopBtn', 'prevBtn', 'nextBtn', 'shuffleBtn', 
+                               'muteBtn', 'volDown', 'volUp', 'volNum', 'eqSelect', 'normBtn', 'recordBtn',
+                               'playlist', 'searchInput', 'stationCount', 'nowTitle', 
+                               'statusDot', 'statusText', 'addStreamBtn', 'loadUrlBtn', 'loadFileBtn',
+                               'gameBtn', 'skinBtn', 'clearBtn', 'loadPresetBtn',
+                               'fileInput', 'notification', 'miniGame', 'gameCanvas', 'gameScore', 'gameClose',
+                               'skinOverlay', 'skinFile', 'skinPreview', 'skinApply', 'skinReset', 'skinCancel',
+                               'themeToggle'];
+            
+                    ids.forEach(id => this.el[id] = document.getElementById(id));
+                    
+                    this.bindEvents();
+                    this.loadTheme();
+                    SkinManager.init();
+                    GameManager.init();
+                },
+                
+                updateNowPlaying() {
+                    const station = AppState.playlist[AppState.currentIndex];
+                    if (!station) return;
+                    
+                    let text = station.title;
+                    if (AppState.currentMetadata) {
+                        text += ` — ${AppState.currentMetadata}`;
                     }
                     
-                    gainNode.gain.setTargetAtTime(targetGain, audioCtx.currentTime, 0.3);
+                    this.el.nowTitle.textContent = text;
+                    this.el.nowTitle.title = text;
+                    document.title = "▶ " + text;
+                },
+
+                bindEvents() {
+                    // Toolbar Events
+                    this.el.gameBtn.onclick = () => {
+                        document.getElementById('miniGame').classList.add('active');
+                        GameManager.start();
+                    };
+
+                    this.el.skinBtn.onclick = () => {
+                        document.getElementById('skinOverlay').classList.add('active');
+                    };
+
+                    this.el.addStreamBtn.onclick = () => {
+                        const url = prompt("Masukkan URL Stream:");
+                        if(url) this.addToPlaylist([{title: Utils.getNameFromUrl(url), url}]);
+                    };
+
+                    this.el.loadUrlBtn.onclick = () => {
+                        const url = prompt("Masukkan URL M3U:");
+                        if(url) {
+                            fetch(url)
+                                .then(r => r.text())
+                                .then(text => {
+                                    const items = Utils.parseM3U(text);
+                                    if(items.length) this.addToPlaylist(items);
+                                })
+                                .catch(() => this.notify("Gagal memuat M3U", "error"));
+                        }
+                    };
+
+                    this.el.loadFileBtn.onclick = () => this.el.fileInput.click();
+
+                    this.el.clearBtn.onclick = () => {
+                        if(confirm("Hapus semua stasiun dari playlist?")) {
+                            AppState.playlist = []; 
+                            AppState.displayPlaylist = [];
+                            AppState.currentIndex = -1;
+                            Player.stop();
+                            this.renderPlaylist();
+                            this.notify("Playlist dikosongkan");
+                        }
+                    };
+
+                    // Audio Controls
+                    this.el.recordBtn.onclick = () => Recorder.toggle();
+                    this.el.playBtn.onclick = () => Player.toggle();
+                    this.el.stopBtn.onclick = () => Player.stop();
+                    this.el.prevBtn.onclick = () => Player.playPrev();
+                    this.el.nextBtn.onclick = () => Player.playNext();
+                    
+                    // PERBAIKAN: Volume step dikurangi dari 0.5 ke 0.05 (5%)
+                    this.el.volDown.onclick = () => AudioEngine.setVolume(AppState.volume - 0.05);
+                    this.el.volUp.onclick = () => AudioEngine.setVolume(AppState.volume + 0.05);
+                    
+                    this.el.muteBtn.onclick = () => { 
+                        this.el.audio.muted = !this.el.audio.muted; 
+                        this.updateControls(); 
+                        Storage.save(); 
+                    };
+                    
+                    this.el.shuffleBtn.onclick = () => { 
+                        AppState.isShuffled = !AppState.isShuffled; 
+                        this.updateControls(); 
+                        Storage.save(); 
+                    };
+                    
+                    this.el.normBtn.onclick = () => { 
+                        AppState.isNormalized = !AppState.isNormalized; 
+                        this.updateControls(); 
+                        Storage.save(); 
+                    };
+
+                    this.el.eqSelect.onchange = (e) => {
+                        AudioEngine.applyEq(e.target.value);
+                        this.notify(`EQ: ${e.target.value.toUpperCase()}`);
+                    };
+
+                    // Pencarian Playlist
+                    this.el.searchInput.addEventListener('input', (e) => {
+                        const term = e.target.value.toLowerCase();
+                        AppState.displayPlaylist = AppState.playlist.filter(s => 
+                            (s.title && s.title.toLowerCase().includes(term)) || s.url.toLowerCase().includes(term)
+                        );
+                        this.renderPlaylist();
+                    });
+
+                    // Event Audio Native
+                    this.el.audio.onplaying = () => { 
+                        this.setStatus("ON AIR", "ok"); 
+                        Player.resetRetry(); 
+                        this.updatePlayButton(); 
+                    };
+                    this.el.audio.onwaiting = () => this.setStatus("BUFFER", "warn");
+                    this.el.audio.onended = () => { this.setStatus("SELESAI", "warn"); Player.retry(true); };
+                    this.el.audio.onerror = () => { this.setStatus("ERROR", "err"); Player.retry(); };
+
+                    // Load Preset Button
+                    this.el.loadPresetBtn.onclick = () => {
+                        const demos = [
+                            { title: "Lofi Girl (Hip Hop)", url: "https://play.streamafrica.net/lofiradio" },
+                            { title: "Smooth Jazz Florida", url: "https://us4.internet-radio.com/proxy/wsjf?mp=/stream;" },
+                            { title: "BBC World Service", url: "https://stream.live.vc.bbcmedia.co.uk/bbc_world_service" }
+                        ];
+                        this.addToPlaylist(demos);
+                        this.notify("Demo dimuat!");
+                    };
+
+                    // File Input
+                    this.el.fileInput.onchange = () => {
+                        if(this.el.fileInput.files.length) Player.handleFiles(this.el.fileInput.files);
+                        this.el.fileInput.value = '';
+                    };
+
+                    // Drag & Drop
+                    document.body.ondragover = e => e.preventDefault();
+                    document.body.ondrop = e => {
+                        e.preventDefault();
+                        if(e.dataTransfer.files.length) Player.handleFiles(e.dataTransfer.files);
+                    };
+                    
+                    // Theme Toggle
+                    this.el.themeToggle.onclick = () => this.cycleTheme();
+                },
+
+                updateRecordButton() {
+                    const isRecording = Recorder.isRecording;
+                    this.el.recordBtn.classList.toggle("recording", isRecording);
+                    document.getElementById('iconRec').style.display = isRecording ? 'none' : 'block';
+                    document.getElementById('iconRecStop').style.display = isRecording ? 'block' : 'none';
+    
+                    const paused = this.el.audio.paused;
+                    document.getElementById('iconPlay').style.display = paused ? 'block' : 'none';
+                    document.getElementById('iconPause').style.display = paused ? 'none' : 'block';
+                },
+
+                addToPlaylist(items) {
+                    AppState.playlist.push(...items);
+                    AppState.displayPlaylist = [...AppState.playlist];
+                    this.el.searchInput.value = "";
+                    this.renderPlaylist();
+                    this.notify(`${items.length} stasiun ditambahkan`, "ok");
+                    Storage.save();
+                },
+
+                renderPlaylist() {
+                    const list = AppState.displayPlaylist.length > 0 || this.el.searchInput.value ? AppState.displayPlaylist : AppState.playlist;
+                    this.el.playlist.innerHTML = "";
+    
+                    list.forEach((item, idx) => {
+                        const realIdx = AppState.playlist.indexOf(item);
+                        const li = document.createElement("li");
+                        li.className = `playlist-item ${realIdx === AppState.currentIndex ? 'active' : ''}`;
+                        li.innerHTML = `
+                            <span class="item-num">${idx + 1}</span>
+                            <span class="item-title">${item.title}</span>
+                            <div class="item-actions">
+                                <button class="btn-mini remove-btn" data-index="${realIdx}">✕</button>
+                            </div>
+                        `;
+                        li.onclick = () => Player.play(realIdx);
+                        this.el.playlist.appendChild(li);
+                    });
+    
+                    this.addRemoveEventListeners();
+                    this.el.stationCount.textContent = `${list.length} STASIUN`;
+    
+                    if (AppState.currentIndex >= 0) {
+                         const active = this.el.playlist.querySelector('.active');
+                         if(active) active.scrollIntoView({behavior: "smooth", block: "nearest"});
+                    }
+                },
+
+                addRemoveEventListeners() {
+                    const removeButtons = this.el.playlist.querySelectorAll('.remove-btn');
+                    removeButtons.forEach(btn => {
+                        btn.onclick = (e) => {
+                            e.stopPropagation();
+                            const index = parseInt(btn.getAttribute('data-index'));
+                            this.removeStation(index);
+                        };
+                    });
+                },
+
+                removeStation(index) {
+                    AppState.playlist.splice(index, 1);
+                    AppState.displayPlaylist = [...AppState.playlist];
+                    this.renderPlaylist();
+                    Storage.save();
+                },
+
+                updateControls() {
+                    this.el.shuffleBtn.classList.toggle("active", AppState.isShuffled);
+                    this.el.normBtn.classList.toggle("active", AppState.isNormalized);
+                    this.el.normBtn.textContent = AppState.isNormalized ? "AGC ON" : "AGC OFF";
+                    this.el.muteBtn.style.opacity = this.el.audio.muted ? "0.5" : "1";
+                },
+
+                updateVolumeDisplay() {
+                    this.el.volNum.textContent = Math.round(AppState.volume * 100) + "%";
+                },
+
+                updatePlayButton() {
+                    const paused = this.el.audio.paused;
+                    document.getElementById('iconPlay').style.display = paused ? 'block' : 'none';
+                    document.getElementById('iconPause').style.display = paused ? 'none' : 'block';
+                },
+
+                setStatus(msg, type) {
+                    this.el.statusText.textContent = msg;
+                    this.el.statusDot.className = `status-dot ${type}`;
+                },
+
+                notify(msg, type="info") {
+                    this.el.notification.textContent = msg;
+                    this.el.notification.className = `notification ${type} show`;
+                    setTimeout(() => this.el.notification.classList.remove("show"), 3000);
+                },
+
+                loadTheme() {
+                    const theme = localStorage.getItem('miniamp_theme') || 'dark';
+                    document.documentElement.setAttribute('data-theme', theme);
+                    this.updateThemeIcon(theme);
+                },
+                cycleTheme() {
+                    const current = document.documentElement.getAttribute('data-theme');
+                    const next = current === 'dark' ? 'light' : (current === 'light' ? 'trippy' : 'dark');
+                    document.documentElement.setAttribute('data-theme', next);
+                    localStorage.setItem('miniamp_theme', next);
+                    this.updateThemeIcon(next);
+                },
+                updateThemeIcon(theme) {
+                    const sun = document.getElementById('iconSun');
+                    const moon = document.getElementById('iconMoon');
+                    sun.style.display = theme === 'dark' ? 'block' : 'none';
+                    moon.style.display = theme !== 'dark' ? 'block' : 'none';
+                }
+            };
+
+            /* =========================================
+               MODUL: PEMUTAR UTAMA (Player)
+               Logika bisnis pemutaran musik
+               ========================================= */
+            const Player = {
+                async toggle() {
+                    if (!AppState.playlist.length) return UI.notify("Playlist kosong!", "error");
+                    await AudioEngine.init();
+                    
+                    if (UI.el.audio.paused) {
+                        AppState.isStopped = false;
+                        if (AppState.currentIndex < 0) AppState.currentIndex = 0;
+                        this.play(AppState.currentIndex);
+                    } else {
+                        this.pause();
+                    }
+                },
+
+                async play(index) {
+                    if (!AppState.playlist[index]) return;
+                    
+                    await AudioEngine.init();
+                    this.resetRetry();
+                    
+                    clearTimeout(AppState.metadataTimeout);
+                    AppState.currentMetadata = "";
+                    
+                    AppState.currentIndex = index;
+                    UI.renderPlaylist();
+                    UI.updateNowPlaying();
+                    
+                    const station = AppState.playlist[index];
+                    UI.setStatus("KONEKSI...", "warn");
+
+                    try {
+                        await this.attemptStream(station.url);
+                        Utils.fetchLiveMetadata(station.url);
+                    } catch (e) {
+                        console.warn("Error Pemutaran:", e);
+                        UI.setStatus("ERROR", "err");
+                    }
+                    Storage.save();
+                },
+
+                async attemptStream(url) {
+                    const audio = UI.el.audio;
+                    
+                    try {
+                        audio.src = url;
+                        audio.setAttribute('crossorigin', 'anonymous');
+                        await this.loadAndPlay(audio);
+                        UI.notify("Mode: CORS Aktif (Visualizer OK)");
+                        return;
+                    } catch (e) {
+                        console.log("Gagal mode CORS, mencoba fallback...");
+                    }
+
+                    if (url.startsWith("http:") && location.protocol === "https:") {
+                        try {
+                            const secureUrl = url.replace("http:", "https:");
+                            UI.setStatus("UPGRADE HTTPS...", "warn");
+                            audio.src = secureUrl;
+                            audio.setAttribute('crossorigin', 'anonymous');
+                            await this.loadAndPlay(audio);
+                            UI.notify("Smart Upgrade: HTTPS Aktif", "ok");
+                            AppState.playlist[AppState.currentIndex].url = secureUrl;
+                            return;
+                        } catch (e) { console.log("Gagal upgrade HTTPS"); }
+                    }
+
+                    UI.setStatus("RETRY NO-CORS", "warn");
+                    audio.removeAttribute('crossorigin');
+                    audio.src = url;
+                    await this.loadAndPlay(audio);
+                    UI.notify("Visualizer nonaktif (Batasan Browser)", "warn");
+                },
+
+                loadAndPlay(audio) {
+                    return new Promise((resolve, reject) => {
+                        const timer = setTimeout(() => reject("Timeout"), 10000);
+                        
+                        const onPlay = () => {
+                            clearTimeout(timer);
+                            cleanup();
+                            AudioEngine.fade(1, Config.fadeIn);
+                            resolve();
+                        };
+                        const onError = (e) => {
+                            clearTimeout(timer);
+                            cleanup();
+                            reject(e);
+                        };
+                        
+                        const cleanup = () => {
+                            audio.removeEventListener('playing', onPlay);
+                            audio.removeEventListener('error', onError);
+                        };
+
+                        audio.addEventListener('playing', onPlay);
+                        audio.addEventListener('error', onError);
+                        
+                        audio.load();
+                        audio.play().catch(onError);
+                    });
+                },
+
+                pause() {
+                    AppState.isStopped = true;
+                    AudioEngine.fade(0, Config.fadeOut);
+                    setTimeout(() => UI.el.audio.pause(), Config.fadeOut * 1000);
+                    UI.setStatus("JEDA", "warn");
+                    UI.updatePlayButton();
+                },
+
+                stop() {
+                    AppState.isStopped = true;
+                    this.resetRetry();
+                    AudioEngine.fade(0, Config.fadeOut);
+                    setTimeout(() => {
+                        UI.el.audio.pause();
+                        UI.el.audio.src = "";
+                        UI.setStatus("BERHENTI", "warn");
+                        UI.updatePlayButton();
+                    }, Config.fadeOut * 1000);
+                },
+
+                playNext() {
+                    if (!AppState.playlist.length) return;
+                    let next = AppState.isShuffled 
+                        ? Math.floor(Math.random() * AppState.playlist.length)
+                        : (AppState.currentIndex + 1) % AppState.playlist.length;
+                    this.play(next);
+                },
+
+                playPrev() {
+                    if (!AppState.playlist.length) return;
+                    let prev = AppState.currentIndex <= 0 
+                        ? AppState.playlist.length - 1 
+                        : AppState.currentIndex - 1;
+                    this.play(prev);
+                },
+
+                retry(isEnded) {
+                    if (AppState.isStopped) return;
+                    AppState.retryCount++;
+                    
+                    if (AppState.retryCount > Config.maxRetries) {
+                        UI.setStatus("GAGAL TOTAL", "err");
+                        return;
+                    }
+
+                    const delay = 1000 * Math.pow(2, AppState.retryCount);
+                    UI.setStatus(`RETRY (${AppState.retryCount})...`, "warn");
+                    
+                    AppState.retryTimeout = setTimeout(() => {
+                        if (isEnded) this.playNext();
+                        else this.play(AppState.currentIndex);
+                    }, delay);
+                },
+
+                resetRetry() {
+                    clearTimeout(AppState.retryTimeout);
+                    AppState.retryCount = 0;
+                },
+
+                async handleFiles(files) {
+                    const newItems = [];
+                    for (const file of files) {
+                        if (file.name.match(/\.(m3u|m3u8|txt)$/i)) {
+                            const text = await file.text();
+                            newItems.push(...Utils.parseM3U(text));
+                        } 
+                        else if (file.type.startsWith('audio/') || file.name.match(/\.(mp3|wav|ogg|aac|flac|m4a)$/i)) {
+                            newItems.push({
+                                title: file.name.replace(/\.[^/.]+$/, ""),
+                                url: URL.createObjectURL(file)
+                            });
+                        }
+                    }
+                    if (newItems.length) UI.addToPlaylist(newItems);
+                }
+            };
+
+            /* =========================================
+               MODUL: STORAGE (Penyimpanan Lokal)
+               Logika penyimpanan lokal MiniAmp
+               ========================================= */
+            const Storage = {
+                save() {
+                    const data = {
+                        playlist: AppState.playlist.filter(s => !s.url.startsWith('blob:')),
+                        idx: AppState.currentIndex,
+                        vol: AppState.volume,
+                        shuf: AppState.isShuffled,
+                        norm: AppState.isNormalized,
+                        eq: AppState.currentEq
+                    };
+                    localStorage.setItem(Config.storageKey, JSON.stringify(data));
+                },
+                load() {
+                    try {
+                        const data = JSON.parse(localStorage.getItem(Config.storageKey) || "{}");
+                        if (Array.isArray(data.playlist)) {
+                            AppState.playlist = data.playlist;
+                            AppState.displayPlaylist = [...AppState.playlist];
+                        }
+                        if (data.idx !== undefined) AppState.currentIndex = data.idx;
+
+                        if (data.vol !== undefined) {
+                            AppState.volume = Math.min(0.8, data.vol);
+                        } else {
+                            AppState.volume = 0.5;
+                        }
+
+                        if (data.shuf !== undefined) AppState.isShuffled = data.shuf;
+                        if (data.norm !== undefined) AppState.isNormalized = data.norm;
+                        if (data.eq) AppState.currentEq = data.eq;
+
+                        AudioEngine.setVolume(AppState.volume);
+                        
+                        UI.renderPlaylist();
+                        UI.el.eqSelect.value = AppState.currentEq;
+                        UI.updateVolumeDisplay();
+                        UI.updateControls();
+                    } catch (e) { 
+                        console.error("Gagal memuat penyimpanan", e);
+                        AudioEngine.setVolume(0.5);
+                    }
+                }
+            };
+
+            /* =========================================
+               MODUL: FITUR TAMBAHAN (Skin & Game)
+               Pengaturan Skin dan Play Game Sederhana
+               ========================================= */
+            const SkinManager = {
+                init() {
+                    const overlay = document.getElementById('skinOverlay');
+                    const preview = document.getElementById('skinPreview');
+                    
+                    document.getElementById('skinBtn').onclick = () => overlay.classList.add('active');
+                    document.getElementById('skinCancel').onclick = () => overlay.classList.remove('active');
+                    
+                    document.getElementById('skinFile').onchange = (e) => {
+                        const file = e.target.files[0];
+                        if(file) {
+                            const reader = new FileReader();
+                            reader.onload = ev => preview.style.backgroundImage = `url(${ev.target.result})`;
+                            reader.readAsDataURL(file);
+                        }
+                    };
+                    
+                    document.getElementById('skinApply').onclick = () => {
+                        const bg = preview.style.backgroundImage;
+                        if(bg && bg !== 'none') {
+                            document.body.style.backgroundImage = bg;
+                            document.body.style.backgroundSize = 'cover';
+                            localStorage.setItem(Config.skinKey, bg);
+                            UI.notify("Tema diterapkan!");
+                        }
+                        overlay.classList.remove('active');
+                    };
+
+                    document.getElementById('skinReset').onclick = () => {
+                        localStorage.removeItem(Config.skinKey);
+                        document.body.style.backgroundImage = '';
+                        preview.style.backgroundImage = 'none';
+                        UI.notify("Tema direset");
+                    };
+
+                    const saved = localStorage.getItem(Config.skinKey);
+                    if(saved) {
+                        document.body.style.backgroundImage = saved;
+                        document.body.style.backgroundSize = 'cover';
+                    }
+                }
+            };
+
+            const GameManager = {
+                active: false,
+                score: 0,
+                circles: [],
+                
+                init() {
+                    const btn = document.getElementById('gameBtn');
+                    const close = document.getElementById('gameClose');
+                    const modal = document.getElementById('miniGame');
+                    
+                    btn.onclick = () => {
+                        modal.classList.add('active');
+                        this.start();
+                    };
+                    close.onclick = () => {
+                        modal.classList.remove('active');
+                        this.active = false;
+                    };
+                    
+                    const canvas = document.getElementById('gameCanvas');
+                    const hit = (e) => {
+                        if(!this.active) return;
+                        e.preventDefault();
+                        const rect = canvas.getBoundingClientRect();
+                        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                        const x = clientX - rect.left;
+                        const y = clientY - rect.top;
+                        
+                        for(let i = this.circles.length-1; i>=0; i--) {
+                            const c = this.circles[i];
+                            const dx = x - c.x;
+                            const dy = y - c.y;
+                            if (dx*dx + dy*dy <= c.r*c.r) {
+                                this.circles.splice(i, 1);
+                                this.score += 10;
+                                document.getElementById('gameScore').textContent = this.score;
+                                break;
+                            }
+                        }
+                    };
+                    
+                    canvas.addEventListener('mousedown', hit);
+                    canvas.addEventListener('touchstart', hit);
+                },
+                
+                start() {
+                    this.active = true;
+                    this.score = 0;
+                    this.circles = [];
+                    document.getElementById('gameScore').textContent = "0";
+                    const canvas = document.getElementById('gameCanvas');
+                    const ctx = canvas.getContext('2d');
+                    let lastSpawn = 0;
+                    
+                    const loop = (time) => {
+                        if(!this.active) return;
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        
+                        if (time - lastSpawn > 500) {
+                            this.circles.push({
+                                x: Math.random() * (canvas.width - 40) + 20,
+                                y: -20,
+                                r: 15 + Math.random() * 10,
+                                speed: 1 + Math.random() * 2,
+                                color: `hsl(${Math.random()*360}, 70%, 60%)`
+                            });
+                            lastSpawn = time;
+                        }
+                        
+                        for(let i = this.circles.length-1; i>=0; i--) {
+                            const c = this.circles[i];
+                            c.y += c.speed;
+                            
+                            let boom = 0;
+                            if(AudioEngine.nodes.analyser && !UI.el.audio.paused) {
+                                const data = new Uint8Array(10);
+                                AudioEngine.nodes.analyser.getByteFrequencyData(data);
+                                boom = data[2] / 30;
+                            }
+
+                            ctx.fillStyle = c.color;
+                            ctx.beginPath();
+                            ctx.arc(c.x, c.y, c.r + boom, 0, Math.PI*2);
+                            ctx.fill();
+                            
+                            if(c.y > canvas.height + 50) this.circles.splice(i, 1);
+                        }
+                        requestAnimationFrame(loop);
+                    };
                     requestAnimationFrame(loop);
                 }
-                loop();
-            }
+            };
 
-            // --- Visualizer ---
-            function setupVisualizer() {
-                const canvas = el.visualizer;
-                function resize() {
-                    const rect = canvas.parentElement.getBoundingClientRect();
-                    canvas.width = rect.width * 1.5; // HiDPI ish
-                    canvas.height = rect.height * 1.5;
-                }
-                window.addEventListener('resize', resize);
-                resize();
-            }
-
-            function startVisualizerLoop() {
-                const canvas = el.visualizer;
-                const ctx = canvas.getContext('2d');
-                const bufferLength = analyserNode.frequencyBinCount;
-                const dataArray = new Uint8Array(bufferLength);
-                const timeArray = new Uint8Array(bufferLength);
-
-                function draw() {
-                    requestAnimationFrame(draw);
-                    if (el.audio.paused) {
-                        ctx.clearRect(0,0,canvas.width,canvas.height);
-                        return;
-                    }
-
-                    const w = canvas.width;
-                    const h = canvas.height;
-                    ctx.clearRect(0, 0, w, h);
-
-                    if (state.vizMode === 0) {
-                        // MODE 0: Frequency Bars
-                        analyserNode.getByteFrequencyData(dataArray);
-                        const bars = 40;
-                        const barW = w / bars;
-                        // Use lower frequency range usually more active
-                        const step = Math.floor((bufferLength * 0.6) / bars); 
-
-                        for(let i=0; i<bars; i++) {
-                            const val = dataArray[i*step];
-                            const percent = val / 255;
-                            const barH = percent * h * 0.9;
-                            
-                            const x = i * barW;
-                            const y = h - barH;
-
-                            // Gradient
-                            const hue = 250 + (i * 2); // Purple/Blue range
-                            ctx.fillStyle = `hsla(${hue}, 80%, 65%, 0.8)`;
-                            
-                            // Rounded top rect
-                            ctx.beginPath();
-                            ctx.roundRect(x + 2, y, barW - 4, barH, [4,4,0,0]);
-                            ctx.fill();
-                        }
-                    } else {
-                        // MODE 1: Oscilloscope (Wave)
-                        analyserNode.getByteTimeDomainData(timeArray);
-                        ctx.lineWidth = 3;
-                        ctx.strokeStyle = '#8b5cf6'; // Violet accent
-                        ctx.beginPath();
-
-                        const sliceWidth = w * 1.0 / bufferLength;
-                        let x = 0;
-
-                        for(let i = 0; i < bufferLength; i++) {
-                            const v = timeArray[i] / 128.0;
-                            const y = v * h / 2;
-
-                            if(i === 0) ctx.moveTo(x, y);
-                            else ctx.lineTo(x, y);
-
-                            x += sliceWidth;
-                        }
-                        ctx.stroke();
-                    }
-                }
-                draw();
-            }
-
-            // --- Info & Stats Panels ---
-            function showInfoPanel(text) {
-                el.infoText.textContent = text;
-                el.infoPanel.classList.add('show');
-            }
-            
-            function hideInfoPanel() {
-                el.infoPanel.classList.remove('show');
-            }
-            
-            function showStatsPanel(show) {
-                if (show) {
-                    el.statsPanel.classList.add('show');
-                } else {
-                    el.statsPanel.classList.remove('show');
-                }
-            }
-            
-            function showProgressBar(show) {
-                if (show) {
-                    el.progressContainer.classList.add('show');
-                    el.progressBar.style.width = '0%';
-                    
-                    // Simulate progress
-                    let progress = 0;
-                    const interval = setInterval(() => {
-                        progress += Math.random() * 10;
-                        if (progress >= 100) {
-                            progress = 100;
-                            clearInterval(interval);
-                            setTimeout(() => {
-                                el.progressContainer.classList.remove('show');
-                            }, 500);
-                        }
-                        el.progressBar.style.width = `${progress}%`;
-                    }, 200);
-                } else {
-                    el.progressContainer.classList.remove('show');
-                }
-            }
-            
-            function startUptimeCounter() {
-                uptimeInterval = setInterval(() => {
-                    const uptime = Math.floor((Date.now() - state.startTime) / 1000);
-                    const minutes = Math.floor(uptime / 60);
-                    const seconds = uptime % 60;
-                    el.uptimeDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                }, 1000);
-            }
-            
-            function updateBitrate(bitrate) {
-                if (bitrate > 0) {
-                    el.bitrateDisplay.textContent = `${Math.round(bitrate / 1000)} kbps`;
-                } else {
-                    el.bitrateDisplay.textContent = '-';
-                }
-            }
-
-            // --- List & Filter Logic ---
-            function applyFilter() {
-                const text = el.searchBox.value.toLowerCase().trim();
-                if (!text) {
-                    state.filteredPlaylist = state.playlist.map((item, index) => ({...item, originalIndex: index}));
-                } else {
-                    state.filteredPlaylist = state.playlist
-                        .map((item, index) => ({...item, originalIndex: index}))
-                        .filter(item => item.title.toLowerCase().includes(text));
-                }
-                renderPlaylist();
-            }
-
-            function renderPlaylist() {
-                el.playlist.innerHTML = "";
-                
-                if (state.filteredPlaylist.length === 0) {
-                    el.emptyHint.style.display = "block";
-                } else {
-                    el.emptyHint.style.display = "none";
-                }
-
-                state.filteredPlaylist.forEach((item) => {
-                    const li = document.createElement("li");
-                    const isPlaying = (item.originalIndex === state.index);
-                    if (isPlaying) li.classList.add("active");
-                    
-                    li.innerHTML = `
-                        <span class="num">${isPlaying ? '<i class="ph-fill ph-speaker-high"></i>' : item.originalIndex + 1}</span>
-                        <span class="title">${item.title}</span>
-                        <div class="actions">
-                            <button class="mini-btn delete-btn" title="Hapus"><i class="ph ph-x"></i></button>
-                        </div>
-                    `;
-                    
-                    // Play click
-                    li.addEventListener('click', (e) => {
-                        if (!e.target.closest('.delete-btn')) {
-                            playStation(item.originalIndex);
-                        }
-                    });
-
-                    // Delete click
-                    li.querySelector('.delete-btn').addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        removeStation(item.originalIndex);
-                    });
-                    
-                    el.playlist.appendChild(li);
-                });
-                
-                highlightPlaylist();
-            }
-
-            function removeStation(originalIndex) {
-                if (confirm("Hapus stasiun ini?")) {
-                    state.playlist.splice(originalIndex, 1);
-                    
-                    if (state.index === originalIndex) {
-                        el.audio.pause();
-                        el.audio.src = "";
-                        setStatus("Berhenti");
-                        state.index = -1;
-                        updatePlayBtn(false);
-                    } else if (state.index > originalIndex) {
-                        state.index--;
-                    }
-                    
-                    saveStorage();
-                    applyFilter(); // Re-render
-                }
-            }
-
-            function highlightPlaylist() {
-                // Scroll to active item
-                const activeEl = el.playlist.querySelector('.active');
-                if (activeEl) {
-                    activeEl.scrollIntoView({ behavior: "smooth", block: "center" });
-                }
-            }
-
-            // --- Export Playlist ---
-            function exportPlaylist() {
-                if (state.playlist.length === 0) {
-                    showToast("Playlist kosong!", "err");
-                    return;
-                }
-                
-                let m3uContent = "#EXTM3U\n";
-                
-                state.playlist.forEach(station => {
-                    m3uContent += `#EXTINF:-1,${station.title}\n`;
-                    m3uContent += `${station.url}\n`;
-                });
-                
-                const blob = new Blob([m3uContent], { type: 'audio/x-mpegurl' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'miniamp-playlist.m3u';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                
-                showToast("Playlist berhasil diexport", "ok");
-            }
-
-            // --- Tooltip System ---
-            function showTooltip(text, element) {
-                clearTimeout(tooltipTimeout);
-                
-                const rect = element.getBoundingClientRect();
-                const tooltip = el.tooltip;
-                
-                tooltip.textContent = text;
-                tooltip.style.left = `${rect.left + (rect.width / 2)}px`;
-                tooltip.style.top = `${rect.top - 10}px`;
-                tooltip.style.transform = 'translateX(-50%) translateY(-100%)';
-                
-                tooltip.classList.add('show');
-                
-                tooltipTimeout = setTimeout(() => {
-                    tooltip.classList.remove('show');
-                }, 3000);
-            }
-            
-            function hideTooltip() {
-                clearTimeout(tooltipTimeout);
-                el.tooltip.classList.remove('show');
-            }
-
-            // --- Utils ---
-            function setStatus(text, type = "neutral") {
-                el.statusText.textContent = text;
-                el.statusDot.className = "status-dot";
-                document.querySelector('.deck').className = "deck";
-
-                if (type === "playing") {
-                    document.querySelector('.deck').classList.add("playing");
-                } else if (type === "warn") {
-                    document.querySelector('.deck').classList.add("connecting");
-                } else if (type === "err") {
-                    document.querySelector('.deck').classList.add("error");
-                }
-            }
-
-            function updatePlayBtn(isPlaying) {
-                const icon = isPlaying ? "ph-pause" : "ph-play";
-                el.playBtn.innerHTML = `<i class="ph-fill ${icon}"></i>`;
-                el.playBtn.classList.toggle("playing", isPlaying);
-            }
-
-            function showToast(msg, type="ok") {
-                el.toast.querySelector('span').textContent = msg;
-                el.toast.className = `toast show ${type}`;
-                el.toast.querySelector('i').className = type === 'ok' ? "ph-fill ph-check-circle" : "ph-fill ph-warning-circle";
-                setTimeout(() => el.toast.classList.remove('show'), 3000);
-            }
-
-            function extractName(url) {
-                try {
-                    return new URL(url).pathname.split('/').pop() || "Stream";
-                } catch { return "Radio Stream"; }
-            }
-
-            function parseM3u(text) {
-                const lines = text.split(/\r?\n/);
-                const res = [];
-                let info = null;
-                for(let line of lines) {
-                    line = line.trim();
-                    if(!line) continue;
-                    if(line.startsWith("#EXTINF")) {
-                        info = line.split(",")[1];
-                    } else if(!line.startsWith("#")) {
-                        res.push({ title: info || extractName(line), url: line });
-                        info = null;
-                    }
-                }
-                return res;
-            }
-
-            // --- Event Listeners ---
-            function setupEventListeners() {
-                // Media
-                el.playBtn.onclick = togglePlay;
-                el.nextBtn.onclick = playNext;
-                el.prevBtn.onclick = playPrev;
-                
-                // Sliders & Toggles
-                el.volSlider.oninput = (e) => setVolume(e.target.value / 100);
-                el.muteIcon.onclick = toggleMute;
-                
-                el.shuffleBtn.onclick = () => {
-                    state.shuffled = !state.shuffled;
-                    el.shuffleBtn.classList.toggle("active", state.shuffled);
-                    saveStorage();
-                    showToast(state.shuffled ? "Acak: ON" : "Acak: OFF");
-                };
-                
-                el.normBtn.onclick = () => {
-                    state.normalized = !state.normalized;
-                    el.normBtn.classList.toggle("active", state.normalized);
-                    saveStorage();
-                    showToast(state.normalized ? "Auto Gain: ON" : "Auto Gain: OFF");
-                };
-
-                el.vizToggle.onclick = () => {
-                    state.vizMode = state.vizMode === 0 ? 1 : 0;
-                    const icons = ["ph-chart-bar", "ph-wave-sine"];
-                    el.vizToggle.innerHTML = `<i class="ph ${icons[state.vizMode]}"></i>`;
-                    showToast(`Visualizer: ${state.vizMode === 0 ? 'Bars' : 'Wave'}`);
-                };
-
-                // Search
-                el.searchBox.addEventListener('input', applyFilter);
-
-                // Menu Handling
-                const toggleMenu = (show) => el.menuOverlay.classList.toggle("show", show);
-                el.menuToggleBtn.onclick = () => toggleMenu(true);
-                el.menuCloseBtn.onclick = () => toggleMenu(false);
-                el.menuOverlay.onclick = (e) => {
-                    if(e.target === el.menuOverlay) toggleMenu(false);
-                };
-                
-                // Help Handling
-                const toggleHelp = (show) => el.helpOverlay.classList.toggle("show", show);
-                el.helpBtn.onclick = () => toggleHelp(true);
-                el.helpCloseBtn.onclick = () => toggleHelp(false);
-                el.helpOverlay.onclick = (e) => {
-                    if(e.target === el.helpOverlay) toggleHelp(false);
-                };
-
-                // Menu Actions
-                el.resetBtn.onclick = () => {
-                    if(confirm("Reset playlist ke stasiun bawaan (Indo)?")) {
-                        state.playlist = [...defaultStations];
-                        el.audio.pause();
-                        state.index = -1;
-                        updatePlayBtn(false);
-                        saveStorage();
-                        applyFilter();
-                        toggleMenu(false);
-                        showToast("Playlist di-reset!", "ok");
-                    }
-                };
-
-                el.clearBtn.onclick = () => {
-                    if(confirm("Hapus SEMUA stasiun?")) {
-                        state.playlist = [];
-                        el.audio.pause();
-                        state.index = -1;
-                        saveStorage();
-                        applyFilter();
-                        toggleMenu(false);
-                    }
-                };
-
-                el.sleepTimerBtn.onclick = toggleSleepTimer;
-                
-                el.exportBtn.onclick = () => {
-                    exportPlaylist();
-                    toggleMenu(false);
-                };
-
-                el.addStreamBtn.onclick = () => {
-                    const url = prompt("Masukkan URL Stream (.mp3/.aac):");
-                    if (url) {
-                        const name = prompt("Nama Stasiun:", extractName(url)) || "Stream Baru";
-                        state.playlist.push({ title: name, url: url });
-                        saveStorage();
-                        applyFilter();
-                        toggleMenu(false);
-                        showToast("Stasiun ditambahkan", "ok");
-                    }
-                };
-
-                el.pasteBtn.onclick = async () => {
-                    try {
-                        const text = await navigator.clipboard.readText();
-                        if(text) processTextImport(text);
-                    } catch(e) {
-                        // Fallback if clipboard denied
-                        const text = prompt("Paste isi playlist (M3U) di sini:");
-                        if(text) processTextImport(text);
-                    }
-                    toggleMenu(false);
-                };
-
-                function processTextImport(text) {
-                    const items = parseM3u(text);
-                    if(items.length) {
-                        state.playlist.push(...items);
-                        saveStorage();
-                        applyFilter();
-                        showToast(`${items.length} stasiun ditambahkan`, "ok");
-                    } else {
-                        showToast("Format tidak valid", "err");
-                    }
-                }
-
-                // File handling
-                el.loadFileBtn.onclick = () => el.fileInput.click();
-                el.fileInput.onchange = async (e) => {
-                    const file = e.target.files[0];
-                    if(file) {
-                        const text = await file.text();
-                        processTextImport(text);
-                    }
-                };
-
-                // Drag & Drop
-                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(name => {
-                    document.body.addEventListener(name, e => { e.preventDefault(); e.stopPropagation(); });
-                });
-                document.body.addEventListener('drop', async (e) => {
-                    const file = e.dataTransfer.files[0];
-                    if(file && (file.name.endsWith('.m3u') || file.name.endsWith('.txt'))) {
-                        const text = await file.text();
-                        processTextImport(text);
-                    }
-                });
-
-                // Audio Events
-                el.audio.onerror = () => {
-                    setStatus("Error", "err");
-                    startRetry();
-                };
-                el.audio.onended = () => playNext();
-                el.audio.onwaiting = () => {
-                    state.buffering = true;
-                    showInfoPanel("Buffering...");
-                };
-                el.audio.oncanplay = () => {
-                    state.buffering = false;
-                    hideInfoPanel();
-                };
-                
-                // Tooltips for buttons
-                const tooltipElements = document.querySelectorAll('[title]');
-                tooltipElements.forEach(el => {
-                    el.addEventListener('mouseenter', (e) => {
-                        showTooltip(e.target.getAttribute('title'), e.target);
-                    });
-                    el.addEventListener('mouseleave', hideTooltip);
-                });
-                
-                // Keyboard shortcuts
-                document.addEventListener('keydown', (e) => {
-                    // Prevent default if we're handling the key
-                    if ([' ', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'm', 'M', 's', 'S', 'n', 'N'].includes(e.key)) {
-                        e.preventDefault();
-                    }
-                    
-                    switch(e.key) {
-                        case ' ':
-                            togglePlay();
-                            break;
-                        case 'ArrowRight':
-                            playNext();
-                            break;
-                        case 'ArrowLeft':
-                            playPrev();
-                            break;
-                        case 'ArrowUp':
-                            setVolume(Math.min(state.volume + 0.1, 1));
-                            break;
-                        case 'ArrowDown':
-                            setVolume(Math.max(state.volume - 0.1, 0));
-                            break;
-                        case 'm':
-                        case 'M':
-                            toggleMute();
-                            break;
-                        case 's':
-                        case 'S':
-                            state.shuffled = !state.shuffled;
-                            el.shuffleBtn.classList.toggle("active", state.shuffled);
-                            saveStorage();
-                            showToast(state.shuffled ? "Acak: ON" : "Acak: OFF");
-                            break;
-                        case 'n':
-                        case 'N':
-                            state.normalized = !state.normalized;
-                            el.normBtn.classList.toggle("active", state.normalized);
-                            saveStorage();
-                            showToast(state.normalized ? "Auto Gain: ON" : "Auto Gain: OFF");
-                            break;
-                    }
-                });
-            }
-
-            // --- Storage ---
-            function saveStorage() {
-                localStorage.setItem("miniamp", JSON.stringify({
-                    playlist: state.playlist,
-                    volume: state.volume,
-                    shuffled: state.shuffled,
-                    normalized: state.normalized
-                }));
-            }
-
-            function loadStorage() {
-                try {
-                    const d = JSON.parse(localStorage.getItem("miniamp") || "{}");
-                    if (d.playlist) state.playlist = d.playlist;
-                    if (d.volume != null) state.volume = d.volume;
-                    if (d.shuffled != null) state.shuffled = d.shuffled;
-                    if (d.normalized != null) state.normalized = d.normalized;
-                } catch(e) { console.log("New session"); }
-            }
-
-            // Run
-            init();
+            /* =========================================
+               INISIALISASI UTAMA
+               ========================================= */
+            window.addEventListener('DOMContentLoaded', () => {
+                UI.init();
+                Storage.load();
+            });
 
         })();
     </script>

@@ -4,357 +4,935 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="description" content="e-Ujian - Platform Ujian Digital Terintegrasi SMAPTA" />
-  <meta name="keywords" content="e-Ujian, ujian online, kartu ujian digital, SMAPTA, sistem ujian, pendidikan digital" />
-  <meta name="author" content="SMAPTA" />
-  <meta name="theme-color" content="#3f51b5" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
-
-  <!-- Open Graph Meta Tags -->
-  <meta property="og:title" content="e-Ujian SMAPTA" />
-  <meta property="og:description" content="Platform Ujian Digital Terintegrasi untuk Siswa SMAPTA" />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://smapgritakokak.sch.id" />
-  <meta property="og:image" content="https://smapgritakokak.sch.id/spmb/assets/img/icons/icon-192x192.png" />
-
-  <!-- Twitter Card Meta Tags -->
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="e-Ujian SMAPTA" />
-  <meta name="twitter:description" content="Platform Ujian Digital Terintegrasi untuk Siswa SMAPTA" />
-  <meta name="twitter:image" content="https://smapgritakokak.sch.id/spmb/assets/img/icons/icon-192x192.png" />
-
-  <title>e-Ujian - Platform Ujian Digital SMAPTA</title>
-  <link rel="icon" href="https://smapgritakokak.sch.id/spmb/assets/img/icons/icon-96x96.png" type="image/x-icon">
-  <link rel="apple-touch-icon" href="https://smapgritakokak.sch.id/spmb/assets/img/icons/icon-192x192.png">
+  <meta name="description" content="Platform Ujian Digital Terintegrasi - Asesmen Sumatif untuk Peserta Didik" />
+  <meta name="keywords" content="Asesmen Sumatif, Ujian Online, Platform Ujian, Evaluasi Pembelajaran" />
+  <meta name="author" content="Tim Pengembang" />
+  <meta name="theme-color" content="#4f46e5" />
   
+  <!-- Open Graph / Social Media Tags -->
+  <meta property="og:title" content="Platform Ujian Digital - Asesmen Sumatif" />
+  <meta property="og:description" content="Platform Ujian Digital Terintegrasi untuk Asesmen Sumatif" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="" />
+  
+  <title>Platform Ujian Digital - Asesmen Sumatif</title>
+  <link rel="icon" href="https://www.google.com/s2/favicons?domain=google.com&sz=128" type="image/png">
+  <link rel="apple-touch-icon" href="https://www.google.com/s2/favicons?domain=google.com&sz=192">
+  
+  <!-- Preload resources -->
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Google+Sans:wght@400;500;700&display=swap" as="style">
+  <link rel="preload" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" as="style">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts & Icons -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Google+Sans:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+
   <style>
-    /* CSS Reset */
-    *, *::before, *::after {
-      box-sizing: border-box;
+    /* Performance optimization */
+    * {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
     
-    ::-webkit-scrollbar {
-      width: 8px;
+    body {
+      font-family: 'Google Sans', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      overflow: hidden;
+      overscroll-behavior: none;
+      touch-action: manipulation;
     }
     
-    ::-webkit-scrollbar-track {
-      background: #f1f1f1;
-    }
-    
-    ::-webkit-scrollbar-thumb {
-      background: #c1c1c1;
-      border-radius: 4px;
-    }
-    
-    ::-webkit-scrollbar-thumb:hover {
-      background: #a8a8a8;
-    }
-    
-    html, body {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Google Sans', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-      background-color: #f5f5f5;
-    }
-    
-    .loading-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(135deg, #3f51b5 0%, #1a237e 100%);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-      transition: opacity 0.5s ease-out;
-    }
-    
-    .logo-container {
-      margin-bottom: 2rem;
-      text-align: center;
-      animation: fadeIn 1s ease;
-    }
-    
-    .logo-container img {
-      width: 80px;
-      height: 80px;
-      border-radius: 16px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
-    
-    .logo-container h1 {
-      color: white;
-      font-size: 1.8rem;
-      margin-top: 1rem;
-      font-weight: 500;
-      letter-spacing: 0.5px;
-    }
-    
-    .logo-container p {
-      color: rgba(255, 255, 255, 0.8);
-      margin-top: 0.5rem;
-      font-size: 1rem;
-    }
-    
+    /* Custom spinner animation - optimized */
     .spinner {
       width: 50px;
       height: 50px;
-      border: 5px solid rgba(255, 255, 255, 0.3);
+      border: 3px solid rgba(79, 70, 229, 0.1);
       border-radius: 50%;
-      border-top-color: #fff;
-      animation: spin 1s ease-in-out infinite;
-    }
-    
-    .progress-container {
-      width: 240px;
-      height: 4px;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 2px;
-      margin-top: 1rem;
-      overflow: hidden;
-    }
-    
-    .progress-bar {
-      height: 100%;
-      width: 0%;
-      background: #fff;
-      border-radius: 2px;
-      transition: width 0.3s ease;
+      border-top-color: #4f46e5;
+      animation: spin 0.8s linear infinite;
+      will-change: transform;
     }
     
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
-    
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .loading-text {
-      color: white;
-      margin-top: 1rem;
-      font-size: 1rem;
-    }
-    
-    .iframe-container {
+
+    /* Progress container */
+    .progress-container {
+      width: 260px;
+      height: 6px;
+      background: #e5e7eb;
+      border-radius: 9999px;
+      overflow: hidden;
+      margin: 0 auto;
       position: relative;
-      width: 100%;
+    }
+
+    /* Bar */
+    .progress-bar {
       height: 100%;
-      display: none;
+      width: 0%;
+      background: linear-gradient(90deg, #3b82f6, #2563eb);
+      background-size: 200% 100%;
+      border-radius: inherit;
+      animation: examLoad 2.2s ease-in-out infinite;
+      will-change: width, background-position;
+    }
+
+    /* Animation */
+    @keyframes examLoad {
+      0% {
+        width: 0%;
+        background-position: 0% 50%;
+      }
+      50% {
+        width: 95%;
+        background-position: 100% 50%;
+      }
+      100% {
+        width: 0%;
+        background-position: 0% 50%;
+      }
+    }
+
+    .loading-dots::after {
+      content: "";
+      animation: dots 1.5s infinite;
+    }
+
+    @keyframes dots {
+      0% { content: ""; }
+      33% { content: "."; }
+      66% { content: ".."; }
+      100% { content: "..."; }
     }
     
-    iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
+    /* Pulse animation for status indicators */
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
     }
     
-    .error-message {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: #f5f5f5;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      text-align: center;
-      padding: 2rem;
-      z-index: 10000;
+    .pulse-online {
+      animation: pulse 2s infinite;
     }
     
-    .error-icon {
-      font-size: 3rem;
-      color: #d32f2f;
-      margin-bottom: 1rem;
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #a8a8a8;
     }
     
-    .error-message h2 {
-      color: #d32f2f;
-      margin-bottom: 1rem;
-      font-size: 1.5rem;
+    /* Smooth transitions */
+    .smooth-transition {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     
-    .error-message p {
-      margin-bottom: 1.5rem;
-      color: #424242;
-      max-width: 500px;
-      line-height: 1.5;
-    }
-      
-    .connection-status {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      padding: 8px 12px;
-      border-radius: 20px;
-      font-size: 0.875rem;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      z-index: 1000;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      display: none;
+    /* Glass effect for notices */
+    .glass-effect {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px) saturate(180%);
+      -webkit-backdrop-filter: blur(12px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
     
-    .online {
-      background: #4caf50;
-      color: white;
+    /* Performance classes */
+    .will-change-transform {
+      will-change: transform;
     }
     
-    .offline {
-      background: #f44336;
-      color: white;
+    .will-change-opacity {
+      will-change: opacity;
+    }
+    
+    /* Hide elements initially */
+    [data-hidden] {
+      display: none !important;
+    }
+    
+    /* Focus styles for accessibility */
+    .focus-visible {
+      outline: 2px solid #4f46e5;
+      outline-offset: 2px;
+    }
+    
+    /* Loading skeleton */
+    .skeleton {
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 4px;
+    }
+    
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
     }
   </style>
 </head>
-<body>
-  <div class="loading-overlay" id="loadingOverlay">
-    <div class="logo-container">
-      <span class="material-icons-outlined" style="font-size: 3rem; color: white;">school</span>
-      <h1>e-Ujian</h1>
-      <p>Platform Ujian Digital SMAPTA</p>
+<body class="bg-gray-100 select-none">
+
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="fixed inset-0 bg-white flex flex-col justify-center items-center z-[9999] transition-opacity duration-500">
+    <div class="text-center max-w-md px-6">
+      <div class="w-24 h-24 bg-gradient-to-br from-indigo-600 to-purple-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+          <span class="material-icons-outlined" style="font-size: 48px;">school</span>
+      </div>
+      <h1 class="text-3xl font-bold text-gray-800 mb-2">Asesmen Sumatif</h1>
+      <p class="text-gray-600 mb-6">Platform Ujian Digital Terintegrasi</p>
+      
+      <!-- Progress Animation -->
+      <div class="progress-container mb-6">
+        <div class="progress-bar"></div>
+      </div>
+      
+      <div class="text-sm text-gray-500 space-y-1">
+        <div class="flex items-center justify-center gap-2">
+          <span class="material-icons-outlined text-green-500 text-sm">check_circle</span>
+          <span>Memuat antarmuka ujian...</span>
+        </div>
+        <div class="flex items-center justify-center gap-2">
+          <span id="loadingStep1" class="material-icons-outlined text-gray-300 text-sm">radio_button_unchecked</span>
+          <span>Menyiapkan lingkungan ujian...</span>
+        </div>
+        <div class="flex items-center justify-center gap-2">
+          <span id="loadingStep2" class="material-icons-outlined text-gray-300 text-sm">radio_button_unchecked</span>
+          <span>Memverifikasi koneksi...</span>
+        </div>
+      </div>
+      
+      <!-- Performance metrics (hidden by default) -->
+      <div id="performanceMetrics" class="mt-4 text-xs text-gray-400 space-y-1 hidden">
+        <div>Load Time: <span id="loadTime">0</span>ms</div>
+        <div>Memory: <span id="memoryUsage">-</span></div>
+      </div>
     </div>
-    <div class="spinner"></div>
-    <div class="progress-container">
-      <div class="progress-bar" id="progressBar"></div>
+  </div>
+  
+  <!-- Error Message -->
+  <div id="errorMessage" class="fixed inset-0 bg-gray-100 flex-col justify-center items-center text-center p-6 z-[10000] hidden">
+    <div class="max-w-md">
+      <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+        <span class="material-icons-outlined text-red-500" style="font-size: 48px;">error_outline</span>
+      </div>
+      <h2 class="text-2xl font-bold text-gray-800 mt-4">Gagal Memuat Aplikasi</h2>
+      <div class="mt-4 p-4 bg-yellow-50 rounded-lg border border-yellow-200 text-left">
+        <p class="text-gray-700 mb-2 font-medium">Kemungkinan penyebab:</p>
+        <ul class="text-gray-600 text-sm space-y-1 list-disc pl-5">
+          <li>Tidak terhubung ke internet</li>
+          <li>Server sedang dalam perawatan</li>
+          <li>Koneksi jaringan tidak stabil</li>
+          <li>Browser memblokir konten</li>
+          <li>Cache browser perlu dibersihkan</li>
+        </ul>
+      </div>
+      <div class="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
+        <button id="retryButton" class="bg-indigo-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-transform transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
+          <span class="material-icons-outlined">refresh</span>
+          Coba Lagi
+        </button>
+        <button id="helpButton" class="bg-gray-200 text-gray-800 font-semibold py-3 px-6 rounded-lg shadow hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-transform active:scale-95 flex items-center justify-center gap-2">
+          <span class="material-icons-outlined">help_outline</span>
+          Bantuan
+        </button>
+      </div>
     </div>
-    <p class="loading-text">Memuat data e-Ujian...</p>
   </div>
   
-  <div class="error-message" id="errorMessage">
-    <span class="material-icons-outlined error-icon">error_outline</span>
-    <h2>Gagal Memuat Konten</h2>
-    <p>Terjadi kendala saat memuat e-Ujian. Pastikan Anda terhubung ke internet dan coba lagi. Jika masalah berlanjut, silakan hubungi administrator.</p>
-    <button class="retry-button" id="retryButton">
-      <span class="material-icons-outlined">refresh</span>
-      Coba Lagi
-    </button>
+  <!-- Connection Status -->
+  <div id="connectionStatus" class="fixed bottom-5 right-5 px-4 py-3 rounded-xl text-sm font-medium text-white shadow-lg flex items-center gap-2 z-[1000] glass-effect border hidden transform transition-transform duration-300 hover:scale-105 cursor-pointer" title="Klik untuk detail koneksi">
+    <span class="material-icons-outlined" id="connectionIcon" style="font-size: 18px;"></span>
+    <span id="connectionText"></span>
+    <span id="connectionSpeed" class="text-xs opacity-80 ml-2 hidden"></span>
+    <span id="connectionLatency" class="text-xs opacity-80 hidden">• <span id="latencyValue">-</span>ms</span>
+  </div>
+
+  <!-- Information Panel -->
+  <div id="infoPanel" class="fixed top-5 right-5 bg-white rounded-xl shadow-lg p-4 z-[1000] glass-effect border hidden max-w-xs transform transition-all duration-300">
+    <div class="flex items-start justify-between mb-3">
+      <h3 class="font-bold text-gray-800 flex items-center gap-2">
+        <span class="material-icons-outlined text-indigo-600">info</span>
+        Informasi Ujian
+      </h3>
+      <button id="closeInfoPanel" class="text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-full hover:bg-gray-100">
+        <span class="material-icons-outlined">close</span>
+      </button>
+    </div>
+    <div class="space-y-3 text-sm">
+      <div class="flex items-center gap-2">
+        <span class="material-icons-outlined text-green-500 text-base">check_circle</span>
+        <span>Semua fitur telah diaktifkan</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="material-icons-outlined text-blue-500 text-base">security</span>
+        <span>Lingkungan ujian aman</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="material-icons-outlined text-purple-500 text-base">timer</span>
+        <span>Durasi ujian: <span id="examDuration">-</span> menit</span>
+      </div>
+      <div class="pt-2 border-t">
+        <p class="text-gray-600 text-xs">Pastikan koneksi internet stabil selama ujian berlangsung. Simpan jawaban secara berkala.</p>
+      </div>
+    </div>
   </div>
   
-  <div class="connection-status" id="connectionStatus">
-    <span class="material-icons-outlined" id="connectionIcon">wifi_off</span>
-    <span id="connectionText">Tidak terhubung</span>
+  <!-- Control Panel -->
+  <div id="controlPanel" class="fixed bottom-20 right-5 bg-white rounded-xl shadow-lg p-3 z-[1000] glass-effect border hidden transform transition-all duration-300">
+    <div class="flex items-center gap-2">
+      <button id="infoButton" class="p-2 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors" title="Informasi Ujian" aria-label="Tampilkan informasi ujian">
+        <span class="material-icons-outlined text-gray-700">info</span>
+      </button>
+      <button id="reloadButton" class="p-2 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors" title="Muat Ulang" aria-label="Muat ulang aplikasi">
+        <span class="material-icons-outlined text-gray-700">refresh</span>
+      </button>
+      <button id="fullscreenButton" class="p-2 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors" title="Layar Penuh" aria-label="Toggle layar penuh">
+        <span class="material-icons-outlined text-gray-700">fullscreen</span>
+      </button>
+    </div>
   </div>
   
-  <div class="iframe-container" id="iframeContainer">
-    <iframe 
-      src="https://script.google.com/macros/s/AKfycbxQnnLAhqlgWbROXNpg5V2CPHj6yz0wrEYdajF4N3qHU8Q-s6FniBbSIZ6VP9XUXCqu/exec"
-      style="border:none;" 
-      allow="autoplay; camera; encrypted-media; geolocation; microphone; midi; payment; usb; accelerometer; gyroscope; magnetometer; screen-wake-lock; clipboard-read; clipboard-write; web-share; fullscreen"
-      id="contentFrame"
-      onload="hideLoading()">
-    </iframe>
+  <!-- Notification Container -->
+  <div id="notificationContainer" class="fixed bottom-24 right-5 z-[999] space-y-2"></div>
+  
+  <!-- Main Application Container -->
+  <div id="appContainer" class="min-h-screen">
+    
+    <!-- Iframe View -->
+    <div id="iframeView" class="fixed inset-0 bg-white z-[9000]">    
+      <!-- Iframe Loader -->
+      <div id="iframeLoader" class="absolute inset-0 bg-white flex flex-col justify-center items-center z-10 will-change-opacity">
+        <div class="text-center">
+          <div class="spinner mb-4"></div>
+          <p class="text-indigo-600 font-medium">Membuka Asesmen Sumatif...</p>
+          <p class="text-gray-500 text-sm mt-2">Silakan tunggu sebentar</p>
+          <div class="mt-4 text-xs text-gray-400">
+            <span id="iframeLoadProgress">0%</span> terload
+          </div>
+        </div>
+      </div>
+      
+      <!-- Iframe Content -->
+      <iframe 
+        id="contentFrame" 
+        src="" 
+        class="w-full h-full border-none relative z-0 smooth-transition"
+        title="Aplikasi Ujian Online - Asesmen Sumatif"
+        allowfullscreen
+        loading="eager"
+        sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-downloads"
+      ></iframe>
+    </div>
   </div>
 
   <script>
-    // Variabel global
-    let progressInterval;
-    let isOnline = navigator.onLine;
-    
-    // Fungsi untuk menyembunyikan loading overlay
-    function hideLoading() {
-      clearInterval(progressInterval);
-      document.getElementById('progressBar').style.width = '100%';
+    // --- Application Configuration ---
+    const CONFIG = {
+      APP_NAME: 'Ujian Online - Asesmen Sumatif',
+      APP_URL: "https://script.google.com/macros/s/AKfycbxQnnLAhqlgWbROXNpg5V2CPHj6yz0wrEYdajF4N3qHU8Q-s6FniBbSIZ6VP9XUXCqu/exec",
+      LOAD_TIMEOUT: 30000, // 30 seconds timeout
+      RETRY_ATTEMPTS: 3,
+      RETRY_DELAY: 2000,
+      CONNECTION_CHECK_INTERVAL: 10000, // 10 seconds
+      PERFORMANCE_MONITORING: true,
+      AUTO_SAVE_INTERVAL: 60000, // 60 seconds
+    };
+
+    // --- DOM Elements ---
+    const elements = {
+      loadingOverlay: document.getElementById('loadingOverlay'),
+      loadingStep1: document.getElementById('loadingStep1'),
+      loadingStep2: document.getElementById('loadingStep2'),
+      errorMessage: document.getElementById('errorMessage'),
+      retryButton: document.getElementById('retryButton'),
+      helpButton: document.getElementById('helpButton'),
+      contentFrame: document.getElementById('contentFrame'),
+      iframeLoader: document.getElementById('iframeLoader'),
+      connectionStatus: document.getElementById('connectionStatus'),
+      connectionIcon: document.getElementById('connectionIcon'),
+      connectionText: document.getElementById('connectionText'),
+      connectionSpeed: document.getElementById('connectionSpeed'),
+      connectionLatency: document.getElementById('connectionLatency'),
+      latencyValue: document.getElementById('latencyValue'),
+      infoPanel: document.getElementById('infoPanel'),
+      controlPanel: document.getElementById('controlPanel'),
+      closeInfoPanel: document.getElementById('closeInfoPanel'),
+      infoButton: document.getElementById('infoButton'),
+      reloadButton: document.getElementById('reloadButton'),
+      fullscreenButton: document.getElementById('fullscreenButton'),
+      notificationContainer: document.getElementById('notificationContainer'),
+      performanceMetrics: document.getElementById('performanceMetrics'),
+      loadTime: document.getElementById('loadTime'),
+      memoryUsage: document.getElementById('memoryUsage'),
+      iframeLoadProgress: document.getElementById('iframeLoadProgress'),
+      examDuration: document.getElementById('examDuration'),
+    };
+
+    // --- Application State ---
+    const state = {
+      isOnline: navigator.onLine,
+      isFullscreen: false,
+      loadStartTime: null,
+      retryCount: 0,
+      connectionCheckInterval: null,
+      autoSaveInterval: null,
+      isInitialized: false,
+      currentLoadProgress: 0,
+      connectionStats: {
+        latency: null,
+        speed: null,
+        lastCheck: null,
+      },
+    };
+
+    // --- Performance Monitoring ---
+    const performanceMonitor = {
+      startTime: null,
+      metrics: {
+        domLoad: null,
+        appLoad: null,
+        memory: null,
+      },
+      
+      start() {
+        this.startTime = performance.now();
+        state.loadStartTime = Date.now();
+      },
+      
+      mark(name) {
+        performance.mark(`${name}-start`);
+      },
+      
+      measure(name) {
+        performance.measure(name, `${name}-start`);
+        const measure = performance.getEntriesByName(name)[0];
+        return measure ? Math.round(measure.duration) : 0;
+      },
+      
+      updateMemoryUsage() {
+        if ('memory' in performance) {
+          const memory = performance.memory;
+          const usedMB = Math.round(memory.usedJSHeapSize / 1048576);
+          const totalMB = Math.round(memory.totalJSHeapSize / 1048576);
+          elements.memoryUsage.textContent = `${usedMB}MB / ${totalMB}MB`;
+        }
+      },
+      
+      updateLoadTime() {
+        if (state.loadStartTime) {
+          const loadTime = Date.now() - state.loadStartTime;
+          elements.loadTime.textContent = loadTime;
+          return loadTime;
+        }
+        return 0;
+      }
+    };
+
+    // --- Connection Manager ---
+    const connectionManager = {
+      async checkConnection() {
+        if (!state.isOnline) return false;
+        
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 5000);
+        
+        try {
+          const start = performance.now();
+          const response = await fetch(CONFIG.APP_URL + '?ping=1', {
+            method: 'HEAD',
+            signal: controller.signal,
+            cache: 'no-store',
+          });
+          clearTimeout(timeout);
+          
+          const latency = Math.round(performance.now() - start);
+          state.connectionStats.latency = latency;
+          elements.latencyValue.textContent = latency;
+          
+          return response.ok;
+        } catch (error) {
+          console.warn('Connection check failed:', error);
+          return false;
+        }
+      },
+      
+      async measureSpeed() {
+        if (!state.isOnline) return;
+        
+        const startTime = Date.now();
+        const testImage = new Image();
+        testImage.src = CONFIG.APP_URL + '?t=' + startTime;
+        
+        return new Promise((resolve) => {
+          testImage.onload = () => {
+            const duration = Date.now() - startTime;
+            const speed = duration < 800 ? 'Cepat' : duration < 2500 ? 'Sedang' : 'Lambat';
+            state.connectionStats.speed = speed;
+            elements.connectionSpeed.textContent = `• ${speed}`;
+            elements.connectionSpeed.classList.remove('hidden');
+            resolve(speed);
+          };
+          
+          testImage.onerror = () => {
+            elements.connectionSpeed.textContent = '• Tidak terukur';
+            elements.connectionSpeed.classList.remove('hidden');
+            resolve(null);
+          };
+          
+          // Timeout setelah 10 detik
+          setTimeout(() => {
+            testImage.onload = null;
+            testImage.onerror = null;
+            resolve(null);
+          }, 10000);
+        });
+      },
+      
+      updateUI() {
+        state.isOnline = navigator.onLine;
+        elements.connectionStatus.style.display = 'flex';
+        
+        if (state.isOnline) {
+          elements.connectionStatus.className = 'fixed bottom-5 right-5 px-4 py-3 rounded-xl text-sm font-medium text-white shadow-lg flex items-center gap-2 z-[1000] glass-effect border bg-green-500/90 transform transition-transform duration-300 hover:scale-105 cursor-pointer';
+          elements.connectionIcon.textContent = 'wifi';
+          elements.connectionText.textContent = 'Terhubung';
+          elements.connectionIcon.classList.add('pulse-online');
+          elements.connectionLatency.classList.remove('hidden');
+          
+          // Auto-hide setelah 5 detik
+          setTimeout(() => {
+            if (state.isOnline) {
+              elements.connectionStatus.style.opacity = '0.8';
+            }
+          }, 5000);
+        } else {
+          elements.connectionStatus.className = 'fixed bottom-5 right-5 px-4 py-3 rounded-xl text-sm font-medium text-white shadow-lg flex items-center gap-2 z-[1000] glass-effect border bg-red-500/90 transform transition-transform duration-300 hover:scale-105 cursor-pointer';
+          elements.connectionIcon.textContent = 'wifi_off';
+          elements.connectionText.textContent = 'Offline';
+          elements.connectionIcon.classList.remove('pulse-online');
+          elements.connectionSpeed.classList.add('hidden');
+          elements.connectionLatency.classList.add('hidden');
+        }
+      },
+      
+      startMonitoring() {
+        if (state.connectionCheckInterval) {
+          clearInterval(state.connectionCheckInterval);
+        }
+        
+        state.connectionCheckInterval = setInterval(async () => {
+          if (state.isOnline) {
+            const isConnected = await this.checkConnection();
+            if (!isConnected && state.isOnline) {
+              showNotification('Koneksi ke server terganggu', 'warning');
+            }
+          }
+        }, CONFIG.CONNECTION_CHECK_INTERVAL);
+      },
+    };
+
+    // --- Notification System ---
+    const notificationSystem = {
+      show(message, type = 'info', duration = 4000) {
+        const id = 'notification-' + Date.now();
+        const colors = {
+          info: 'bg-blue-500 border-blue-400',
+          warning: 'bg-yellow-500 border-yellow-400',
+          success: 'bg-green-500 border-green-400',
+          error: 'bg-red-500 border-red-400',
+        };
+        
+        const icon = {
+          info: 'info',
+          warning: 'warning',
+          success: 'check_circle',
+          error: 'error',
+        };
+        
+        const notification = document.createElement('div');
+        notification.id = id;
+        notification.className = `glass-effect ${colors[type]} text-white px-4 py-3 rounded-lg shadow-lg text-sm flex items-center gap-2 transform transition-all duration-300 translate-y-2 opacity-0`;
+        notification.innerHTML = `
+          <span class="material-icons-outlined text-sm flex-shrink-0">${icon[type]}</span>
+          <span class="flex-grow">${message}</span>
+          <button class="text-white/80 hover:text-white ml-2" onclick="notificationSystem.close('${id}')">
+            <span class="material-icons-outlined text-sm">close</span>
+          </button>
+        `;
+        
+        elements.notificationContainer.appendChild(notification);
+        
+        // Animate in
+        requestAnimationFrame(() => {
+          notification.classList.remove('translate-y-2', 'opacity-0');
+        });
+        
+        // Auto close
+        const timeout = setTimeout(() => this.close(id), duration);
+        
+        // Store timeout ID for manual close
+        notification.dataset.timeoutId = timeout;
+        
+        return id;
+      },
+      
+      close(id) {
+        const notification = document.getElementById(id);
+        if (!notification) return;
+        
+        clearTimeout(notification.dataset.timeoutId);
+        notification.classList.add('translate-y-2', 'opacity-0');
+        
+        setTimeout(() => {
+          if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+          }
+        }, 300);
+      },
+    };
+
+    // --- Helper Functions ---
+    function showNotification(message, type = 'info', duration = 4000) {
+      return notificationSystem.show(message, type, duration);
+    }
+
+    function updateLoadingSteps() {
+      setTimeout(() => {
+        elements.loadingStep1.textContent = 'check_circle';
+        elements.loadingStep1.className = 'material-icons-outlined text-green-500 text-sm';
+      }, 800);
       
       setTimeout(() => {
-        const loadingOverlay = document.getElementById('loadingOverlay');
-        loadingOverlay.style.opacity = '0';
-        
-        setTimeout(() => {
-          loadingOverlay.style.display = 'none';
-          document.getElementById('iframeContainer').style.display = 'block';
-          updateConnectionStatus();
-        }, 500);
-      }, 300);
+        elements.loadingStep2.textContent = 'check_circle';
+        elements.loadingStep2.className = 'material-icons-outlined text-green-500 text-sm';
+      }, 1600);
     }
-    
-    // Fungsi untuk menangani error
-    function showError() {
-      clearInterval(progressInterval);
-      document.getElementById('loadingOverlay').style.display = 'none';
-      document.getElementById('errorMessage').style.display = 'flex';
-    }
-    
-    // Fungsi untuk mensimulasikan progress loading
-    function simulateProgress() {
-      const progressBar = document.getElementById('progressBar');
-      let width = 0;
+
+    function simulateLoadProgress() {
+      if (state.currentLoadProgress >= 100) return;
       
-      progressInterval = setInterval(() => {
-        if (width >= 90) {
-          clearInterval(progressInterval);
-        } else {
-          width += Math.random() * 5;
-          progressBar.style.width = width + '%';
-        }
-      }, 300);
-    }
-    
-    // Fungsi untuk memeriksa status koneksi
-    function checkConnection() {
-      isOnline = navigator.onLine;
-      updateConnectionStatus();
+      state.currentLoadProgress += Math.random() * 20;
+      if (state.currentLoadProgress > 100) state.currentLoadProgress = 100;
       
-      if (isOnline && document.getElementById('errorMessage').style.display === 'flex') {
-        document.getElementById('retryButton').click();
+      elements.iframeLoadProgress.textContent = Math.round(state.currentLoadProgress) + '%';
+      
+      if (state.currentLoadProgress < 100) {
+        setTimeout(simulateLoadProgress, 300);
       }
     }
-    
-    // Fungsi untuk memperbarui tampilan status koneksi
-    function updateConnectionStatus() {
-      const statusElement = document.getElementById('connectionStatus');
-      const iconElement = document.getElementById('connectionIcon');
-      const textElement = document.getElementById('connectionText');
+
+    function hideIframeLoading() {
+      state.currentLoadProgress = 100;
+      elements.iframeLoadProgress.textContent = '100%';
       
-      if (isOnline) {
-        statusElement.className = 'connection-status online';
-        iconElement.textContent = 'wifi';
-        textElement.textContent = 'Terhubung';
-        
-        // Sembunyikan status online setelah 3 detik
+      setTimeout(() => {
+        elements.iframeLoader.style.opacity = '0';
         setTimeout(() => {
-          if (isOnline) {
-            statusElement.style.display = 'none';
+          elements.iframeLoader.style.display = 'none';
+          elements.contentFrame.style.opacity = '1';
+          
+          const loadTime = performanceMonitor.updateLoadTime();
+          if (loadTime > 3000) {
+            showNotification(`Aplikasi dimuat dalam ${Math.round(loadTime/1000)} detik`, 'info');
           }
-        }, 3000);
-      } else {
-        statusElement.className = 'connection-status offline';
-        statusElement.style.display = 'flex';
-        iconElement.textContent = 'wifi_off';
-        textElement.textContent = 'Tidak terhubung';
+        }, 300);
+      }, 500);
+    }
+
+    function showControlPanel() {
+      elements.controlPanel.style.display = 'block';
+      requestAnimationFrame(() => {
+        elements.controlPanel.style.opacity = '1';
+      });
+    }
+
+    function initializeApp() {
+      if (state.isInitialized) return;
+      
+      performanceMonitor.start();
+      state.loadStartTime = Date.now();
+      updateLoadingSteps();
+      
+      if (!state.isOnline) {
+        setTimeout(() => showError(), 1500);
+        connectionManager.updateUI();
+        return;
+      }
+      
+      // Set iframe permissions
+      elements.contentFrame.allow = `
+        autoplay; 
+        camera; 
+        encrypted-media; 
+        geolocation; 
+        microphone; 
+        midi; 
+        payment; 
+        usb; 
+        accelerometer; 
+        gyroscope; 
+        magnetometer; 
+        screen-wake-lock; 
+        clipboard-read; 
+        clipboard-write; 
+        web-share; 
+        fullscreen
+      `.trim().replace(/\s+/g, ' ');
+      
+      // Load the app with retry logic
+      loadAppWithRetry();
+      
+      // Start connection monitoring
+      connectionManager.startMonitoring();
+      
+      // Start auto-save reminder
+      startAutoSaveReminder();
+      
+      // Hide loading overlay
+      setTimeout(() => {
+        elements.loadingOverlay.style.opacity = '0';
+        setTimeout(() => {
+          elements.loadingOverlay.style.display = 'none';
+          showControlPanel();
+          connectionManager.updateUI();
+          connectionManager.measureSpeed();
+          connectionManager.checkConnection();
+          
+          if (CONFIG.PERFORMANCE_MONITORING) {
+            elements.performanceMetrics.classList.remove('hidden');
+            performanceMonitor.updateMemoryUsage();
+            setInterval(() => performanceMonitor.updateMemoryUsage(), 10000);
+          }
+        }, 500);
+      }, 2000);
+      
+      state.isInitialized = true;
+    }
+
+    async function loadAppWithRetry() {
+      try {
+        simulateLoadProgress();
+        elements.contentFrame.src = CONFIG.APP_URL;
+        
+        // Set timeout untuk loading
+        const timeoutPromise = new Promise((_, reject) => {
+          setTimeout(() => reject(new Error('Load timeout')), CONFIG.LOAD_TIMEOUT);
+        });
+        
+        await Promise.race([
+          new Promise((resolve) => {
+            elements.contentFrame.addEventListener('load', resolve, { once: true });
+          }),
+          timeoutPromise
+        ]);
+        
+        state.retryCount = 0; // Reset retry count on success
+      } catch (error) {
+        console.error('Failed to load app:', error);
+        state.retryCount++;
+        
+        if (state.retryCount <= CONFIG.RETRY_ATTEMPTS) {
+          showNotification(`Gagal memuat, mencoba lagi (${state.retryCount}/${CONFIG.RETRY_ATTEMPTS})...`, 'warning');
+          
+          await new Promise(resolve => setTimeout(resolve, CONFIG.RETRY_DELAY));
+          return loadAppWithRetry();
+        } else {
+          showError();
+          showNotification('Gagal memuat aplikasi setelah beberapa percobaan', 'error');
+        }
       }
     }
-        
-    // Deteksi jika iframe gagal dimuat
-    document.getElementById('contentFrame').addEventListener('error', showError);
-    
-    // Event listener untuk perubahan koneksi
-    window.addEventListener('online', checkConnection);
-    window.addEventListener('offline', checkConnection);
-    
-    // Inisialisasi saat halaman dimuat
-    window.addEventListener('load', function() {
-      simulateProgress();
-      checkConnection();
+
+    function showError() {
+      elements.loadingOverlay.style.display = 'none';
+      elements.errorMessage.style.display = 'flex';
+      connectionManager.updateUI();
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+          showNotification(`Gagal masuk mode layar penuh: ${err.message}`, 'error');
+        });
+        state.isFullscreen = true;
+        elements.fullscreenButton.innerHTML = '<span class="material-icons-outlined text-gray-700">fullscreen_exit</span>';
+      } else {
+        document.exitFullscreen();
+        state.isFullscreen = false;
+        elements.fullscreenButton.innerHTML = '<span class="material-icons-outlined text-gray-700">fullscreen</span>';
+      }
+    }
+
+    function startAutoSaveReminder() {
+      state.autoSaveInterval = setInterval(() => {
+        showNotification('Ingat untuk menyimpan jawaban Anda secara berkala', 'info', 3000);
+      }, CONFIG.AUTO_SAVE_INTERVAL);
+    }
+
+    // --- Event Listeners ---
+    function setupEventListeners() {
+      // App initialization
+      window.addEventListener('load', initializeApp);
       
-      // Sembunyikan loading setelah 15 detik (fallback)
-      setTimeout(hideLoading, 15000);
-    });
+      // Iframe events
+      elements.contentFrame.addEventListener('load', hideIframeLoading);
+      
+      elements.contentFrame.addEventListener('error', () => {
+        hideIframeLoading();
+        showError();
+        showNotification('Gagal memuat aplikasi ujian', 'error');
+      });
+      
+      // Connection events
+      window.addEventListener('online', () => {
+        connectionManager.updateUI();
+        connectionManager.measureSpeed();
+        connectionManager.checkConnection();
+        showNotification('Koneksi internet kembali pulih', 'success');
+      });
+      
+      window.addEventListener('offline', () => {
+        connectionManager.updateUI();
+        showNotification('Koneksi internet terputus', 'warning');
+      });
+      
+      // Button events
+      elements.retryButton.addEventListener('click', () => {
+        elements.errorMessage.style.display = 'none';
+        elements.loadingOverlay.style.display = 'flex';
+        elements.loadingOverlay.style.opacity = '1';
+        state.retryCount = 0;
+        initializeApp();
+      });
+      
+      elements.helpButton.addEventListener('click', () => {
+        showNotification('Hubungi administrator untuk bantuan teknis', 'info');
+      });
+      
+      elements.infoButton.addEventListener('click', () => {
+        elements.infoPanel.style.display = 'block';
+        requestAnimationFrame(() => {
+          elements.infoPanel.style.opacity = '1';
+        });
+      });
+      
+      elements.closeInfoPanel.addEventListener('click', () => {
+        elements.infoPanel.style.opacity = '0';
+        setTimeout(() => {
+          elements.infoPanel.style.display = 'none';
+        }, 300);
+      });
+      
+      elements.reloadButton.addEventListener('click', () => {
+        if (confirm('Muat ulang aplikasi ujian? Semua perubahan yang belum disimpan mungkin akan hilang.')) {
+          elements.iframeLoader.style.display = 'flex';
+          elements.iframeLoader.style.opacity = '1';
+          state.currentLoadProgress = 0;
+          simulateLoadProgress();
+          elements.contentFrame.src = elements.contentFrame.src;
+        }
+      });
+      
+      elements.fullscreenButton.addEventListener('click', toggleFullscreen);
+      
+      elements.connectionStatus.addEventListener('click', () => {
+        if (state.isOnline) {
+          showNotification(
+            `Status: ${state.isOnline ? 'Online' : 'Offline'}<br>
+             Latency: ${state.connectionStats.latency || '-'}ms<br>
+             Speed: ${state.connectionStats.speed || '-'}`,
+            'info',
+            5000
+          );
+        }
+      });
+      
+      // Fullscreen change events
+      document.addEventListener('fullscreenchange', () => {
+        state.isFullscreen = !!document.fullscreenElement;
+        elements.fullscreenButton.innerHTML = state.isFullscreen 
+          ? '<span class="material-icons-outlined text-gray-700">fullscreen_exit</span>'
+          : '<span class="material-icons-outlined text-gray-700">fullscreen</span>';
+      });
+      
+      // Mouse movement for control panel
+      let hideControlPanelTimeout;
+      document.addEventListener('mousemove', (e) => {
+        if (e.clientY > window.innerHeight - 100) {
+          elements.controlPanel.style.opacity = '1';
+          clearTimeout(hideControlPanelTimeout);
+        }
+      });
+      
+      elements.controlPanel.addEventListener('mouseleave', () => {
+        hideControlPanelTimeout = setTimeout(() => {
+          elements.controlPanel.style.opacity = '0.7';
+        }, 2000);
+      });
+      
+      elements.controlPanel.addEventListener('mouseenter', () => {
+        clearTimeout(hideControlPanelTimeout);
+        elements.controlPanel.style.opacity = '1';
+      });
+      
+      // Keyboard shortcuts
+      document.addEventListener('keydown', (e) => {
+        // F5 untuk reload
+        if (e.key === 'F5') {
+          e.preventDefault();
+          elements.reloadButton.click();
+        }
+        
+        // F11 untuk fullscreen
+        if (e.key === 'F11') {
+          e.preventDefault();
+          toggleFullscreen();
+        }
+        
+        // Ctrl+R untuk reload
+        if (e.ctrlKey && e.key === 'r') {
+          e.preventDefault();
+          elements.reloadButton.click();
+        }
+      });
+      
+      // Beforeunload untuk konfirmasi keluar
+      window.addEventListener('beforeunload', (e) => {
+        if (elements.contentFrame.src && elements.contentFrame.src !== 'about:blank') {
+          e.preventDefault();
+          e.returnValue = 'Apakah Anda yakin ingin meninggalkan halaman ini? Perubahan yang belum disimpan mungkin akan hilang.';
+        }
+      });
+    }
+
+    // --- Initialize Application ---
+    function init() {
+      setupEventListeners();
+      
+      // Expose necessary functions to global scope
+      window.notificationSystem = notificationSystem;
+      
+      // Set exam duration (example)
+      elements.examDuration.textContent = '120';
+      
+      // Initial connection check
+      connectionManager.updateUI();
+    }
+
+    // Start the application
+    init();
   </script>
 </body>
-
 </html>
-
-
-

@@ -9,19 +9,9 @@
   <meta name="author" content="Tim Pengembang" />
   <meta name="theme-color" content="#4f46e5" />
   
-  <!-- Open Graph / Social Media Tags -->
-  <meta property="og:title" content="Platform Ujian Digital - Asesmen Sumatif" />
-  <meta property="og:description" content="Platform Ujian Digital Terintegrasi untuk Asesmen Sumatif" />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="" />
-  
   <title>Platform Ujian Digital - Asesmen Sumatif</title>
   <link rel="icon" href="https://www.google.com/s2/favicons?domain=google.com&sz=128" type="image/png">
   <link rel="apple-touch-icon" href="https://www.google.com/s2/favicons?domain=google.com&sz=192">
-  
-  <!-- Preload resources -->
-  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Google+Sans:wght@400;500;700&display=swap" as="style">
-  <link rel="preload" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" as="style">
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -31,8 +21,11 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
 
   <style>
-    /* Performance optimization */
+    /* Reset and base styles */
     * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
@@ -45,7 +38,7 @@
       touch-action: manipulation;
     }
     
-    /* Custom spinner animation - optimized */
+    /* Custom spinner animation */
     .spinner {
       width: 50px;
       height: 50px;
@@ -53,14 +46,13 @@
       border-radius: 50%;
       border-top-color: #4f46e5;
       animation: spin 0.8s linear infinite;
-      will-change: transform;
     }
     
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
 
-    /* Progress container */
+    /* Progress animation */
     .progress-container {
       width: 260px;
       height: 6px;
@@ -68,34 +60,20 @@
       border-radius: 9999px;
       overflow: hidden;
       margin: 0 auto;
-      position: relative;
     }
 
-    /* Bar */
     .progress-bar {
       height: 100%;
       width: 0%;
       background: linear-gradient(90deg, #3b82f6, #2563eb);
-      background-size: 200% 100%;
       border-radius: inherit;
       animation: examLoad 2.2s ease-in-out infinite;
-      will-change: width, background-position;
     }
 
-    /* Animation */
     @keyframes examLoad {
-      0% {
-        width: 0%;
-        background-position: 0% 50%;
-      }
-      50% {
-        width: 95%;
-        background-position: 100% 50%;
-      }
-      100% {
-        width: 0%;
-        background-position: 0% 50%;
-      }
+      0% { width: 0%; }
+      50% { width: 95%; }
+      100% { width: 0%; }
     }
 
     .loading-dots::after {
@@ -110,7 +88,7 @@
       100% { content: "..."; }
     }
     
-    /* Pulse animation for status indicators */
+    /* Pulse animation */
     @keyframes pulse {
       0%, 100% { opacity: 1; }
       50% { opacity: 0.7; }
@@ -120,27 +98,7 @@
       animation: pulse 2s infinite;
     }
     
-    /* Custom scrollbar */
-    ::-webkit-scrollbar {
-      width: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #f1f1f1;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #c1c1c1;
-      border-radius: 4px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #a8a8a8;
-    }
-    
-    /* Smooth transitions */
-    .smooth-transition {
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    
-    /* Glass effect for notices */
+    /* Glass effect */
     .glass-effect {
       background: rgba(255, 255, 255, 0.92);
       backdrop-filter: blur(12px) saturate(180%);
@@ -148,37 +106,52 @@
       border: 1px solid rgba(255, 255, 255, 0.2);
     }
     
-    /* Performance classes */
-    .will-change-transform {
-      will-change: transform;
+    /* Smooth transitions */
+    .smooth-transition {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     
-    .will-change-opacity {
-      will-change: opacity;
+    /* Iframe container with fallback */
+    .iframe-fallback {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #f8fafc;
+      z-index: 10;
     }
     
-    /* Hide elements initially */
-    [data-hidden] {
-      display: none !important;
+    /* Cors error specific styles */
+    .cors-error {
+      background: #fee2e2;
+      border: 2px dashed #ef4444;
+      border-radius: 12px;
     }
     
-    /* Focus styles for accessibility */
-    .focus-visible {
-      outline: 2px solid #4f46e5;
-      outline-offset: 2px;
+    /* Alternative viewer */
+    .alt-viewer {
+      width: 100%;
+      height: 100%;
+      border: none;
     }
     
-    /* Loading skeleton */
-    .skeleton {
-      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-      background-size: 200% 100%;
-      animation: shimmer 1.5s infinite;
-      border-radius: 4px;
-    }
-    
-    @keyframes shimmer {
-      0% { background-position: -200% 0; }
-      100% { background-position: 200% 0; }
+    .proxy-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      color: #2563eb;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      z-index: 100;
     }
   </style>
 </head>
@@ -193,7 +166,6 @@
       <h1 class="text-3xl font-bold text-gray-800 mb-2">Asesmen Sumatif</h1>
       <p class="text-gray-600 mb-6">Platform Ujian Digital Terintegrasi</p>
       
-      <!-- Progress Animation -->
       <div class="progress-container mb-6">
         <div class="progress-bar"></div>
       </div>
@@ -213,10 +185,10 @@
         </div>
       </div>
       
-      <!-- Performance metrics (hidden by default) -->
-      <div id="performanceMetrics" class="mt-4 text-xs text-gray-400 space-y-1 hidden">
-        <div>Load Time: <span id="loadTime">0</span>ms</div>
-        <div>Memory: <span id="memoryUsage">-</span></div>
+      <!-- Connection method indicator -->
+      <div id="connectionMethod" class="mt-4 text-xs text-gray-400 hidden">
+        <span class="font-medium">Metode koneksi:</span> 
+        <span id="methodText">Direct</span>
       </div>
     </div>
   </div>
@@ -231,13 +203,33 @@
       <div class="mt-4 p-4 bg-yellow-50 rounded-lg border border-yellow-200 text-left">
         <p class="text-gray-700 mb-2 font-medium">Kemungkinan penyebab:</p>
         <ul class="text-gray-600 text-sm space-y-1 list-disc pl-5">
+          <li>Masalah CORS (Cross-Origin Resource Sharing)</li>
           <li>Tidak terhubung ke internet</li>
           <li>Server sedang dalam perawatan</li>
           <li>Koneksi jaringan tidak stabil</li>
           <li>Browser memblokir konten</li>
-          <li>Cache browser perlu dibersihkan</li>
         </ul>
       </div>
+      
+      <!-- CORS Specific Solutions -->
+      <div id="corsSolutions" class="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200 text-left hidden">
+        <p class="text-gray-700 mb-2 font-medium flex items-center gap-2">
+          <span class="material-icons-outlined text-blue-500">lightbulb</span>
+          Solusi untuk CORS:
+        </p>
+        <div class="flex flex-wrap gap-2 mt-2">
+          <button id="tryProxyButton" class="bg-blue-100 text-blue-700 text-xs font-medium px-3 py-1.5 rounded-lg hover:bg-blue-200 transition-colors">
+            Coba Proxy
+          </button>
+          <button id="tryNewWindowButton" class="bg-blue-100 text-blue-700 text-xs font-medium px-3 py-1.5 rounded-lg hover:bg-blue-200 transition-colors">
+            Buka di Tab Baru
+          </button>
+          <button id="tryCORSCleanButton" class="bg-blue-100 text-blue-700 text-xs font-medium px-3 py-1.5 rounded-lg hover:bg-blue-200 transition-colors">
+            Bersihkan CORS
+          </button>
+        </div>
+      </div>
+      
       <div class="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
         <button id="retryButton" class="bg-indigo-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-transform transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
           <span class="material-icons-outlined">refresh</span>
@@ -252,102 +244,155 @@
   </div>
   
   <!-- Connection Status -->
-  <div id="connectionStatus" class="fixed bottom-5 right-5 px-4 py-3 rounded-xl text-sm font-medium text-white shadow-lg flex items-center gap-2 z-[1000] glass-effect border hidden transform transition-transform duration-300 hover:scale-105 cursor-pointer" title="Klik untuk detail koneksi">
+  <div id="connectionStatus" class="fixed bottom-5 right-5 px-4 py-3 rounded-xl text-sm font-medium text-white shadow-lg flex items-center gap-2 z-[1000] glass-effect border hidden">
     <span class="material-icons-outlined" id="connectionIcon" style="font-size: 18px;"></span>
     <span id="connectionText"></span>
-    <span id="connectionSpeed" class="text-xs opacity-80 ml-2 hidden"></span>
-    <span id="connectionLatency" class="text-xs opacity-80 hidden">• <span id="latencyValue">-</span>ms</span>
+    <span id="connectionMethodBadge" class="text-xs opacity-80 ml-2 hidden">• Direct</span>
   </div>
 
-  <!-- Information Panel -->
-  <div id="infoPanel" class="fixed top-5 right-5 bg-white rounded-xl shadow-lg p-4 z-[1000] glass-effect border hidden max-w-xs transform transition-all duration-300">
+  <!-- CORS Bypass Options -->
+  <div id="corsOptions" class="fixed top-5 left-5 bg-white rounded-xl shadow-lg p-4 z-[1000] glass-effect border hidden max-w-xs">
     <div class="flex items-start justify-between mb-3">
       <h3 class="font-bold text-gray-800 flex items-center gap-2">
-        <span class="material-icons-outlined text-indigo-600">info</span>
-        Informasi Ujian
+        <span class="material-icons-outlined text-blue-600">vpn_lock</span>
+        Opsi Koneksi
       </h3>
-      <button id="closeInfoPanel" class="text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-full hover:bg-gray-100">
+      <button id="closeCorsOptions" class="text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-full hover:bg-gray-100">
         <span class="material-icons-outlined">close</span>
       </button>
     </div>
     <div class="space-y-3 text-sm">
-      <div class="flex items-center gap-2">
-        <span class="material-icons-outlined text-green-500 text-base">check_circle</span>
-        <span>Semua fitur telah diaktifkan</span>
+      <div class="flex items-center justify-between">
+        <span>Mode Koneksi:</span>
+        <select id="connectionMode" class="text-xs border rounded px-2 py-1">
+          <option value="direct">Direct (Standar)</option>
+          <option value="proxy">Proxy</option>
+          <option value="newtab">Tab Baru</option>
+        </select>
       </div>
-      <div class="flex items-center gap-2">
-        <span class="material-icons-outlined text-blue-500 text-base">security</span>
-        <span>Lingkungan ujian aman</span>
+      <div id="proxyOptions" class="space-y-2 hidden">
+        <div class="text-xs text-gray-600">Pilih proxy server:</div>
+        <div class="flex flex-wrap gap-1">
+          <button data-proxy="cors-anywhere" class="proxy-option bg-blue-50 text-blue-700 text-xs px-2 py-1 rounded border border-blue-200 hover:bg-blue-100">
+            cors-anywhere
+          </button>
+          <button data-proxy="allorigins" class="proxy-option bg-blue-50 text-blue-700 text-xs px-2 py-1 rounded border border-blue-200 hover:bg-blue-100">
+            allorigins
+          </button>
+          <button data-proxy="thingproxy" class="proxy-option bg-blue-50 text-blue-700 text-xs px-2 py-1 rounded border border-blue-200 hover:bg-blue-100">
+            thingproxy
+          </button>
+        </div>
       </div>
-      <div class="flex items-center gap-2">
-        <span class="material-icons-outlined text-purple-500 text-base">timer</span>
-        <span>Durasi ujian: <span id="examDuration">-</span> menit</span>
-      </div>
-      <div class="pt-2 border-t">
-        <p class="text-gray-600 text-xs">Pastikan koneksi internet stabil selama ujian berlangsung. Simpan jawaban secara berkala.</p>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Control Panel -->
-  <div id="controlPanel" class="fixed bottom-20 right-5 bg-white rounded-xl shadow-lg p-3 z-[1000] glass-effect border hidden transform transition-all duration-300">
-    <div class="flex items-center gap-2">
-      <button id="infoButton" class="p-2 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors" title="Informasi Ujian" aria-label="Tampilkan informasi ujian">
-        <span class="material-icons-outlined text-gray-700">info</span>
-      </button>
-      <button id="reloadButton" class="p-2 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors" title="Muat Ulang" aria-label="Muat ulang aplikasi">
-        <span class="material-icons-outlined text-gray-700">refresh</span>
-      </button>
-      <button id="fullscreenButton" class="p-2 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors" title="Layar Penuh" aria-label="Toggle layar penuh">
-        <span class="material-icons-outlined text-gray-700">fullscreen</span>
+      <button id="applyConnectionMode" class="w-full bg-indigo-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors">
+        Terapkan
       </button>
     </div>
   </div>
-  
-  <!-- Notification Container -->
-  <div id="notificationContainer" class="fixed bottom-24 right-5 z-[999] space-y-2"></div>
   
   <!-- Main Application Container -->
   <div id="appContainer" class="min-h-screen">
     
     <!-- Iframe View -->
-    <div id="iframeView" class="fixed inset-0 bg-white z-[9000]">    
+    <div id="iframeView" class="fixed inset-0 bg-white z-[9000]">
       <!-- Iframe Loader -->
-      <div id="iframeLoader" class="absolute inset-0 bg-white flex flex-col justify-center items-center z-10 will-change-opacity">
+      <div id="iframeLoader" class="absolute inset-0 bg-white flex flex-col justify-center items-center z-10">
         <div class="text-center">
           <div class="spinner mb-4"></div>
           <p class="text-indigo-600 font-medium">Membuka Asesmen Sumatif...</p>
           <p class="text-gray-500 text-sm mt-2">Silakan tunggu sebentar</p>
-          <div class="mt-4 text-xs text-gray-400">
-            <span id="iframeLoadProgress">0%</span> terload
-          </div>
+          <div id="loadMethodInfo" class="mt-2 text-xs text-gray-400"></div>
         </div>
       </div>
       
-      <!-- Iframe Content -->
-      <iframe 
-        id="contentFrame" 
-        src="" 
-        class="w-full h-full border-none relative z-0 smooth-transition"
-        title="Aplikasi Ujian Online - Asesmen Sumatif"
-        allowfullscreen
-        loading="eager"
-        sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-downloads"
-      ></iframe>
+      <!-- Iframe Content with Fallback -->
+      <div id="iframeContainer" class="w-full h-full relative">
+        <iframe 
+          id="contentFrame" 
+          src="" 
+          class="w-full h-full border-none smooth-transition"
+          title="Aplikasi Ujian Online - Asesmen Sumatif"
+          allow="autoplay; camera; encrypted-media; geolocation; microphone; midi; payment; usb; accelerometer; gyroscope; magnetometer; screen-wake-lock; clipboard-read; clipboard-write; web-share; fullscreen"
+          allowfullscreen
+          sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals"
+          referrerpolicy="no-referrer-when-downgrade"
+        ></iframe>
+        
+        <!-- Fallback for CORS -->
+        <div id="iframeFallback" class="iframe-fallback hidden">
+          <div class="text-center max-w-md p-6">
+            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="material-icons-outlined text-red-500 text-3xl">block</span>
+            </div>
+            <h3 class="text-lg font-bold text-gray-800 mb-2">Terblokir oleh CORS</h3>
+            <p class="text-gray-600 text-sm mb-4">
+              Browser mencegah akses karena masalah keamanan Cross-Origin.
+            </p>
+            <div class="space-y-3">
+              <button id="openInNewTab" class="w-full bg-indigo-600 text-white py-2.5 rounded-lg font-medium hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2">
+                <span class="material-icons-outlined">open_in_new</span>
+                Buka di Tab Baru
+              </button>
+              <button id="tryProxyFallback" class="w-full bg-blue-100 text-blue-700 py-2.5 rounded-lg font-medium hover:bg-blue-200 transition-colors flex items-center justify-center gap-2">
+                <span class="material-icons-outlined">vpn_key</span>
+                Coba dengan Proxy
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
+  <!-- Alternative Viewer (for proxy) -->
+  <div id="altViewerContainer" class="fixed inset-0 bg-white z-[9999] hidden">
+    <div class="h-12 bg-gray-100 border-b flex items-center justify-between px-4">
+      <div class="flex items-center gap-2">
+        <span class="material-icons-outlined text-gray-600">public</span>
+        <span class="text-sm font-medium">Alternative Viewer</span>
+        <span id="proxyBadge" class="proxy-badge">Proxy Active</span>
+      </div>
+      <button id="closeAltViewer" class="text-gray-500 hover:text-gray-700">
+        <span class="material-icons-outlined">close</span>
+      </button>
+    </div>
+    <iframe 
+      id="altViewerFrame"
+      class="alt-viewer"
+      sandbox="allow-scripts allow-same-origin allow-forms"
+      referrerpolicy="no-referrer"
+    ></iframe>
+  </div>
+
   <script>
-    // --- Application Configuration ---
+    // --- Configuration ---
     const CONFIG = {
-      APP_NAME: 'Ujian Online - Asesmen Sumatif',
       APP_URL: "https://script.google.com/macros/s/AKfycbxQnnLAhqlgWbROXNpg5V2CPHj6yz0wrEYdajF4N3qHU8Q-s6FniBbSIZ6VP9XUXCqu/exec",
-      LOAD_TIMEOUT: 30000, // 30 seconds timeout
+      LOAD_TIMEOUT: 25000,
       RETRY_ATTEMPTS: 3,
-      RETRY_DELAY: 2000,
-      CONNECTION_CHECK_INTERVAL: 10000, // 10 seconds
-      PERFORMANCE_MONITORING: true,
-      AUTO_SAVE_INTERVAL: 60000, // 60 seconds
+      
+      // CORS Proxy Servers
+      PROXY_SERVERS: {
+        'cors-anywhere': 'https://cors-anywhere.herokuapp.com/',
+        'allorigins': 'https://api.allorigins.win/raw?url=',
+        'thingproxy': 'https://thingproxy.freeboard.io/fetch/',
+        'corsproxy': 'https://corsproxy.io/?',
+      },
+      
+      // Fallback URLs
+      FALLBACK_URLS: [
+        'https://script.googleusercontent.com/macros/echo?user_content_key=AKfycbxQnnLAhqlgWbROXNpg5V2CPHj6yz0wrEYdajF4N3qHU8Q-s6FniBbSIZ6VP9XUXCqu&lib=',
+        'https://n8n.cors.workers.dev/?',
+      ],
+    };
+
+    // --- Application State ---
+    const state = {
+      currentProxy: null,
+      connectionMode: 'direct',
+      retryCount: 0,
+      isCORSBlocked: false,
+      fallbackIndex: 0,
     };
 
     // --- DOM Elements ---
@@ -356,256 +401,326 @@
       loadingStep1: document.getElementById('loadingStep1'),
       loadingStep2: document.getElementById('loadingStep2'),
       errorMessage: document.getElementById('errorMessage'),
+      corsSolutions: document.getElementById('corsSolutions'),
       retryButton: document.getElementById('retryButton'),
       helpButton: document.getElementById('helpButton'),
+      tryProxyButton: document.getElementById('tryProxyButton'),
+      tryNewWindowButton: document.getElementById('tryNewWindowButton'),
+      tryCORSCleanButton: document.getElementById('tryCORSCleanButton'),
       contentFrame: document.getElementById('contentFrame'),
       iframeLoader: document.getElementById('iframeLoader'),
+      iframeFallback: document.getElementById('iframeFallback'),
       connectionStatus: document.getElementById('connectionStatus'),
       connectionIcon: document.getElementById('connectionIcon'),
       connectionText: document.getElementById('connectionText'),
-      connectionSpeed: document.getElementById('connectionSpeed'),
-      connectionLatency: document.getElementById('connectionLatency'),
-      latencyValue: document.getElementById('latencyValue'),
-      infoPanel: document.getElementById('infoPanel'),
-      controlPanel: document.getElementById('controlPanel'),
-      closeInfoPanel: document.getElementById('closeInfoPanel'),
-      infoButton: document.getElementById('infoButton'),
-      reloadButton: document.getElementById('reloadButton'),
-      fullscreenButton: document.getElementById('fullscreenButton'),
-      notificationContainer: document.getElementById('notificationContainer'),
-      performanceMetrics: document.getElementById('performanceMetrics'),
-      loadTime: document.getElementById('loadTime'),
-      memoryUsage: document.getElementById('memoryUsage'),
-      iframeLoadProgress: document.getElementById('iframeLoadProgress'),
-      examDuration: document.getElementById('examDuration'),
+      connectionMethod: document.getElementById('connectionMethod'),
+      connectionMethodBadge: document.getElementById('connectionMethodBadge'),
+      methodText: document.getElementById('methodText'),
+      corsOptions: document.getElementById('corsOptions'),
+      closeCorsOptions: document.getElementById('closeCorsOptions'),
+      connectionMode: document.getElementById('connectionMode'),
+      proxyOptions: document.getElementById('proxyOptions'),
+      applyConnectionMode: document.getElementById('applyConnectionMode'),
+      openInNewTab: document.getElementById('openInNewTab'),
+      tryProxyFallback: document.getElementById('tryProxyFallback'),
+      altViewerContainer: document.getElementById('altViewerContainer'),
+      altViewerFrame: document.getElementById('altViewerFrame'),
+      closeAltViewer: document.getElementById('closeAltViewer'),
+      loadMethodInfo: document.getElementById('loadMethodInfo'),
+      proxyBadge: document.getElementById('proxyBadge'),
     };
 
-    // --- Application State ---
-    const state = {
-      isOnline: navigator.onLine,
-      isFullscreen: false,
-      loadStartTime: null,
-      retryCount: 0,
-      connectionCheckInterval: null,
-      autoSaveInterval: null,
-      isInitialized: false,
-      currentLoadProgress: 0,
-      connectionStats: {
-        latency: null,
-        speed: null,
-        lastCheck: null,
-      },
-    };
+    // --- CORS Bypass Methods ---
 
-    // --- Performance Monitoring ---
-    const performanceMonitor = {
-      startTime: null,
-      metrics: {
-        domLoad: null,
-        appLoad: null,
-        memory: null,
-      },
+    // Method 1: Direct (original)
+    function loadDirect() {
+      elements.loadMethodInfo.textContent = 'Mode: Direct Connection';
+      elements.methodText.textContent = 'Direct';
+      elements.connectionMethodBadge.textContent = '• Direct';
       
-      start() {
-        this.startTime = performance.now();
-        state.loadStartTime = Date.now();
-      },
+      state.connectionMode = 'direct';
+      state.currentProxy = null;
       
-      mark(name) {
-        performance.mark(`${name}-start`);
-      },
+      // Set iframe src directly
+      elements.contentFrame.src = CONFIG.APP_URL;
       
-      measure(name) {
-        performance.measure(name, `${name}-start`);
-        const measure = performance.getEntriesByName(name)[0];
-        return measure ? Math.round(measure.duration) : 0;
-      },
+      // Update connection method indicator
+      elements.connectionMethod.classList.remove('hidden');
+      elements.connectionMethodBadge.classList.remove('hidden');
+    }
+
+    // Method 2: Proxy Server
+    function loadWithProxy(proxyType = 'cors-anywhere') {
+      const proxyUrl = CONFIG.PROXY_SERVERS[proxyType];
+      if (!proxyUrl) return false;
       
-      updateMemoryUsage() {
-        if ('memory' in performance) {
-          const memory = performance.memory;
-          const usedMB = Math.round(memory.usedJSHeapSize / 1048576);
-          const totalMB = Math.round(memory.totalJSHeapSize / 1048576);
-          elements.memoryUsage.textContent = `${usedMB}MB / ${totalMB}MB`;
-        }
-      },
+      elements.loadMethodInfo.textContent = `Mode: Proxy (${proxyType})`;
+      elements.methodText.textContent = `Proxy: ${proxyType}`;
+      elements.connectionMethodBadge.textContent = `• Proxy`;
       
-      updateLoadTime() {
-        if (state.loadStartTime) {
-          const loadTime = Date.now() - state.loadStartTime;
-          elements.loadTime.textContent = loadTime;
-          return loadTime;
-        }
-        return 0;
+      state.connectionMode = 'proxy';
+      state.currentProxy = proxyType;
+      
+      // Construct URL with proxy
+      let proxiedUrl;
+      if (proxyType === 'allorigins') {
+        proxiedUrl = proxyUrl + encodeURIComponent(CONFIG.APP_URL);
+      } else if (proxyType === 'corsproxy') {
+        proxiedUrl = proxyUrl + encodeURIComponent(CONFIG.APP_URL);
+      } else {
+        proxiedUrl = proxyUrl + CONFIG.APP_URL;
       }
-    };
+      
+      elements.contentFrame.src = proxiedUrl;
+      
+      // Show proxy badge
+      elements.proxyBadge.textContent = `Proxy: ${proxyType}`;
+      
+      // Update indicators
+      elements.connectionMethod.classList.remove('hidden');
+      elements.connectionMethodBadge.classList.remove('hidden');
+      
+      return true;
+    }
 
-    // --- Connection Manager ---
-    const connectionManager = {
-      async checkConnection() {
-        if (!state.isOnline) return false;
-        
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 5000);
-        
-        try {
-          const start = performance.now();
-          const response = await fetch(CONFIG.APP_URL + '?ping=1', {
-            method: 'HEAD',
-            signal: controller.signal,
-            cache: 'no-store',
-          });
-          clearTimeout(timeout);
-          
-          const latency = Math.round(performance.now() - start);
-          state.connectionStats.latency = latency;
-          elements.latencyValue.textContent = latency;
-          
-          return response.ok;
-        } catch (error) {
-          console.warn('Connection check failed:', error);
-          return false;
-        }
-      },
+    // Method 3: Open in New Tab/Window
+    function openInNewTab() {
+      elements.loadMethodInfo.textContent = 'Mode: New Tab';
+      elements.methodText.textContent = 'New Tab';
       
-      async measureSpeed() {
-        if (!state.isOnline) return;
-        
-        const startTime = Date.now();
-        const testImage = new Image();
-        testImage.src = CONFIG.APP_URL + '?t=' + startTime;
-        
-        return new Promise((resolve) => {
-          testImage.onload = () => {
-            const duration = Date.now() - startTime;
-            const speed = duration < 800 ? 'Cepat' : duration < 2500 ? 'Sedang' : 'Lambat';
-            state.connectionStats.speed = speed;
-            elements.connectionSpeed.textContent = `• ${speed}`;
-            elements.connectionSpeed.classList.remove('hidden');
-            resolve(speed);
-          };
-          
-          testImage.onerror = () => {
-            elements.connectionSpeed.textContent = '• Tidak terukur';
-            elements.connectionSpeed.classList.remove('hidden');
-            resolve(null);
-          };
-          
-          // Timeout setelah 10 detik
-          setTimeout(() => {
-            testImage.onload = null;
-            testImage.onerror = null;
-            resolve(null);
-          }, 10000);
-        });
-      },
+      // Hide iframe, open in new tab
+      elements.contentFrame.style.display = 'none';
       
-      updateUI() {
-        state.isOnline = navigator.onLine;
-        elements.connectionStatus.style.display = 'flex';
-        
-        if (state.isOnline) {
-          elements.connectionStatus.className = 'fixed bottom-5 right-5 px-4 py-3 rounded-xl text-sm font-medium text-white shadow-lg flex items-center gap-2 z-[1000] glass-effect border bg-green-500/90 transform transition-transform duration-300 hover:scale-105 cursor-pointer';
-          elements.connectionIcon.textContent = 'wifi';
-          elements.connectionText.textContent = 'Terhubung';
-          elements.connectionIcon.classList.add('pulse-online');
-          elements.connectionLatency.classList.remove('hidden');
-          
-          // Auto-hide setelah 5 detik
-          setTimeout(() => {
-            if (state.isOnline) {
-              elements.connectionStatus.style.opacity = '0.8';
-            }
-          }, 5000);
-        } else {
-          elements.connectionStatus.className = 'fixed bottom-5 right-5 px-4 py-3 rounded-xl text-sm font-medium text-white shadow-lg flex items-center gap-2 z-[1000] glass-effect border bg-red-500/90 transform transition-transform duration-300 hover:scale-105 cursor-pointer';
-          elements.connectionIcon.textContent = 'wifi_off';
-          elements.connectionText.textContent = 'Offline';
-          elements.connectionIcon.classList.remove('pulse-online');
-          elements.connectionSpeed.classList.add('hidden');
-          elements.connectionLatency.classList.add('hidden');
-        }
-      },
+      const newWindow = window.open(CONFIG.APP_URL, '_blank');
       
-      startMonitoring() {
-        if (state.connectionCheckInterval) {
-          clearInterval(state.connectionCheckInterval);
-        }
+      if (!newWindow) {
+        showNotification('Popup diblokir! Izinkan popup untuk situs ini.', 'error');
+        return false;
+      }
+      
+      // Show message
+      showNotification('Aplikasi dibuka di tab baru. Anda dapat kembali ke halaman ini nanti.', 'info', 5000);
+      
+      return true;
+    }
+
+    // Method 4: Alternative Viewer (embedded proxy)
+    function openAlternativeViewer() {
+      elements.altViewerContainer.classList.remove('hidden');
+      elements.altViewerFrame.src = CONFIG.APP_URL;
+      
+      // Hide main app
+      document.getElementById('iframeView').style.display = 'none';
+      
+      showNotification('Menggunakan viewer alternatif untuk menghindari CORS', 'info');
+    }
+
+    // Method 5: Fetch and Inject (for simple content)
+    async function fetchAndInject() {
+      try {
+        elements.loadMethodInfo.textContent = 'Mode: Fetch & Inject';
         
-        state.connectionCheckInterval = setInterval(async () => {
-          if (state.isOnline) {
-            const isConnected = await this.checkConnection();
-            if (!isConnected && state.isOnline) {
-              showNotification('Koneksi ke server terganggu', 'warning');
-            }
+        // Use CORS proxy for fetch
+        const proxyUrl = CONFIG.PROXY_SERVERS['allorigins'];
+        const response = await fetch(proxyUrl + encodeURIComponent(CONFIG.APP_URL));
+        
+        if (!response.ok) throw new Error('Fetch failed');
+        
+        const html = await response.text();
+        
+        // Create a new document in iframe
+        const iframeDoc = elements.contentFrame.contentDocument;
+        iframeDoc.open();
+        iframeDoc.write(html);
+        iframeDoc.close();
+        
+        return true;
+      } catch (error) {
+        console.error('Fetch and inject failed:', error);
+        return false;
+      }
+    }
+
+    // Method 6: PostMessage Communication
+    function setupPostMessageBridge() {
+      // Listen for messages from iframe
+      window.addEventListener('message', (event) => {
+        // Verify origin if possible
+        // if (event.origin !== "https://expected-origin.com") return;
+        
+        console.log('Message from iframe:', event.data);
+        
+        // Handle specific messages
+        switch(event.data.type) {
+          case 'READY':
+            showNotification('Iframe siap', 'success');
+            break;
+          case 'ERROR':
+            handleIframeError(event.data.message);
+            break;
+        }
+      });
+      
+      // Send message to iframe
+      function sendToIframe(message) {
+        elements.contentFrame.contentWindow.postMessage(message, '*');
+      }
+      
+      return { sendToIframe };
+    }
+
+    // --- CORS Detection ---
+    function detectCORS() {
+      return new Promise((resolve) => {
+        const testIframe = document.createElement('iframe');
+        testIframe.style.display = 'none';
+        testIframe.src = CONFIG.APP_URL;
+        
+        testIframe.onload = () => {
+          document.body.removeChild(testIframe);
+          resolve(false); // No CORS issue
+        };
+        
+        testIframe.onerror = () => {
+          document.body.removeChild(testIframe);
+          resolve(true); // CORS issue detected
+        };
+        
+        document.body.appendChild(testIframe);
+        
+        // Timeout
+        setTimeout(() => {
+          if (testIframe.parentNode) {
+            document.body.removeChild(testIframe);
+            resolve(true);
           }
-        }, CONFIG.CONNECTION_CHECK_INTERVAL);
-      },
-    };
+        }, 5000);
+      });
+    }
 
-    // --- Notification System ---
-    const notificationSystem = {
-      show(message, type = 'info', duration = 4000) {
-        const id = 'notification-' + Date.now();
-        const colors = {
-          info: 'bg-blue-500 border-blue-400',
-          warning: 'bg-yellow-500 border-yellow-400',
-          success: 'bg-green-500 border-green-400',
-          error: 'bg-red-500 border-red-400',
-        };
-        
-        const icon = {
-          info: 'info',
-          warning: 'warning',
-          success: 'check_circle',
-          error: 'error',
-        };
-        
-        const notification = document.createElement('div');
-        notification.id = id;
-        notification.className = `glass-effect ${colors[type]} text-white px-4 py-3 rounded-lg shadow-lg text-sm flex items-center gap-2 transform transition-all duration-300 translate-y-2 opacity-0`;
-        notification.innerHTML = `
-          <span class="material-icons-outlined text-sm flex-shrink-0">${icon[type]}</span>
-          <span class="flex-grow">${message}</span>
-          <button class="text-white/80 hover:text-white ml-2" onclick="notificationSystem.close('${id}')">
-            <span class="material-icons-outlined text-sm">close</span>
-          </button>
-        `;
-        
-        elements.notificationContainer.appendChild(notification);
-        
-        // Animate in
-        requestAnimationFrame(() => {
-          notification.classList.remove('translate-y-2', 'opacity-0');
-        });
-        
-        // Auto close
-        const timeout = setTimeout(() => this.close(id), duration);
-        
-        // Store timeout ID for manual close
-        notification.dataset.timeoutId = timeout;
-        
-        return id;
-      },
+    // --- Enhanced Loading ---
+    async function loadAppWithFallback() {
+      state.retryCount++;
       
-      close(id) {
-        const notification = document.getElementById(id);
-        if (!notification) return;
-        
-        clearTimeout(notification.dataset.timeoutId);
-        notification.classList.add('translate-y-2', 'opacity-0');
-        
+      if (state.retryCount > CONFIG.RETRY_ATTEMPTS) {
+        showError('Max retries reached');
+        return;
+      }
+      
+      // Try different methods based on retry count
+      let success = false;
+      
+      switch(state.retryCount) {
+        case 1:
+          // First try: Direct
+          loadDirect();
+          break;
+          
+        case 2:
+          // Second try: Proxy
+          showNotification('Mencoba dengan proxy...', 'info');
+          success = loadWithProxy('cors-anywhere');
+          if (!success) {
+            loadWithProxy('allorigins');
+          }
+          break;
+          
+        case 3:
+          // Third try: Alternative methods
+          elements.corsSolutions.classList.remove('hidden');
+          showNotification('Menggunakan metode alternatif...', 'warning');
+          openAlternativeViewer();
+          break;
+      }
+      
+      // Set timeout for load
+      const timeoutId = setTimeout(() => {
+        if (!success) {
+          handleLoadTimeout();
+        }
+      }, CONFIG.LOAD_TIMEOUT);
+      
+      // Store timeout ID
+      state.currentTimeout = timeoutId;
+    }
+
+    // --- Error Handling ---
+    function handleCORSBlock() {
+      state.isCORSBlocked = true;
+      
+      // Show fallback UI
+      elements.iframeFallback.classList.remove('hidden');
+      elements.contentFrame.style.display = 'none';
+      
+      // Show CORS solutions
+      elements.corsSolutions.classList.remove('hidden');
+      
+      // Update error message
+      const errorTitle = document.querySelector('#errorMessage h2');
+      if (errorTitle) {
+        errorTitle.textContent = 'Terblokir oleh CORS Policy';
+      }
+    }
+
+    function handleIframeError(message) {
+      console.error('Iframe error:', message);
+      
+      if (message && message.includes('CORS') || message.includes('cross-origin')) {
+        handleCORSBlock();
+      } else {
+        showError(message || 'Unknown error');
+      }
+    }
+
+    function handleLoadTimeout() {
+      if (state.connectionMode === 'direct') {
+        // Try proxy on timeout
+        showNotification('Waktu habis, mencoba proxy...', 'warning');
+        loadWithProxy('cors-anywhere');
+      } else {
+        showError('Waktu muat habis');
+      }
+    }
+
+    function showError(message = '') {
+      elements.loadingOverlay.style.display = 'none';
+      elements.errorMessage.style.display = 'flex';
+      
+      if (message) {
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'mt-3 p-3 bg-red-50 rounded border border-red-200 text-sm text-red-700';
+        errorDiv.textContent = `Detail: ${message}`;
+        elements.errorMessage.querySelector('.max-w-md').appendChild(errorDiv);
+      }
+    }
+
+    // --- UI Functions ---
+    function showNotification(message, type = 'info', duration = 4000) {
+      // Create notification element
+      const notification = document.createElement('div');
+      notification.className = `fixed top-5 right-5 px-4 py-3 rounded-lg shadow-lg text-sm flex items-center gap-2 z-[9999] glass-effect border ${
+        type === 'error' ? 'bg-red-500 text-white' :
+        type === 'warning' ? 'bg-yellow-500 text-white' :
+        type === 'success' ? 'bg-green-500 text-white' :
+        'bg-blue-500 text-white'
+      }`;
+      
+      notification.innerHTML = `
+        <span class="material-icons-outlined text-sm">${type === 'info' ? 'info' : type === 'warning' ? 'warning' : type === 'success' ? 'check_circle' : 'error'}</span>
+        <span>${message}</span>
+      `;
+      
+      document.body.appendChild(notification);
+      
+      // Remove after duration
+      setTimeout(() => {
+        notification.style.opacity = '0';
         setTimeout(() => {
           if (notification.parentNode) {
             notification.parentNode.removeChild(notification);
           }
         }, 300);
-      },
-    };
-
-    // --- Helper Functions ---
-    function showNotification(message, type = 'info', duration = 4000) {
-      return notificationSystem.show(message, type, duration);
+      }, duration);
     }
 
     function updateLoadingSteps() {
@@ -620,195 +735,37 @@
       }, 1600);
     }
 
-    function simulateLoadProgress() {
-      if (state.currentLoadProgress >= 100) return;
-      
-      state.currentLoadProgress += Math.random() * 20;
-      if (state.currentLoadProgress > 100) state.currentLoadProgress = 100;
-      
-      elements.iframeLoadProgress.textContent = Math.round(state.currentLoadProgress) + '%';
-      
-      if (state.currentLoadProgress < 100) {
-        setTimeout(simulateLoadProgress, 300);
-      }
-    }
-
-    function hideIframeLoading() {
-      state.currentLoadProgress = 100;
-      elements.iframeLoadProgress.textContent = '100%';
-      
-      setTimeout(() => {
-        elements.iframeLoader.style.opacity = '0';
-        setTimeout(() => {
-          elements.iframeLoader.style.display = 'none';
-          elements.contentFrame.style.opacity = '1';
-          
-          const loadTime = performanceMonitor.updateLoadTime();
-          if (loadTime > 3000) {
-            showNotification(`Aplikasi dimuat dalam ${Math.round(loadTime/1000)} detik`, 'info');
-          }
-        }, 300);
-      }, 500);
-    }
-
-    function showControlPanel() {
-      elements.controlPanel.style.display = 'block';
-      requestAnimationFrame(() => {
-        elements.controlPanel.style.opacity = '1';
-      });
-    }
-
-    function initializeApp() {
-      if (state.isInitialized) return;
-      
-      performanceMonitor.start();
-      state.loadStartTime = Date.now();
+    // --- Initialize App ---
+    async function initializeApp() {
       updateLoadingSteps();
       
-      if (!state.isOnline) {
-        setTimeout(() => showError(), 1500);
-        connectionManager.updateUI();
-        return;
+      // Check CORS first
+      const hasCORS = await detectCORS();
+      
+      if (hasCORS) {
+        showNotification('Mendeteksi potensi masalah CORS, menggunakan metode alternatif...', 'warning');
+        // Start with proxy to avoid CORS
+        loadWithProxy('cors-anywhere');
+      } else {
+        // Direct connection
+        loadDirect();
       }
       
-      // Set iframe permissions
-      elements.contentFrame.allow = `
-        autoplay; 
-        camera; 
-        encrypted-media; 
-        geolocation; 
-        microphone; 
-        midi; 
-        payment; 
-        usb; 
-        accelerometer; 
-        gyroscope; 
-        magnetometer; 
-        screen-wake-lock; 
-        clipboard-read; 
-        clipboard-write; 
-        web-share; 
-        fullscreen
-      `.trim().replace(/\s+/g, ' ');
-      
-      // Load the app with retry logic
-      loadAppWithRetry();
-      
-      // Start connection monitoring
-      connectionManager.startMonitoring();
-      
-      // Start auto-save reminder
-      startAutoSaveReminder();
-      
-      // Hide loading overlay
+      // Hide loading after timeout
       setTimeout(() => {
         elements.loadingOverlay.style.opacity = '0';
         setTimeout(() => {
           elements.loadingOverlay.style.display = 'none';
-          showControlPanel();
-          connectionManager.updateUI();
-          connectionManager.measureSpeed();
-          connectionManager.checkConnection();
-          
-          if (CONFIG.PERFORMANCE_MONITORING) {
-            elements.performanceMetrics.classList.remove('hidden');
-            performanceMonitor.updateMemoryUsage();
-            setInterval(() => performanceMonitor.updateMemoryUsage(), 10000);
-          }
         }, 500);
       }, 2000);
       
-      state.isInitialized = true;
-    }
-
-    async function loadAppWithRetry() {
-      try {
-        simulateLoadProgress();
-        elements.contentFrame.src = CONFIG.APP_URL;
-        
-        // Set timeout untuk loading
-        const timeoutPromise = new Promise((_, reject) => {
-          setTimeout(() => reject(new Error('Load timeout')), CONFIG.LOAD_TIMEOUT);
-        });
-        
-        await Promise.race([
-          new Promise((resolve) => {
-            elements.contentFrame.addEventListener('load', resolve, { once: true });
-          }),
-          timeoutPromise
-        ]);
-        
-        state.retryCount = 0; // Reset retry count on success
-      } catch (error) {
-        console.error('Failed to load app:', error);
-        state.retryCount++;
-        
-        if (state.retryCount <= CONFIG.RETRY_ATTEMPTS) {
-          showNotification(`Gagal memuat, mencoba lagi (${state.retryCount}/${CONFIG.RETRY_ATTEMPTS})...`, 'warning');
-          
-          await new Promise(resolve => setTimeout(resolve, CONFIG.RETRY_DELAY));
-          return loadAppWithRetry();
-        } else {
-          showError();
-          showNotification('Gagal memuat aplikasi setelah beberapa percobaan', 'error');
-        }
-      }
-    }
-
-    function showError() {
-      elements.loadingOverlay.style.display = 'none';
-      elements.errorMessage.style.display = 'flex';
-      connectionManager.updateUI();
-    }
-
-    function toggleFullscreen() {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen().catch(err => {
-          showNotification(`Gagal masuk mode layar penuh: ${err.message}`, 'error');
-        });
-        state.isFullscreen = true;
-        elements.fullscreenButton.innerHTML = '<span class="material-icons-outlined text-gray-700">fullscreen_exit</span>';
-      } else {
-        document.exitFullscreen();
-        state.isFullscreen = false;
-        elements.fullscreenButton.innerHTML = '<span class="material-icons-outlined text-gray-700">fullscreen</span>';
-      }
-    }
-
-    function startAutoSaveReminder() {
-      state.autoSaveInterval = setInterval(() => {
-        showNotification('Ingat untuk menyimpan jawaban Anda secara berkala', 'info', 3000);
-      }, CONFIG.AUTO_SAVE_INTERVAL);
+      // Setup post-message bridge
+      setupPostMessageBridge();
     }
 
     // --- Event Listeners ---
     function setupEventListeners() {
-      // App initialization
-      window.addEventListener('load', initializeApp);
-      
-      // Iframe events
-      elements.contentFrame.addEventListener('load', hideIframeLoading);
-      
-      elements.contentFrame.addEventListener('error', () => {
-        hideIframeLoading();
-        showError();
-        showNotification('Gagal memuat aplikasi ujian', 'error');
-      });
-      
-      // Connection events
-      window.addEventListener('online', () => {
-        connectionManager.updateUI();
-        connectionManager.measureSpeed();
-        connectionManager.checkConnection();
-        showNotification('Koneksi internet kembali pulih', 'success');
-      });
-      
-      window.addEventListener('offline', () => {
-        connectionManager.updateUI();
-        showNotification('Koneksi internet terputus', 'warning');
-      });
-      
-      // Button events
+      // Retry button
       elements.retryButton.addEventListener('click', () => {
         elements.errorMessage.style.display = 'none';
         elements.loadingOverlay.style.display = 'flex';
@@ -817,122 +774,128 @@
         initializeApp();
       });
       
-      elements.helpButton.addEventListener('click', () => {
-        showNotification('Hubungi administrator untuk bantuan teknis', 'info');
+      // Try proxy button
+      elements.tryProxyButton.addEventListener('click', () => {
+        elements.errorMessage.style.display = 'none';
+        loadWithProxy('cors-anywhere');
       });
       
-      elements.infoButton.addEventListener('click', () => {
-        elements.infoPanel.style.display = 'block';
-        requestAnimationFrame(() => {
-          elements.infoPanel.style.opacity = '1';
+      // Open in new tab button
+      elements.tryNewWindowButton.addEventListener('click', () => {
+        openInNewTab();
+      });
+      
+      // CORS clean button
+      elements.tryCORSCleanButton.addEventListener('click', () => {
+        // Clear iframe cache and reload
+        elements.contentFrame.src = 'about:blank';
+        setTimeout(() => {
+          loadDirect();
+        }, 100);
+      });
+      
+      // Help button
+      elements.helpButton.addEventListener('click', () => {
+        showNotification('Untuk masalah CORS: 1. Coba proxy, 2. Buka di tab baru, 3. Hubungi admin', 'info');
+      });
+      
+      // Iframe events
+      elements.contentFrame.addEventListener('load', () => {
+        elements.iframeLoader.style.display = 'none';
+        elements.iframeFallback.classList.add('hidden');
+        elements.contentFrame.style.display = 'block';
+        showNotification('Aplikasi berhasil dimuat', 'success');
+      });
+      
+      elements.contentFrame.addEventListener('error', (e) => {
+        handleIframeError('Iframe load error');
+      });
+      
+      // Fallback buttons
+      elements.openInNewTab.addEventListener('click', () => {
+        openInNewTab();
+        elements.iframeFallback.classList.add('hidden');
+      });
+      
+      elements.tryProxyFallback.addEventListener('click', () => {
+        loadWithProxy('cors-anywhere');
+        elements.iframeFallback.classList.add('hidden');
+        elements.contentFrame.style.display = 'block';
+      });
+      
+      // CORS options
+      elements.connectionMode.addEventListener('change', (e) => {
+        if (e.target.value === 'proxy') {
+          elements.proxyOptions.classList.remove('hidden');
+        } else {
+          elements.proxyOptions.classList.add('hidden');
+        }
+      });
+      
+      // Proxy option buttons
+      document.querySelectorAll('.proxy-option').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const proxyType = e.target.dataset.proxy;
+          loadWithProxy(proxyType);
+          elements.corsOptions.classList.add('hidden');
         });
       });
       
-      elements.closeInfoPanel.addEventListener('click', () => {
-        elements.infoPanel.style.opacity = '0';
-        setTimeout(() => {
-          elements.infoPanel.style.display = 'none';
-        }, 300);
-      });
-      
-      elements.reloadButton.addEventListener('click', () => {
-        if (confirm('Muat ulang aplikasi ujian? Semua perubahan yang belum disimpan mungkin akan hilang.')) {
-          elements.iframeLoader.style.display = 'flex';
-          elements.iframeLoader.style.opacity = '1';
-          state.currentLoadProgress = 0;
-          simulateLoadProgress();
-          elements.contentFrame.src = elements.contentFrame.src;
+      elements.applyConnectionMode.addEventListener('click', () => {
+        const mode = elements.connectionMode.value;
+        
+        switch(mode) {
+          case 'direct':
+            loadDirect();
+            break;
+          case 'proxy':
+            loadWithProxy('cors-anywhere');
+            break;
+          case 'newtab':
+            openInNewTab();
+            break;
         }
+        
+        elements.corsOptions.classList.add('hidden');
       });
       
-      elements.fullscreenButton.addEventListener('click', toggleFullscreen);
+      elements.closeCorsOptions.addEventListener('click', () => {
+        elements.corsOptions.classList.add('hidden');
+      });
       
+      // Alternative viewer
+      elements.closeAltViewer.addEventListener('click', () => {
+        elements.altViewerContainer.classList.add('hidden');
+        document.getElementById('iframeView').style.display = 'block';
+      });
+      
+      // Connection status click to show options
       elements.connectionStatus.addEventListener('click', () => {
-        if (state.isOnline) {
-          showNotification(
-            `Status: ${state.isOnline ? 'Online' : 'Offline'}<br>
-             Latency: ${state.connectionStats.latency || '-'}ms<br>
-             Speed: ${state.connectionStats.speed || '-'}`,
-            'info',
-            5000
-          );
-        }
+        elements.corsOptions.classList.remove('hidden');
       });
       
-      // Fullscreen change events
-      document.addEventListener('fullscreenchange', () => {
-        state.isFullscreen = !!document.fullscreenElement;
-        elements.fullscreenButton.innerHTML = state.isFullscreen 
-          ? '<span class="material-icons-outlined text-gray-700">fullscreen_exit</span>'
-          : '<span class="material-icons-outlined text-gray-700">fullscreen</span>';
+      // Online/Offline detection
+      window.addEventListener('online', () => {
+        showNotification('Koneksi internet pulih', 'success');
       });
       
-      // Mouse movement for control panel
-      let hideControlPanelTimeout;
-      document.addEventListener('mousemove', (e) => {
-        if (e.clientY > window.innerHeight - 100) {
-          elements.controlPanel.style.opacity = '1';
-          clearTimeout(hideControlPanelTimeout);
-        }
-      });
-      
-      elements.controlPanel.addEventListener('mouseleave', () => {
-        hideControlPanelTimeout = setTimeout(() => {
-          elements.controlPanel.style.opacity = '0.7';
-        }, 2000);
-      });
-      
-      elements.controlPanel.addEventListener('mouseenter', () => {
-        clearTimeout(hideControlPanelTimeout);
-        elements.controlPanel.style.opacity = '1';
-      });
-      
-      // Keyboard shortcuts
-      document.addEventListener('keydown', (e) => {
-        // F5 untuk reload
-        if (e.key === 'F5') {
-          e.preventDefault();
-          elements.reloadButton.click();
-        }
-        
-        // F11 untuk fullscreen
-        if (e.key === 'F11') {
-          e.preventDefault();
-          toggleFullscreen();
-        }
-        
-        // Ctrl+R untuk reload
-        if (e.ctrlKey && e.key === 'r') {
-          e.preventDefault();
-          elements.reloadButton.click();
-        }
-      });
-      
-      // Beforeunload untuk konfirmasi keluar
-      window.addEventListener('beforeunload', (e) => {
-        if (elements.contentFrame.src && elements.contentFrame.src !== 'about:blank') {
-          e.preventDefault();
-          e.returnValue = 'Apakah Anda yakin ingin meninggalkan halaman ini? Perubahan yang belum disimpan mungkin akan hilang.';
-        }
+      window.addEventListener('offline', () => {
+        showNotification('Koneksi internet terputus', 'warning');
       });
     }
 
-    // --- Initialize Application ---
-    function init() {
+    // --- Initialize ---
+    window.addEventListener('DOMContentLoaded', () => {
       setupEventListeners();
-      
-      // Expose necessary functions to global scope
-      window.notificationSystem = notificationSystem;
-      
-      // Set exam duration (example)
-      elements.examDuration.textContent = '120';
-      
-      // Initial connection check
-      connectionManager.updateUI();
-    }
+      initializeApp();
+    });
 
-    // Start the application
-    init();
+    // Expose some functions for debugging
+    window.appDebug = {
+      reloadWithProxy: (type) => loadWithProxy(type),
+      openNewTab: () => openInNewTab(),
+      getState: () => ({ ...state }),
+    };
   </script>
 </body>
 </html>

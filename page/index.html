@@ -1,107 +1,565 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Profile</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/dedebasuni/dedebasuni.github.io/css/profil.css">
-    <link rel="icon" href="https://www.google.com/s2/favicons?domain=google.com&sz=128" type="image/png">
-    <link rel="apple-touch-icon" href="https://www.google.com/s2/favicons?domain=google.com&sz=192">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="description" content="Portal Aplikasi Personal - Platform digital terpadu untuk aplikasi pribadi dan produktivitas sehari-hari." />
+  <meta name="keywords" content="portal personal, aplikasi pribadi, sistem informasi personal, produktivitas digital, tools sehari-hari" />
+  <meta name="author" content="Pengguna" />
+  <!-- Google Material Theme Colors -->
+  <meta name="theme-color" content="#1a73e8" />
+
+  <title>Portal Aplikasi Personal</title>
+  <link rel="icon" href="https://www.google.com/s2/favicons?domain=google.com&sz=128" type="image/png">
+  <link rel="apple-touch-icon" href="https://www.google.com/s2/favicons?domain=google.com&sz=192">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'google-blue': '#1a73e8',
+            'google-blue-dark': '#0d47a1',
+            'google-blue-light': '#4285f4',
+            'google-red': '#ea4335',
+            'google-yellow': '#fbbc04',
+            'google-green': '#34a853',
+            'google-gray': '#5f6368',
+            'google-gray-light': '#f8f9fa',
+            'google-gray-border': '#dadce0',
+          },
+          fontFamily: {
+            'google-sans': ['Google Sans', 'Inter', 'Roboto', 'sans-serif'],
+          },
+          boxShadow: {
+            'google': '0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15)',
+            'google-hover': '0 1px 3px 0 rgba(60,64,67,0.3), 0 4px 8px 3px rgba(60,64,67,0.15)',
+          },
+          borderRadius: {
+            'google': '8px',
+            'google-lg': '12px',
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <style>
+    /* Google-style CSS */
+    body {
+      font-family: 'Google Sans', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      color: #202124;
+    }
+    
+    /* Google Material Spinner */
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(66, 133, 244, 0.2);
+      border-radius: 50%;
+      border-top-color: #4285f4;
+      animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Google-style scrollbar */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f3f4;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #dadce0;
+      border-radius: 5px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #bdc1c6;
+    }
+    
+    /* Material Design animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .fade-in-up {
+      animation: fadeInUp 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+    
+    /* Google-style ripple effect */
+    .ripple {
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .ripple:after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 5px;
+      height: 5px;
+      background: rgba(0, 0, 0, 0.1);
+      opacity: 0;
+      border-radius: 100%;
+      transform: scale(1, 1) translate(-50%);
+      transform-origin: 50% 50%;
+    }
+    
+    .ripple:focus:after {
+      animation: ripple 0.6s ease-out;
+    }
+    
+    @keyframes ripple {
+      0% {
+        transform: scale(0, 0);
+        opacity: 0.5;
+      }
+      20% {
+        transform: scale(25, 25);
+        opacity: 0.3;
+      }
+      100% {
+        opacity: 0;
+        transform: scale(40, 40);
+      }
+    }
+    
+    /* Search highlight */
+    .highlight {
+      background-color: #e8f0fe;
+      padding: 0 2px;
+      border-radius: 2px;
+      color: #1a73e8;
+    }
+    
+    /* Google-style profile avatar */
+    .avatar {
+      width: 96px;
+      height: 96px;
+      background: linear-gradient(135deg, #4285f4, #34a853);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 40px;
+      font-weight: 500;
+      box-shadow: 0 2px 10px rgba(66, 133, 244, 0.3);
+    }
+    
+    /* Google-style input focus */
+    .google-input:focus {
+      border-color: #1a73e8;
+      box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+    }
+    
+    /* Google-style elevation */
+    .elevation-1 {
+      box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
+    }
+    
+    .elevation-2 {
+      box-shadow: 0 1px 3px 0 rgba(60,64,67,0.3), 0 4px 8px 3px rgba(60,64,67,0.15);
+    }
+    
+    /* Material Design transition */
+    .material-transition {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+  </style>
 </head>
-<body>
-    <!-- Floating stars -->
-    <div class="star" style="--opacity: 0.6; --duration: 4s; width: 2px; height: 2px; top: 20%; left: 15%;"></div>
-    <div class="star" style="--opacity: 0.8; --duration: 7s; width: 3px; height: 3px; top: 30%; left: 80%;"></div>
-    <div class="star" style="--opacity: 0.5; --duration: 6s; width: 1.5px; height: 1.5px; top: 70%; left: 10%;"></div>
-    <div class="star" style="--opacity: 0.7; --duration: 5s; width: 2px; height: 2px; top: 80%; left: 70%;"></div>
+<body class="bg-google-gray-light">
 
-    <div class="container">
-        <div class="profile-img-container">
-            <img src="https://avatars.githubusercontent.com/u/12972124?v=4?w=500&auto=format&fit=crop" alt="Profile Picture" class="profile-img">
-        </div>
-        <h1>Dede Basuni</h1>
-        <p class="bio">Cosmic Explorer | Interstellar Developer | Dreamer of Galaxies</p>
-
-        <h2 class="section-title">Connect</h2>
-        <div class="links">
-            <a href="https://github.com" target="_blank" class="link">
-                <img src="https://cdn-icons-png.flaticon.com/24/2111/2111432.png" alt="GitHub Icon">
-                <div class="link-content">
-                    <div class="link-title">GitHub</div>
-                    <div class="link-desc">Orbit my code constellations</div>
-                </div>
-            </a>
-            <a href="https://facebook.com" target="_blank" class="link">
-                <img src="https://cdn-icons-png.flaticon.com/128/733/733547.png" alt="Facebook Icon">
-                <div class="link-content">
-                    <div class="link-title">Facebook</div>
-                    <div class="link-desc">Connect across the cosmos</div>
-                </div>
-            </a>
-            <a href="https://twitter.com" target="_blank" class="link">
-                <img src="https://cdn-icons-png.flaticon.com/24/733/733579.png" alt="Twitter Icon">
-                <div class="link-content">
-                    <div class="link-title">Twitter</div>
-                    <div class="link-desc">Catch my cosmic tweets</div>
-                </div>
-            </a>
-            <a href="https://instagram.com" target="_blank" class="link">
-                <img src="https://cdn-icons-png.flaticon.com/24/2111/2111463.png" alt="Instagram Icon">
-                <div class="link-content">
-                    <div class="link-title">Instagram</div>
-                    <div class="link-desc">Glimpse my starry life</div>
-                </div>
-            </a>
-        </div>
-
-        <h2 class="section-title">Projects</h2>
-        <div class="projects">
-            <a href="https://dedebasuni.github.io/page/qrtotp" target="_blank" class="project">
-                <img src="https://cdn-icons-png.flaticon.com/512/2906/2906274.png" alt="Project Icon">
-                <div class="project-content">
-                    <div class="project-title">QR & TOTP Tools</div>
-                    <div class="project-desc">Membaca QR code dan menghasilkan kode TOTP.</div>
-                </div>
-            </a>
-            <a href="https://dedebasuni.github.io/page/erapor" target="_blank" class="project">
-                <img src="https://cdn-icons-png.flaticon.com/512/2906/2906274.png" alt="Project Icon">
-                <div class="project-content">
-                    <div class="project-title">e-Rapor Merdeka</div>
-                    <div class="project-desc">Sistem Rapor Digital Akademik Peserta Didik.</div>
-                </div>
-            </a>
-            <a href="https://dedebasuni.github.io/page/amp" target="_blank" class="project">
-                <img src="https://cdn-icons-png.flaticon.com/512/2906/2906274.png" alt="Project Icon">
-                <div class="project-content">
-                    <div class="project-title">MiniAmp</div>
-                    <div class="project-desc">Web Streaming Radio Player MiniAmp</div>
-                </div>
-            </a>
-            <a href="https://dedebasuni.github.io/page/quran" target="_blank" class="project">
-                <img src="https://cdn-icons-png.flaticon.com/512/2906/2906274.png" alt="Project Icon">
-                <div class="project-content">
-                    <div class="project-title">Al-Quran Digital</div>
-                    <div class="project-desc">Baca dan cari ayat Al-Quran secara online.</div>
-                </div>
-            </a>
-            <a href="https://dedebasuni.github.io/page/spmb" target="_blank" class="project">
-                <img src="https://cdn-icons-png.flaticon.com/512/2906/2906274.png" alt="Project Icon">
-                <div class="project-content">
-                    <div class="project-title">SPMB Sekolah</div>
-                    <div class="project-desc">Sistem Penerimaan Murid Baru untuk sekolah.</div>
-                </div>
-            </a>
-            <a href="https://dedebasuni.github.io/page/notes" target="_blank" class="project">
-                <img src="https://cdn-icons-png.flaticon.com/512/2906/2906274.png" alt="Project Icon">
-                <div class="project-content">
-                    <div class="project-title">My Notes</div>
-                    <div class="project-desc">Blogpost pribadi dan pepatah kategori Sunda.</div>
-                </div>
-            </a>
-        </div>
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="fixed inset-0 bg-white flex flex-col justify-center items-center z-[9999] transition-opacity duration-300">
+    <div class="text-center">
+      <div class="avatar mx-auto mb-6">
+        <span class="material-icons" style="font-size: 48px;">account_circle</span>
+      </div>
+      <h1 class="text-3xl font-google-sans font-medium text-gray-900">Portal Personal</h1>
+      <p class="text-google-gray mt-3">Aplikasi dan Alat Produktivitas Pribadi</p>
     </div>
+    <div class="spinner mt-10"></div>
+    <p id="loadingText" class="text-google-gray mt-6 font-medium">Memuat aplikasi...</p>
+  </div>
+  
+  <!-- Error Message -->
+  <div id="errorMessage" class="fixed inset-0 bg-white flex-col justify-center items-center text-center p-6 z-[10000] hidden">
+    <span class="material-icons text-google-red" style="font-size: 64px;">error_outline</span>
+    <h2 class="text-3xl font-google-sans font-medium text-google-red mt-8">Gagal Memuat Konten</h2>
+    <p class="mt-4 text-google-gray max-w-md text-lg">Terjadi kendala saat memuat konten. Pastikan Anda terhubung ke internet dan coba lagi.</p>
+    <button id="retryButton" class="mt-10 bg-google-blue text-white font-medium py-3 px-8 rounded-google elevation-1 hover:elevation-2 hover:bg-google-blue-dark material-transition ripple flex items-center gap-3">
+      <span class="material-icons">refresh</span>
+      Coba Lagi
+    </button>
+  </div>
+  
+  <!-- Connection Status -->
+  <div id="connectionStatus" class="fixed bottom-5 right-5 px-4 py-2 rounded-google text-sm font-medium text-white shadow-google flex items-center gap-2 z-[1000] hidden material-transition">
+    <span class="material-icons" id="connectionIcon" style="font-size: 18px;"></span>
+    <span id="connectionText"></span>
+  </div>
+
+  <!-- Permission Notice -->
+  <div id="violationNotice" class="fixed bottom-20 md:bottom-5 right-5 bg-google-gray text-white px-4 py-3 rounded-google shadow-google text-sm flex items-center gap-2 z-[1000] opacity-0 transition-opacity duration-300 hidden material-transition elevation-1">
+    <span class="material-icons" style="font-size: 18px;">info</span>
+    Izin akses diberikan ke aplikasi ini.
+  </div>
+  
+  <!-- Main Application Container -->
+  <div id="appContainer" class="min-h-screen">
+    
+    <!-- Portal View -->
+    <main id="portalView" class="w-full min-h-screen bg-white hidden">
+      <div class="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
+        <!-- Header Profile -->
+        <header class="text-center py-12">
+          <div class="avatar mx-auto">
+            <span class="material-icons" style="font-size: 48px;">account_circle</span>
+          </div>
+          <h1 class="text-4xl font-google-sans font-medium text-gray-900 mt-8">Portal Personal</h1>
+          <p class="text-google-gray mt-3 text-lg">Aplikasi dan Alat Produktivitas Pribadi</p>
+          
+          <!-- Search Bar -->
+          <div class="mt-10 max-w-xl mx-auto">
+            <div class="relative">
+              <span class="material-icons absolute left-4 top-1/2 transform -translate-y-1/2 text-google-gray">search</span>
+              <input 
+                type="text" 
+                id="searchInput" 
+                placeholder="Cari aplikasi atau alat..." 
+                class="w-full pl-12 pr-12 py-4 rounded-google-lg border border-google-gray-border focus:outline-none focus:border-google-blue google-input material-transition elevation-1 hover:elevation-2"
+              >
+              <button id="clearSearch" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-google-gray hover:text-gray-900 material-transition hidden">
+                <span class="material-icons">close</span>
+              </button>
+            </div>
+          </div>
+        </header>
+        
+        <!-- App Grid -->
+        <section class="mt-12">
+          <div id="linksContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- App links will be generated by JavaScript here -->
+          </div>
+        </section>
+
+        <!-- No Results Message -->
+        <div id="noResults" class="text-center py-16 hidden">
+          <span class="material-icons text-google-gray-border" style="font-size: 80px;">search_off</span>
+          <h3 class="text-2xl font-google-sans font-medium text-google-gray mt-6">Aplikasi tidak ditemukan</h3>
+          <p class="text-google-gray mt-3 text-lg">Coba gunakan kata kunci lain atau lihat semua aplikasi.</p>
+          <button id="showAllApps" class="mt-8 bg-google-blue text-white font-medium py-3 px-6 rounded-google elevation-1 hover:elevation-2 hover:bg-google-blue-dark material-transition ripple">
+            Tampilkan Semua Aplikasi
+          </button>
+        </div>
+
+         <!-- Footer -->
+         <footer class="text-center py-12 mt-12 border-t border-google-gray-border">
+            <p class="text-google-gray text-sm">&copy; 2025 Portal Personal. Hak Cipta Dilindungi.</p>
+            <div class="flex justify-center gap-6 mt-4">
+              <a href="#" class="text-google-blue hover:text-google-blue-dark text-sm material-transition">Privasi</a>
+              <a href="#" class="text-google-blue hover:text-google-blue-dark text-sm material-transition">Persyaratan</a>
+              <a href="#" class="text-google-blue hover:text-google-blue-dark text-sm material-transition">Bantuan</a>
+            </div>
+        </footer>
+      </div>
+    </main>
+    
+    <!-- Iframe View -->
+    <div id="iframeView" class="fixed inset-0 bg-white z-[9000] hidden">
+       <button id="backButton" class="absolute top-6 left-6 bg-white w-12 h-12 rounded-full flex items-center justify-center shadow-google hover:shadow-google-hover material-transition ripple z-20">
+        <span class="material-icons text-google-gray">arrow_back</span>
+      </button>
+      <div id="iframeLoader" class="absolute inset-0 bg-white flex flex-col justify-center items-center z-10">
+          <div class="spinner"></div>
+          <p class="text-google-blue font-medium mt-6">Memuat aplikasi...</p>
+      </div>
+      <iframe id="contentFrame" src="" class="w-full h-full border-none relative z-0"></iframe>
+    </div>
+  </div>
+
+  <script>
+    // --- DOM Elements ---
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const loadingText = document.getElementById('loadingText');
+    const errorMessage = document.getElementById('errorMessage');
+    const retryButton = document.getElementById('retryButton');
+    const portalView = document.getElementById('portalView');
+    const iframeView = document.getElementById('iframeView');
+    const contentFrame = document.getElementById('contentFrame');
+    const backButton = document.getElementById('backButton');
+    const iframeLoader = document.getElementById('iframeLoader');
+    const connectionStatus = document.getElementById('connectionStatus');
+    const connectionIcon = document.getElementById('connectionIcon');
+    const connectionText = document.getElementById('connectionText');
+    const violationNotice = document.getElementById('violationNotice');
+    const linksContainer = document.getElementById('linksContainer');
+    const searchInput = document.getElementById('searchInput');
+    const clearSearch = document.getElementById('clearSearch');
+    const noResults = document.getElementById('noResults');
+    const showAllApps = document.getElementById('showAllApps');
+
+    // --- Global Variables ---
+    let isOnline = navigator.onLine;
+    const fullPermissions = "autoplay; camera; encrypted-media; geolocation; microphone; midi; payment; usb; accelerometer; gyroscope; magnetometer; screen-wake-lock; clipboard-read; clipboard-write; web-share; fullscreen";
+
+    // Data aplikasi personal yang akan ditampilkan
+    const appData = [
+      { id: 'erapor', name: 'e-Rapor', desc: 'Akses Sistem Rapor Digital', icon: 'local_library', url: "https://script.google.com/macros/s/AKfycby00syjpoAMG8sz-GWX9Nox4XwZD_GC-Q16NBrjvuePU-2sia6r_IpZ5LEdwZuUNKpatg/exec", color: 'bg-indigo-500', iconColor: 'text-white' },
+      { id: 'dapodik', name: 'Dapodik', desc: 'Data Pokok Peserta Didik', icon: 'school', url: "https://script.google.com/macros/s/AKfycbxeJaVjE6c0CNopRd8ztQXq356kt7t9eL194oPEBMxmmKxELjG9R46ElRyeIzu6ZZ32/exec", color: 'bg-google-green', iconColor: 'text-white' },
+      { id: 'ns', name: 'NS', desc: 'Wali Kelas XII', icon: 'grading', url: "https://script.google.com/macros/s/AKfycbxpudS5QjXXt_s9owWVuCqpwto7Spn5tbkM8mZYxA1z-MTOo9P1D9uvz_4FVuaVVKAmJw/exec", color: 'bg-google-yellow', iconColor: 'text-white' },
+      { id: 'presensi', name: 'e-Presensi', desc: 'Presensi Geofencing', icon: 'qr_code_scanner', url: "https://script.google.com/macros/s/AKfycbzPXFDwJGyOc2QefTGenRbakxuaQVwMzTzNmbRUASF856kxL3aapxHNoppKMvkzr3-U/exec", color: 'bg-google-red', iconColor: 'text-white' },
+      { id: 'cbt', name: 'CBT Asesmen', desc: 'Evaluasi Pembelajaran', icon: 'cast_for_education', url: "https://script.google.com/macros/s/AKfycbxQnnLAhqlgWbROXNpg5V2CPHj6yz0wrEYdajF4N3qHU8Q-s6FniBbSIZ6VP9XUXCqu/exec", color: 'bg-purple-500', iconColor: 'text-white' },
+      { id: 'amp', name: 'MiniAmp', desc: 'Pemutar Musik Sederhana', icon: 'queue_music', url: "https://dedebasuni.github.io/page/amp", color: 'bg-pink-500', iconColor: 'text-white' }
+    ];
+    
+    const specialAppsData = [
+      { id: 'konversi', name: 'Konversi', desc: 'Metode Linear Transformation', icon: 'ads_click', url: "https://dedebasuni.github.io/page/konversi", color: 'bg-green-500', iconColor: 'text-white' },
+      { id: 'periodik', name: 'Eksplorasi', desc: 'Tabel Periodik Interaktif', icon: 'data_exploration', url: "https://dedebasuni.github.io/page/periodik", color: 'bg-red-500', iconColor: 'text-white' },
+      { id: 'ketik', name: 'Praktikum', desc: 'Mengetik 10 Jari', icon: 'keyboard', url: "https://dedebasuni.github.io/page/ketik", color: 'bg-indigo-500', iconColor: 'text-white' },
+    ];
+
+    // Convert array to object for easier URL lookup
+    const appUrls = appData.reduce((acc, app) => {
+        acc[app.id] = { url: app.url, allow: fullPermissions };
+        return acc;
+    }, {});
+    
+    // --- Functions ---
+
+    // Fungsi untuk membuat elemen aplikasi dengan desain Google-style
+    function createAppLink(app, index) {
+        const linkElement = document.createElement('a');
+        linkElement.href = '#';
+        linkElement.className = 'app-link bg-white p-5 rounded-google border border-google-gray-border flex items-center space-x-4 material-transition transform hover:scale-[1.02] fade-in-up ripple elevation-1 hover:elevation-2';
+        linkElement.dataset.app = app.id;
+        linkElement.style.animationDelay = `${index * 0.05}s`;
+        
+        linkElement.innerHTML = `
+          <div class="w-14 h-14 ${app.color} ${app.iconColor} rounded-google flex items-center justify-center material-transition">
+            <span class="material-icons" style="font-size: 28px;">${app.icon}</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <h3 class="font-google-sans font-medium text-gray-900 truncate">${app.name}</h3>
+            <p class="text-sm text-google-gray truncate mt-1">${app.desc}</p>
+          </div>
+          <span class="material-icons text-google-gray-border">chevron_right</span>
+        `;
+
+        linkElement.addEventListener('click', (e) => {
+            e.preventDefault();
+            const appId = linkElement.getAttribute('data-app');
+            openApp(appId);
+        });
+
+        return linkElement;
+    }
+
+    // Fungsi untuk merender aplikasi dengan animasi bertahap
+    function renderApps(apps) {
+        linksContainer.innerHTML = '';
+        
+        if (apps.length === 0) {
+            noResults.classList.remove('hidden');
+            return;
+        }
+        
+        noResults.classList.add('hidden');
+        
+        apps.forEach((app, index) => {
+            const link = createAppLink(app, index);
+            linksContainer.appendChild(link);
+        });
+    }
+
+    // Fungsi untuk mencari aplikasi
+    function searchApps(query) {
+        const allApps = [...appData, ...specialAppsData];
+        const filteredApps = allApps.filter(app => 
+            app.name.toLowerCase().includes(query.toLowerCase()) || 
+            app.desc.toLowerCase().includes(query.toLowerCase())
+        );
+        
+        renderApps(filteredApps);
+        
+        // Tampilkan tombol clear search jika ada query
+        if (query) {
+            clearSearch.classList.remove('hidden');
+        } else {
+            clearSearch.classList.add('hidden');
+        }
+    }
+
+    // Fungsi untuk merender semua aplikasi
+    function renderAllApps() {
+        const allApps = [...appData, ...specialAppsData];
+        renderApps(allApps);
+        searchInput.value = '';
+        clearSearch.classList.add('hidden');
+    }
+
+    // Fungsi untuk menambahkan aplikasi khusus ke appUrls
+    function addSpecialAppsToUrls() {
+        specialAppsData.forEach(app => {
+            appUrls[app.id] = {
+                url: app.url,
+                allow: fullPermissions
+            };
+        });
+    }
+
+    function hideInitialLoading() {
+      setTimeout(() => {
+        loadingOverlay.style.opacity = '0';
+        setTimeout(() => {
+          loadingOverlay.style.display = 'none';
+          portalView.style.display = 'block';
+          updateConnectionStatus();
+        }, 300);
+      }, 1200);
+    }
+    
+    function showError() {
+      loadingOverlay.style.display = 'none';
+      iframeView.style.display = 'none';
+      portalView.style.display = 'none';
+      errorMessage.style.display = 'flex';
+    }
+    
+    function updateConnectionStatus() {
+      isOnline = navigator.onLine;
+      connectionStatus.style.display = 'flex';
+
+      if (isOnline) {
+        connectionStatus.className = 'fixed bottom-5 right-5 px-4 py-2 rounded-google text-sm font-medium text-white shadow-google flex items-center gap-2 z-[1000] bg-google-green material-transition';
+        connectionIcon.textContent = 'wifi';
+        connectionText.textContent = 'Terhubung';
+        
+        setTimeout(() => {
+          if (isOnline) {
+            connectionStatus.style.display = 'none';
+          }
+        }, 3000);
+      } else {
+        connectionStatus.className = 'fixed bottom-5 right-5 px-4 py-2 rounded-google text-sm font-medium text-white shadow-google flex items-center gap-2 z-[1000] bg-google-red material-transition';
+        connectionIcon.textContent = 'wifi_off';
+        connectionText.textContent = 'Tidak terhubung';
+      }
+    }
+    
+    function openApp(appId) {
+      if (!isOnline && appUrls[appId]?.url !== "about:blank") {
+          console.warn("Tidak ada koneksi internet untuk membuka aplikasi ini.");
+          return;
+      }
+      
+      iframeLoader.style.display = 'flex';
+      contentFrame.style.opacity = '0';
+      
+      contentFrame.allow = appUrls[appId]?.allow || "fullscreen";
+      contentFrame.src = appUrls[appId]?.url || 'about:blank';
+      
+      portalView.style.display = 'none';
+      iframeView.style.display = 'block';
+      
+      showViolationNotice();
+    }
+    
+    function hideIframeLoading() {
+      iframeLoader.style.display = 'none';
+      contentFrame.style.opacity = '1';
+    }
+    
+    function backToPortal() {
+      contentFrame.src = 'about:blank';
+      contentFrame.removeAttribute('allow');
+      iframeView.style.display = 'none';
+      portalView.style.display = 'block';
+      hideViolationNotice();
+    }
+    
+    function showViolationNotice() {
+      violationNotice.style.display = 'flex';
+      setTimeout(() => {
+        violationNotice.style.opacity = '1';
+      }, 10);
+      
+      setTimeout(hideViolationNotice, 4000);
+    }
+    
+    function hideViolationNotice() {
+      violationNotice.style.opacity = '0';
+      setTimeout(() => {
+        violationNotice.style.display = 'none';
+      }, 300);
+    }
+        
+    // --- Event Listeners & Initializers ---
+
+    window.addEventListener('load', () => {
+      addSpecialAppsToUrls();
+      renderAllApps();
+      setTimeout(hideInitialLoading, 1500); 
+    });
+
+    // Event listener untuk pencarian
+    searchInput.addEventListener('input', (e) => {
+      searchApps(e.target.value);
+    });
+
+    // Event listener untuk tombol clear search
+    clearSearch.addEventListener('click', () => {
+      searchInput.value = '';
+      searchInput.focus();
+      renderAllApps();
+    });
+
+    // Event listener untuk tombol tampilkan semua aplikasi
+    showAllApps.addEventListener('click', renderAllApps);
+
+    // Event listener untuk menekan Enter di search input
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+      }
+    });
+
+    contentFrame.addEventListener('load', hideIframeLoading);
+
+    contentFrame.addEventListener('error', () => {
+      iframeLoader.style.display = 'none';
+      showError();
+    });
+    
+    window.addEventListener('online', updateConnectionStatus);
+    window.addEventListener('offline', updateConnectionStatus);
+    
+    backButton.addEventListener('click', backToPortal);
+    retryButton.addEventListener('click', () => window.location.reload());
+    
+  </script>
 </body>
 </html>

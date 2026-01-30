@@ -1,0 +1,1796 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>KetikAI - Ujian Praktik Mengetik</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- jsPDF for PDF Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- Chart.js for Statistics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            200: '#c7d2fe',
+                            300: '#a5b4fc',
+                            400: '#818cf8',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            800: '#3730a3',
+                            900: '#312e81',
+                        },
+                        secondary: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            200: '#a7f3d0',
+                            300: '#6ee7b7',
+                            400: '#34d399',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                        },
+                        error: '#ef4444',
+                        warning: '#f59e0b',
+                        dark: '#1f2937',
+                        light: '#f8fafc',
+                    },
+                    screens: {
+                        'xs': '475px',
+                        '3xl': '1920px',
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s ease-in-out infinite',
+                        'bounce-slow': 'bounce 2s ease-in-out infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 10px; height: 10px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #c7d2fe; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a5b4fc; }
+        
+        /* Selection Color */
+        ::selection { background-color: rgba(79, 70, 229, 0.3); }
+        
+        /* Animations */
+        @keyframes blink { 0%, 100% { border-color: transparent; } 50% { border-color: #4f46e5; } }
+        @keyframes blink-block { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .cursor-active { background-color: #4f46e5; color: white; border-radius: 2px; animation: blink-block 1s infinite; padding: 0 2px; }
+        
+        @keyframes slideInUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .slide-in-up { animation: slideInUp 0.3s ease-out; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .fade-in { animation: fadeIn 0.2s ease-out; }
+        
+        @keyframes modalFadeIn { from { opacity: 0; transform: scale(0.95) translateY(-10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        .modal-animate { animation: modalFadeIn 0.25s ease-out forwards; }
+        
+        /* Typing Area Styles */
+        .char-error {
+            background-color: #fee2e2;
+            color: #ef4444;
+            text-decoration: underline;
+            text-decoration-thickness: 2px;
+        }
+
+        .char-correct {
+            color: #059669;
+        }
+
+        .blur-content {
+            filter: blur(3px);
+            opacity: 0.5;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        .typing-area { 
+            min-height: 250px;
+            max-height: 350px;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+            font-variant-ligatures: none;
+            padding-bottom: 50%;
+        }
+
+        /* Mencegah seleksi teks di seluruh area ujian */
+        .typing-area, .typing-area * {
+            -webkit-user-select: none; /* Safari */
+            -moz-user-select: none;    /* Firefox */
+            -ms-user-select: none;     /* IE10+/Edge */
+            user-select: none;         /* Standard */
+        }
+                
+        @media (max-width: 640px) {
+            .typing-area { 
+                min-height: 180px;
+                max-height: 250px;
+            }
+        }
+        
+        /* Caps Lock Warning */
+        .caps-warning { 
+            position: absolute; 
+            top: -40px; 
+            right: 0; 
+            background: linear-gradient(135deg, #fef3c7, #fde68a); 
+            color: #92400e; 
+            padding: 6px 12px; 
+            border-radius: 8px; 
+            font-size: 0.75rem; 
+            font-weight: bold; 
+            border: 1px solid #fcd34d;
+            display: flex; 
+            align-items: center; 
+            gap: 6px; 
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 20;
+        }
+        
+        /* Virtual Keyboard Responsive */
+        .keyboard-key {
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+        
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .mobile-hidden { display: none; }
+            .mobile-flex-col { flex-direction: column; }
+            .mobile-text-center { text-align: center; }
+            .mobile-full-width { width: 100%; }
+        }
+        
+        /* Loading Spinner */
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(79, 70, 229, 0.2);
+            border-top: 4px solid #4f46e5;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Gradient Backgrounds */
+        .gradient-primary {
+            background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+        }
+        
+        .gradient-secondary {
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+        }
+        
+        /* Card Hover Effects */
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        /* Focus Ring for Accessibility */
+        .focus-visible-ring:focus-visible {
+            outline: 2px solid #4f46e5;
+            outline-offset: 2px;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
+    <div id="app" class="flex flex-col min-h-screen">
+        
+        <!-- Header / Navbar -->
+        <header class="bg-white border-b border-gray-200 px-4 sm:px-6 py-4 flex justify-between items-center shadow-sm z-10 sticky top-0">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-md">
+                    <i class="fas fa-keyboard"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-gray-900 leading-tight">Ketik<span class="text-primary-600">AI</span></h1>
+                    <p class="text-[10px] sm:text-xs text-gray-500 font-medium tracking-wide uppercase hidden xs:block">Sistem Ujian Praktik Mengetik</p>
+                    <p class="text-[10px] sm:text-xs text-gray-500 font-medium tracking-wide uppercase xs:hidden">Ujian Mengetik</p>
+                </div>
+            </div>
+            
+            <!-- User Info & Controls -->
+            <div v-if="isRegistered" class="flex items-center gap-2 sm:gap-4">
+                <!-- Mobile Menu Button -->
+                <button @click="showMobileMenu = !showMobileMenu" class="sm:hidden w-10 h-10 rounded-lg flex items-center justify-center text-gray-600 hover:bg-gray-100 transition-colors focus-visible-ring">
+                    <i class="fas fa-bars text-lg"></i>
+                </button>
+                
+                <!-- Desktop User Info -->
+                <div class="hidden sm:flex items-center gap-3 text-sm bg-gray-50 px-4 py-2 rounded-xl border border-gray-100 shadow-sm">
+                    <div class="flex flex-col text-right">
+                        <span class="font-bold text-gray-800 truncate max-w-[120px]">{{ userData.name }}</span>
+                        <span class="text-xs text-gray-500">{{ userData.kelas }} • <span class="text-primary-600 font-semibold">{{ getModeLabel(currentMode) }}</span></span>
+                    </div>
+                    <div class="w-9 h-9 rounded-full gradient-primary text-white flex items-center justify-center font-bold uppercase shadow-sm">
+                        {{ userData.name.charAt(0) }}
+                    </div>
+                </div>
+                
+                <!-- Sound Toggle -->
+                <button @click="toggleSound" class="hidden sm:flex w-10 h-10 rounded-lg items-center justify-center transition-colors focus-visible-ring"
+                    :class="isSoundOn ? 'bg-primary-50 text-primary-600' : 'bg-gray-100 text-gray-500'">
+                    <i class="fas" :class="isSoundOn ? 'fa-volume-up' : 'fa-volume-mute'"></i>
+                </button>
+                
+                <!-- Mobile Menu Dropdown -->
+                <div v-if="showMobileMenu" class="fixed inset-0 z-50 sm:hidden" @click="showMobileMenu = false">
+                    <div class="absolute top-16 right-4 bg-white rounded-xl shadow-2xl border border-gray-200 w-64 p-4 slide-in-up" @click.stop>
+                        <div class="flex items-center gap-3 mb-4 pb-4 border-b border-gray-100">
+                            <div class="w-12 h-12 rounded-full gradient-primary text-white flex items-center justify-center font-bold text-xl uppercase">
+                                {{ userData.name.charAt(0) }}
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="font-bold text-gray-800 truncate">{{ userData.name }}</p>
+                                <p class="text-xs text-gray-500">{{ userData.kelas }}</p>
+                                <p class="text-xs font-medium text-primary-600">{{ getModeLabel(currentMode) }}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-2">
+                            <button @click="toggleSound" class="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                                <span class="flex items-center gap-3">
+                                    <i class="fas" :class="isSoundOn ? 'fa-volume-up text-primary-600' : 'fa-volume-mute text-gray-500'"></i>
+                                    <span>{{ isSoundOn ? 'Suara Aktif' : 'Suara Mati' }}</span>
+                                </span>
+                                <i class="fas fa-chevron-right text-gray-400 text-sm"></i>
+                            </button>
+                            
+                            <button @click="showInstructions = true" class="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                                <span class="flex items-center gap-3">
+                                    <i class="fas fa-info-circle text-blue-500"></i>
+                                    <span>Petunjuk</span>
+                                </span>
+                                <i class="fas fa-chevron-right text-gray-400 text-sm"></i>
+                            </button>
+                            
+                            <button @click="resetTest(false)" class="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                                <span class="flex items-center gap-3">
+                                    <i class="fas fa-redo text-yellow-500"></i>
+                                    <span>Ulangi Ujian</span>
+                                </span>
+                                <i class="fas fa-chevron-right text-gray-400 text-sm"></i>
+                            </button>
+                            
+                            <button @click="logout" class="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors text-red-500">
+                                <span class="flex items-center gap-3">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    <span>Ganti Peserta</span>
+                                </span>
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 flex flex-col items-center p-3 sm:p-4 md:p-6 w-full overflow-y-auto">
+            
+            <!-- Welcome / Instruction Banner -->
+            <div v-if="isRegistered && !isStarted && !isFinished" class="w-full max-w-4xl mb-4 sm:mb-6">
+                <div class="bg-gradient-to-r from-primary-50 to-blue-50 border border-primary-100 rounded-xl p-4 flex items-start gap-3">
+                    <div class="bg-primary-100 text-primary-600 p-2 rounded-lg">
+                        <i class="fas fa-info-circle text-lg"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-bold text-gray-800 mb-1">Selamat Datang, {{ userData.name }}!</h3>
+                        <p class="text-sm text-gray-600">
+                            Anda akan mengerjakan ujian mengetik tingkat <span class="font-semibold text-primary-600">{{ getModeLabel(currentMode) }}</span>. 
+                            Klik area teks di bawah atau tekan tombol apa saja untuk mulai. Ketik dengan akurat dan cepat!
+                        </p>
+                    </div>
+                    <button @click="showInstructions = true" class="text-primary-600 hover:text-primary-700 text-sm font-medium flex items-center gap-1">
+                        <span>Petunjuk</span>
+                        <i class="fas fa-chevron-right text-xs"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Stats Bar (Real-time) -->
+            <div class="w-full max-w-4xl grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4 sm:mb-6">
+                <div class="bg-white p-3 sm:p-4 rounded-xl shadow-sm border border-gray-100 card-hover">
+                    <div class="flex items-center justify-between mb-1">
+                        <p class="text-xs text-gray-500 uppercase font-semibold">Kecepatan (WPM)</p>
+                        <i class="fas fa-tachometer-alt text-primary-300 text-sm"></i>
+                    </div>
+                    <p class="text-2xl sm:text-3xl font-mono font-bold text-primary-600">{{ wpm }}</p>
+                    <p class="text-[10px] text-gray-400 mt-1">Kata per menit</p>
+                </div>
+                <div class="bg-white p-3 sm:p-4 rounded-xl shadow-sm border border-gray-100 card-hover">
+                    <div class="flex items-center justify-between mb-1">
+                        <p class="text-xs text-gray-500 uppercase font-semibold">Akurasi</p>
+                        <i class="fas fa-bullseye text-secondary-300 text-sm"></i>
+                    </div>
+                    <p class="text-2xl sm:text-3xl font-mono font-bold" :class="accuracy >= 90 ? 'text-secondary-600' : accuracy >= 70 ? 'text-yellow-500' : 'text-red-500'">{{ accuracy }}%</p>
+                    <p class="text-[10px] text-gray-400 mt-1">{{ getAccuracyFeedback() }}</p>
+                </div>
+                <div class="bg-white p-3 sm:p-4 rounded-xl shadow-sm border border-gray-100 card-hover">
+                    <div class="flex items-center justify-between mb-1">
+                        <p class="text-xs text-gray-500 uppercase font-semibold">Karakter (CPM)</p>
+                        <i class="fas fa-keyboard text-gray-400 text-sm"></i>
+                    </div>
+                    <p class="text-2xl sm:text-3xl font-mono font-bold text-gray-700">{{ cpm }}</p>
+                    <p class="text-[10px] text-gray-400 mt-1">Karakter per menit</p>
+                </div>
+                <div class="bg-white p-3 sm:p-4 rounded-xl shadow-sm border border-gray-100 card-hover">
+                    <div class="flex items-center justify-between mb-1">
+                        <p class="text-xs text-gray-500 uppercase font-semibold">Waktu</p>
+                        <i class="fas fa-clock text-gray-400 text-sm"></i>
+                    </div>
+                    <p class="text-2xl sm:text-3xl font-mono font-bold text-gray-700">{{ formattedTime }}</p>
+                    <p class="text-[10px] text-gray-400 mt-1">{{ getTimeProgress() }}</p>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div v-if="isStarted && !isFinished" class="w-full max-w-4xl mb-4">
+                <div class="flex items-center justify-between mb-1">
+                    <span class="text-xs font-medium text-gray-600">Progress: {{ progressPercentage }}%</span>
+                    <span class="text-xs font-medium text-gray-600">{{ typedChars }}/{{ targetText.length }} karakter</span>
+                </div>
+                <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div class="h-full gradient-primary rounded-full transition-all duration-300" :style="{ width: progressPercentage + '%' }"></div>
+                </div>
+            </div>
+
+            <!-- Typing Area -->
+            <div 
+                class="w-full max-w-4xl bg-white rounded-2xl shadow-lg border border-gray-200 p-4 sm:p-6 md:p-8 mb-4 sm:mb-6 relative cursor-text group typing-area select-none"
+                @click="focusInput"
+                @contextmenu="handleSecurityViolation" 
+                :class="{'ring-2 ring-primary-300': isInputFocused, 'ring-2 ring-red-200': !isInputFocused && isStarted && !isFinished}"
+            >
+
+                <!-- Caps Lock Warning -->
+                <div v-if="capsLockOn" class="caps-warning">
+                    <i class="fas fa-exclamation-triangle"></i> CAPS LOCK AKTIF
+                </div>
+
+                <!-- Prompt Overlay -->
+                <div v-if="isStarted && !isFinished && !isInputFocused" class="absolute inset-0 z-20 flex items-center justify-center bg-white/60 backdrop-blur-sm rounded-2xl">
+                    <div class="bg-white shadow-xl border border-gray-200 px-6 py-4 rounded-xl flex items-center gap-3 animate-bounce-slow">
+                        <div class="w-16 h-16 gradient-primary rounded-full flex items-center justify-center mx-auto mb-4 text-white">
+                            <i class="fas fa-play text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-2">Mulai Ujian</h3>
+                        <p class="text-gray-600 mb-4 max-w-md">Klik area ini atau tekan tombol apa saja untuk memulai ujian mengetik.</p>
+                        <div class="flex flex-wrap justify-center gap-2">
+                            <div class="flex items-center gap-1 text-xs bg-gray-100 px-2 py-1 rounded">
+                                <i class="fas fa-keyboard text-primary-500"></i>
+                                <span>Mode: {{ getModeLabel(currentMode) }}</span>
+                            </div>
+                            <div class="flex items-center gap-1 text-xs bg-gray-100 px-2 py-1 rounded">
+                                <i class="fas fa-font text-primary-500"></i>
+                                <span>{{ targetText.length }} karakter</span>
+                            </div>
+                            <div class="flex items-center gap-1 text-xs bg-gray-100 px-2 py-1 rounded">
+                                <i class="fas fa-bullseye text-primary-500"></i>
+                                <span>Tingkatkan akurasi</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hidden Input -->
+                <input 
+                    ref="typingInput" 
+                    type="text" 
+                    class="absolute opacity-0 top-0 left-0 w-full h-full cursor-default"
+                    v-model="inputValue"
+                    @input="handleInput"
+                    @keydown="handleKeydown"
+                    @keyup="checkCapsLock"
+                    @focus="isInputFocused = true"
+                    @blur="isInputFocused = false"
+        
+                    @paste="handleSecurityViolation"
+                    @copy="handleSecurityViolation"
+                    @cut="handleSecurityViolation"
+        
+                    :disabled="!isRegistered || isFinished"
+                    autocomplete="off"
+                >
+
+                <!-- Text Display -->
+                <div class="font-mono text-lg sm:text-xl md:text-2xl leading-loose break-words select-none text-justify transition-all duration-300"
+                    :class="{'blur-content': isStarted && !isInputFocused}">
+                    <span 
+                        v-for="(char, index) in targetText.split('')" 
+                        :key="index"
+                        :id="'char-' + index" 
+                        :class="getCharClass(index)"
+                        class="transition-all duration-75 inline-block py-1"
+                    >{{ char === ' ' ? '&nbsp;' : char }}</span>
+                    </div>
+                
+                <!-- Current Character Hint -->
+                <div v-if="isStarted && !isFinished && nextCharToType" class="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-primary-600 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2">
+                    <span class="text-sm">Karakter selanjutnya:</span>
+                    <span class="font-mono text-xl font-bold bg-white text-primary-600 px-2 py-1 rounded">{{ nextCharToType === ' ' ? 'SPASI' : nextCharToType }}</span>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="w-full max-w-4xl flex flex-wrap gap-2 mb-6 justify-center">
+                <button @click="resetTest(false)" :disabled="!isStarted && !isFinished" 
+                    class="px-4 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 focus-visible-ring">
+                    <i class="fas fa-redo"></i>
+                    <span class="hidden sm:inline">Ulangi</span>
+                </button>
+                
+                <button @click="toggleSound" 
+                    class="px-4 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors flex items-center gap-2 focus-visible-ring"
+                    :class="isSoundOn ? 'text-primary-600' : 'text-gray-500'">
+                    <i class="fas" :class="isSoundOn ? 'fa-volume-up' : 'fa-volume-mute'"></i>
+                    <span class="hidden sm:inline">{{ isSoundOn ? 'Suara Aktif' : 'Suara Mati' }}</span>
+                </button>
+                
+                <button @click="showInstructions = true" 
+                    class="px-4 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors flex items-center gap-2 focus-visible-ring">
+                    <i class="fas fa-question-circle"></i>
+                    <span class="hidden sm:inline">Petunjuk</span>
+                </button>
+                
+                <button v-if="isFirebaseAvailable" @click="showLeaderboard = true" 
+                    class="px-4 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors flex items-center gap-2 focus-visible-ring">
+                    <i class="fas fa-trophy text-yellow-500"></i>
+                    <span class="hidden sm:inline">Peringkat</span>
+                </button>
+            </div>
+
+            <!-- Virtual Keyboard (Desktop) -->
+            <div class="w-full max-w-4xl hidden md:block select-none mb-8">
+                <div class="bg-gray-100 p-4 rounded-2xl shadow-inner border border-gray-300">
+                    <div class="flex justify-between items-center px-2 mb-3">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-keyboard text-primary-500"></i>
+                            <span class="text-sm font-medium text-gray-700">Keyboard Virtual</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span class="text-xs text-gray-600">Mode: <b>{{ getModeLabel(currentMode) }}</b></span>
+                            <div class="flex items-center gap-1">
+                                <div class="w-2 h-2 rounded-full" :class="isSoundOn ? 'bg-green-500' : 'bg-gray-400'"></div>
+                                <span class="text-xs text-gray-600">{{ isSoundOn ? 'Suara aktif' : 'Suara mati' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-for="(row, rIndex) in keyboardLayout" :key="rIndex" class="flex justify-center gap-1.5 mb-1.5 last:mb-0">
+                        <div 
+                            v-for="key in row" 
+                            :key="key.code"
+                            :class="[
+                                'keyboard-key h-12 flex items-center justify-center rounded-lg font-bold text-sm uppercase transition-all duration-100 select-none',
+                                getKeyWidth(key.code),
+                                getKeyColor(key.char, key.code)
+                            ]"
+                        >
+                            {{ key.label || key.char }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Virtual Keyboard -->
+            <div v-if="showMobileKeyboard" class="w-full max-w-4xl md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-300 p-3 shadow-2xl z-40 slide-in-up">
+                <div class="flex justify-between items-center mb-3">
+                    <span class="text-sm font-medium text-gray-700">Keyboard Virtual</span>
+                    <button @click="showMobileKeyboard = false" class="text-gray-500 p-1">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div v-for="(row, rIndex) in mobileKeyboardLayout" :key="rIndex" class="flex justify-center gap-1 mb-1 last:mb-0">
+                    <div 
+                        v-for="key in row" 
+                        :key="key.code"
+                        :class="[
+                            'keyboard-key h-10 flex items-center justify-center rounded-lg font-bold text-xs uppercase',
+                            getMobileKeyWidth(key.code),
+                            getKeyColor(key.char, key.code)
+                        ]"
+                        @touchstart="handleVirtualKeyPress(key.code, key.char)"
+                        @touchend="lastKeyPressed = null"
+                    >
+                        {{ key.label || key.char }}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Mobile Keyboard Toggle -->
+            <button @click="showMobileKeyboard = !showMobileKeyboard" class="md:hidden fixed bottom-6 right-6 w-14 h-14 gradient-primary rounded-full shadow-lg flex items-center justify-center text-white z-30 focus-visible-ring">
+                <i class="fas fa-keyboard text-xl"></i>
+            </button>
+
+            <!-- Leaderboard Section -->
+            <div v-if="showLeaderboard" class="w-full max-w-4xl mb-8">
+                <div class="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
+                    <div class="px-4 sm:px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gradient-to-r from-gray-50 to-white">
+                        <h3 class="font-bold text-gray-800 flex items-center gap-2">
+                            <i class="fas fa-trophy text-yellow-500"></i>
+                            Papan Peringkat (Top 10)
+                        </h3>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs text-gray-500 bg-gray-200 px-2 py-1 rounded-full">Live</span>
+                            <button @click="showLeaderboard = false" class="text-gray-500 hover:text-gray-700 p-1">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left">
+                            <thead class="text-xs text-gray-500 uppercase bg-gray-50 border-b border-gray-100">
+                                <tr>
+                                    <th class="px-4 sm:px-6 py-3">Peringkat</th>
+                                    <th class="px-4 sm:px-6 py-3">Nama Peserta</th>
+                                    <th class="px-4 sm:px-6 py-3 hidden sm:table-cell">Kelas</th>
+                                    <th class="px-4 sm:px-6 py-3">WPM</th>
+                                    <th class="px-4 sm:px-6 py-3">Akurasi</th>
+                                    <th class="px-4 sm:px-6 py-3 hidden md:table-cell">Mode</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                <tr v-if="!isFirebaseAvailable">
+                                    <td colspan="6" class="px-4 sm:px-6 py-8 text-center text-gray-500 italic bg-gray-50">
+                                        <i class="fas fa-wifi-slash text-gray-400 text-lg mb-2 block"></i>
+                                        Mode Offline: Leaderboard tidak tersedia
+                                    </td>
+                                </tr>
+                                <template v-else>
+                                    <tr v-for="(score, index) in leaderboardData" :key="score.id" class="hover:bg-gray-50 transition-colors">
+                                        <td class="px-4 sm:px-6 py-3 font-medium text-gray-900">
+                                            <div class="flex items-center gap-2">
+                                                <span v-if="index === 0" class="text-xl">🥇</span>
+                                                <span v-else-if="index === 1" class="text-xl">🥈</span>
+                                                <span v-else-if="index === 2" class="text-xl">🥉</span>
+                                                <span v-else class="font-bold text-gray-500">{{ index + 1 }}</span>
+                                            </div>
+                                        </td>
+                                        <td class="px-4 sm:px-6 py-3 font-medium text-gray-900">
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-8 h-8 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center font-bold uppercase text-sm">
+                                                    {{ score.name.charAt(0) }}
+                                                </div>
+                                                <div>
+                                                    <div class="font-medium">{{ score.name }}</div>
+                                                    <div class="text-xs text-gray-500 sm:hidden">{{ score.kelas }}</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-4 sm:px-6 py-3 text-gray-500 hidden sm:table-cell">{{ score.kelas }}</td>
+                                        <td class="px-4 sm:px-6 py-3 font-bold text-primary-600">{{ score.wpm }}</td>
+                                        <td class="px-4 sm:px-6 py-3">
+                                            <div class="flex items-center gap-1">
+                                                <span :class="score.accuracy >= 90 ? 'text-green-600' : score.accuracy >= 70 ? 'text-yellow-600' : 'text-red-600'">{{ score.accuracy }}%</span>
+                                                <div class="w-16 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                                                    <div class="h-full rounded-full" :class="score.accuracy >= 90 ? 'bg-green-500' : score.accuracy >= 70 ? 'bg-yellow-500' : 'bg-red-500'" 
+                                                        :style="{ width: score.accuracy + '%' }"></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-4 sm:px-6 py-3 text-gray-500 text-xs hidden md:table-cell">
+                                            <span class="px-2 py-1 rounded-full" :class="getModeBadgeClass(score.mode)">{{ getModeLabel(score.mode) }}</span>
+                                        </td>
+                                    </tr>
+                                    <tr v-if="leaderboardData.length === 0">
+                                        <td colspan="6" class="px-4 sm:px-6 py-8 text-center text-gray-500 italic">
+                                            <i class="fas fa-chart-line text-gray-400 text-lg mb-2 block"></i>
+                                            Belum ada data skor ujian. Jadilah yang pertama!
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="mt-auto border-t border-gray-200 bg-white py-4 px-4 sm:px-6">
+            <div class="max-w-4xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
+                <div class="text-center sm:text-left">
+                    <p class="text-sm text-gray-600">© 2025 KetikAI - Sistem Ujian Praktik Mengetik</p>
+                    <p class="text-xs text-gray-500">Dikembangkan untuk Pembelajaran Siswa SMAPTA</p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 rounded-full" :class="isFirebaseAvailable ? 'bg-green-500' : 'bg-gray-400'"></div>
+                        <span class="text-xs text-gray-600">{{ isFirebaseAvailable ? 'Online' : 'Offline' }}</span>
+                    </div>
+                    <div class="text-xs text-gray-500">
+                        Versi 2.1.0
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- REGISTRATION MODAL (Initial) -->
+        <div v-if="!isRegistered" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/90 backdrop-blur-sm">
+            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 sm:p-8 modal-animate overflow-y-auto max-h-[90vh]">
+                <div class="text-center mb-6">
+                    <div class="w-20 h-20 gradient-primary rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                        <i class="fas fa-user-graduate text-white text-3xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-900">Data Peserta Ujian</h2>
+                    <p class="text-gray-500 text-sm mt-1">Isi data diri Anda sebelum memulai ujian praktik mengetik.</p>
+                </div>
+
+                <form @submit.prevent="registerUser" class="space-y-5">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <span class="flex items-center gap-1">
+                                <i class="fas fa-id-card text-primary-500"></i>
+                                NISN
+                            </span>
+                        </label>
+                        <input 
+                            v-model="form.nisn" 
+                            type="text" 
+                            inputmode="numeric" 
+                            pattern="[0-9]*" 
+                            required 
+                            placeholder="Contoh: 0051234567" 
+                            class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all font-mono focus-visible-ring"
+                            @input="validateNisnInput"
+                            maxlength="16"
+                        >
+                        <p class="text-xs text-gray-400 mt-2 flex items-center gap-1">
+                            <i class="fas fa-info-circle"></i>
+                            Masukkan digit NISN (angka depan 0 tetap dipertahankan)
+                        </p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <span class="flex items-center gap-1">
+                                <i class="fas fa-user text-primary-500"></i>
+                                Nama Lengkap
+                            </span>
+                        </label>
+                        <input v-model="form.name" type="text" required placeholder="Nama sesuai absen" 
+                            class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all focus-visible-ring">
+                    </div>
+                    
+                    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <span class="flex items-center gap-1">
+                                    <i class="fas fa-users text-primary-500"></i>
+                                    Kelas
+                                </span>
+                            </label>
+                            <select v-model="form.kelas" required 
+                                class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all bg-white focus-visible-ring">
+                                <option value="" disabled>Pilih Kelas</option>
+                                <option value="XII 1">XII 1</option>
+                                <option value="XII 2">XII 2</option>
+                                <option value="XII 3">XII 3</option>
+                                <option value="XII 4">XII 4</option>
+                                <option value="XII 5">XII 5</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <span class="flex items-center gap-1">
+                                    <i class="fas fa-chart-line text-primary-500"></i>
+                                    Tingkat Kesulitan
+                                </span>
+                            </label>
+                            <select v-model="form.mode" required 
+                                class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all bg-white focus-visible-ring">
+                                <option v-for="mode in modes" :key="mode.id" :value="mode.id">{{ mode.label }}</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="pt-2">
+                        <button type="submit" class="w-full gradient-primary text-white font-bold py-3.5 rounded-xl hover:opacity-90 transition-all shadow-lg shadow-primary-300 focus-visible-ring flex items-center justify-center gap-2">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Masuk & Mulai Ujian
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- INSTRUCTIONS MODAL -->
+        <div v-if="showInstructions" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/90 backdrop-blur-sm">
+            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-6 sm:p-8 modal-animate overflow-y-auto max-h-[90vh]">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                        <i class="fas fa-info-circle text-primary-500"></i>
+                        Petunjuk Penggunaan
+                    </h2>
+                    <button @click="showInstructions = false" class="text-gray-500 hover:text-gray-700 p-2 rounded-lg hover:bg-gray-100 transition-colors focus-visible-ring">
+                        <i class="fas fa-times text-lg"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-6">
+                    <div class="bg-blue-50 border border-blue-100 rounded-xl p-4">
+                        <h3 class="font-bold text-blue-800 mb-2 flex items-center gap-2">
+                            <i class="fas fa-lightbulb"></i>
+                            Cara Menggunakan KetikAI
+                        </h3>
+                        <ol class="list-decimal pl-5 space-y-2 text-blue-700">
+                            <li>Isi data diri Anda pada formulir pendaftaran</li>
+                            <li>Pilih tingkat kesulitan sesuai kemampuan</li>
+                            <li>Klik area teks atau tekan tombol apa saja untuk mulai</li>
+                            <li>Ketik teks yang ditampilkan dengan akurat dan cepat</li>
+                            <li>Selesaikan seluruh teks untuk melihat hasil</li>
+                            <li>Simpan hasil atau ulangi ujian dengan tingkat berbeda</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                            <div class="flex items-center gap-2 mb-2">
+                                <div class="w-10 h-10 bg-green-100 text-green-600 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-tachometer-alt"></i>
+                                </div>
+                                <h4 class="font-bold text-gray-800">Statistik Penting</h4>
+                            </div>
+                            <ul class="space-y-1 text-sm text-gray-600">
+                                <li class="flex items-center gap-1"><i class="fas fa-circle text-primary-500 text-xs"></i> <b>WPM:</b> Kata per menit</li>
+                                <li class="flex items-center gap-1"><i class="fas fa-circle text-secondary-500 text-xs"></i> <b>Akurasi:</b> Persentase ketepatan</li>
+                                <li class="flex items-center gap-1"><i class="fas fa-circle text-gray-500 text-xs"></i> <b>CPM:</b> Karakter per menit</li>
+                                <li class="flex items-center gap-1"><i class="fas fa-circle text-yellow-500 text-xs"></i> <b>Waktu:</b> Durasi pengerjaan</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                            <div class="flex items-center gap-2 mb-2">
+                                <div class="w-10 h-10 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-keyboard"></i>
+                                </div>
+                                <h4 class="font-bold text-gray-800">Tips Mengetik Cepat</h4>
+                            </div>
+                            <ul class="space-y-1 text-sm text-gray-600">
+                                <li class="flex items-center gap-1"><i class="fas fa-check text-green-500 text-xs"></i> Gunakan semua jari Anda</li>
+                                <li class="flex items-center gap-1"><i class="fas fa-check text-green-500 text-xs"></i> Hafal posisi tombol</li>
+                                <li class="flex items-center gap-1"><i class="fas fa-check text-green-500 text-xs"></i> Jangan melihat keyboard</li>
+                                <li class="flex items-center gap-1"><i class="fas fa-check text-green-500 text-xs"></i> Fokus pada akurasi terlebih dahulu</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-amber-50 border border-amber-100 rounded-xl p-4">
+                        <h4 class="font-bold text-amber-800 mb-2 flex items-center gap-2">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Perhatian
+                        </h4>
+                        <p class="text-amber-700 text-sm">
+                            Ujian ini bertujuan untuk mengukur kemampuan mengetik Anda. Hasil yang diperoleh dapat digunakan sebagai bahan evaluasi pembelajaran. 
+                            Kerjakan dengan jujur dan konsentrasi penuh untuk mendapatkan hasil yang optimal.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="mt-8 flex justify-end">
+                    <button @click="showInstructions = false" class="px-6 py-2.5 bg-primary-600 text-white font-medium rounded-xl hover:bg-primary-700 transition-colors focus-visible-ring">
+                        Saya Mengerti
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESULT MODAL -->
+        <div v-if="isFinished" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-6 sm:p-8 transform transition-all scale-100 modal-animate overflow-y-auto max-h-[95vh]">
+                <div class="text-center mb-6">
+                    <div class="w-20 h-20 gradient-secondary rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                        <i class="fas fa-medal text-white text-3xl"></i>
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">Ujian Selesai!</h2>
+                    <p class="text-gray-500 text-sm sm:text-base mt-1">Berikut adalah hasil ujian praktik mengetik Anda.</p>
+                </div>
+
+                <!-- Result Card -->
+                <div class="bg-gradient-to-r from-gray-50 to-white p-5 sm:p-6 rounded-xl border border-gray-200 mb-6 shadow-sm">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-5 pb-5 border-b border-gray-200 gap-4">
+                        <div class="text-left">
+                            <p class="text-lg font-bold text-gray-800">{{ userData.name }}</p>
+                            <div class="flex flex-wrap items-center gap-2 mt-1">
+                                <span class="text-sm text-gray-500">{{ userData.kelas }}</span>
+                                <span class="w-2 h-2 rounded-full bg-gray-400"></span>
+                                <span class="px-3 py-1 text-xs font-medium rounded-full" :class="getModeBadgeClass(currentMode)">{{ getModeLabel(currentMode) }}</span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-xs text-gray-500">NISN</p>
+                            <p class="text-sm font-mono text-gray-700 font-medium">{{ userData.nisn }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+                        <div class="bg-white p-4 rounded-xl border border-gray-100">
+                            <p class="text-[10px] text-gray-500 uppercase font-bold mb-1">Kecepatan</p>
+                            <p class="text-2xl font-bold text-primary-600">{{ wpm }}</p>
+                            <p class="text-[10px] text-gray-400 mt-1">WPM</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl border border-gray-100">
+                            <p class="text-[10px] text-gray-500 uppercase font-bold mb-1">Akurasi</p>
+                            <p class="text-2xl font-bold" :class="accuracy >= 90 ? 'text-green-600' : accuracy >= 70 ? 'text-yellow-500' : 'text-red-500'">{{ accuracy }}%</p>
+                            <p class="text-[10px] text-gray-400 mt-1">{{ getAccuracyFeedback() }}</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl border border-gray-100">
+                            <p class="text-[10px] text-gray-500 uppercase font-bold mb-1">Karakter</p>
+                            <p class="text-2xl font-bold text-gray-700">{{ cpm }}</p>
+                            <p class="text-[10px] text-gray-400 mt-1">CPM</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl border border-gray-100">
+                            <p class="text-[10px] text-gray-500 uppercase font-bold mb-1">Waktu</p>
+                            <p class="text-2xl font-bold text-gray-700">{{ formattedTime }}</p>
+                            <p class="text-[10px] text-gray-400 mt-1">{{ getTimeProgress() }}</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Performance Rating -->
+                    <div class="mt-5 pt-5 border-t border-gray-200">
+                        <div class="flex items-center justify-between mb-2">
+                            <p class="text-sm font-medium text-gray-700">Penilaian Performa</p>
+                            <span class="text-xs font-medium px-3 py-1 rounded-full" :class="getPerformanceRatingClass()">{{ getPerformanceRating() }}</span>
+                        </div>
+                        <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                            <div class="h-full rounded-full transition-all duration-500" :class="getPerformanceBarClass()" :style="{ width: getPerformancePercentage() + '%' }"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div v-if="scoreSubmitted" class="mb-5 flex justify-center">
+                    <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-green-100 text-green-800 border border-green-200">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        Data hasil ujian telah tersimpan di server
+                    </span>
+                </div>
+
+                <div class="flex flex-col gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <button 
+                            v-if="!scoreSubmitted"
+                            @click="submitScore" 
+                            :disabled="isSubmitting || !isFirebaseAvailable"
+                            class="w-full gradient-primary text-white font-bold py-3.5 rounded-xl hover:opacity-90 transition-all shadow-lg shadow-primary-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 focus-visible-ring"
+                            :title="!isFirebaseAvailable ? 'Mode Offline: Tidak dapat menyimpan' : ''"
+                        >
+                            <i class="fas" :class="isSubmitting ? 'fa-spinner fa-spin' : 'fa-save'"></i>
+                            {{ isSubmitting ? 'Menyimpan...' : 'Simpan Nilai' }}
+                        </button>
+                        
+                        <button 
+                            @click="downloadPDF"
+                            class="w-full bg-gray-800 text-white font-bold py-3.5 rounded-xl hover:bg-gray-900 transition-all flex items-center justify-center gap-2 focus-visible-ring shadow-lg"
+                        >
+                            <i class="fas fa-file-pdf"></i>
+                            Export PDF
+                        </button>
+                    </div>
+
+                    <!-- Mode Selection -->
+                    <div class="mt-4 pt-5 border-t border-gray-100">
+                        <p class="text-sm font-semibold text-gray-700 mb-3 text-center">Lanjutkan dengan tingkat kesulitan lain:</p>
+                        <div class="flex flex-wrap gap-2 mb-4 justify-center">
+                            <button 
+                                v-for="mode in modes" 
+                                :key="mode.id"
+                                @click="nextModeSelection = mode.id"
+                                class="px-4 py-2.5 text-sm font-medium rounded-xl border transition-all focus-visible-ring"
+                                :class="nextModeSelection === mode.id ? getModeButtonActiveClass(mode.id) : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'"
+                            >
+                                {{ mode.label }}
+                            </button>
+                        </div>
+                        <button @click="resetTest(true)" class="w-full bg-white border-2 border-primary-500 text-primary-600 font-bold py-3.5 rounded-xl hover:bg-primary-50 transition-colors flex items-center justify-center gap-2 focus-visible-ring">
+                            <i class="fas fa-play-circle"></i>
+                            Mulai Ulang (Mode {{ getModeLabel(nextModeSelection) }})
+                        </button>
+                    </div>
+                    
+                    <div class="text-center pt-2">
+                        <button @click="logout" class="text-sm text-red-500 hover:text-red-700 font-medium py-2 flex items-center justify-center gap-2 mx-auto">
+                            <i class="fas fa-sign-out-alt"></i>
+                            Ganti Peserta (Log Out)
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vue App & Logic -->
+    <script type="module">
+        import { createApp, ref, computed, onMounted, nextTick, watch } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        createApp({
+            setup() {
+                // --- Firebase Setup (Safe Check) ---
+                const isFirebaseAvailable = ref(false);
+                let app, auth, db;
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+                try {
+                    if (typeof __firebase_config !== 'undefined') {
+                        const firebaseConfig = JSON.parse(__firebase_config);
+                        app = initializeApp(firebaseConfig);
+                        auth = getAuth(app);
+                        db = getFirestore(app);
+                        isFirebaseAvailable.value = true;
+                    } else {
+                        console.warn("KetikAI: Firebase Config tidak ditemukan. Berjalan dalam Mode Offline.");
+                    }
+                } catch (e) {
+                    console.error("KetikAI: Gagal menginisialisasi Firebase:", e);
+                }
+                
+                const user = ref(null);
+                const leaderboardData = ref([]);
+                
+                // --- Data Text Assets (Updated for more educational content) ---
+                const textAssets = {
+                    basic: [
+                        "saya suka belajar komputer dan teknologi informasi di sekolah",
+                        "ibu pergi ke pasar untuk membeli sayuran dan buah-buahan segar",
+                        "ayah membaca koran sambil menikmati secangkir kopi panas pagi ini",
+                        "adik sedang bermain sepak bola di lapangan dekat rumah kami",
+                        "kucing peliharaan kami tidur nyenyak di atas kursi kayu yang empuk",
+                        "guru mengajarkan mata pelajaran matematika dengan sangat sabar",
+                        "pagi hari yang cerah sangat cocok untuk berolahraga bersama teman",
+                        "perpustakaan sekolah memiliki banyak koleksi buku pengetahuan",
+                        "adik perempuan saya pandai bermain piano sejak usia dini",
+                        "kami belajar sejarah Indonesia untuk mengenal perjuangan pahlawan"
+                    ],
+                    intermediate: [
+                        "Pancasila adalah dasar negara Indonesia yang harus kita amalkan dalam kehidupan sehari-hari sebagai warga negara yang baik dan bertanggung jawab.",
+                        "Indonesia memiliki ribuan pulau yang tersebar dari Sabang sampai Merauke dengan keanekaragaman budaya, bahasa, dan adat istiadat yang unik.",
+                        "Pendidikan adalah senjata paling ampuh yang bisa digunakan untuk mengubah dunia menjadi lebih baik dan maju di masa depan.",
+                        "Kesehatan adalah harta yang tak ternilai harganya, maka kita wajib menjaga pola makan sehat dan rutin berolahraga setiap hari.",
+                        "Teknologi informasi telah berkembang pesat dan membawa banyak perubahan dalam berbagai aspek kehidupan manusia modern.",
+                        "Lingkungan yang bersih dan hijau akan membuat hidup kita menjadi lebih sehat dan nyaman untuk ditinggali bersama keluarga.",
+                        "Kerja keras dan disiplin adalah kunci utama untuk mencapai kesuksesan dalam menempuh pendidikan maupun karir profesional.",
+                        "Membaca buku dapat memperluas wawasan dan pengetahuan kita tentang berbagai hal yang terjadi di dunia ini."
+                    ],
+                    advanced: [
+                        "Kecerdasan Buatan atau Artificial Intelligence adalah simulasi dari kecerdasan yang dimiliki oleh manusia yang dimodelkan di dalam mesin dan diprogram agar bisa berpikir seperti manusia serta melakukan pekerjaan tertentu.",
+                        "Revolusi Industri 4.0 menekankan pada pola ekonomi digital, kecerdasan buatan, big data, robotika, dan teknologi lainnya yang dikenal dengan fenomena disruptive innovation dalam berbagai sektor industri.",
+                        "Pemrograman berorientasi objek adalah paradigma pemrograman yang berorientasikan kepada objek, di mana semua data dan fungsi dibungkus dalam kelas-kelas atau objek-objek yang saling berinteraksi.",
+                        "Algoritma adalah urutan langkah-langkah logis penyelesaian masalah yang disusun secara sistematis dan logis untuk mencapai tujuan tertentu dalam pemrograman komputer.",
+                        "Jaringan komputer merupakan sistem yang terdiri dari dua atau lebih komputer yang saling terhubung melalui media transmisi untuk berbagi sumber daya dan informasi secara efisien.",
+                        "Basis data adalah kumpulan data yang terorganisir dengan baik sehingga dapat diakses, dikelola, dan diperbarui dengan mudah untuk mendukung proses pengambilan keputusan."
+                    ]
+                };
+
+                const modes = [
+                    { id: 'basic', label: 'Pemula' },
+                    { id: 'intermediate', label: 'Menengah' },
+                    { id: 'advanced', label: 'Lanjutan' },
+                ];
+
+                // --- App State ---
+                const isRegistered = ref(false);
+                const form = ref({ nisn: '', name: '', kelas: '', mode: 'basic' });
+                const userData = ref({ nisn: '', name: '', kelas: '' });
+                
+                // Audio System
+                const isSoundOn = ref(true);
+                let audioCtx = null;
+                
+                // Typing State
+                const inputValue = ref('');
+                const targetText = ref('');
+                const isStarted = ref(false);
+                const isFinished = ref(false);
+                const isInputFocused = ref(false);
+                const startTime = ref(null);
+                const elapsedTime = ref(0);
+                const timerInterval = ref(null);
+                const errorCount = ref(0);
+                const currentMode = ref('basic');
+                const typingInput = ref(null);
+                const lastKeyPressed = ref(null);
+                const isSubmitting = ref(false);
+                const scoreSubmitted = ref(false);
+                const nextModeSelection = ref('basic');
+                const capsLockOn = ref(false);
+                const showMobileMenu = ref(false);
+                const showInstructions = ref(false);
+                const showLeaderboard = ref(false);
+                const showMobileKeyboard = ref(false);
+
+                // Keyboard Layouts
+                const keyboardLayout = [
+                    [
+                        { char: '`', code: 'Backquote' }, { char: '1', code: 'Digit1' }, { char: '2', code: 'Digit2' }, { char: '3', code: 'Digit3' }, { char: '4', code: 'Digit4' }, { char: '5', code: 'Digit5' }, { char: '6', code: 'Digit6' }, { char: '7', code: 'Digit7' }, { char: '8', code: 'Digit8' }, { char: '9', code: 'Digit9' }, { char: '0', code: 'Digit0' }, { char: '-', code: 'Minus' }, { char: '=', code: 'Equal' }, { label: 'BACK', code: 'Backspace' }
+                    ],
+                    [
+                        { label: 'TAB', code: 'Tab' }, { char: 'q', code: 'KeyQ' }, { char: 'w', code: 'KeyW' }, { char: 'e', code: 'KeyE' }, { char: 'r', code: 'KeyR' }, { char: 't', code: 'KeyT' }, { char: 'y', code: 'KeyY' }, { char: 'u', code: 'KeyU' }, { char: 'i', code: 'KeyI' }, { char: 'o', code: 'KeyO' }, { char: 'p', code: 'KeyP' }, { char: '[', code: 'BracketLeft' }, { char: ']', code: 'BracketRight' }, { char: '\\', code: 'Backslash' }
+                    ],
+                    [
+                        { label: 'CAPS', code: 'CapsLock' }, { char: 'a', code: 'KeyA' }, { char: 's', code: 'KeyS' }, { char: 'd', code: 'KeyD' }, { char: 'f', code: 'KeyF' }, { char: 'g', code: 'KeyG' }, { char: 'h', code: 'KeyH' }, { char: 'j', code: 'KeyJ' }, { char: 'k', code: 'KeyK' }, { char: 'l', code: 'KeyL' }, { char: ';', code: 'Semicolon' }, { char: "'", code: 'Quote' }, { label: 'ENTER', code: 'Enter' }
+                    ],
+                    [
+                        { label: 'SHIFT', code: 'ShiftLeft' }, { char: 'z', code: 'KeyZ' }, { char: 'x', code: 'KeyX' }, { char: 'c', code: 'KeyC' }, { char: 'v', code: 'KeyV' }, { char: 'b', code: 'KeyB' }, { char: 'n', code: 'KeyN' }, { char: 'm', code: 'KeyM' }, { char: ',', code: 'Comma' }, { char: '.', code: 'Period' }, { char: '/', code: 'Slash' }, { label: 'SHIFT', code: 'ShiftRight' }
+                    ],
+                    [
+                        { label: 'SPACE', char: ' ', code: 'Space' }
+                    ]
+                ];
+                
+                // Simplified mobile keyboard layout
+                const mobileKeyboardLayout = [
+                    [
+                        { char: 'q', code: 'KeyQ' }, { char: 'w', code: 'KeyW' }, { char: 'e', code: 'KeyE' }, { char: 'r', code: 'KeyR' }, { char: 't', code: 'KeyT' }, { char: 'y', code: 'KeyY' }, { char: 'u', code: 'KeyU' }, { char: 'i', code: 'KeyI' }, { char: 'o', code: 'KeyO' }, { char: 'p', code: 'KeyP' }
+                    ],
+                    [
+                        { char: 'a', code: 'KeyA' }, { char: 's', code: 'KeyS' }, { char: 'd', code: 'KeyD' }, { char: 'f', code: 'KeyF' }, { char: 'g', code: 'KeyG' }, { char: 'h', code: 'KeyH' }, { char: 'j', code: 'KeyJ' }, { char: 'k', code: 'KeyK' }, { char: 'l', code: 'KeyL' }
+                    ],
+                    [
+                        { label: '↑', code: 'ShiftLeft' }, { char: 'z', code: 'KeyZ' }, { char: 'x', code: 'KeyX' }, { char: 'c', code: 'KeyC' }, { char: 'v', code: 'KeyV' }, { char: 'b', code: 'KeyB' }, { char: 'n', code: 'KeyN' }, { char: 'm', code: 'KeyM' }, { label: '⌫', code: 'Backspace' }
+                    ],
+                    [
+                        { label: '123', code: 'AltLeft' }, { label: 'SPACE', char: ' ', code: 'Space' }, { label: '⏎', code: 'Enter' }
+                    ]
+                ];
+
+                // --- Computed Properties ---
+                // 1. WPM Bersih (Net WPM)
+                // Rumus: (Gross Words - Total Errors) / Menit
+                // Ini menghukum siswa yang mengetik cepat tapi banyak salah.
+                const wpm = computed(() => {
+                    if (elapsedTime.value === 0 || inputValue.value.length === 0) return 0;
+    
+                    const minutes = elapsedTime.value / 60;
+                    const grossWords = inputValue.value.length / 5;
+    
+                    // Menghitung Net WPM:
+                    // Kita kurangi jumlah kata yang dihasilkan dengan jumlah total kesalahan yang dibuat.
+                    // Logika: Jika kamu salah ketik 1 huruf, kamu dianggap "gagal" menyelesaikan 1 kata (penalti standar).
+                    const netValue = (grossWords - errorCount.value) / minutes;
+    
+                    // Pastikan WPM tidak negatif & bulatkan
+                    const finalWpm = Math.max(0, Math.round(netValue));
+    
+                    return finalWpm > 999 ? 999 : finalWpm;
+                });
+
+                // 2. Karakter Per Menit (CPM) - Opsional: Bisa dibuat 'Net CPM' juga
+                const cpm = computed(() => {
+                    if (elapsedTime.value === 0) return 0;
+    
+                    const minutes = elapsedTime.value / 60;
+    
+                    // Kita gunakan jumlah karakter BENAR saja untuk CPM agar fair
+                    // (Total Ketik - Total Salah) / Menit
+                    const correctChars = Math.max(0, inputValue.value.length - errorCount.value);
+    
+                    const cpmValue = Math.round(correctChars / minutes);
+                    return cpmValue > 9999 ? 9999 : cpmValue;
+                });
+
+                // 3. Akurasi (Fixed Logic)
+                // Mencegah nilai negatif jika user sering backspace/salah
+                const accuracy = computed(() => {
+                    if (inputValue.value.length === 0) return 100;
+    
+                    // Total keystrokes estimasi (Input saat ini + Kesalahan yang dibuat)
+                    // Ini memberikan gambaran "Usaha vs Hasil"
+                    const totalEffort = inputValue.value.length + errorCount.value;
+                    if (totalEffort === 0) return 100;
+
+                    // Rumus: (Karakter Benar / Total Usaha) * 100
+                    // Karakter Benar = Input Length - (Error yg tersisa di layar... tapi kita pakai estimasi sederhana)
+                    // Agar simple & fair: (1 - (Error / Total Input)) * 100
+    
+                    let acc = (1 - (errorCount.value / inputValue.value.length)) * 100;
+    
+                    // Clamp values between 0 and 100
+                    acc = Math.max(0, Math.min(100, acc));
+    
+                    return Math.round(acc);
+                });
+
+                // 4. Formatted Time (Tetap sama)
+                const formattedTime = computed(() => {
+                    const minutes = Math.floor(elapsedTime.value / 60).toString().padStart(2, '0');
+                    const seconds = (elapsedTime.value % 60).toString().padStart(2, '0');
+                    return `${minutes}:${seconds}`;
+                });
+
+                // 5. Helper lainnya (Tetap sama)
+                const typedChars = computed(() => inputValue.value.length);
+                const progressPercentage = computed(() => {
+                    if (targetText.value.length === 0) return 0;
+                    return Math.round((inputValue.value.length / targetText.value.length) * 100);
+                });
+                const nextCharToType = computed(() => {
+                    const nextIndex = inputValue.value.length;
+                    return nextIndex < targetText.value.length ? targetText.value[nextIndex] : '';
+                });
+
+                // --- Methods ---
+                const getModeLabel = (modeId) => {
+                    const mode = modes.find(m => m.id === modeId);
+                    return mode ? mode.label : modeId;
+                };
+                
+                const getModeBadgeClass = (modeId) => {
+                    switch(modeId) {
+                        case 'basic': return 'bg-blue-100 text-blue-800';
+                        case 'intermediate': return 'bg-purple-100 text-purple-800';
+                        case 'advanced': return 'bg-amber-100 text-amber-800';
+                        default: return 'bg-gray-100 text-gray-800';
+                    }
+                };
+                
+                const getModeButtonActiveClass = (modeId) => {
+                    switch(modeId) {
+                        case 'basic': return 'bg-blue-500 text-white border-blue-500';
+                        case 'intermediate': return 'bg-purple-500 text-white border-purple-500';
+                        case 'advanced': return 'bg-amber-500 text-white border-amber-500';
+                        default: return 'bg-primary-500 text-white border-primary-500';
+                    }
+                };
+                
+                const getAccuracyFeedback = () => {
+                    if (accuracy.value >= 95) return 'Sangat Baik';
+                    if (accuracy.value >= 85) return 'Baik';
+                    if (accuracy.value >= 75) return 'Cukup';
+                    if (accuracy.value >= 60) return 'Perlu Latihan';
+                    return 'Perlu Banyak Latihan';
+                };
+                
+                const getTimeProgress = () => {
+                    if (!isStarted.value) return 'Belum dimulai';
+                    if (isFinished.value) return 'Selesai';
+                    return 'Sedang berjalan';
+                };
+                
+                const getPerformanceRating = () => {
+                    const score = (wpm.value * 0.6) + (accuracy.value * 0.4);
+                    if (score >= 80) return 'Sangat Baik';
+                    if (score >= 65) return 'Baik';
+                    if (score >= 50) return 'Cukup';
+                    return 'Perlu Latihan';
+                };
+                
+                const getPerformancePercentage = () => {
+                    const score = (wpm.value * 0.6) + (accuracy.value * 0.4);
+                    return Math.min(score, 100);
+                };
+                
+                const getPerformanceBarClass = () => {
+                    const score = (wpm.value * 0.6) + (accuracy.value * 0.4);
+                    if (score >= 80) return 'bg-green-500';
+                    if (score >= 65) return 'bg-blue-500';
+                    if (score >= 50) return 'bg-yellow-500';
+                    return 'bg-red-500';
+                };
+                
+                const getPerformanceRatingClass = () => {
+                    const score = (wpm.value * 0.6) + (accuracy.value * 0.4);
+                    if (score >= 80) return 'bg-green-100 text-green-800';
+                    if (score >= 65) return 'bg-blue-100 text-blue-800';
+                    if (score >= 50) return 'bg-yellow-100 text-yellow-800';
+                    return 'bg-red-100 text-red-800';
+                };
+
+                const validateNisnInput = (e) => {
+                    const cleanVal = e.target.value.replace(/[^0-9]/g, '');
+                    form.value.nisn = cleanVal;
+                };
+
+                const loadText = () => {
+                    const options = textAssets[currentMode.value];
+                    if (!options || options.length === 0) {
+                        targetText.value = "Teks tidak tersedia untuk mode ini.";
+                        return;
+                    }
+                    
+                    let newText = "";
+                    let attempts = 0;
+                    
+                    // Try to get a different text than before
+                    do {
+                        const randomIndex = Math.floor(Math.random() * options.length);
+                        newText = options[randomIndex];
+                        attempts++;
+                    } while (newText === targetText.value && attempts < 5 && options.length > 1);
+
+                    targetText.value = newText;
+                };
+
+                const registerUser = () => {
+                    if (form.value.nisn && form.value.name && form.value.kelas && form.value.mode) {
+                        userData.value = { ...form.value };
+                        currentMode.value = form.value.mode;
+                        nextModeSelection.value = form.value.mode;
+                        loadText();
+                        isRegistered.value = true;
+                        initAudio();
+                        nextTick(() => {
+                            focusInput();
+                            // Show instructions for first time users
+                            setTimeout(() => {
+                                showInstructions.value = true;
+                            }, 500);
+                        });
+                    }
+                };
+
+                const logout = () => {
+                    isRegistered.value = false;
+                    isFinished.value = false;
+                    isStarted.value = false;
+                    showMobileMenu.value = false;
+                    stopTimer();
+                    
+                    // Reset Forms
+                    form.value.nisn = '';
+                    form.value.name = '';
+                    form.value.kelas = '';
+                    form.value.mode = 'basic';
+                    
+                    userData.value = { nisn: '', name: '', kelas: '' };
+                };
+
+                // --- Audio System ---
+                const initAudio = () => {
+                    if (!window.AudioContext && !window.webkitAudioContext) return;
+                    try {
+                        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    } catch (e) {
+                        console.warn("AudioContext tidak didukung:", e);
+                    }
+                };
+
+                const playTypingSound = () => {
+                    if (!isSoundOn.value || !audioCtx) return;
+                    try {
+                        if (audioCtx.state === 'suspended') audioCtx.resume();
+                        
+                        const t = audioCtx.currentTime;
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(800, t);
+                        osc.frequency.exponentialRampToValueAtTime(200, t + 0.08);
+                        
+                        gain.gain.setValueAtTime(0.1, t);
+                        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.08);
+                        
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        
+                        osc.start(t);
+                        osc.stop(t + 0.08);
+                    } catch (e) {
+                        console.warn("Gagal memainkan suara:", e);
+                    }
+                };
+
+                const toggleSound = () => {
+                    isSoundOn.value = !isSoundOn.value;
+                    if (isSoundOn.value && !audioCtx) initAudio();
+                };
+
+                // --- Firebase Functions ---
+                const initAuth = async () => {
+                    if (!isFirebaseAvailable.value) return;
+                    try {
+                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                            await signInWithCustomToken(auth, __initial_auth_token);
+                        } else {
+                            await signInAnonymously(auth);
+                        }
+                    } catch (error) {
+                        console.error("Auth error:", error);
+                    }
+                };
+
+                const fetchLeaderboard = () => {
+                    if (!isFirebaseAvailable.value) return;
+                    try {
+                        const collectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard');
+                        const q = query(collectionRef, orderBy('wpm', 'desc'), orderBy('accuracy', 'desc'), limit(10));
+                        
+                        onSnapshot(q, (snapshot) => {
+                            const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                            leaderboardData.value = docs;
+                        });
+                    } catch (e) {
+                        console.error("Gagal mengambil leaderboard:", e);
+                    }
+                };
+
+                const submitScore = async () => {
+                    if (!isFirebaseAvailable.value) {
+                        alert("Mode Offline: Penyimpanan skor tidak tersedia.");
+                        return;
+                    }
+
+                    if (!user.value) {
+                        alert("Anda harus login untuk menyimpan skor.");
+                        return;
+                    }
+                    
+                    isSubmitting.value = true;
+
+                    try {
+                        await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard'), {
+                            name: userData.value.name,
+                            nisn: userData.value.nisn,
+                            kelas: userData.value.kelas,
+                            wpm: wpm.value,
+                            accuracy: accuracy.value,
+                            cpm: cpm.value,
+                            mode: currentMode.value,
+                            timestamp: serverTimestamp(),
+                            userId: user.value.uid,
+                            timeSpent: elapsedTime.value
+                        });
+                        scoreSubmitted.value = true;
+                    } catch (e) {
+                        alert("Gagal menyimpan skor: " + e.message);
+                    } finally {
+                        isSubmitting.value = false;
+                    }
+                };
+
+                const downloadPDF = () => {
+                    const { jsPDF } = window.jspdf;
+                    const doc = new jsPDF();
+                    
+                    // Header
+                    doc.setFont("helvetica", "bold");
+                    doc.setFontSize(24);
+                    doc.setTextColor(79, 70, 229);
+                    doc.text("HASIL UJIAN PRAKTIK MENGETIK", 105, 20, { align: "center" });
+                    
+                    doc.setFontSize(14);
+                    doc.setTextColor(55, 65, 81);
+                    doc.text("SMAPTA KetikAI - Sistem Ujian Praktik", 105, 30, { align: "center" });
+                    
+                    doc.setDrawColor(226, 232, 240);
+                    doc.setLineWidth(0.5);
+                    doc.line(20, 35, 190, 35);
+
+                    // Student Info
+                    doc.setFont("helvetica", "normal");
+                    doc.setFontSize(12);
+                    
+                    let y = 50;
+                    doc.text("DATA PESERTA", 20, y);
+                    y += 10;
+                    
+                    doc.setFontSize(11);
+                    doc.text(`Nama Peserta    : ${userData.value.name}`, 25, y);
+                    y += 8;
+                    doc.text(`NISN                   : ${userData.value.nisn}`, 25, y);
+                    y += 8;
+                    doc.text(`Kelas                  : ${userData.value.kelas}`, 25, y);
+                    y += 8;
+                    doc.text(`Tingkat Kesulitan : ${getModeLabel(currentMode.value)}`, 25, y);
+                    y += 8;
+                    doc.text(`Tanggal Ujian     : ${new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}`, 25, y);
+                    
+                    // Results Box
+                    y += 15;
+                    doc.setDrawColor(79, 70, 229);
+                    doc.setFillColor(238, 242, 255);
+                    doc.roundedRect(20, y, 170, 50, 3, 3, 'FD');
+                    
+                    doc.setFont("helvetica", "bold");
+                    doc.setFontSize(14);
+                    doc.setTextColor(79, 70, 229);
+                    doc.text("HASIL UJIAN", 105, y + 15, { align: "center" });
+                    
+                    doc.setFontSize(12);
+                    doc.setTextColor(55, 65, 81);
+                    doc.text(`Kecepatan (WPM)       : ${wpm.value}`, 30, y + 30);
+                    doc.text(`Akurasi                       : ${accuracy.value}%`, 30, y + 40);
+                    doc.text(`Karakter per Menit : ${cpm.value}`, 30, y + 50);
+                    doc.text(`Waktu Pengerjaan     : ${formattedTime.value}`, 110, y + 30);
+                    
+                    // Performance Rating
+                    y += 65;
+                    doc.setFont("helvetica", "bold");
+                    doc.text("PERFORMANCE RATING", 105, y, { align: "center" });
+                    
+                    y += 10;
+                    doc.setFontSize(11);
+                    doc.setTextColor(255, 255, 255);
+                    
+                    const performanceWidth = getPerformancePercentage();
+                    doc.setFillColor(34, 197, 94); // Green
+                    doc.roundedRect(30, y, performanceWidth, 10, 2, 2, 'F');
+                    
+                    doc.setFillColor(226, 232, 240); // Gray
+                    doc.roundedRect(30 + performanceWidth, y, 100 - performanceWidth, 10, 2, 2, 'F');
+                    
+                    doc.setTextColor(55, 65, 81);
+                    doc.setFont("helvetica", "bold");
+                    doc.text(getPerformanceRating(), 105, y + 7, { align: "center" });
+                    
+                    // Footer
+                    y += 30;
+                    doc.setFont("helvetica", "italic");
+                    doc.setFontSize(10);
+                    doc.setTextColor(107, 114, 128);
+                    doc.text("Dicetak secara otomatis oleh Sistem KetikAI", 105, 280, { align: "center" });
+                    
+                    // Save PDF
+                    doc.save(`Hasil_Ujian_${userData.value.name.replace(/\s+/g, '_')}_${Date.now()}.pdf`);
+                };
+
+                const startTimer = () => {
+                    if (!isStarted.value) {
+                        isStarted.value = true;
+                        startTime.value = Date.now();
+                        timerInterval.value = setInterval(() => {
+                            const now = Date.now();
+                            elapsedTime.value = Math.floor((now - startTime.value) / 1000);
+                        }, 1000);
+                    }
+                };
+
+                const stopTimer = () => {
+                    clearInterval(timerInterval.value);
+                    isStarted.value = false;
+                };
+
+                const handleSecurityViolation = (event) => {
+                    // FIX: Manual preventDefault di sini (pengganti .prevent di HTML)
+                    if (event) {
+                        event.preventDefault();
+                        event.stopPropagation(); // Tambahan untuk keamanan ekstra
+                    }
+    
+                    // Mainkan suara error (jika sound aktif)
+                    if (isSoundOn.value && audioCtx) {
+                        try {
+                            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+                            const t = audioCtx.currentTime;
+                            const osc = audioCtx.createOscillator();
+                            const gain = audioCtx.createGain();
+                            osc.type = 'sawtooth';
+                            osc.frequency.setValueAtTime(150, t);
+                            osc.frequency.exponentialRampToValueAtTime(50, t + 0.3);
+                            gain.gain.setValueAtTime(0.2, t);
+                            gain.gain.exponentialRampToValueAtTime(0.01, t + 0.3);
+                            osc.connect(gain);
+                            gain.connect(audioCtx.destination);
+                            osc.start(t);
+                            osc.stop(t + 0.3);
+                        } catch (err) {
+                            console.error(err);
+                        }
+                    }
+
+                    // Peringatan
+                    alert("⚠️ PERINGATAN KEAMANAN ⚠️\n\nDilarang melakukan Copy-Paste atau Klik Kanan selama ujian berlangsung!");
+    
+                    // Fokuskan kembali ke input
+                    nextTick(() => {
+                        if (typingInput.value) typingInput.value.focus();
+                    });
+                };
+
+                const handleInput = (e) => {
+                    if (!isStarted.value && !isFinished.value) startTimer();
+
+                    const currentInput = inputValue.value;
+                    const currentIndex = currentInput.length - 1;
+
+                    // Game Over Check
+                    if (currentInput.length === targetText.value.length) {
+                        if (currentIndex >= 0 && currentInput[currentIndex] !== targetText.value[currentIndex]) {
+                            errorCount.value++;
+                        }
+                        finishTest();
+                        return;
+                    }
+
+                    // Realtime Error Check
+                    if (currentIndex >= 0) {
+                        if (currentInput[currentIndex] !== targetText.value[currentIndex]) {
+                            errorCount.value++;
+                        }
+                    }
+                    scrollToCursor();
+                };
+                
+                const handleVirtualKeyPress = (code, char) => {
+                    lastKeyPressed.value = code;
+                    playTypingSound();
+                    
+                    // Simulate key press
+                    if (code === 'Backspace') {
+                        inputValue.value = inputValue.value.slice(0, -1);
+                    } else if (code === 'Space') {
+                        inputValue.value += ' ';
+                    } else if (code === 'Enter') {
+                        // Handle enter if needed
+                    } else if (char && char.length === 1) {
+                        inputValue.value += char;
+                    }
+                    
+                    setTimeout(() => lastKeyPressed.value = null, 150);
+                };
+
+                const handleKeydown = (e) => {
+                    if (e.key === 'Escape' && showMobileKeyboard.value) {
+                        showMobileKeyboard.value = false;
+                        return;
+                    }
+                    
+                    lastKeyPressed.value = e.code;
+                    playTypingSound();
+                    setTimeout(() => lastKeyPressed.value = null, 150);
+                    
+                    if(e.code === 'Tab') e.preventDefault();
+                    checkCapsLock(e);
+                    
+                    // Auto-hide mobile keyboard on desktop keys
+                    if (e.code === 'Enter' || e.code === 'Space') {
+                        showMobileKeyboard.value = false;
+                    }
+                };
+
+                const checkCapsLock = (e) => {
+                    if (e.getModifierState) {
+                        capsLockOn.value = e.getModifierState("CapsLock");
+                    }
+                };
+
+                const finishTest = () => {
+                    stopTimer();
+                    isFinished.value = true;
+                    showMobileKeyboard.value = false;
+                    if(typingInput.value) typingInput.value.blur();
+                    
+                    // Auto-show leaderboard after test
+                    if (isFirebaseAvailable.value) {
+                        setTimeout(() => {
+                            showLeaderboard.value = true;
+                        }, 1500);
+                    }
+                };
+
+                const resetTest = (restartWithNewMode = false) => {
+                    stopTimer();
+                    inputValue.value = '';
+                    elapsedTime.value = 0;
+                    errorCount.value = 0;
+                    isFinished.value = false;
+                    isStarted.value = false;
+                    lastKeyPressed.value = null;
+                    scoreSubmitted.value = false;
+                    showMobileKeyboard.value = false;
+                    
+                    if (restartWithNewMode) {
+                        currentMode.value = nextModeSelection.value;
+                        loadText();
+                    }
+                    
+                    nextTick(() => focusInput());
+                };
+
+                const focusInput = () => {
+                    if (typingInput.value && !isFinished.value && isRegistered.value) {
+                        typingInput.value.focus();
+                        
+                        // On mobile, show keyboard
+                        if (window.innerWidth < 768) {
+                            showMobileKeyboard.value = true;
+                        }
+                    }
+                };
+
+                // Method Baru: Auto Scroll
+                const scrollToCursor = () => {
+                    nextTick(() => {
+                        // Cari elemen karakter yang sedang aktif (kursor)
+                        const cursorIndex = inputValue.value.length;
+                        const cursorElement = document.getElementById('char-' + cursorIndex);
+                        const container = document.querySelector('.typing-area');
+        
+                        if (cursorElement && container) {
+                            const containerRect = container.getBoundingClientRect();
+                            const cursorRect = cursorElement.getBoundingClientRect();
+
+                            // Hanya scroll jika kursor mendekati bawah area (buffer 60px)
+                            // Atau jika kursor di atas area (saat backspace ke atas)
+                            if (cursorRect.bottom > containerRect.bottom - 60 || cursorRect.top < containerRect.top + 60) {
+                                cursorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }
+                        }
+                    });
+                };
+
+                // Visual helpers
+                const getCharClass = (index) => {
+                    const typedChar = inputValue.value[index];
+                    const targetChar = targetText.value[index];
+                    const isCursor = index === inputValue.value.length;
+    
+                    let classes = "";
+                    
+                    if (isCursor) {
+                        // Style kursor blok baru
+                        classes += "cursor-active "; 
+                    } else if (typedChar == null) {
+                        classes += "text-gray-400 ";
+                    } else if (typedChar === targetChar) {
+                        classes += "char-correct font-medium "; // Class baru
+                    } else {
+                        classes += "char-error font-medium ";   // Class baru
+                    }
+    
+                    return classes;
+                };
+
+                const getKeyWidth = (code) => {
+                    if (code === 'Space') return 'w-64 lg:w-80';
+                    if (['ShiftLeft', 'ShiftRight', 'Enter', 'Backspace', 'CapsLock', 'Tab'].includes(code)) return 'flex-1 px-3 lg:px-4';
+                    return 'w-10 lg:w-12';
+                };
+                
+                const getMobileKeyWidth = (code) => {
+                    if (code === 'Space') return 'flex-1';
+                    if (['Backspace', 'Enter', 'ShiftLeft', 'AltLeft'].includes(code)) return 'w-14';
+                    return 'w-9';
+                };
+
+                const getKeyColor = (char, code) => {
+                    if (lastKeyPressed.value === code) {
+                        return 'bg-gray-600 text-white transform scale-95 shadow-inner';
+                    }
+                    
+                    const nextCharIndex = inputValue.value.length;
+                    
+                    // Highlight next key
+                    if (nextCharIndex < targetText.value.length && !isFinished.value) {
+                        const targetChar = targetText.value[nextCharIndex];
+                        
+                        // Handle Spacebar
+                        if (targetChar === ' ' && code === 'Space') {
+                            return 'gradient-primary text-white shadow-lg shadow-primary-300';
+                        }
+                        
+                        // Handle Characters
+                        if (char && targetChar.toLowerCase() === char.toLowerCase()) {
+                            return 'gradient-primary text-white shadow-lg shadow-primary-300';
+                        }
+                    }
+                    
+                    // Default key style
+                    if (['ShiftLeft', 'ShiftRight', 'Enter', 'Backspace', 'CapsLock', 'Tab', 'AltLeft'].includes(code)) {
+                        return 'bg-gray-300 text-gray-800 shadow border-b-2 border-gray-400';
+                    }
+                    
+                    return 'bg-white text-gray-800 shadow border-b-2 border-gray-300 hover:bg-gray-50';
+                };
+                
+                const formatDate = (timestamp) => {
+                    if (!timestamp) return '-';
+                    try {
+                        const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+                        return date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                    } catch (e) {
+                        return '-';
+                    }
+                };
+                
+                // Close mobile menu when clicking outside
+                const handleClickOutside = (event) => {
+                    if (showMobileMenu.value && !event.target.closest('.mobile-menu-container')) {
+                        showMobileMenu.value = false;
+                    }
+                };
+
+                onMounted(() => {
+                    loadText();
+                    
+                    if (isFirebaseAvailable.value) {
+                        initAuth().then(() => {
+                            onAuthStateChanged(auth, (u) => {
+                                user.value = u;
+                                if (u) fetchLeaderboard();
+                            });
+                        });
+                    }
+                    
+                    // Event Listeners
+                    window.addEventListener('keydown', (e) => {
+                        if (!isFinished.value && isRegistered.value) {
+                            focusInput();
+                        }
+                        checkCapsLock(e);
+                    });
+                    
+                    window.addEventListener('click', handleClickOutside);
+                    
+                    // Initialize audio
+                    initAudio();
+                    
+                    // Check screen size for mobile keyboard
+                    const checkScreenSize = () => {
+                        if (window.innerWidth >= 768) {
+                            showMobileKeyboard.value = false;
+                        }
+                    };
+                    
+                    window.addEventListener('resize', checkScreenSize);
+                });
+
+                return {
+                    // Refs
+                    inputValue, targetText, isStarted, isFinished, isInputFocused, wpm, cpm, accuracy, 
+                    formattedTime, errorCount, currentMode, modes, keyboardLayout, mobileKeyboardLayout,
+                    typingInput, leaderboardData, form, userData, isRegistered, isSubmitting, 
+                    scoreSubmitted, isSoundOn, isFirebaseAvailable, nextModeSelection, capsLockOn,
+                    showMobileMenu, showInstructions, showLeaderboard, showMobileKeyboard,
+                    
+                    // Computed
+                    typedChars, progressPercentage, nextCharToType,
+                    
+                    // Methods
+                    handleInput, handleKeydown, handleVirtualKeyPress, handleSecurityViolation, getCharClass, getKeyWidth, getMobileKeyWidth,
+                    getKeyColor, checkCapsLock, resetTest, focusInput, submitScore, registerUser, 
+                    toggleSound, downloadPDF, formatDate, getModeLabel, getModeBadgeClass, getModeButtonActiveClass,
+                    logout, validateNisnInput, getAccuracyFeedback, getTimeProgress, getPerformanceRating,
+                    getPerformancePercentage, getPerformanceBarClass, getPerformanceRatingClass
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

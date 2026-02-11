@@ -1,566 +1,725 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="description" content="Portal Aplikasi Personal - Platform digital terpadu untuk aplikasi pribadi dan produktivitas sehari-hari." />
-  <meta name="keywords" content="portal personal, aplikasi pribadi, sistem informasi personal, produktivitas digital, tools sehari-hari" />
-  <meta name="author" content="Pengguna" />
-  <!-- Google Material Theme Colors -->
-  <meta name="theme-color" content="#1a73e8" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    <meta name="theme-color" content="#f0f4f9" />
+    <title>Workspace · Portal Personal</title>
+    
+    <!-- Favicon dinamis dari Google -->
+    <link rel="icon" href="https://www.google.com/s2/favicons?domain=google.com&sz=128" type="image/png" />
 
-  <title>Portal Aplikasi Personal</title>
-  <link rel="icon" href="https://www.google.com/s2/favicons?domain=google.com&sz=128" type="image/png">
-  <link rel="apple-touch-icon" href="https://www.google.com/s2/favicons?domain=google.com&sz=192">
-  
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            'google-blue': '#1a73e8',
-            'google-blue-dark': '#0d47a1',
-            'google-blue-light': '#4285f4',
-            'google-red': '#ea4335',
-            'google-yellow': '#fbbc04',
-            'google-green': '#34a853',
-            'google-gray': '#5f6368',
-            'google-gray-light': '#f8f9fa',
-            'google-gray-border': '#dadce0',
-          },
-          fontFamily: {
-            'google-sans': ['Google Sans', 'Inter', 'Roboto', 'sans-serif'],
-          },
-          boxShadow: {
-            'google': '0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15)',
-            'google-hover': '0 1px 3px 0 rgba(60,64,67,0.3), 0 4px 8px 3px rgba(60,64,67,0.15)',
-          },
-          borderRadius: {
-            'google': '8px',
-            'google-lg': '12px',
-          }
+    <!-- Tailwind CSS CDN dengan konfigurasi kustom Material Design 3 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // ---------------------------------------------------------------------
+        //  KONFIGURASI TAILWIND - Tema Material 3 ala Google Workspace
+        // ---------------------------------------------------------------------
+        tailwind.config = {
+            theme: {
+                extend: {
+                    // Palet warna Material 3 (Google modern)
+                    colors: {
+                        'm3-bg'              : '#f0f4f9',   // Latar belakang utama
+                        'm3-surface'         : '#ffffff',   // Permukaan putih bersih
+                        'm3-primary'         : '#0b57d0',   // Biru Google yang ikonik
+                        'm3-primary-hover'   : '#0842a0',   // Biru gelap untuk hover
+                        'm3-on-surface'      : '#1f1f1f',   // Teks di atas permukaan
+                        'm3-on-surface-variant': '#444746', // Teks variasi abu-abu
+                        'm3-outline'         : '#747775',   // Garis outline
+                        'm3-outline-variant' : '#c4c7c5',   // Outline varian terang
+                    },
+                    // Font Google Sans sebagai font utama
+                    fontFamily: {
+                        'sans': ['Google Sans', 'Roboto', 'Arial', 'sans-serif'],
+                    },
+                    // Radius khas Material 3 (M3)
+                    borderRadius: {
+                        'xl'    : '16px',
+                        '2xl'   : '24px',
+                        '3xl'   : '32px',
+                        'pill'  : '9999px',
+                    },
+                    // Elevasi bayangan sesuai spesifikasi M3
+                    boxShadow: {
+                        'elevation-1': '0 1px 2px 0 rgba(0,0,0,0.3), 0 1px 3px 1px rgba(0,0,0,0.15)',
+                        'elevation-2': '0 1px 2px 0 rgba(60,64,67,0.3), 0 2px 6px 2px rgba(60,64,67,0.15)',
+                        'floating'   : '0 4px 8px 3px rgba(0,0,0,0.15), 0 1px 3px rgba(0,0,0,0.3)',
+                    }
+                }
+            }
+        };
+    </script>
+
+    <!-- Font Google Sans & ikon Material (outlined & round) -->
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined|Material+Icons+Round" rel="stylesheet" />
+
+    <!-- ------------------------------------------------------------------ -->
+    <!--  STYLE GLOBAL & ANIMASI KHUSUS                                   -->
+    <!--  Seluruh CSS kustom ditempatkan di sini agar terpisah dari logic -->
+    <!-- ------------------------------------------------------------------ -->
+    <style>
+        /* ========== DASAR ========== */
+        body {
+            background-color: #f0f4f9;
+            color: #1f1f1f;
+            -webkit-font-smoothing: antialiased;
         }
-      }
-    }
-  </script>
 
-  <!-- Google Fonts & Icons -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        /* ========== SCROLLBAR MINIMALIS ========== */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #dadce0;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #bdc1c6;
+        }
 
-  <style>
-    /* Google-style CSS */
-    body {
-      font-family: 'Google Sans', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      -webkit-tap-highlight-color: transparent;
-      color: #202124;
-    }
-    
-    /* Google Material Spinner */
-    .spinner {
-      width: 50px;
-      height: 50px;
-      border: 4px solid rgba(66, 133, 244, 0.2);
-      border-radius: 50%;
-      border-top-color: #4285f4;
-      animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-    }
-    
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+        /* ========== ANIMASI LOADER GOOGLE 4 WARNA ========== */
+        .spinner-container {
+            position: relative;
+            width: 48px;
+            height: 48px;
+        }
+        .circular {
+            animation: rotate 2s linear infinite;
+            height: 100%;
+            transform-origin: center center;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            margin: auto;
+        }
+        .path {
+            stroke-dasharray: 1, 200;
+            stroke-dashoffset: 0;
+            animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite;
+            stroke-linecap: round;
+        }
+        @keyframes rotate {
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes dash {
+            0%   { stroke-dasharray: 1,200; stroke-dashoffset: 0; }
+            50%  { stroke-dasharray: 89,200; stroke-dashoffset: -35px; }
+            100% { stroke-dasharray: 89,200; stroke-dashoffset: -124px; }
+        }
+        @keyframes color {
+            100%, 0% { stroke: #4285F4; }
+            40%      { stroke: #DB4437; }
+            66%      { stroke: #F4B400; }
+            80%, 90% { stroke: #0F9D58; }
+        }
 
-    /* Google-style scrollbar */
-    ::-webkit-scrollbar {
-      width: 10px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #f1f3f4;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #dadce0;
-      border-radius: 5px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #bdc1c6;
-    }
-    
-    /* Material Design animations */
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    
-    .fade-in-up {
-      animation: fadeInUp 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-    }
-    
-    /* Google-style ripple effect */
-    .ripple {
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .ripple:after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 5px;
-      height: 5px;
-      background: rgba(0, 0, 0, 0.1);
-      opacity: 0;
-      border-radius: 100%;
-      transform: scale(1, 1) translate(-50%);
-      transform-origin: 50% 50%;
-    }
-    
-    .ripple:focus:after {
-      animation: ripple 0.6s ease-out;
-    }
-    
-    @keyframes ripple {
-      0% {
-        transform: scale(0, 0);
-        opacity: 0.5;
-      }
-      20% {
-        transform: scale(25, 25);
-        opacity: 0.3;
-      }
-      100% {
-        opacity: 0;
-        transform: scale(40, 40);
-      }
-    }
-    
-    /* Search highlight */
-    .highlight {
-      background-color: #e8f0fe;
-      padding: 0 2px;
-      border-radius: 2px;
-      color: #1a73e8;
-    }
-    
-    /* Google-style profile avatar */
-    .avatar {
-      width: 96px;
-      height: 96px;
-      background: linear-gradient(135deg, #4285f4, #34a853);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 40px;
-      font-weight: 500;
-      box-shadow: 0 2px 10px rgba(66, 133, 244, 0.3);
-    }
-    
-    /* Google-style input focus */
-    .google-input:focus {
-      border-color: #1a73e8;
-      box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
-    }
-    
-    /* Google-style elevation */
-    .elevation-1 {
-      box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
-    }
-    
-    .elevation-2 {
-      box-shadow: 0 1px 3px 0 rgba(60,64,67,0.3), 0 4px 8px 3px rgba(60,64,67,0.15);
-    }
-    
-    /* Material Design transition */
-    .material-transition {
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-  </style>
+        /* ========== RIPPLE EFFECT (ELEGAN) ========== */
+        .ripple {
+            position: relative;
+            overflow: hidden;
+            transform: translate3d(0,0,0);
+        }
+        .ripple:after {
+            content: "";
+            display: block;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            background-image: radial-gradient(circle, #000 10%, transparent 10.01%);
+            background-repeat: no-repeat;
+            background-position: 50%;
+            transform: scale(10,10);
+            opacity: 0;
+            transition: transform 0.5s, opacity 1s;
+        }
+        .ripple:active:after {
+            transform: scale(0,0);
+            opacity: 0.1;
+            transition: 0s;
+        }
+
+        /* ========== FADE IN (KARTU APLIKASI) ========== */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in {
+            animation: fadeIn 0.4s cubic-bezier(0.0,0.0,0.2,1) forwards;
+        }
+
+        /* ========== LOADER IFRAME BERBLUR ========== */
+        .iframe-loader-material {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transition: opacity 0.25s ease;
+            z-index: 200;
+        }
+
+        /* ========== SHIMMER PROGRESS BAR ========== */
+        .shimmer {
+            background: linear-gradient(90deg, #0b57d0 25%, #89b9ff 50%, #0b57d0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.8s infinite;
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* ========== STATUS CHIP ONLINE / OFFLINE ========== */
+        .chip-online {
+            background-color: #e6f4ea;
+            color: #0d652d;
+            border: 1px solid #a8dab5;
+        }
+        .chip-offline {
+            background-color: #fce8e6;
+            color: #b31412;
+            border: 1px solid #f6aea9;
+        }
+    </style>
 </head>
-<body class="bg-google-gray-light">
+<body class="h-screen flex flex-col overflow-hidden">
 
-  <!-- Loading Overlay -->
-  <div id="loadingOverlay" class="fixed inset-0 bg-white flex flex-col justify-center items-center z-[9999] transition-opacity duration-300">
-    <div class="text-center">
-      <div class="avatar mx-auto mb-6">
-        <span class="material-icons" style="font-size: 48px;">account_circle</span>
-      </div>
-      <h1 class="text-3xl font-google-sans font-medium text-gray-900">Portal Personal</h1>
-      <p class="text-google-gray mt-3">Aplikasi dan Alat Produktivitas Pribadi</p>
+    <!-- ================================================================== -->
+    <!--  KOMPONEN: LAYAR SPLASH (LOADING OVERLAY)                          -->
+    <!--  Menampilkan spinner Google 4 warna saat inisialisasi              -->
+    <!-- ================================================================== -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-white z-[9999] flex flex-col justify-center items-center transition-opacity duration-500">
+        <div class="spinner-container mb-6">
+            <svg class="circular" viewBox="25 25 50 50">
+                <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="4" stroke-miterlimit="10" />
+            </svg>
+        </div>
+        <div class="flex items-center gap-2">
+            <span class="text-2xl font-sans font-medium text-gray-600">Google</span>
+            <span class="text-2xl font-sans font-normal text-gray-500">Workspace</span>
+        </div>
     </div>
-    <div class="spinner mt-10"></div>
-    <p id="loadingText" class="text-google-gray mt-6 font-medium">Memuat aplikasi...</p>
-  </div>
-  
-  <!-- Error Message -->
-  <div id="errorMessage" class="fixed inset-0 bg-white flex-col justify-center items-center text-center p-6 z-[10000] hidden">
-    <span class="material-icons text-google-red" style="font-size: 64px;">error_outline</span>
-    <h2 class="text-3xl font-google-sans font-medium text-google-red mt-8">Gagal Memuat Konten</h2>
-    <p class="mt-4 text-google-gray max-w-md text-lg">Terjadi kendala saat memuat konten. Pastikan Anda terhubung ke internet dan coba lagi.</p>
-    <button id="retryButton" class="mt-10 bg-google-blue text-white font-medium py-3 px-8 rounded-google elevation-1 hover:elevation-2 hover:bg-google-blue-dark material-transition ripple flex items-center gap-3">
-      <span class="material-icons">refresh</span>
-      Coba Lagi
-    </button>
-  </div>
-  
-  <!-- Connection Status -->
-  <div id="connectionStatus" class="fixed bottom-5 right-5 px-4 py-2 rounded-google text-sm font-medium text-white shadow-google flex items-center gap-2 z-[1000] hidden material-transition">
-    <span class="material-icons" id="connectionIcon" style="font-size: 18px;"></span>
-    <span id="connectionText"></span>
-  </div>
 
-  <!-- Permission Notice -->
-  <div id="violationNotice" class="fixed bottom-20 md:bottom-5 right-5 bg-google-gray text-white px-4 py-3 rounded-google shadow-google text-sm flex items-center gap-2 z-[1000] opacity-0 transition-opacity duration-300 hidden material-transition elevation-1">
-    <span class="material-icons" style="font-size: 18px;">info</span>
-    Izin akses diberikan ke aplikasi ini.
-  </div>
-  
-  <!-- Main Application Container -->
-  <div id="appContainer" class="min-h-screen">
-    
-    <!-- Portal View -->
-    <main id="portalView" class="w-full min-h-screen bg-white hidden">
-      <div class="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
-        <!-- Header Profile -->
-        <header class="text-center py-12">
-          <div class="avatar mx-auto">
-            <span class="material-icons" style="font-size: 48px;">account_circle</span>
-          </div>
-          <h1 class="text-4xl font-google-sans font-medium text-gray-900 mt-8">Portal Personal</h1>
-          <p class="text-google-gray mt-3 text-lg">Aplikasi dan Alat Produktivitas Pribadi</p>
-          
-          <!-- Search Bar -->
-          <div class="mt-10 max-w-xl mx-auto">
-            <div class="relative">
-              <span class="material-icons absolute left-4 top-1/2 transform -translate-y-1/2 text-google-gray">search</span>
-              <input 
-                type="text" 
-                id="searchInput" 
-                placeholder="Cari aplikasi atau alat..." 
-                class="w-full pl-12 pr-12 py-4 rounded-google-lg border border-google-gray-border focus:outline-none focus:border-google-blue google-input material-transition elevation-1 hover:elevation-2"
-              >
-              <button id="clearSearch" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-google-gray hover:text-gray-900 material-transition hidden">
-                <span class="material-icons">close</span>
-              </button>
+    <!-- ================================================================== -->
+    <!--  KOMPONEN: LAYAR ERROR KONEKSI                                     -->
+    <!--  Muncul saat perangkat offline, ada tombol reload                  -->
+    <!-- ================================================================== -->
+    <div id="errorMessage" class="fixed inset-0 bg-white z-[9999] hidden flex-col justify-center items-center text-center p-8">
+        <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mb-4">
+            <span class="material-icons-round text-red-500 text-3xl">cloud_off</span>
+        </div>
+        <h2 class="text-xl font-medium text-gray-900">Tidak ada koneksi internet</h2>
+        <p class="mt-2 text-gray-500 mb-8 max-w-xs">Periksa koneksi jaringan Anda dan coba lagi.</p>
+        <button id="retryButton" class="px-6 py-2.5 bg-m3-primary text-white rounded-pill font-medium hover:shadow-lg hover:bg-m3-primary-hover transition-all">
+            Coba Lagi
+        </button>
+    </div>
+
+    <!-- ================================================================== -->
+    <!-- HEADER UTAMA - Google Workspace style                              -->
+    <!-- Berisi menu, judul, status online, avatar                          -->
+    <!-- ================================================================== -->
+    <header id="topBar" class="bg-m3-bg px-4 py-3 flex items-center justify-between z-50 shrink-0">
+        <!-- Kiri: menu + logo workspace -->
+        <div class="flex items-center gap-3">
+            <button class="p-2 rounded-full hover:bg-gray-200/50 transition-colors material-icons-round text-gray-600" aria-label="Menu utama">
+                menu
+            </button>
+            <div class="flex items-center gap-2 select-none">
+                <div class="w-8 h-8 bg-m3-primary rounded-lg flex items-center justify-center text-white">
+                    <span class="material-icons-round text-lg">grid_view</span>
+                </div>
+                <span class="text-xl font-normal text-gray-600 hidden sm:block">Workspace</span>
             </div>
-          </div>
-        </header>
-        
-        <!-- App Grid -->
-        <section class="mt-12">
-          <div id="linksContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <!-- App links will be generated by JavaScript here -->
-          </div>
-        </section>
-
-        <!-- No Results Message -->
-        <div id="noResults" class="text-center py-16 hidden">
-          <span class="material-icons text-google-gray-border" style="font-size: 80px;">search_off</span>
-          <h3 class="text-2xl font-google-sans font-medium text-google-gray mt-6">Aplikasi tidak ditemukan</h3>
-          <p class="text-google-gray mt-3 text-lg">Coba gunakan kata kunci lain atau lihat semua aplikasi.</p>
-          <button id="showAllApps" class="mt-8 bg-google-blue text-white font-medium py-3 px-6 rounded-google elevation-1 hover:elevation-2 hover:bg-google-blue-dark material-transition ripple">
-            Tampilkan Semua Aplikasi
-          </button>
         </div>
 
-         <!-- Footer -->
-         <footer class="text-center py-12 mt-12 border-t border-google-gray-border">
-            <p class="text-google-gray text-sm">&copy; 2025 Portal Personal. Hak Cipta Dilindungi.</p>
-            <div class="flex justify-center gap-6 mt-4">
-              <a href="#" class="text-google-blue hover:text-google-blue-dark text-sm material-transition">Privasi</a>
-              <a href="#" class="text-google-blue hover:text-google-blue-dark text-sm material-transition">Persyaratan</a>
-              <a href="#" class="text-google-blue hover:text-google-blue-dark text-sm material-transition">Bantuan</a>
+        <!-- Kanan: status koneksi + apps icon + avatar -->
+        <div class="flex items-center gap-2">
+            <!-- Status online/offline (akan ditampilkan lewat JS) -->
+            <div id="connectionStatus" class="hidden px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 chip-online">
+                <span class="material-icons-round text-[16px]">wifi</span> Online
             </div>
-        </footer>
-      </div>
-    </main>
-    
-    <!-- Iframe View -->
-    <div id="iframeView" class="fixed inset-0 bg-white z-[9000] hidden">
-       <button id="backButton" class="absolute top-6 left-6 bg-white w-12 h-12 rounded-full flex items-center justify-center shadow-google hover:shadow-google-hover material-transition ripple z-20">
-        <span class="material-icons text-google-gray">arrow_back</span>
-      </button>
-      <div id="iframeLoader" class="absolute inset-0 bg-white flex flex-col justify-center items-center z-10">
-          <div class="spinner"></div>
-          <p class="text-google-blue font-medium mt-6">Memuat aplikasi...</p>
-      </div>
-      <iframe id="contentFrame" src="" class="w-full h-full border-none relative z-0"></iframe>
+            
+            <!-- Ikon aplikasi Google -->
+            <button class="p-2 rounded-full hover:bg-gray-200/50 transition-colors material-icons-round text-gray-600" aria-label="Aplikasi Google">
+                apps
+            </button>
+            
+            <!-- Avatar pengguna (inisial) -->
+            <div class="w-9 h-9 bg-purple-600 rounded-full flex items-center justify-center text-white text-sm hover:ring-4 hover:ring-gray-200 transition-all cursor-pointer select-none">
+                P
+            </div>
+        </div>
+    </header>
+
+    <!-- ================================================================== -->
+    <!-- KONTAINER UTAMA - Beralih antara PORTAL (grid) dan IFRAME (app)    -->
+    <!-- ================================================================== -->
+    <div id="appContainer" class="flex-1 overflow-hidden relative">
+
+        <!-- ========== TAMPILAN PORTAL (HALAMAN AWAL) ========== -->
+        <main id="portalView" class="w-full h-full overflow-y-auto pb-20">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 pt-6">
+                
+                <!-- Hero / Selamat Datang + Pencarian -->
+                <div class="flex flex-col items-center mb-10 mt-4">
+                    <!-- Chip "Hari ini · Kerja cepat" -->
+                    <div class="inline-flex items-center gap-2 bg-white/40 backdrop-blur-sm px-5 py-2 rounded-full text-sm text-m3-on-surface-variant shadow-sm mb-4">
+                        <span class="material-icons-round text-base text-m3-primary">schedule</span>
+                        <span>Hari ini · Kerja cepat</span>
+                    </div>
+                    <!-- Judul sambutan -->
+                    <h1 class="text-3xl sm:text-4xl font-normal text-gray-800 mb-8 text-center">
+                        Selamat Datang
+                    </h1>
+                    
+                    <!-- Komponen Pencarian (Search Bar) -->
+                    <div class="relative w-full max-w-2xl group z-10">
+                        <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                            <span class="material-icons-round text-gray-400 group-focus-within:text-m3-primary transition-colors">search</span>
+                        </div>
+                        <input 
+                            type="text" 
+                            id="searchInput" 
+                            class="block w-full pl-14 pr-12 py-3.5 bg-white border border-transparent rounded-pill text-gray-900 placeholder-gray-500 focus:outline-none focus:bg-white focus:shadow-elevation-2 focus:border-transparent transition-all shadow-sm hover:shadow-md hover:bg-white" 
+                            placeholder="Telusuri aplikasi, alat, dan lainnya"
+                            aria-label="Pencarian aplikasi"
+                        />
+                        <!-- Tombol hapus pencarian (hidden default) -->
+                        <button id="clearSearch" class="absolute inset-y-0 right-0 pr-4 flex items-center hidden cursor-pointer" aria-label="Hapus pencarian">
+                            <span class="material-icons-round text-gray-500 hover:bg-gray-100 rounded-full p-1">close</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Section Daftar Aplikasi -->
+                <div id="appsSection">
+                    <h3 class="text-sm font-medium text-gray-500 mb-4 px-2">Aplikasi Aktif</h3>
+                    <!-- Container grid untuk kartu aplikasi, diisi oleh JavaScript -->
+                    <div id="linksContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-12"></div>
+                </div>
+
+                <!-- Pesan "Tidak ada hasil" saat pencarian kosong -->
+                <div id="noResults" class="hidden flex flex-col items-center justify-center py-20 text-center">
+                    <img src="https://www.gstatic.com/images/branding/product/2x/drive_48dp.png" class="w-16 h-16 opacity-20 grayscale mb-4" alt="Tidak ditemukan" />
+                    <p class="text-gray-500 text-lg">Tidak ada aplikasi yang cocok.</p>
+                    <button id="showAllApps" class="mt-4 text-m3-primary font-medium hover:underline">Lihat semua aplikasi</button>
+                </div>
+            </div>
+            
+            <!-- Footer sederhana -->
+            <div class="text-center py-8 text-xs text-gray-400">
+                <p>&copy; 2025 · Portal Personal — Google Workspace Inspired</p>
+            </div>
+        </main>
+
+        <!-- ========== TAMPILAN IFRAME (EMBED APLIKASI) ========== -->
+        <div id="iframeView" class="absolute inset-0 bg-white z-[100] hidden flex flex-col">
+            <!-- Header IFRAME : navigasi kembali, nama aplikasi, tombol aksi -->
+            <div class="bg-white border-b border-gray-200 px-2 py-2 flex items-center justify-between shrink-0 shadow-sm z-10">
+                <div class="flex items-center gap-2">
+                    <!-- Tombol kembali ke portal -->
+                    <button id="backButton" class="p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-600" aria-label="Kembali">
+                        <span class="material-icons-round">arrow_back</span>
+                    </button>
+                    <!-- Informasi aplikasi aktif -->
+                    <div class="flex flex-col">
+                        <span id="activeAppName" class="font-medium text-gray-800 text-sm">Memuat...</span>
+                        <span class="text-xs text-green-700 flex items-center gap-1 bg-green-100/70 px-2 py-0.5 rounded-full">
+                            <span class="w-2 h-2 rounded-full bg-green-500"></span> Terkoneksi
+                        </span>
+                    </div>
+                </div>
+                
+                <!-- Aksi: reload & buka di tab baru -->
+                <div class="flex items-center gap-1">
+                    <button id="refreshIframeBtn" class="p-2.5 rounded-full hover:bg-black/5 text-m3-on-surface-variant" title="Muat Ulang" aria-label="Muat ulang iframe">
+                        <span class="material-icons-round text-2xl">refresh</span>
+                    </button>
+                    <button id="openExternalBtn" class="p-2.5 rounded-full hover:bg-black/5 text-m3-on-surface-variant" title="Buka di Tab Baru" aria-label="Buka di tab baru">
+                        <span class="material-icons-round text-2xl">open_in_new</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Loader halus saat iframe sedang loading -->
+            <div id="iframeLoader" class="absolute inset-0 top-[76px] iframe-loader-material flex flex-col items-center justify-center z-[250] transition-opacity duration-300">
+                <div class="relative flex flex-col items-center">
+                    <!-- Ikon aplikasi dengan efek float -->
+                    <div class="w-24 h-24 bg-white/70 backdrop-blur-2xl rounded-3xl flex items-center justify-center shadow-elevation-3">
+                        <span class="material-icons-round text-m3-primary text-5xl" id="loaderAppIcon">rocket_launch</span>
+                    </div>
+                    <!-- Nama aplikasi yang sedang dibuka -->
+                    <span class="mt-6 text-lg font-medium text-m3-on-surface bg-white/50 px-6 py-2 rounded-pill backdrop-blur-sm shadow-sm" id="loaderAppName">
+                        Menyiapkan ruang kerja...
+                    </span>
+                    <!-- Progress bar ala Android (shimmer) -->
+                    <div class="mt-6 w-56 h-1.5 bg-white/60 rounded-full overflow-hidden shadow-inner">
+                        <div class="h-full bg-m3-primary rounded-full shimmer" style="width: 90%;"></div>
+                    </div>
+                    <!-- Indikator keamanan HTTPS -->
+                    <p class="mt-4 text-xs text-gray-500 flex items-center gap-1">
+                        <span class="material-icons-round text-sm">lock</span> Koneksi aman (HTTPS)
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Elemen iframe utama – akan diisi URL aplikasi -->
+            <iframe 
+                id="contentFrame" 
+                class="w-full h-full border-0 bg-white relative z-0" 
+                src="about:blank" 
+                sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-downloads allow-storage-access-by-user-activation allow-top-navigation-by-user-activation" 
+                allow="camera; microphone; geolocation; fullscreen; clipboard-read; clipboard-write; web-share"
+                title="Embed Aplikasi"
+            ></iframe>
+        </div>
     </div>
-  </div>
 
-  <script>
-    // --- DOM Elements ---
-    const loadingOverlay = document.getElementById('loadingOverlay');
-    const loadingText = document.getElementById('loadingText');
-    const errorMessage = document.getElementById('errorMessage');
-    const retryButton = document.getElementById('retryButton');
-    const portalView = document.getElementById('portalView');
-    const iframeView = document.getElementById('iframeView');
-    const contentFrame = document.getElementById('contentFrame');
-    const backButton = document.getElementById('backButton');
-    const iframeLoader = document.getElementById('iframeLoader');
-    const connectionStatus = document.getElementById('connectionStatus');
-    const connectionIcon = document.getElementById('connectionIcon');
-    const connectionText = document.getElementById('connectionText');
-    const violationNotice = document.getElementById('violationNotice');
-    const linksContainer = document.getElementById('linksContainer');
-    const searchInput = document.getElementById('searchInput');
-    const clearSearch = document.getElementById('clearSearch');
-    const noResults = document.getElementById('noResults');
-    const showAllApps = document.getElementById('showAllApps');
+    <!-- ================================================================== -->
+    <!-- KOMPONEN TOAST (NOTIFIKASI SEMENTARA)                              -->
+    <!-- Muncul di tengah bawah, untuk feedback pengguna                    -->
+    <!-- ================================================================== -->
+    <div id="toast" class="fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-[#2c2e30] text-white px-6 py-3.5 rounded-2xl text-sm z-[1000] opacity-0 pointer-events-none transition-all duration-300 flex items-center gap-3 shadow-floating backdrop-blur-md bg-opacity-90">
+        <span class="material-icons-round text-base" id="toastIcon">info</span>
+        <span id="toastMessage" class="font-medium">Pesan notifikasi</span>
+    </div>
 
-    // --- Global Variables ---
-    let isOnline = navigator.onLine;
-    const fullPermissions = "autoplay; camera; encrypted-media; geolocation; microphone; midi; payment; usb; accelerometer; gyroscope; magnetometer; screen-wake-lock; clipboard-read; clipboard-write; web-share; fullscreen";
+    <!-- ================================================================== -->
+    <!-- JAVASCRIPT : LOGIKA APLIKASI                                       -->
+    <!-- - Manajemen state (online, aplikasi aktif, dll)                    -->
+    <!-- - Render grid aplikasi                                             -->
+    <!-- - Pencarian dan filter                                             -->
+    <!-- - Kontrol iframe & loader                                          -->
+    <!-- - Semua fungsi diberi komentar lengkap dalam Bahasa Indonesia      -->
+    <!-- - Menggunakan camelCase dan struktur modular                       -->
+    <!-- ================================================================== -->
+    <script>
+        // -----------------------------------------------------------------
+        // 1. DATASET APLIKASI
+        //    Disimpan dalam array objek, mudah ditambah/dikurangi
+        // -----------------------------------------------------------------
+        const APP_DATA = {
+            /** Aplikasi utama (Google Apps Script) */
+            core: [
+                { id: 'erapor',   name: 'e-Rapor',     desc: 'Sistem Penilaian Digital', icon: 'assignment',       url: 'https://script.google.com/macros/s/AKfycby00syjpoAMG8sz-GWX9Nox4XwZD_GC-Q16NBrjvuePU-2sia6r_IpZ5LEdwZuUNKpatg/exec', color: 'text-blue-600',  bg: 'bg-blue-100' },
+                { id: 'dapodik',  name: 'Dapodik',     desc: 'Data Pokok Pendidikan',    icon: 'school',           url: 'https://script.google.com/macros/s/AKfycbxeJaVjE6c0CNopRd8ztQXq356kt7t9eL194oPEBMxmmKxELjG9R46ElRyeIzu6ZZ32/exec', color: 'text-green-600', bg: 'bg-green-100' },
+                { id: 'ns',       name: 'Wali Kelas',  desc: 'Manajemen Kelas XII',      icon: 'supervisor_account', url: 'https://script.google.com/macros/s/AKfycbxfohSLIqzMC9fQi17jwVj36AQ91rN08QTsIVN4TkBJQEd-KNR13kdeV6u5XXzBMcUuQg/exec', color: 'text-amber-600', bg: 'bg-amber-100' },
+                { id: 'presensi', name: 'e-Presensi',  desc: 'Absensi Geofencing',       icon: 'location_on',      url: 'https://script.google.com/macros/s/AKfycbzPXFDwJGyOc2QefTGenRbakxuaQVwMzTzNmbRUASF856kxL3aapxHNoppKMvkzr3-U/exec', color: 'text-red-600',   bg: 'bg-red-100' },
+                { id: 'cbt',      name: 'CBT Ujian',   desc: 'Computer Based Test',      icon: 'computer',         url: 'https://script.google.com/macros/s/AKfycbxQnnLAhqlgWbROXNpg5V2CPHj6yz0wrEYdajF4N3qHU8Q-s6FniBbSIZ6VP9XUXCqu/exec', color: 'text-purple-600', bg: 'bg-purple-100' }
+            ],
+            /** Aplikasi tambahan (dari GitHub Pages) */
+            special: [
+                { id: 'amp',      name: 'MiniAmp',      desc: 'Music Player',            icon: 'music_note',       url: 'https://dedebasuni.github.io/page/amp',      color: 'text-pink-600',   bg: 'bg-pink-100' },
+                { id: 'konversi', name: 'Konversi',     desc: 'Matematika Linear',       icon: 'calculate',        url: 'https://dedebasuni.github.io/page/konversi', color: 'text-teal-600',   bg: 'bg-teal-100' },
+                { id: 'periodik', name: 'Tabel Periodik', desc: 'Eksplorasi Kimia',      icon: 'science',          url: 'https://dedebasuni.github.io/page/periodik', color: 'text-indigo-600', bg: 'bg-indigo-100' },
+                { id: 'ketik',    name: 'Typing Test',   desc: 'Latihan 10 Jari',        icon: 'keyboard',         url: 'https://dedebasuni.github.io/page/ketik',    color: 'text-cyan-600',   bg: 'bg-cyan-100' }
+            ]
+        };
 
-    // Data aplikasi personal yang akan ditampilkan
-    const appData = [
-      { id: 'erapor', name: 'e-Rapor', desc: 'Akses Sistem Rapor Digital', icon: 'local_library', url: "https://script.google.com/macros/s/AKfycby00syjpoAMG8sz-GWX9Nox4XwZD_GC-Q16NBrjvuePU-2sia6r_IpZ5LEdwZuUNKpatg/exec", color: 'bg-indigo-500', iconColor: 'text-white' },
-      { id: 'dapodik', name: 'Dapodik', desc: 'Data Pokok Peserta Didik', icon: 'school', url: "https://script.google.com/macros/s/AKfycbxeJaVjE6c0CNopRd8ztQXq356kt7t9eL194oPEBMxmmKxELjG9R46ElRyeIzu6ZZ32/exec", color: 'bg-google-green', iconColor: 'text-white' },
-      { id: 'ns', name: 'NS', desc: 'Wali Kelas XII', icon: 'grading', url: "https://script.google.com/macros/s/AKfycbxfohSLIqzMC9fQi17jwVj36AQ91rN08QTsIVN4TkBJQEd-KNR13kdeV6u5XXzBMcUuQg/exec", color: 'bg-google-yellow', iconColor: 'text-white' },
-      { id: 'presensi', name: 'e-Presensi', desc: 'Presensi Geofencing', icon: 'qr_code_scanner', url: "https://script.google.com/macros/s/AKfycbzPXFDwJGyOc2QefTGenRbakxuaQVwMzTzNmbRUASF856kxL3aapxHNoppKMvkzr3-U/exec", color: 'bg-google-red', iconColor: 'text-white' },
-      { id: 'cbt', name: 'CBT Asesmen', desc: 'Evaluasi Pembelajaran', icon: 'cast_for_education', url: "https://script.google.com/macros/s/AKfycbxQnnLAhqlgWbROXNpg5V2CPHj6yz0wrEYdajF4N3qHU8Q-s6FniBbSIZ6VP9XUXCqu/exec", color: 'bg-purple-500', iconColor: 'text-white' },
-      { id: 'amp', name: 'MiniAmp', desc: 'Pemutar Musik Sederhana', icon: 'queue_music', url: "https://dedebasuni.github.io/page/amp", color: 'bg-pink-500', iconColor: 'text-white' }
-    ];
-    
-    const specialAppsData = [
-      { id: 'konversi', name: 'Konversi', desc: 'Metode Linear Transformation', icon: 'ads_click', url: "https://dedebasuni.github.io/page/konversi", color: 'bg-green-500', iconColor: 'text-white' },
-      { id: 'periodik', name: 'Eksplorasi', desc: 'Tabel Periodik Interaktif', icon: 'data_exploration', url: "https://dedebasuni.github.io/page/periodik", color: 'bg-red-500', iconColor: 'text-white' },
-      { id: 'ketik', name: 'Praktikum', desc: 'Mengetik 10 Jari', icon: 'keyboard', url: "https://dedebasuni.github.io/page/ketik", color: 'bg-indigo-500', iconColor: 'text-white' },
-    ];
-
-    // Convert array to object for easier URL lookup
-    const appUrls = appData.reduce((acc, app) => {
-        acc[app.id] = { url: app.url, allow: fullPermissions };
-        return acc;
-    }, {});
-    
-    // --- Functions ---
-
-    // Fungsi untuk membuat elemen aplikasi dengan desain Google-style
-    function createAppLink(app, index) {
-        const linkElement = document.createElement('a');
-        linkElement.href = '#';
-        linkElement.className = 'app-link bg-white p-5 rounded-google border border-google-gray-border flex items-center space-x-4 material-transition transform hover:scale-[1.02] fade-in-up ripple elevation-1 hover:elevation-2';
-        linkElement.dataset.app = app.id;
-        linkElement.style.animationDelay = `${index * 0.05}s`;
+        // Gabung semua aplikasi menjadi satu array
+        const ALL_APPS = [...APP_DATA.core, ...APP_DATA.special];
         
-        linkElement.innerHTML = `
-          <div class="w-14 h-14 ${app.color} ${app.iconColor} rounded-google flex items-center justify-center material-transition">
-            <span class="material-icons" style="font-size: 28px;">${app.icon}</span>
-          </div>
-          <div class="flex-1 min-w-0">
-            <h3 class="font-google-sans font-medium text-gray-900 truncate">${app.name}</h3>
-            <p class="text-sm text-google-gray truncate mt-1">${app.desc}</p>
-          </div>
-          <span class="material-icons text-google-gray-border">chevron_right</span>
-        `;
+        /** 
+         * Map untuk akses cepat aplikasi berdasarkan ID 
+         * @type {Object.<string, Object>}
+         */
+        const APP_MAP = ALL_APPS.reduce((map, app) => {
+            map[app.id] = app;
+            return map;
+        }, {});
 
-        linkElement.addEventListener('click', (e) => {
-            e.preventDefault();
-            const appId = linkElement.getAttribute('data-app');
-            openApp(appId);
-        });
-
-        return linkElement;
-    }
-
-    // Fungsi untuk merender aplikasi dengan animasi bertahap
-    function renderApps(apps) {
-        linksContainer.innerHTML = '';
+        // -----------------------------------------------------------------
+        // 2. STATE MANAGEMENT
+        //    Variabel global untuk menyimpan status aplikasi
+        // -----------------------------------------------------------------
+        /** Status koneksi internet (online/offline) */
+        let isOnline = navigator.onLine;
         
-        if (apps.length === 0) {
-            noResults.classList.remove('hidden');
-            return;
+        /** Aplikasi yang sedang aktif / dibuka di iframe */
+        let activeApp = null;
+
+        // -----------------------------------------------------------------
+        // 3. REFERENSI DOM (ELEMEN)
+        //    Semua elemen penting disimpan dalam objek `els` agar mudah diakses
+        // -----------------------------------------------------------------
+        const els = {
+            // Layar & overlay
+            loading         : document.getElementById('loadingOverlay'),
+            error           : document.getElementById('errorMessage'),
+            portal          : document.getElementById('portalView'),
+            iframeView      : document.getElementById('iframeView'),
+            iframe          : document.getElementById('contentFrame'),
+            iframeLoader    : document.getElementById('iframeLoader'),
+            
+            // Grid aplikasi & pencarian
+            grid            : document.getElementById('linksContainer'),
+            search          : document.getElementById('searchInput'),
+            clearSearch     : document.getElementById('clearSearch'),
+            noResults       : document.getElementById('noResults'),
+            
+            // Header & informasi
+            activeAppName   : document.getElementById('activeAppName'),
+            connectionStatus: document.getElementById('connectionStatus'),
+            
+            // Loader iframe (ikon + teks)
+            loaderAppName   : document.getElementById('loaderAppName'),
+            loaderAppIcon   : document.getElementById('loaderAppIcon'),
+            
+            // Tombol pada iframe
+            refreshIframeBtn: document.getElementById('refreshIframeBtn'),
+            
+            // Toast notifikasi
+            toast           : document.getElementById('toast'),
+            toastIcon       : document.getElementById('toastIcon'),
+            toastMessage    : document.getElementById('toastMessage'),
+        };
+
+        // -----------------------------------------------------------------
+        // 4. FUNGSI-FUNGSI UTILITY
+        // -----------------------------------------------------------------
+        
+        /**
+         * Menampilkan pesan toast sementara.
+         * @param {string} pesan - Teks yang akan ditampilkan.
+         * @param {string} ikon - Nama ikon Material (default: 'info').
+         */
+        function tampilkanToast(pesan, ikon = 'info') {
+            els.toastMessage.innerText = pesan;
+            els.toastIcon.innerText = ikon;
+            els.toast.style.opacity = '1';
+            els.toast.style.transform = 'translate(-50%, 0)';
+            // Sembunyikan setelah 3 detik
+            setTimeout(() => {
+                els.toast.style.opacity = '0';
+                els.toast.style.transform = 'translate(-50%, 20px)';
+            }, 3000);
         }
-        
-        noResults.classList.add('hidden');
-        
-        apps.forEach((app, index) => {
-            const link = createAppLink(app, index);
-            linksContainer.appendChild(link);
-        });
-    }
 
-    // Fungsi untuk mencari aplikasi
-    function searchApps(query) {
-        const allApps = [...appData, ...specialAppsData];
-        const filteredApps = allApps.filter(app => 
-            app.name.toLowerCase().includes(query.toLowerCase()) || 
-            app.desc.toLowerCase().includes(query.toLowerCase())
-        );
-        
-        renderApps(filteredApps);
-        
-        // Tampilkan tombol clear search jika ada query
-        if (query) {
-            clearSearch.classList.remove('hidden');
-        } else {
-            clearSearch.classList.add('hidden');
+        /**
+         * Memperbarui status koneksi dan menampilkan chip.
+         * Dipanggil saat event online/offline.
+         */
+        function perbaruiStatusKoneksi() {
+            isOnline = navigator.onLine;
+            const statusEl = els.connectionStatus;
+            
+            if (!isOnline) {
+                tampilkanToast('Anda sedang offline', 'wifi_off');
+                statusEl.className = 'px-4 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 chip-offline';
+                statusEl.innerHTML = '<span class="material-icons-round text-[16px]">wifi_off</span> Offline';
+                statusEl.classList.remove('hidden');
+            } else {
+                tampilkanToast('Koneksi terhubung kembali', 'wifi');
+                statusEl.className = 'px-4 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 chip-online';
+                statusEl.innerHTML = '<span class="material-icons-round text-[16px]">wifi</span> Online';
+                statusEl.classList.remove('hidden');
+                // Sembunyikan setelah 3.5 detik
+                setTimeout(() => {
+                    statusEl.classList.add('hidden');
+                }, 3500);
+            }
         }
-    }
 
-    // Fungsi untuk merender semua aplikasi
-    function renderAllApps() {
-        const allApps = [...appData, ...specialAppsData];
-        renderApps(allApps);
-        searchInput.value = '';
-        clearSearch.classList.add('hidden');
-    }
+        // -----------------------------------------------------------------
+        // 5. FUNGSI RENDER & FILTER
+        // -----------------------------------------------------------------
+        
+        /**
+         * Merender kartu aplikasi ke dalam grid.
+         * @param {Array} daftarApp - Array aplikasi yang akan ditampilkan.
+         */
+        function renderAplikasi(daftarApp) {
+            els.grid.innerHTML = '';
+            
+            // Jika tidak ada aplikasi, tampilkan pesan "Tidak ada hasil"
+            if (daftarApp.length === 0) {
+                els.noResults.classList.remove('hidden');
+                return;
+            }
+            els.noResults.classList.add('hidden');
 
-    // Fungsi untuk menambahkan aplikasi khusus ke appUrls
-    function addSpecialAppsToUrls() {
-        specialAppsData.forEach(app => {
-            appUrls[app.id] = {
-                url: app.url,
-                allow: fullPermissions
+            // Loop dan buat elemen kartu
+            daftarApp.forEach((app, index) => {
+                const card = document.createElement('div');
+                card.className = `
+                    group bg-m3-surface p-4 rounded-2xl border border-transparent 
+                    hover:shadow-elevation-2 hover:border-gray-200 transition-all duration-200 cursor-pointer 
+                    flex items-center gap-4 ripple fade-in relative
+                `;
+                // Animasi fade-in bertahap
+                card.style.animationDelay = `${index * 0.05}s`;
+
+                // Konten kartu
+                card.innerHTML = `
+                    <div class="w-12 h-12 rounded-xl ${app.bg} ${app.color} flex items-center justify-center shrink-0">
+                        <span class="material-icons-round text-2xl">${app.icon}</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="font-sans font-medium text-gray-900 truncate group-hover:text-m3-primary transition-colors">${app.name}</h3>
+                        <p class="text-sm text-gray-500 truncate">${app.desc}</p>
+                    </div>
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity bg-gray-50">
+                        <span class="material-icons-round text-sm">arrow_forward</span>
+                    </div>
+                `;
+
+                // Event klik: buka aplikasi di iframe
+                card.addEventListener('click', () => bukaAplikasi(app));
+                els.grid.appendChild(card);
+            });
+        }
+
+        /**
+         * Memfilter aplikasi berdasarkan query pencarian.
+         * @param {string} query - Kata kunci pencarian.
+         */
+        function filterAplikasi(query) {
+            const kataKunci = query.toLowerCase();
+            const hasilFilter = ALL_APPS.filter(app => 
+                app.name.toLowerCase().includes(kataKunci) || 
+                app.desc.toLowerCase().includes(kataKunci)
+            );
+            renderAplikasi(hasilFilter);
+        }
+
+        // -----------------------------------------------------------------
+        // 6. FUNGSI IFRAME (MEMBUKA / MENUTUP APLIKASI)
+        // -----------------------------------------------------------------
+        
+        /**
+         * Membuka aplikasi di dalam iframe.
+         * @param {Object} app - Objek aplikasi yang akan dibuka.
+         */
+        function bukaAplikasi(app) {
+            if (!isOnline) {
+                tampilkanToast('Tidak ada koneksi internet', 'wifi_off');
+                return;
+            }
+
+            activeApp = app; // simpan state
+            
+            // Ubah tampilan loader sesuai aplikasi yang dipilih
+            els.loaderAppName.innerText = `Membuka ${app.name} ...`;
+            if (els.loaderAppIcon) {
+                els.loaderAppIcon.innerText = app.icon || 'rocket_launch';
+            }
+
+            // UI transisi: portal hilang, iframe tampil
+            els.portal.style.display = 'none';
+            els.iframeView.style.display = 'flex';
+            els.activeAppName.innerText = app.name;
+
+            // Tampilkan loader
+            els.iframeLoader.style.display = 'flex';
+            els.iframeLoader.style.opacity = '1';
+
+            // Set src iframe (trigger load)
+            els.iframe.src = app.url;
+
+            // Konfigurasi tombol "Buka di Tab Baru"
+            const openExtBtn = document.getElementById('openExternalBtn');
+            openExtBtn.onclick = () => window.open(app.url, '_blank');
+
+            // Tombol refresh: reload iframe
+            els.refreshIframeBtn.onclick = () => {
+                els.iframeLoader.style.display = 'flex';
+                els.iframe.src = app.url;
             };
-        });
-    }
+        }
 
-    function hideInitialLoading() {
-      setTimeout(() => {
-        loadingOverlay.style.opacity = '0';
-        setTimeout(() => {
-          loadingOverlay.style.display = 'none';
-          portalView.style.display = 'block';
-          updateConnectionStatus();
-        }, 300);
-      }, 1200);
-    }
-    
-    function showError() {
-      loadingOverlay.style.display = 'none';
-      iframeView.style.display = 'none';
-      portalView.style.display = 'none';
-      errorMessage.style.display = 'flex';
-    }
-    
-    function updateConnectionStatus() {
-      isOnline = navigator.onLine;
-      connectionStatus.style.display = 'flex';
+        /** Menutup iframe dan kembali ke portal */
+        function tutupAplikasi() {
+            els.iframe.src = 'about:blank';
+            els.iframeView.style.display = 'none';
+            els.portal.style.display = 'block';
+            els.iframeLoader.style.display = 'none'; // reset loader
+        }
 
-      if (isOnline) {
-        connectionStatus.className = 'fixed bottom-5 right-5 px-4 py-2 rounded-google text-sm font-medium text-white shadow-google flex items-center gap-2 z-[1000] bg-google-green material-transition';
-        connectionIcon.textContent = 'wifi';
-        connectionText.textContent = 'Terhubung';
+        // -----------------------------------------------------------------
+        // 7. EVENT LISTENER (INISIALISASI)
+        // -----------------------------------------------------------------
         
-        setTimeout(() => {
-          if (isOnline) {
-            connectionStatus.style.display = 'none';
-          }
-        }, 3000);
-      } else {
-        connectionStatus.className = 'fixed bottom-5 right-5 px-4 py-2 rounded-google text-sm font-medium text-white shadow-google flex items-center gap-2 z-[1000] bg-google-red material-transition';
-        connectionIcon.textContent = 'wifi_off';
-        connectionText.textContent = 'Tidak terhubung';
-      }
-    }
-    
-    function openApp(appId) {
-      if (!isOnline && appUrls[appId]?.url !== "about:blank") {
-          console.warn("Tidak ada koneksi internet untuk membuka aplikasi ini.");
-          return;
-      }
-      
-      iframeLoader.style.display = 'flex';
-      contentFrame.style.opacity = '0';
-      
-      contentFrame.allow = appUrls[appId]?.allow || "fullscreen";
-      contentFrame.src = appUrls[appId]?.url || 'about:blank';
-      
-      portalView.style.display = 'none';
-      iframeView.style.display = 'block';
-      
-      showViolationNotice();
-    }
-    
-    function hideIframeLoading() {
-      iframeLoader.style.display = 'none';
-      contentFrame.style.opacity = '1';
-    }
-    
-    function backToPortal() {
-      contentFrame.src = 'about:blank';
-      contentFrame.removeAttribute('allow');
-      iframeView.style.display = 'none';
-      portalView.style.display = 'block';
-      hideViolationNotice();
-    }
-    
-    function showViolationNotice() {
-      violationNotice.style.display = 'flex';
-      setTimeout(() => {
-        violationNotice.style.opacity = '1';
-      }, 10);
-      
-      setTimeout(hideViolationNotice, 4000);
-    }
-    
-    function hideViolationNotice() {
-      violationNotice.style.opacity = '0';
-      setTimeout(() => {
-        violationNotice.style.display = 'none';
-      }, 300);
-    }
-        
-    // --- Event Listeners & Initializers ---
+        /** Inisialisasi awal aplikasi */
+        function inisialisasi() {
+            // Render semua aplikasi
+            renderAplikasi(ALL_APPS);
+            
+            // Simulasi loading overlay (hilang setelah 1.5 detik)
+            setTimeout(() => {
+                els.loading.style.opacity = '0';
+                setTimeout(() => {
+                    els.loading.style.display = 'none';
+                }, 500);
+            }, 1500);
 
-    window.addEventListener('load', () => {
-      addSpecialAppsToUrls();
-      renderAllApps();
-      setTimeout(hideInitialLoading, 1500); 
-    });
+            // Daftarkan event listener untuk koneksi
+            window.addEventListener('online', perbaruiStatusKoneksi);
+            window.addEventListener('offline', perbaruiStatusKoneksi);
+            
+            // Jika sudah offline sejak awal, langsung tampilkan status
+            if (!isOnline) perbaruiStatusKoneksi();
+        }
 
-    // Event listener untuk pencarian
-    searchInput.addEventListener('input', (e) => {
-      searchApps(e.target.value);
-    });
+        // -----------------------------------------------------------------
+        // 8. REGISTRASI SEMUA EVENT LISTENER
+        // -----------------------------------------------------------------
+        (function daftarkanEventListeners() {
+            // Event pencarian (input)
+            els.search.addEventListener('input', (e) => {
+                const query = e.target.value;
+                filterAplikasi(query);
+                // Tampilkan/sembunyikan tombol clear
+                els.clearSearch.classList.toggle('hidden', query.length === 0);
+            });
 
-    // Event listener untuk tombol clear search
-    clearSearch.addEventListener('click', () => {
-      searchInput.value = '';
-      searchInput.focus();
-      renderAllApps();
-    });
+            // Tombol hapus pencarian
+            els.clearSearch.addEventListener('click', () => {
+                els.search.value = '';
+                els.search.focus();
+                renderAplikasi(ALL_APPS);
+                els.clearSearch.classList.add('hidden');
+            });
 
-    // Event listener untuk tombol tampilkan semua aplikasi
-    showAllApps.addEventListener('click', renderAllApps);
+            // Tombol "Lihat semua aplikasi"
+            document.getElementById('showAllApps').addEventListener('click', () => {
+                els.search.value = '';
+                renderAplikasi(ALL_APPS);
+            });
 
-    // Event listener untuk menekan Enter di search input
-    searchInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-      }
-    });
+            // Tombol kembali dari iframe
+            document.getElementById('backButton').addEventListener('click', tutupAplikasi);
 
-    contentFrame.addEventListener('load', hideIframeLoading);
+            // Tombol retry (jika offline)
+            document.getElementById('retryButton').addEventListener('click', () => location.reload());
 
-    contentFrame.addEventListener('error', () => {
-      iframeLoader.style.display = 'none';
-      showError();
-    });
-    
-    window.addEventListener('online', updateConnectionStatus);
-    window.addEventListener('offline', updateConnectionStatus);
-    
-    backButton.addEventListener('click', backToPortal);
-    retryButton.addEventListener('click', () => window.location.reload());
-    
-  </script>
+            // Event load iframe: sembunyikan loader
+            els.iframe.addEventListener('load', function() {
+                // Abaikan jika src = about:blank
+                if (els.iframe.src !== 'about:blank') {
+                    els.iframeLoader.style.opacity = '0';
+                    setTimeout(() => {
+                        els.iframeLoader.style.display = 'none';
+                    }, 250);
+                    tampilkanToast(`${activeApp?.name || 'Aplikasi'} siap digunakan`, 'check_circle');
+                }
+            });
+        })();
+
+        // -----------------------------------------------------------------
+        // 9. JALANKAN INISIALISASI
+        // -----------------------------------------------------------------
+        inisialisasi();
+
+    </script>
 </body>
 </html>
-

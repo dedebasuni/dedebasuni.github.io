@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -8,11 +7,10 @@
   <meta name="description" content="e-Ujian - Platform Ujian Digital Terintegrasi SMAPTA" />
   <meta name="keywords" content="e-Ujian, ujian online, kartu ujian digital, SMAPTA, sistem ujian, pendidikan digital" />
   <meta name="author" content="SMAPTA" />
-  <meta name="theme-color" content="#3f51b5" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+  <meta name="theme-color" content="#0b57d0" />
+
+  <!-- Favicon dinamis dari Google -->
+  <link rel="icon" href="https://www.google.com/s2/favicons?domain=google.com&sz=128" type="image/png" />
 
   <!-- Open Graph Meta Tags -->
   <meta property="og:title" content="e-Ujian SMAPTA" />
@@ -28,232 +26,298 @@
   <meta name="twitter:image" content="https://smapgritakokak.sch.id/spmb/assets/img/icons/icon-192x192.png" />
 
   <title>e-Ujian - Platform Ujian Digital SMAPTA</title>
-  <link rel="icon" href="https://smapgritakokak.sch.id/spmb/assets/img/icons/icon-96x96.png" type="image/x-icon">
-  <link rel="apple-touch-icon" href="https://smapgritakokak.sch.id/spmb/assets/img/icons/icon-192x192.png">
-  
+
+  <!-- Tailwind CSS CDN dengan konfigurasi kustom Material Design 3 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    // ---------------------------------------------------------------------
+    //  KONFIGURASI TAILWIND - Tema Material 3 ala Google Workspace
+    // ---------------------------------------------------------------------
+    tailwind.config = {
+      theme: {
+        extend: {
+          // Palet warna Material 3 (Google modern)
+          colors: {
+            'm3-bg'              : '#f0f4f9',   // Latar belakang utama
+            'm3-surface'         : '#ffffff',   // Permukaan putih bersih
+            'm3-primary'         : '#0b57d0',   // Biru Google yang ikonik
+            'm3-primary-hover'   : '#0842a0',   // Biru gelap untuk hover
+            'm3-on-surface'      : '#1f1f1f',   // Teks di atas permukaan
+            'm3-on-surface-variant': '#444746', // Teks variasi abu-abu
+            'm3-outline'         : '#747775',   // Garis outline
+            'm3-outline-variant' : '#c4c7c5',   // Outline varian terang
+          },
+          // Font Google Sans sebagai font utama
+          fontFamily: {
+            'sans': ['Google Sans', 'Roboto', 'Arial', 'sans-serif'],
+          },
+          // Radius khas Material 3 (M3)
+          borderRadius: {
+            'xl'    : '16px',
+            '2xl'   : '24px',
+            '3xl'   : '32px',
+            'pill'  : '9999px',
+          },
+          // Elevasi bayangan sesuai spesifikasi M3
+          boxShadow: {
+            'elevation-1': '0 1px 2px 0 rgba(0,0,0,0.3), 0 1px 3px 1px rgba(0,0,0,0.15)',
+            'elevation-2': '0 1px 2px 0 rgba(60,64,67,0.3), 0 2px 6px 2px rgba(60,64,67,0.15)',
+            'floating'   : '0 4px 8px 3px rgba(0,0,0,0.15), 0 1px 3px rgba(0,0,0,0.3)',
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Font Google Sans & ikon Material (outlined & round) -->
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined|Material+Icons+Round" rel="stylesheet" />
+
+  <!-- ------------------------------------------------------------------ -->
+  <!--  STYLE GLOBAL & ANIMASI KHUSUS                                   -->
+  <!--  Seluruh CSS kustom ditempatkan di sini agar terpisah dari logic -->
+  <!-- ------------------------------------------------------------------ -->
   <style>
-    /* CSS Reset */
-    *, *::before, *::after {
+    /* ========== RESET & DASAR ========== */
+    * {
+      margin: 0;
+      padding: 0;
       box-sizing: border-box;
-    }
-    
-    ::-webkit-scrollbar {
-      width: 8px;
-    }
-    
-    ::-webkit-scrollbar-track {
-      background: #f1f1f1;
-    }
-    
-    ::-webkit-scrollbar-thumb {
-      background: #c1c1c1;
-      border-radius: 4px;
-    }
-    
-    ::-webkit-scrollbar-thumb:hover {
-      background: #a8a8a8;
     }
     
     html, body {
       height: 100%;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Google Sans', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-      background-color: #f5f5f5;
+      width: 100%;
+      overflow: hidden; /* Mencegah scroll ganda */
+      background-color: #f0f4f9;
+      color: #1f1f1f;
+      -webkit-font-smoothing: antialiased;
     }
-    
-    .loading-overlay {
-      position: fixed;
+
+    body {
+      font-family: 'Google Sans', Roboto, Arial, sans-serif;
+    }
+
+    /* ========== SCROLLBAR MINIMALIS ========== */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #dadce0;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #bdc1c6;
+    }
+
+    /* ========== ANIMASI LOADER GOOGLE 4 WARNA ========== */
+    .spinner-container {
+      position: relative;
+      width: 48px;
+      height: 48px;
+    }
+    .circular {
+      animation: rotate 2s linear infinite;
+      height: 100%;
+      transform-origin: center center;
+      width: 100%;
+      position: absolute;
       top: 0;
+      bottom: 0;
       left: 0;
+      right: 0;
+      margin: auto;
+    }
+    .path {
+      stroke-dasharray: 1, 200;
+      stroke-dashoffset: 0;
+      animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite;
+      stroke-linecap: round;
+    }
+    @keyframes rotate {
+      100% { transform: rotate(360deg); }
+    }
+    @keyframes dash {
+      0%   { stroke-dasharray: 1,200; stroke-dashoffset: 0; }
+      50%  { stroke-dasharray: 89,200; stroke-dashoffset: -35px; }
+      100% { stroke-dasharray: 89,200; stroke-dashoffset: -124px; }
+    }
+    @keyframes color {
+      100%, 0% { stroke: #4285F4; }
+      40%      { stroke: #DB4437; }
+      66%      { stroke: #F4B400; }
+      80%, 90% { stroke: #0F9D58; }
+    }
+
+    /* ========== RIPPLE EFFECT (ELEGAN) ========== */
+    .ripple {
+      position: relative;
+      overflow: hidden;
+      transform: translate3d(0,0,0);
+    }
+    .ripple:after {
+      content: "";
+      display: block;
+      position: absolute;
       width: 100%;
       height: 100%;
-      background: linear-gradient(135deg, #3f51b5 0%, #1a237e 100%);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-      transition: opacity 0.5s ease-out;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      background-image: radial-gradient(circle, #000 10%, transparent 10.01%);
+      background-repeat: no-repeat;
+      background-position: 50%;
+      transform: scale(10,10);
+      opacity: 0;
+      transition: transform 0.5s, opacity 1s;
     }
-    
-    .logo-container {
-      margin-bottom: 2rem;
-      text-align: center;
-      animation: fadeIn 1s ease;
+    .ripple:active:after {
+      transform: scale(0,0);
+      opacity: 0.1;
+      transition: 0s;
     }
-    
-    .logo-container img {
-      width: 80px;
-      height: 80px;
-      border-radius: 16px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
-    
-    .logo-container h1 {
-      color: white;
-      font-size: 1.8rem;
-      margin-top: 1rem;
-      font-weight: 500;
-      letter-spacing: 0.5px;
-    }
-    
-    .logo-container p {
-      color: rgba(255, 255, 255, 0.8);
-      margin-top: 0.5rem;
-      font-size: 1rem;
-    }
-    
-    .spinner {
-      width: 50px;
-      height: 50px;
-      border: 5px solid rgba(255, 255, 255, 0.3);
-      border-radius: 50%;
-      border-top-color: #fff;
-      animation: spin 1s ease-in-out infinite;
-    }
-    
-    .progress-container {
-      width: 240px;
-      height: 4px;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 2px;
-      margin-top: 1rem;
-      overflow: hidden;
-    }
-    
-    .progress-bar {
-      height: 100%;
-      width: 0%;
-      background: #fff;
-      border-radius: 2px;
-      transition: width 0.3s ease;
-    }
-    
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-    
+
+    /* ========== FADE IN (KARTU APLIKASI) ========== */
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+      to   { opacity: 1; transform: translateY(0); }
     }
-    
-    .loading-text {
-      color: white;
-      margin-top: 1rem;
-      font-size: 1rem;
+    .fade-in {
+      animation: fadeIn 0.4s cubic-bezier(0.0,0.0,0.2,1) forwards;
     }
-    
-    .iframe-container {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      display: none;
+
+    /* ========== LOADER IFRAME BERBLUR ========== */
+    .iframe-loader-material {
+      background: rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: opacity 0.25s ease;
+      z-index: 200;
     }
-    
-    iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
+
+    /* ========== SHIMMER PROGRESS BAR ========== */
+    .shimmer {
+      background: linear-gradient(90deg, #0b57d0 25%, #89b9ff 50%, #0b57d0 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.8s infinite;
     }
-    
-    .error-message {
-      display: none;
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ========== STATUS CHIP ONLINE / OFFLINE ========== */
+    .chip-online {
+      background-color: #e6f4ea;
+      color: #0d652d;
+      border: 1px solid #a8dab5;
+    }
+    .chip-offline {
+      background-color: #fce8e6;
+      color: #b31412;
+      border: 1px solid #f6aea9;
+    }
+
+    /* ========== IFRAME FULLSCREEN FIX ========== */
+    #iframeContainer {
       position: fixed;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: #f5f5f5;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      text-align: center;
-      padding: 2rem;
+      right: 0;
+      bottom: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: #f0f4f9;
+      z-index: 100;
+    }
+    
+    #contentFrame {
+      width: 100% !important;
+      height: 100% !important;
+      border: none;
+      display: block;
+    }
+    
+    /* ========== LOADING OVERLAY ========== */
+    #loadingOverlay {
+      z-index: 9999;
+    }
+    
+    /* ========== ERROR MESSAGE ========== */
+    #errorMessage {
       z-index: 10000;
     }
     
-    .error-icon {
-      font-size: 3rem;
-      color: #d32f2f;
-      margin-bottom: 1rem;
-    }
-    
-    .error-message h2 {
-      color: #d32f2f;
-      margin-bottom: 1rem;
-      font-size: 1.5rem;
-    }
-    
-    .error-message p {
-      margin-bottom: 1.5rem;
-      color: #424242;
-      max-width: 500px;
-      line-height: 1.5;
-    }
-      
-    .connection-status {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      padding: 8px 12px;
-      border-radius: 20px;
-      font-size: 0.875rem;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+    /* ========== CONNECTION STATUS ========== */
+    #connectionStatus {
       z-index: 1000;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      display: none;
     }
-    
-    .online {
-      background: #4caf50;
-      color: white;
-    }
-    
-    .offline {
-      background: #f44336;
-      color: white;
+
+    /* Progress bar style */
+    #progressBar {
+      height: 4px;
+      background: linear-gradient(90deg, #0b57d0, #89b9ff);
+      width: 0%;
+      transition: width 0.3s ease;
     }
   </style>
 </head>
-<body>
-  <div class="loading-overlay" id="loadingOverlay">
-    <div class="logo-container">
-      <span class="material-icons-outlined" style="font-size: 3rem; color: white;">school</span>
-      <h1>e-Ujian</h1>
-      <p>Platform Ujian Digital SMAPTA</p>
-    </div>
-    <div class="spinner"></div>
-    <div class="progress-container">
-      <div class="progress-bar" id="progressBar"></div>
-    </div>
-    <p class="loading-text">Memuat data e-Ujian...</p>
+<body class="bg-m3-bg font-sans antialiased">
+
+  <!-- Loading Overlay dengan desain Material 3 + Google 4-warna spinner -->
+  <div id="loadingOverlay" class="fixed inset-0 bg-white z-[9999] flex flex-col justify-center items-center transition-opacity duration-500">
+      <!-- Progress bar -->
+      <div class="absolute top-0 left-0 w-full h-1 bg-gray-200">
+        <div id="progressBar" class="h-full shimmer"></div>
+      </div>
+      
+      <div class="spinner-container mb-6">
+          <svg class="circular" viewBox="25 25 50 50">
+              <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="4" stroke-miterlimit="10" />
+          </svg>
+      </div>
+      <div class="flex items-center gap-2">
+          <span class="text-2xl font-sans font-medium text-gray-600">STS-PSAJ</span>
+          <span class="text-2xl font-sans font-normal text-gray-500">2025/2026</span>
+      </div>
   </div>
-  
-  <div class="error-message" id="errorMessage">
-    <span class="material-icons-outlined error-icon">error_outline</span>
-    <h2>Gagal Memuat Konten</h2>
-    <p>Terjadi kendala saat memuat e-Ujian. Pastikan Anda terhubung ke internet dan coba lagi. Jika masalah berlanjut, silakan hubungi administrator.</p>
-    <button class="retry-button" id="retryButton">
-      <span class="material-icons-outlined">refresh</span>
-      Coba Lagi
-    </button>
+
+  <!-- Error Message dengan gaya M3 Card -->
+  <div class="hidden fixed inset-0 bg-m3-bg flex-col items-center justify-center p-8 text-center" id="errorMessage">
+    <div class="bg-m3-surface p-8 rounded-2xl shadow-elevation-2 max-w-md w-full fade-in">
+      <span class="material-icons-outlined text-5xl text-[#d32f2f] mb-4">error_outline</span>
+      <h2 class="text-xl font-medium text-m3-on-surface mb-2">Gagal Memuat Konten</h2>
+      <p class="text-m3-on-surface-variant mb-6 leading-relaxed">Terjadi kendala saat memuat Ujian. Pastikan Anda terhubung ke internet dan coba lagi. Jika masalah berlanjut, silakan hubungi administrator.</p>
+      <button class="ripple bg-m3-primary hover:bg-m3-primary-hover text-white px-6 py-2.5 rounded-full inline-flex items-center gap-2 transition-colors shadow-elevation-1" id="retryButton">
+        <span class="material-icons-outlined text-xl">refresh</span>
+        <span class="font-medium">Coba Lagi</span>
+      </button>
+    </div>
   </div>
-  
-  <div class="connection-status" id="connectionStatus">
-    <span class="material-icons-outlined" id="connectionIcon">wifi_off</span>
+
+  <!-- Connection Status Chip (online/offline) -->
+  <div class="fixed bottom-5 right-5 hidden items-center gap-1.5 px-4 py-2 rounded-full text-sm shadow-elevation-1" id="connectionStatus">
+    <span class="material-icons-outlined text-base" id="connectionIcon">wifi_off</span>
     <span id="connectionText">Tidak terhubung</span>
   </div>
-  
-  <div class="iframe-container" id="iframeContainer">
+
+  <!-- Iframe Container dengan loader blur di atasnya - FIXED FULLSCREEN -->
+  <div class="hidden" id="iframeContainer">
+    <!-- Loader internal (akan muncul saat iframe reload / navigasi) -->
+    <div class="iframe-loader-material absolute inset-0 flex items-center justify-center opacity-0 pointer-events-none" id="iframeLoader">
+      <div class="spinner-container">
+        <svg class="circular" viewBox="25 25 50 50">
+          <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="4" stroke-miterlimit="10"/>
+        </svg>
+      </div>
+    </div>
     <iframe 
-      src="https://script.google.com/macros/s/AKfycbzR10RYoZAqzp5QD_S8n85tZXyVZ0LAUEkWqeTrfSD2NMoHoz5ULkPUW0OOFdAwQHYu/exec"
-      style="border:none;" 
-      allow="autoplay; camera; encrypted-media; geolocation; microphone; midi; payment; usb; accelerometer; gyroscope; magnetometer; screen-wake-lock; clipboard-read; clipboard-write; web-share; fullscreen"
+      src="https://script.google.com/macros/s/AKfycbw945PZFK7Hv49qaCQj2ymk6feOgD9UtyWDcMXHiPqWIFWEaiTRR9Btq41_AOt1RQiQ/exec"
       id="contentFrame"
+      allow="autoplay; camera; encrypted-media; geolocation; microphone; midi; payment; usb; accelerometer; gyroscope; magnetometer; screen-wake-lock; clipboard-read; clipboard-write; web-share; fullscreen"
       onload="hideLoading()">
     </iframe>
   </div>
@@ -263,33 +327,73 @@
     let progressInterval;
     let isOnline = navigator.onLine;
     
-    // Fungsi untuk menyembunyikan loading overlay
-    function hideLoading() {
+    // Fungsi aman untuk mendapatkan element
+    function getElementSafely(id) {
+      const element = document.getElementById(id);
+      if (!element) {
+        console.warn(`Element with id '${id}' not found`);
+      }
+      return element;
+    }
+
+    // Fungsi untuk menyembunyikan loading overlay dan menampilkan iframe
+    window.hideLoading = function() {
       clearInterval(progressInterval);
-      document.getElementById('progressBar').style.width = '100%';
+      const progressBar = getElementSafely('progressBar');
+      if (progressBar) {
+        progressBar.style.width = '100%';
+      }
       
       setTimeout(() => {
-        const loadingOverlay = document.getElementById('loadingOverlay');
-        loadingOverlay.style.opacity = '0';
+        const loadingOverlay = getElementSafely('loadingOverlay');
+        const iframeContainer = getElementSafely('iframeContainer');
+        const iframeLoader = getElementSafely('iframeLoader');
         
-        setTimeout(() => {
-          loadingOverlay.style.display = 'none';
-          document.getElementById('iframeContainer').style.display = 'block';
-          updateConnectionStatus();
-        }, 500);
+        if (loadingOverlay) {
+          loadingOverlay.style.opacity = '0';
+          
+          setTimeout(() => {
+            loadingOverlay.style.display = 'none';
+            if (iframeContainer) {
+              iframeContainer.style.display = 'block';
+            }
+            updateConnectionStatus();
+            
+            // sembunyikan loader iframe setelah konten dimuat
+            if (iframeLoader) {
+              iframeLoader.style.opacity = '0';
+              iframeLoader.classList.add('pointer-events-none');
+            }
+            clearTimeout(iframeLoadTimeout);
+          }, 500);
+        }
       }, 300);
-    }
-    
-    // Fungsi untuk menangani error
+    };
+
+    // Fungsi untuk menampilkan error
     function showError() {
       clearInterval(progressInterval);
-      document.getElementById('loadingOverlay').style.display = 'none';
-      document.getElementById('errorMessage').style.display = 'flex';
+      const loadingOverlay = getElementSafely('loadingOverlay');
+      const errorMessage = getElementSafely('errorMessage');
+      const iframeLoader = getElementSafely('iframeLoader');
+      
+      if (loadingOverlay) {
+        loadingOverlay.style.display = 'none';
+      }
+      if (errorMessage) {
+        errorMessage.style.display = 'flex';
+      }
+      if (iframeLoader) {
+        iframeLoader.style.opacity = '0';
+        iframeLoader.classList.add('pointer-events-none');
+      }
     }
-    
-    // Fungsi untuk mensimulasikan progress loading
+
+    // Simulasi progress loading (tetap dipertahankan)
     function simulateProgress() {
-      const progressBar = document.getElementById('progressBar');
+      const progressBar = getElementSafely('progressBar');
+      if (!progressBar) return;
+      
       let width = 0;
       
       progressInterval = setInterval(() => {
@@ -301,58 +405,147 @@
         }
       }, 300);
     }
-    
+
     // Fungsi untuk memeriksa status koneksi
     function checkConnection() {
       isOnline = navigator.onLine;
       updateConnectionStatus();
       
-      if (isOnline && document.getElementById('errorMessage').style.display === 'flex') {
-        document.getElementById('retryButton').click();
+      // Jika online dan error message tampil, coba lagi otomatis
+      const errorMessage = getElementSafely('errorMessage');
+      const retryButton = getElementSafely('retryButton');
+      
+      if (isOnline && errorMessage && errorMessage.style.display === 'flex' && retryButton) {
+        retryButton.click();
       }
     }
-    
-    // Fungsi untuk memperbarui tampilan status koneksi
+
+    // Fungsi untuk memperbarui tampilan status koneksi (chip)
     function updateConnectionStatus() {
-      const statusElement = document.getElementById('connectionStatus');
-      const iconElement = document.getElementById('connectionIcon');
-      const textElement = document.getElementById('connectionText');
+      const statusElement = getElementSafely('connectionStatus');
+      const iconElement = getElementSafely('connectionIcon');
+      const textElement = getElementSafely('connectionText');
+      
+      if (!statusElement || !iconElement || !textElement) return;
       
       if (isOnline) {
-        statusElement.className = 'connection-status online';
+        statusElement.className = 'fixed bottom-5 right-5 flex items-center gap-1.5 px-4 py-2 rounded-full text-sm shadow-elevation-1 chip-online';
         iconElement.textContent = 'wifi';
         textElement.textContent = 'Terhubung';
         
+        // Tampilkan status online
+        statusElement.style.display = 'flex';
+        
         // Sembunyikan status online setelah 3 detik
         setTimeout(() => {
-          if (isOnline) {
+          if (isOnline && statusElement) {
             statusElement.style.display = 'none';
           }
         }, 3000);
       } else {
-        statusElement.className = 'connection-status offline';
+        statusElement.className = 'fixed bottom-5 right-5 flex items-center gap-1.5 px-4 py-2 rounded-full text-sm shadow-elevation-1 chip-offline';
         statusElement.style.display = 'flex';
         iconElement.textContent = 'wifi_off';
         textElement.textContent = 'Tidak terhubung';
       }
     }
-        
-    // Deteksi jika iframe gagal dimuat
-    document.getElementById('contentFrame').addEventListener('error', showError);
-    
-    // Event listener untuk perubahan koneksi
-    window.addEventListener('online', checkConnection);
-    window.addEventListener('offline', checkConnection);
-    
-    // Inisialisasi saat halaman dimuat
-    window.addEventListener('load', function() {
-      simulateProgress();
-      checkConnection();
+
+    // Setup iframe event listeners
+    function setupIframeListeners() {
+      const iframe = getElementSafely('contentFrame');
+      const iframeLoader = getElementSafely('iframeLoader');
       
-      // Sembunyikan loading setelah 15 detik (fallback)
-      setTimeout(hideLoading, 15000);
-    });
+      if (!iframe) {
+        console.warn('Iframe element not found');
+        return;
+      }
+
+      // Event listener untuk iframe error
+      iframe.addEventListener('error', showError);
+
+      // Jika iframe mulai memuat ulang (misal karena navigasi internal), tampilkan loader blur
+      iframe.addEventListener('loadstart', function() {
+        if (iframeLoader) {
+          iframeLoader.style.opacity = '1';
+          iframeLoader.classList.remove('pointer-events-none');
+        }
+        // timeout jika loading terlalu lama
+        clearTimeout(iframeLoadTimeout);
+        iframeLoadTimeout = setTimeout(() => {
+          if (iframeLoader) {
+            iframeLoader.style.opacity = '0';
+            iframeLoader.classList.add('pointer-events-none');
+          }
+        }, 10000);
+      });
+
+      iframe.addEventListener('load', function() {
+        // sembunyikan loader setelah iframe selesai loading
+        if (iframeLoader) {
+          iframeLoader.style.opacity = '0';
+          iframeLoader.classList.add('pointer-events-none');
+        }
+        clearTimeout(iframeLoadTimeout);
+      });
+    }
+
+    // Setup retry button
+    function setupRetryButton() {
+      const retryButton = getElementSafely('retryButton');
+      const errorMessage = getElementSafely('errorMessage');
+      const loadingOverlay = getElementSafely('loadingOverlay');
+      const iframe = getElementSafely('contentFrame');
+      
+      if (retryButton) {
+        retryButton.addEventListener('click', function() {
+          if (errorMessage) {
+            errorMessage.style.display = 'none';
+          }
+          if (loadingOverlay) {
+            loadingOverlay.style.display = 'flex';
+            loadingOverlay.style.opacity = '1';
+          }
+          simulateProgress();
+          
+          // Reload iframe
+          if (iframe && iframe.src) {
+            iframe.src = iframe.src; // trigger reload
+          }
+          
+          // Fallback hide loading setelah 15 detik
+          setTimeout(hideLoading, 15000);
+        });
+      }
+    }
+
+    // Inisialisasi semua
+    function initialize() {
+      setupIframeListeners();
+      setupRetryButton();
+      
+      // Event listener untuk perubahan koneksi
+      window.addEventListener('online', checkConnection);
+      window.addEventListener('offline', checkConnection);
+      
+      // Inisialisasi saat halaman dimuat
+      window.addEventListener('load', function() {
+        simulateProgress();
+        checkConnection();
+        
+        // Sembunyikan loading setelah 15 detik (fallback) jika iframe tak kunjung memuat
+        setTimeout(hideLoading, 15000);
+      });
+    }
+
+    // Mulai inisialisasi setelah DOM siap
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initialize);
+    } else {
+      initialize();
+    }
+
+    // Variabel untuk iframe load timeout
+    let iframeLoadTimeout;
   </script>
 </body>
 </html>
-

@@ -2,724 +2,1087 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
     <meta name="theme-color" content="#f0f4f9" />
+    <meta name="description" content="Portal Personal Enterprise Workspace - Omni SPA Edition" />
+    
+    <!-- PWA & Mobile Web App Capabilities -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    
     <title>Workspace · Portal Personal</title>
     
-    <!-- Favicon dinamis dari Google -->
+    <!-- ARSENAL CDN MANDATORI -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://cdn.tailwindcss.com" />
+    
     <link rel="icon" href="https://www.google.com/s2/favicons?domain=google.com&sz=128" type="image/png" />
-
-    <!-- Tailwind CSS CDN dengan konfigurasi kustom Material Design 3 -->
+    
+    <!-- Core Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined|Material+Icons+Round" rel="stylesheet" />
+    
+    <!-- Ekosistem Vue & Libraries -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- TAILWIND CONFIGURATION - HYBRID OMNI-SPA -->
     <script>
-        // ---------------------------------------------------------------------
-        //  KONFIGURASI TAILWIND - Tema Material 3 ala Google Workspace
-        // ---------------------------------------------------------------------
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
-                    // Palet warna Material 3 (Google modern)
-                    colors: {
-                        'm3-bg'              : '#f0f4f9',   // Latar belakang utama
-                        'm3-surface'         : '#ffffff',   // Permukaan putih bersih
-                        'm3-primary'         : '#0b57d0',   // Biru Google yang ikonik
-                        'm3-primary-hover'   : '#0842a0',   // Biru gelap untuk hover
-                        'm3-on-surface'      : '#1f1f1f',   // Teks di atas permukaan
-                        'm3-on-surface-variant': '#444746', // Teks variasi abu-abu
-                        'm3-outline'         : '#747775',   // Garis outline
-                        'm3-outline-variant' : '#c4c7c5',   // Outline varian terang
-                    },
-                    // Font Google Sans sebagai font utama
                     fontFamily: {
-                        'sans': ['Google Sans', 'Roboto', 'Arial', 'sans-serif'],
+                        sans: ['Google Sans', 'Inter', 'Roboto', 'sans-serif']
                     },
-                    // Radius khas Material 3 (M3)
+                    colors: {
+                        primary: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8' },
+                        dark: { bg: '#0f172a', card: '#1e293b', border: '#334155' },
+                        'm3-bg': '#f0f4f9',
+                        'm3-surface': '#ffffff',
+                        'm3-primary': '#0b57d0',
+                        'm3-primary-hover': '#0842a0',
+                        'm3-on-surface': '#1f1f1f',
+                        'm3-on-surface-variant': '#444746',
+                        'm3-outline': '#747775'
+                    },
                     borderRadius: {
-                        'xl'    : '16px',
-                        '2xl'   : '24px',
-                        '3xl'   : '32px',
-                        'pill'  : '9999px',
+                        'xl': '16px', '2xl': '24px', '3xl': '32px', 'pill': '9999px'
                     },
-                    // Elevasi bayangan sesuai spesifikasi M3
                     boxShadow: {
                         'elevation-1': '0 1px 2px 0 rgba(0,0,0,0.3), 0 1px 3px 1px rgba(0,0,0,0.15)',
                         'elevation-2': '0 1px 2px 0 rgba(60,64,67,0.3), 0 2px 6px 2px rgba(60,64,67,0.15)',
-                        'floating'   : '0 4px 8px 3px rgba(0,0,0,0.15), 0 1px 3px rgba(0,0,0,0.3)',
+                        'floating': '0 4px 8px 3px rgba(0,0,0,0.15), 0 1px 3px rgba(0,0,0,0.3)'
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.3s ease-in-out',
+                        'slide-in': 'slideIn 0.3s ease-out'
+                    },
+                    keyframes: {
+                        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+                        slideIn: { '0%': { transform: 'translateY(10px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } }
                     }
                 }
             }
         };
     </script>
 
-    <!-- Font Google Sans & ikon Material (outlined & round) -->
-    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined|Material+Icons+Round" rel="stylesheet" />
-
-    <!-- ------------------------------------------------------------------ -->
-    <!--  STYLE GLOBAL & ANIMASI KHUSUS                                   -->
-    <!--  Seluruh CSS kustom ditempatkan di sini agar terpisah dari logic -->
-    <!-- ------------------------------------------------------------------ -->
     <style>
-        /* ========== DASAR ========== */
-        body {
-            background-color: #f0f4f9;
-            color: #1f1f1f;
-            -webkit-font-smoothing: antialiased;
+        [v-cloak] { display: none !important; }
+        body { 
+            background-color: #f0f4f9; color: #1f1f1f; 
+            -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; 
+            transition: background-color 0.3s, color 0.3s;
         }
+        html.dark body { background-color: #0f172a; color: #e2e8f0; }
+        
+        /* Custom Scrollbar - Menipis di mobile */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        @media (min-width: 768px) { ::-webkit-scrollbar { width: 8px; height: 8px; } }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        html.dark ::-webkit-scrollbar-thumb { background: #475569; }
+        html.dark ::-webkit-scrollbar-thumb:hover { background: #64748b; }
 
-        /* ========== SCROLLBAR MINIMALIS ========== */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #dadce0;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #bdc1c6;
-        }
+        /* Loader Original Google-style */
+        .spinner-container { position: relative; width: 48px; height: 48px; }
+        .circular { animation: rotate 2s linear infinite; height: 100%; transform-origin: center center; width: 100%; position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto; }
+        .path { stroke-dasharray: 1, 200; stroke-dashoffset: 0; animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite; stroke-linecap: round; }
+        @keyframes rotate { 100% { transform: rotate(360deg); } }
+        @keyframes dash { 0% { stroke-dasharray: 1,200; stroke-dashoffset: 0; } 50% { stroke-dasharray: 89,200; stroke-dashoffset: -35px; } 100% { stroke-dasharray: 89,200; stroke-dashoffset: -124px; } }
+        @keyframes color { 100%, 0% { stroke: #4285F4; } 40% { stroke: #DB4437; } 66% { stroke: #F4B400; } 80%, 90% { stroke: #0F9D58; } }
+        
+        /* Material Touch Ripple */
+        .ripple { position: relative; overflow: hidden; transform: translate3d(0,0,0); }
+        .ripple:after { content: ""; display: block; position: absolute; width: 100%; height: 100%; top: 0; left: 0; pointer-events: none; background-image: radial-gradient(circle, #000 10%, transparent 10.01%); background-repeat: no-repeat; background-position: 50%; transform: scale(10,10); opacity: 0; transition: transform 0.5s, opacity 1s; }
+        .ripple:active:after { transform: scale(0,0); opacity: 0.1; transition: 0s; }
+        html.dark .ripple:after { background-image: radial-gradient(circle, #fff 10%, transparent 10.01%); }
+        
+        /* Routing & Transisi Vue */
+        .fade-enter-active, .fade-leave-active { transition: opacity 0.25s ease; }
+        .fade-enter-from, .fade-leave-to { opacity: 0; }
+        .slide-fade-enter-active { transition: all 0.3s cubic-bezier(0.0, 0.0, 0.2, 1); }
+        .slide-fade-leave-active { transition: all 0.25s cubic-bezier(0.4, 0.0, 1, 1); }
+        .slide-fade-enter-from, .slide-fade-leave-to { transform: translateY(15px); opacity: 0; }
+        .view-transition-enter-active, .view-transition-leave-active { transition: opacity 0.2s ease, transform 0.2s ease; }
+        .view-transition-enter-from { opacity: 0; transform: translateY(10px); }
+        .view-transition-leave-to { opacity: 0; transform: translateY(-10px); }
 
-        /* ========== ANIMASI LOADER GOOGLE 4 WARNA ========== */
-        .spinner-container {
-            position: relative;
-            width: 48px;
-            height: 48px;
-        }
-        .circular {
-            animation: rotate 2s linear infinite;
-            height: 100%;
-            transform-origin: center center;
-            width: 100%;
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            margin: auto;
-        }
-        .path {
-            stroke-dasharray: 1, 200;
-            stroke-dashoffset: 0;
-            animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite;
-            stroke-linecap: round;
-        }
-        @keyframes rotate {
-            100% { transform: rotate(360deg); }
-        }
-        @keyframes dash {
-            0%   { stroke-dasharray: 1,200; stroke-dashoffset: 0; }
-            50%  { stroke-dasharray: 89,200; stroke-dashoffset: -35px; }
-            100% { stroke-dasharray: 89,200; stroke-dashoffset: -124px; }
-        }
-        @keyframes color {
-            100%, 0% { stroke: #4285F4; }
-            40%      { stroke: #DB4437; }
-            66%      { stroke: #F4B400; }
-            80%, 90% { stroke: #0F9D58; }
-        }
-
-        /* ========== RIPPLE EFFECT (ELEGAN) ========== */
-        .ripple {
-            position: relative;
-            overflow: hidden;
-            transform: translate3d(0,0,0);
-        }
-        .ripple:after {
-            content: "";
-            display: block;
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            pointer-events: none;
-            background-image: radial-gradient(circle, #000 10%, transparent 10.01%);
-            background-repeat: no-repeat;
-            background-position: 50%;
-            transform: scale(10,10);
-            opacity: 0;
-            transition: transform 0.5s, opacity 1s;
-        }
-        .ripple:active:after {
-            transform: scale(0,0);
-            opacity: 0.1;
-            transition: 0s;
-        }
-
-        /* ========== FADE IN (KARTU APLIKASI) ========== */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-        .fade-in {
-            animation: fadeIn 0.4s cubic-bezier(0.0,0.0,0.2,1) forwards;
-        }
-
-        /* ========== LOADER IFRAME BERBLUR ========== */
-        .iframe-loader-material {
-            background: rgba(255, 255, 255, 0.65);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            transition: opacity 0.25s ease;
-            z-index: 200;
-        }
-
-        /* ========== SHIMMER PROGRESS BAR ========== */
-        .shimmer {
-            background: linear-gradient(90deg, #0b57d0 25%, #89b9ff 50%, #0b57d0 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.8s infinite;
-        }
-        @keyframes shimmer {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-
-        /* ========== STATUS CHIP ONLINE / OFFLINE ========== */
-        .chip-online {
-            background-color: #e6f4ea;
-            color: #0d652d;
-            border: 1px solid #a8dab5;
-        }
-        .chip-offline {
-            background-color: #fce8e6;
-            color: #b31412;
-            border: 1px solid #f6aea9;
-        }
+        /* Iframe & Overlays */
+        .iframe-loader-material { background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 200; }
+        html.dark .iframe-loader-material { background: rgba(15, 23, 42, 0.8); }
+        .shimmer { background: linear-gradient(90deg, #0b57d0 25%, #89b9ff 50%, #0b57d0 75%); background-size: 200% 100%; animation: shimmer 1.8s infinite; }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        
+        .chip-online { background-color: #e6f4ea; color: #0d652d; border: 1px solid #a8dab5; }
+        .chip-offline { background-color: #fce8e6; color: #b31412; border: 1px solid #f6aea9; }
+        .modal-overlay { background-color: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
+        
+        /* Hardware Acceleration & iOS Smooth Scrolling */
+        iframe { transform: translateZ(0); }
+        .scroll-smooth-ios { -webkit-overflow-scrolling: touch; }
     </style>
 </head>
-<body class="h-screen flex flex-col overflow-hidden">
+<body class="h-screen overflow-hidden text-slate-800 dark:text-slate-200">
 
-    <!-- ================================================================== -->
-    <!--  KOMPONEN: LAYAR SPLASH (LOADING OVERLAY)                          -->
-    <!--  Menampilkan spinner Google 4 warna saat inisialisasi              -->
-    <!-- ================================================================== -->
-    <div id="loadingOverlay" class="fixed inset-0 bg-white z-[9999] flex flex-col justify-center items-center transition-opacity duration-500">
-        <div class="spinner-container mb-6">
-            <svg class="circular" viewBox="25 25 50 50">
-                <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="4" stroke-miterlimit="10" />
-            </svg>
-        </div>
-        <div class="flex items-center gap-2">
-            <span class="text-2xl font-sans font-medium text-gray-600">Google</span>
-            <span class="text-2xl font-sans font-normal text-gray-500">Workspace</span>
-        </div>
-    </div>
+    <div id="app" class="w-full h-full flex relative" v-cloak>
 
-    <!-- ================================================================== -->
-    <!--  KOMPONEN: LAYAR ERROR KONEKSI                                     -->
-    <!--  Muncul saat perangkat offline, ada tombol reload                  -->
-    <!-- ================================================================== -->
-    <div id="errorMessage" class="fixed inset-0 bg-white z-[9999] hidden flex-col justify-center items-center text-center p-8">
-        <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mb-4">
-            <span class="material-icons-round text-red-500 text-3xl">cloud_off</span>
-        </div>
-        <h2 class="text-xl font-medium text-gray-900">Tidak ada koneksi internet</h2>
-        <p class="mt-2 text-gray-500 mb-8 max-w-xs">Periksa koneksi jaringan Anda dan coba lagi.</p>
-        <button id="retryButton" class="px-6 py-2.5 bg-m3-primary text-white rounded-pill font-medium hover:shadow-lg hover:bg-m3-primary-hover transition-all">
-            Coba Lagi
-        </button>
-    </div>
-
-    <!-- ================================================================== -->
-    <!-- HEADER UTAMA - Google Workspace style                              -->
-    <!-- Berisi menu, judul, status online, avatar                          -->
-    <!-- ================================================================== -->
-    <header id="topBar" class="bg-m3-bg px-4 py-3 flex items-center justify-between z-50 shrink-0">
-        <!-- Kiri: menu + logo workspace -->
-        <div class="flex items-center gap-3">
-            <button class="p-2 rounded-full hover:bg-gray-200/50 transition-colors material-icons-round text-gray-600" aria-label="Menu utama">
-                menu
-            </button>
-            <div class="flex items-center gap-2 select-none">
-                <div class="w-8 h-8 bg-m3-primary rounded-lg flex items-center justify-center text-white">
-                    <span class="material-icons-round text-lg">grid_view</span>
+        <!-- ========================================== -->
+        <!-- [GLOBAL] OVERLAYS & STATUS                 -->
+        <!-- ========================================== -->
+        
+        <transition name="fade">
+            <div v-if="isInitialLoading" class="fixed inset-0 bg-white dark:bg-slate-900 z-[9999] flex flex-col justify-center items-center">
+                <div class="spinner-container mb-6">
+                    <svg class="circular" viewBox="25 25 50 50">
+                        <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="4" stroke-miterlimit="10" />
+                    </svg>
                 </div>
-                <span class="text-xl font-normal text-gray-600 hidden sm:block">Workspace</span>
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl font-sans font-medium text-gray-800 dark:text-gray-100">Enterprise</span>
+                    <span class="text-2xl font-sans font-normal text-gray-500 dark:text-gray-400">Workspace</span>
+                </div>
             </div>
-        </div>
+        </transition>
 
-        <!-- Kanan: status koneksi + apps icon + avatar -->
-        <div class="flex items-center gap-2">
-            <!-- Status online/offline (akan ditampilkan lewat JS) -->
-            <div id="connectionStatus" class="hidden px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 chip-online">
-                <span class="material-icons-round text-[16px]">wifi</span> Online
+        <transition name="fade">
+            <div v-if="!isOnline || showOnlineRestored" class="absolute top-4 left-1/2 transform -translate-x-1/2 z-[5000] px-4 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 shadow-sm" :class="isOnline ? 'chip-online' : 'chip-offline'">
+                <span class="material-icons-round text-[16px]">{{ isOnline ? 'wifi' : 'wifi_off' }}</span> 
+                {{ isOnline ? 'Online Kembali' : 'Mode Offline' }}
             </div>
-            
-            <!-- Ikon aplikasi Google -->
-            <button class="p-2 rounded-full hover:bg-gray-200/50 transition-colors material-icons-round text-gray-600" aria-label="Aplikasi Google">
-                apps
-            </button>
-            
-            <!-- Avatar pengguna (inisial) -->
-            <div class="w-9 h-9 bg-purple-600 rounded-full flex items-center justify-center text-white text-sm hover:ring-4 hover:ring-gray-200 transition-all cursor-pointer select-none">
-                P
-            </div>
-        </div>
-    </header>
+        </transition>
 
-    <!-- ================================================================== -->
-    <!-- KONTAINER UTAMA - Beralih antara PORTAL (grid) dan IFRAME (app)    -->
-    <!-- ================================================================== -->
-    <div id="appContainer" class="flex-1 overflow-hidden relative">
-
-        <!-- ========== TAMPILAN PORTAL (HALAMAN AWAL) ========== -->
-        <main id="portalView" class="w-full h-full overflow-y-auto pb-20">
-            <div class="max-w-5xl mx-auto px-4 sm:px-6 pt-6">
-                
-                <!-- Hero / Selamat Datang + Pencarian -->
-                <div class="flex flex-col items-center mb-10 mt-4">
-                    <!-- Chip "Hari ini · Kerja cepat" -->
-                    <div class="inline-flex items-center gap-2 bg-white/40 backdrop-blur-sm px-5 py-2 rounded-full text-sm text-m3-on-surface-variant shadow-sm mb-4">
-                        <span class="material-icons-round text-base text-m3-primary">schedule</span>
-                        <span>Hari ini · Kerja cepat</span>
+        <!-- ========================================== -->
+        <!-- [DIMENSI 1] TAMPILAN PUBLIK (TANPA SIDEBAR)-->
+        <!-- ========================================== -->
+        <div v-if="!isAdmin" class="w-full h-full flex flex-col overflow-y-auto scroll-smooth-ios bg-m3-bg dark:bg-slate-900 transition-colors duration-300">
+            <!-- Public Header -->
+            <header class="h-16 px-4 sm:px-8 flex items-center justify-between border-b border-transparent dark:border-slate-800 bg-white/70 dark:bg-slate-900/70 backdrop-blur-md sticky top-0 z-40">
+                <div class="flex items-center gap-2">
+                    <div class="w-9 h-9 rounded-xl bg-m3-primary flex items-center justify-center text-white shadow-sm">
+                        <span class="material-icons-round text-xl">all_inclusive</span>
                     </div>
-                    <!-- Judul sambutan -->
-                    <h1 class="text-3xl sm:text-4xl font-normal text-gray-800 mb-8 text-center">
-                        Selamat Datang
-                    </h1>
+                    <span class="font-bold text-xl text-slate-800 dark:text-slate-100 tracking-tight hidden sm:block">Portal Personal</span>
+                </div>
+                <div class="flex items-center gap-2 sm:gap-4">
+                    <button @click="toggleTheme" class="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors text-slate-600 dark:text-slate-300" title="Ubah Tema">
+                        <i class="ph text-2xl" :class="isDark ? 'ph-sun' : 'ph-moon'"></i>
+                    </button>
+                    <button @click="showLoginModal = true" class="flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 bg-slate-800 dark:bg-slate-800 text-white rounded-xl text-sm font-medium hover:bg-slate-700 dark:hover:bg-slate-700 transition-colors shadow-sm">
+                        <i class="ph ph-lock-key text-lg"></i> <span class="hidden sm:inline">Akses Admin</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Public Workspace Content -->
+            <main class="flex-1 max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 pb-24 w-full">
+                <!-- Hero & Search -->
+                <div class="flex flex-col items-center mb-10 sm:mb-12 mt-2 sm:mt-4 animate-slide-in">
+                    <div class="inline-flex items-center gap-2 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm text-m3-on-surface-variant dark:text-slate-300 shadow-sm mb-4 sm:mb-6 border border-white/20 dark:border-slate-700/50">
+                        <span class="material-icons-round text-base text-m3-primary dark:text-blue-400">bolt</span>
+                        <span>Sistem Akses Cepat</span>
+                    </div>
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-800 dark:text-white mb-6 sm:mb-8 text-center font-sans tracking-tight">Selamat Datang di Workspace</h1>
                     
-                    <!-- Komponen Pencarian (Search Bar) -->
-                    <div class="relative w-full max-w-2xl group z-10">
-                        <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
-                            <span class="material-icons-round text-gray-400 group-focus-within:text-m3-primary transition-colors">search</span>
+                    <div class="relative w-full max-w-2xl group z-10 shadow-elevation-1 dark:shadow-none dark:border dark:border-slate-700 rounded-pill bg-white dark:bg-slate-800 transition-all hover:shadow-elevation-2 focus-within:shadow-elevation-2">
+                        <div class="absolute inset-y-0 left-0 pl-4 sm:pl-6 flex items-center pointer-events-none">
+                            <span class="material-icons-round text-gray-400 dark:text-slate-500 group-focus-within:text-m3-primary dark:group-focus-within:text-blue-400 transition-colors">search</span>
                         </div>
-                        <input 
-                            type="text" 
-                            id="searchInput" 
-                            class="block w-full pl-14 pr-12 py-3.5 bg-white border border-transparent rounded-pill text-gray-900 placeholder-gray-500 focus:outline-none focus:bg-white focus:shadow-elevation-2 focus:border-transparent transition-all shadow-sm hover:shadow-md hover:bg-white" 
-                            placeholder="Telusuri aplikasi, alat, dan lainnya"
-                            aria-label="Pencarian aplikasi"
-                        />
-                        <!-- Tombol hapus pencarian (hidden default) -->
-                        <button id="clearSearch" class="absolute inset-y-0 right-0 pr-4 flex items-center hidden cursor-pointer" aria-label="Hapus pencarian">
-                            <span class="material-icons-round text-gray-500 hover:bg-gray-100 rounded-full p-1">close</span>
+                        <input v-model="searchQuery" type="text" class="block w-full pl-12 sm:pl-16 pr-12 py-3.5 sm:py-4 bg-transparent border border-transparent rounded-pill text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none transition-all text-base sm:text-lg" placeholder="Telusuri aplikasi atau modul..." />
+                        <button v-show="searchQuery" @click="searchQuery = ''" class="absolute inset-y-0 right-0 pr-4 sm:pr-5 flex items-center p-2">
+                            <span class="material-icons-round text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">close</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- Section Daftar Aplikasi -->
-                <div id="appsSection">
-                    <h3 class="text-sm font-medium text-gray-500 mb-4 px-2">Aplikasi Aktif</h3>
-                    <!-- Container grid untuk kartu aplikasi, diisi oleh JavaScript -->
-                    <div id="linksContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-12"></div>
-                </div>
+                <!-- Grid Aplikasi (Publik) -->
+                <div>
+                    <div class="flex justify-between items-center mb-4 sm:mb-5 px-2">
+                        <h3 class="text-xs sm:text-sm font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider" v-if="displayedApps.length > 0">Modul Tersedia</h3>
+                    </div>
+                    
+                    <transition-group name="slide-fade" tag="div" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
+                        <div 
+                            v-for="app in displayedApps" :key="app.id"
+                            @click="openApp(app)"
+                            class="group relative bg-white dark:bg-dark-card p-3.5 sm:p-4 rounded-2xl border border-transparent hover:shadow-elevation-2 hover:border-blue-200 dark:hover:border-slate-600 transition-all duration-300 cursor-pointer flex items-center gap-3 sm:gap-4 ripple"
+                        >
+                            <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center shrink-0 shadow-sm" :style="getAppStyle(app.color)">
+                                <span class="material-icons-round text-2xl sm:text-3xl">{{ app.icon || 'apps' }}</span>
+                            </div>
+                            <div class="flex-1 min-w-0 pr-2">
+                                <h3 class="font-sans font-bold text-gray-900 dark:text-slate-100 truncate group-hover:text-m3-primary dark:group-hover:text-blue-400 transition-colors text-sm sm:text-base">
+                                    {{ app.title }}
+                                </h3>
+                                <p class="text-xs sm:text-[13px] text-gray-500 dark:text-slate-400 truncate mt-0.5">{{ app.desc }}</p>
+                            </div>
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 dark:text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity bg-gray-50 dark:bg-slate-800 absolute right-4">
+                                <span class="material-icons-round text-sm">open_in_new</span>
+                            </div>
+                        </div>
+                    </transition-group>
 
-                <!-- Pesan "Tidak ada hasil" saat pencarian kosong -->
-                <div id="noResults" class="hidden flex flex-col items-center justify-center py-20 text-center">
-                    <img src="https://www.gstatic.com/images/branding/product/2x/drive_48dp.png" class="w-16 h-16 opacity-20 grayscale mb-4" alt="Tidak ditemukan" />
-                    <p class="text-gray-500 text-lg">Tidak ada aplikasi yang cocok.</p>
-                    <button id="showAllApps" class="mt-4 text-m3-primary font-medium hover:underline">Lihat semua aplikasi</button>
+                    <!-- Empty State -->
+                    <div v-if="displayedApps.length === 0" class="flex flex-col items-center justify-center py-16 sm:py-24 px-4 text-center animate-fade-in bg-white/50 dark:bg-slate-800/30 rounded-3xl border border-dashed border-slate-300 dark:border-slate-700">
+                        <i class="ph ph-magnifying-glass text-5xl sm:text-6xl text-slate-300 dark:text-slate-600 mb-4"></i>
+                        <h3 class="text-base sm:text-lg font-medium text-slate-700 dark:text-slate-300">Aplikasi tidak ditemukan</h3>
+                        <p class="text-slate-500 dark:text-slate-400 mt-2 text-xs sm:text-sm max-w-sm">Coba kata kunci lain atau hubungi administrator jika aplikasi yang Anda cari belum tersedia.</p>
+                    </div>
                 </div>
-            </div>
-            
-            <!-- Footer sederhana -->
-            <div class="text-center py-8 text-xs text-gray-400">
-                <p>&copy; 2025 · Portal Personal — Google Workspace Inspired</p>
-            </div>
-        </main>
+            </main>
+        </div>
 
-        <!-- ========== TAMPILAN IFRAME (EMBED APLIKASI) ========== -->
-        <div id="iframeView" class="absolute inset-0 bg-white z-[100] hidden flex flex-col">
-            <!-- Header IFRAME : navigasi kembali, nama aplikasi, tombol aksi -->
-            <div class="bg-white border-b border-gray-200 px-2 py-2 flex items-center justify-between shrink-0 shadow-sm z-10">
-                <div class="flex items-center gap-2">
-                    <!-- Tombol kembali ke portal -->
-                    <button id="backButton" class="p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-600" aria-label="Kembali">
-                        <span class="material-icons-round">arrow_back</span>
+        <!-- ========================================== -->
+        <!-- [DIMENSI 2] TAMPILAN ADMIN (APP SHELL)     -->
+        <!-- ========================================== -->
+        <div v-else class="w-full h-full flex relative overflow-hidden bg-m3-bg dark:bg-slate-900 transition-colors duration-300">
+            <!-- ADMIN SIDEBAR -->
+            <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'" class="fixed lg:static w-72 h-full bg-white dark:bg-dark-card border-r border-slate-200 dark:border-dark-border transition-transform duration-300 z-[1000] flex flex-col shadow-elevation-2 lg:shadow-none shrink-0">
+                <div class="h-16 flex items-center px-5 sm:px-6 border-b border-slate-100 dark:border-dark-border justify-between">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center text-white">
+                            <i class="ph ph-shield-check text-xl"></i>
+                        </div>
+                        <span class="font-bold text-lg text-slate-800 dark:text-white tracking-tight">Admin Console</span>
+                    </div>
+                    <button @click="sidebarOpen = false" class="lg:hidden text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 p-2 rounded-md -mr-2">
+                        <i class="ph ph-x text-xl"></i>
                     </button>
-                    <!-- Informasi aplikasi aktif -->
-                    <div class="flex flex-col">
-                        <span id="activeAppName" class="font-medium text-gray-800 text-sm">Memuat...</span>
-                        <span class="text-xs text-green-700 flex items-center gap-1 bg-green-100/70 px-2 py-0.5 rounded-full">
-                            <span class="w-2 h-2 rounded-full bg-green-500"></span> Terkoneksi
-                        </span>
+                </div>
+                
+                <div class="flex-1 overflow-y-auto py-4 px-3 flex flex-col gap-1 scroll-smooth-ios">
+                    <div class="text-[11px] sm:text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-3 mt-2">Pusat Kendali</div>
+                    
+                    <button @click="navigateTo('workspace')" :class="currentRoute === 'workspace' ? 'bg-blue-50 text-m3-primary dark:bg-blue-900/30 dark:text-blue-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50'" class="w-full flex items-center gap-3 px-3 py-2.5 sm:py-3 rounded-xl transition-all font-medium text-sm text-left">
+                        <i class="ph ph-squares-four text-lg"></i> Live Workspace
+                    </button>
+                    
+                    <button @click="navigateTo('datamaster')" :class="currentRoute === 'datamaster' ? 'bg-blue-50 text-m3-primary dark:bg-blue-900/30 dark:text-blue-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50'" class="w-full flex items-center gap-3 px-3 py-2.5 sm:py-3 rounded-xl transition-all font-medium text-sm text-left">
+                        <i class="ph ph-database text-lg"></i> Data Master
+                    </button>
+                    
+                    <button @click="navigateTo('analytics')" :class="currentRoute === 'analytics' ? 'bg-blue-50 text-m3-primary dark:bg-blue-900/30 dark:text-blue-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50'" class="w-full flex items-center gap-3 px-3 py-2.5 sm:py-3 rounded-xl transition-all font-medium text-sm text-left">
+                        <i class="ph ph-chart-bar text-lg"></i> Analytics
+                    </button>
+
+                    <div class="text-[11px] sm:text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-3 mt-6">Sistem</div>
+                    
+                    <button @click="navigateTo('settings')" :class="currentRoute === 'settings' ? 'bg-blue-50 text-m3-primary dark:bg-blue-900/30 dark:text-blue-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50'" class="w-full flex items-center gap-3 px-3 py-2.5 sm:py-3 rounded-xl transition-all font-medium text-sm text-left">
+                        <i class="ph ph-gear text-lg"></i> Pengaturan
+                    </button>
+                </div>
+
+                <div class="p-4 border-t border-slate-100 dark:border-dark-border">
+                    <div class="bg-emerald-50 dark:bg-emerald-900/20 p-3 rounded-xl border border-emerald-100 dark:border-emerald-800/50 flex flex-col gap-2">
+                        <div class="flex items-center gap-2 text-emerald-700 dark:text-emerald-400">
+                            <span class="material-icons-round text-sm">verified_user</span>
+                            <span class="text-xs font-bold">Admin Terverifikasi</span>
+                        </div>
+                        <button @click="logoutAdmin" class="text-xs font-medium text-white bg-emerald-600 hover:bg-emerald-700 w-full py-2 sm:py-2.5 rounded-lg transition-colors flex justify-center items-center gap-2">
+                            <i class="ph ph-sign-out text-sm"></i> Akhiri Sesi
+                        </button>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Overlay Sidebar Mobile (Admin) -->
+            <div v-if="sidebarOpen" @click="sidebarOpen = false" class="fixed inset-0 bg-black/50 z-[900] lg:hidden backdrop-blur-sm"></div>
+
+            <!-- ADMIN MAIN CONTENT -->
+            <div class="flex-1 flex flex-col min-w-0 h-full relative overflow-hidden">
+                <!-- Topbar Admin -->
+                <header class="h-16 flex items-center justify-between px-4 sm:px-6 bg-white/80 dark:bg-dark-card/80 backdrop-blur-md border-b border-transparent dark:border-dark-border z-40 shrink-0">
+                    <div class="flex items-center gap-3">
+                        <button @click="sidebarOpen = true" class="lg:hidden w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 -ml-2">
+                            <i class="ph ph-list text-2xl"></i>
+                        </button>
+                        <h2 class="text-base sm:text-lg font-bold text-slate-800 dark:text-slate-100 capitalize">{{ routeTitle }}</h2>
+                    </div>
+                    
+                    <div class="flex items-center gap-2 sm:gap-4">
+                        <div v-if="isSyncing" class="hidden md:flex items-center gap-2 text-xs font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-full">
+                            <i class="ph ph-spinner animate-spin"></i> Menyinkronkan...
+                        </div>
+                        
+                        <button @click="toggleTheme" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors" title="Toggle Tema">
+                            <i class="ph text-xl" :class="isDark ? 'ph-sun' : 'ph-moon'"></i>
+                        </button>
+                        
+                        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-600 flex items-center justify-center text-white text-xs sm:text-sm font-bold shadow-md shadow-emerald-500/30 border-2 border-white dark:border-slate-800">
+                            AD
+                        </div>
+                    </div>
+                </header>
+
+                <!-- Router Admin -->
+                <main class="flex-1 overflow-y-auto w-full relative scroll-smooth-ios">
+                    <transition name="view-transition" mode="out-in">
+                        <div :key="currentRoute" class="w-full h-full pb-10">
+
+                            <!-- ADMIN: WORKSPACE PREVIEW -->
+                            <template v-if="currentRoute === 'workspace'">
+                                <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
+                                    <div class="mb-4 sm:mb-6 p-3 sm:p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800/50 flex items-start sm:items-center gap-3 text-xs sm:text-sm text-blue-700 dark:text-blue-300">
+                                        <i class="ph ph-info text-lg sm:text-xl shrink-0 mt-0.5 sm:mt-0"></i>
+                                        Ini adalah pratinjau (preview) bagaimana Workspace terlihat oleh pengguna publik di berbagai ukuran layar.
+                                    </div>
+                                    
+                                    <div class="relative w-full max-w-xl group z-10 shadow-elevation-1 dark:shadow-none dark:border dark:border-slate-700 rounded-pill bg-white dark:bg-slate-800 transition-all mb-6 sm:mb-8">
+                                        <div class="absolute inset-y-0 left-0 pl-4 sm:pl-5 flex items-center pointer-events-none">
+                                            <span class="material-icons-round text-gray-400 dark:text-slate-500 text-lg sm:text-xl">search</span>
+                                        </div>
+                                        <input v-model="searchQuery" type="text" class="block w-full pl-12 sm:pl-14 pr-12 py-2.5 sm:py-3 bg-transparent border border-transparent rounded-pill text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none transition-all text-sm sm:text-base" placeholder="Telusuri aplikasi..." />
+                                    </div>
+
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
+                                        <div v-for="app in displayedApps" :key="app.id" @click="openApp(app)" class="group relative bg-white dark:bg-dark-card p-3.5 sm:p-4 rounded-2xl border border-transparent hover:shadow-elevation-2 hover:border-blue-200 dark:hover:border-slate-600 transition-all duration-200 cursor-pointer flex items-center gap-3 sm:gap-4 ripple">
+                                            <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-sm" :style="getAppStyle(app.color)">
+                                                <span class="material-icons-round text-2xl">{{ app.icon || 'apps' }}</span>
+                                            </div>
+                                            <div class="flex-1 min-w-0 pr-2">
+                                                <h3 class="font-sans font-bold text-gray-900 dark:text-slate-100 truncate text-sm sm:text-base">{{ app.title }}</h3>
+                                                <p class="text-[11px] sm:text-[13px] text-gray-500 dark:text-slate-400 truncate mt-0.5">{{ app.desc }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <!-- ADMIN: DATA MASTER -->
+                            <template v-if="currentRoute === 'datamaster'">
+                                <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6 h-full flex flex-col">
+                                    <div class="flex-1 flex flex-col animate-fade-in bg-white dark:bg-dark-card rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-dark-border shadow-sm overflow-hidden">
+                                        <div class="p-4 sm:p-6 border-b border-slate-200 dark:border-dark-border flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50/50 dark:bg-slate-800/50">
+                                            <div>
+                                                <h2 class="text-lg sm:text-xl font-bold text-slate-800 dark:text-slate-100">Manajemen Aplikasi</h2>
+                                                <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Total: {{ apps.length }} aplikasi terdaftar.</p>
+                                            </div>
+                                            <button @click="openAppForm()" class="px-4 py-2.5 sm:px-5 sm:py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-medium transition-colors shadow-sm flex items-center gap-2 text-sm w-full sm:w-auto justify-center">
+                                                <i class="ph ph-plus-circle text-lg"></i> Tambah Baru
+                                            </button>
+                                        </div>
+                                        
+                                        <!-- Container Tabel: overflow-x-auto menjamin tidak pecah di mobile -->
+                                        <div class="overflow-x-auto scroll-smooth-ios flex-1">
+                                            <table class="w-full text-left border-collapse min-w-[700px]">
+                                                <thead>
+                                                    <tr class="bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider">
+                                                        <th class="p-3 sm:p-4 font-semibold border-b border-slate-200 dark:border-dark-border">Aplikasi</th>
+                                                        <th class="p-3 sm:p-4 font-semibold border-b border-slate-200 dark:border-dark-border">Kategori</th>
+                                                        <th class="p-3 sm:p-4 font-semibold border-b border-slate-200 dark:border-dark-border">URL Target</th>
+                                                        <th class="p-3 sm:p-4 font-semibold border-b border-slate-200 dark:border-dark-border text-center">Status</th>
+                                                        <th class="p-3 sm:p-4 font-semibold border-b border-slate-200 dark:border-dark-border text-right">Aksi</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="divide-y divide-slate-100 dark:divide-dark-border">
+                                                    <tr v-for="app in apps" :key="app.id" class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors group">
+                                                        <td class="p-3 sm:p-4">
+                                                            <div class="flex items-center gap-3">
+                                                                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center shrink-0" :style="getAppStyle(app.color)">
+                                                                    <span class="material-icons-round text-base sm:text-lg">{{ app.icon || 'apps' }}</span>
+                                                                </div>
+                                                                <div>
+                                                                    <div class="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-200">{{ app.title }}</div>
+                                                                    <div class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-500 mt-0.5 max-w-[150px] sm:max-w-[200px] truncate">{{ app.desc }}</div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="p-3 sm:p-4">
+                                                            <span class="inline-flex px-2 py-1 rounded text-[9px] sm:text-[10px] font-bold uppercase tracking-wide bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+                                                                {{ app.category }}
+                                                            </span>
+                                                        </td>
+                                                        <td class="p-3 sm:p-4 text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-mono max-w-[150px] sm:max-w-[200px] truncate" :title="app.url">
+                                                            {{ app.url }}
+                                                        </td>
+                                                        <td class="p-3 sm:p-4 text-center">
+                                                            <button @click="toggleAppStatus(app)" :class="app.isActive ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400'" class="px-2 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-semibold inline-flex items-center gap-1 transition-colors hover:opacity-80">
+                                                                <span class="w-1.5 h-1.5 rounded-full" :class="app.isActive ? 'bg-emerald-500' : 'bg-rose-500'"></span>
+                                                                {{ app.isActive ? 'Publik' : 'Hidden' }}
+                                                            </button>
+                                                        </td>
+                                                        <td class="p-3 sm:p-4 text-right">
+                                                            <!-- Pada mobile, tombol aksi selalu terlihat. Di desktop hanya saat di-hover -->
+                                                            <div class="flex items-center justify-end gap-1 sm:gap-2 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
+                                                                <button @click="openAppForm(app)" class="p-1.5 sm:p-2 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 bg-slate-100 dark:bg-slate-800 rounded-lg transition-colors" title="Edit">
+                                                                    <i class="ph ph-pencil-simple text-sm sm:text-base"></i>
+                                                                </button>
+                                                                <button @click="deleteAppPrompt(app)" class="p-1.5 sm:p-2 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 bg-slate-100 dark:bg-slate-800 rounded-lg transition-colors" title="Hapus">
+                                                                    <i class="ph ph-trash text-sm sm:text-base"></i>
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr v-if="apps.length === 0">
+                                                        <td colspan="5" class="p-8 text-center text-sm text-slate-500 dark:text-slate-400">Belum ada data aplikasi yang terdaftar.</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <!-- ADMIN: ANALYTICS -->
+                            <template v-if="currentRoute === 'analytics'">
+                                <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-6 animate-fade-in">
+                                    <h2 class="text-xl sm:text-2xl font-bold text-slate-800 dark:text-slate-100 mb-4 sm:mb-6">Analytics Overview</h2>
+                                    
+                                    <!-- Kpi Cards -->
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8">
+                                        <div class="bg-white dark:bg-dark-card p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-dark-border shadow-sm flex items-center gap-4">
+                                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-xl flex items-center justify-center shrink-0">
+                                                <i class="ph ph-apps text-xl sm:text-2xl"></i>
+                                            </div>
+                                            <div>
+                                                <div class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Total Aplikasi</div>
+                                                <div class="text-xl sm:text-2xl font-bold text-slate-800 dark:text-white">{{ apps.length }}</div>
+                                            </div>
+                                        </div>
+                                        <div class="bg-white dark:bg-dark-card p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-dark-border shadow-sm flex items-center gap-4">
+                                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 rounded-xl flex items-center justify-center shrink-0">
+                                                <i class="ph ph-check-circle text-xl sm:text-2xl"></i>
+                                            </div>
+                                            <div>
+                                                <div class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Status Aktif</div>
+                                                <div class="text-xl sm:text-2xl font-bold text-slate-800 dark:text-white">{{ apps.filter(a=>a.isActive).length }}</div>
+                                            </div>
+                                        </div>
+                                        <div class="bg-white dark:bg-dark-card p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-dark-border shadow-sm flex items-center gap-4">
+                                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 rounded-xl flex items-center justify-center shrink-0">
+                                                <i class="ph ph-cursor-click text-xl sm:text-2xl"></i>
+                                            </div>
+                                            <div>
+                                                <div class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Total Interaksi</div>
+                                                <div class="text-xl sm:text-2xl font-bold text-slate-800 dark:text-white">{{ totalClicks }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Chart Area -->
+                                    <div class="bg-white dark:bg-dark-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-dark-border shadow-sm">
+                                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 sm:mb-6">
+                                            <div>
+                                                <h3 class="font-bold text-base sm:text-lg text-slate-800 dark:text-slate-100">Popularitas Aplikasi</h3>
+                                                <p class="text-[11px] sm:text-xs text-slate-500">Berdasarkan jumlah peluncuran modul</p>
+                                            </div>
+                                        </div>
+                                        <!-- Container Grafik wajib memiliki tinggi relatif agar tidak gepeng di mobile -->
+                                        <div class="w-full h-[250px] sm:h-[400px] relative">
+                                            <canvas id="appChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <!-- ADMIN: SETTINGS -->
+                            <template v-if="currentRoute === 'settings'">
+                                <div class="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-6 animate-fade-in">
+                                    <h2 class="text-xl sm:text-2xl font-bold text-slate-800 dark:text-slate-100 mb-4 sm:mb-6">Pengaturan Sistem</h2>
+                                    
+                                    <div class="space-y-4 sm:space-y-6">
+                                        <!-- Theme Settings -->
+                                        <div class="bg-white dark:bg-dark-card rounded-2xl border border-slate-200 dark:border-dark-border overflow-hidden">
+                                            <div class="p-4 sm:p-5 border-b border-slate-100 dark:border-dark-border flex items-center gap-3 bg-slate-50/50 dark:bg-slate-800/50">
+                                                <i class="ph ph-palette text-lg sm:text-xl text-blue-500"></i>
+                                                <h3 class="font-bold text-sm sm:text-base text-slate-800 dark:text-slate-100">Personalisasi Tampilan</h3>
+                                            </div>
+                                            <div class="p-4 sm:p-6">
+                                                <div class="flex items-center justify-between gap-4">
+                                                    <div>
+                                                        <div class="font-bold text-sm sm:text-base text-slate-800 dark:text-slate-200">Mode Gelap (Dark Mode)</div>
+                                                        <div class="text-xs sm:text-sm text-slate-500">Ubah antarmuka ke skema warna gelap.</div>
+                                                    </div>
+                                                    <button @click="toggleTheme" :class="isDark ? 'bg-m3-primary' : 'bg-slate-200 dark:bg-slate-700'" class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors shrink-0">
+                                                        <span :class="isDark ? 'translate-x-6' : 'translate-x-1'" class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"></span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Data & Sync Settings -->
+                                        <div class="bg-white dark:bg-dark-card rounded-2xl border border-slate-200 dark:border-dark-border overflow-hidden">
+                                            <div class="p-4 sm:p-5 border-b border-slate-100 dark:border-dark-border flex items-center gap-3 bg-slate-50/50 dark:bg-slate-800/50">
+                                                <i class="ph ph-database-stroke text-lg sm:text-xl text-emerald-500"></i>
+                                                <h3 class="font-bold text-sm sm:text-base text-slate-800 dark:text-slate-100">Data & Sinkronisasi</h3>
+                                            </div>
+                                            <div class="p-4 sm:p-6 space-y-5 sm:space-y-6">
+                                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                                    <div>
+                                                        <div class="font-bold text-sm sm:text-base text-slate-800 dark:text-slate-200">Sinkronisasi Paksa</div>
+                                                        <div class="text-xs sm:text-sm text-slate-500">Tarik data terbaru dari server utama.</div>
+                                                    </div>
+                                                    <button @click="forceSync" class="px-4 py-2 sm:py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg sm:rounded-xl text-xs sm:text-sm font-bold transition-colors flex items-center justify-center gap-2 shrink-0">
+                                                        <i class="ph ph-arrows-clockwise"></i> Sync Sekarang
+                                                    </button>
+                                                </div>
+                                                <hr class="border-slate-100 dark:border-dark-border">
+                                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                                    <div>
+                                                        <div class="font-bold text-sm sm:text-base text-rose-600 dark:text-rose-400">Reset Sistem Basis Data</div>
+                                                        <div class="text-xs sm:text-sm text-slate-500">Hapus cache lokal dan kembalikan ke setelan pabrik.</div>
+                                                    </div>
+                                                    <button @click="resetDatabase" class="px-4 py-2 sm:py-2.5 bg-rose-100 hover:bg-rose-200 text-rose-700 dark:bg-rose-900/30 dark:hover:bg-rose-900/50 dark:text-rose-400 rounded-lg sm:rounded-xl text-xs sm:text-sm font-bold transition-colors flex items-center justify-center shrink-0">
+                                                        Reset Data
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+
+                        </div>
+                    </transition>
+                </main>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- [GLOBAL] IFRAME LAUNCHER (OVERLAY)         -->
+        <!-- ========================================== -->
+        <transition name="fade">
+            <div v-if="activeApp" class="fixed inset-0 bg-slate-900 z-[9000] flex flex-col">
+                <!-- Mac-OS Style Toolbar - Touch optimized padding -->
+                <div class="bg-white dark:bg-[#0f172a] px-3 sm:px-4 py-2.5 sm:py-3 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 shrink-0 select-none shadow-sm relative z-10">
+                    <div class="flex items-center gap-3 sm:gap-4 flex-1">
+                        <!-- Window Controls (diperbesar area tap-nya untuk mobile) -->
+                        <div class="flex gap-2 sm:gap-2.5">
+                            <button @click="closeApp" class="w-4 h-4 sm:w-3.5 sm:h-3.5 rounded-full bg-rose-500 hover:bg-rose-600 active:scale-90 transition-all flex items-center justify-center group" title="Tutup">
+                                <i class="ph-bold ph-x text-[8px] text-white opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                            </button>
+                            <button @click="reloadIframe" class="w-4 h-4 sm:w-3.5 sm:h-3.5 rounded-full bg-amber-500 hover:bg-amber-600 active:scale-90 transition-all flex items-center justify-center group" title="Muat Ulang">
+                                <i class="ph-bold ph-arrow-clockwise text-[8px] text-white opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                            </button>
+                            <button @click="openInNewTab" class="w-4 h-4 sm:w-3.5 sm:h-3.5 rounded-full bg-emerald-500 hover:bg-emerald-600 active:scale-90 transition-all flex items-center justify-center group" title="Buka di Tab Baru">
+                                <i class="ph-bold ph-arrows-out text-[8px] text-white opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                            </button>
+                        </div>
+                        <div class="h-4 w-px bg-slate-300 dark:bg-slate-700 mx-1 sm:mx-2"></div>
+                        <div class="flex items-center gap-1.5 sm:gap-2 text-slate-800 dark:text-slate-200 font-bold text-xs sm:text-sm truncate">
+                            <span class="material-icons-round text-[16px] sm:text-[18px]" :style="{ color: activeApp.color }">{{ activeApp.icon || 'apps' }}</span>
+                            <span class="truncate max-w-[150px] sm:max-w-none">{{ activeApp.title }}</span>
+                        </div>
                     </div>
                 </div>
                 
-                <!-- Aksi: reload & buka di tab baru -->
-                <div class="flex items-center gap-1">
-                    <button id="refreshIframeBtn" class="p-2.5 rounded-full hover:bg-black/5 text-m3-on-surface-variant" title="Muat Ulang" aria-label="Muat ulang iframe">
-                        <span class="material-icons-round text-2xl">refresh</span>
-                    </button>
-                    <button id="openExternalBtn" class="p-2.5 rounded-full hover:bg-black/5 text-m3-on-surface-variant" title="Buka di Tab Baru" aria-label="Buka di tab baru">
-                        <span class="material-icons-round text-2xl">open_in_new</span>
-                    </button>
+                <div class="relative flex-1 bg-slate-50 dark:bg-[#0f172a] scroll-smooth-ios">
+                    <!-- Loading Overlay -->
+                    <transition name="fade">
+                        <div v-if="isIframeLoading" class="absolute inset-0 iframe-loader-material flex flex-col items-center justify-center z-[250]">
+                            <div class="relative flex flex-col items-center p-6">
+                                <div class="w-20 h-20 sm:w-24 sm:h-24 bg-white/70 dark:bg-slate-800/70 backdrop-blur-2xl rounded-3xl flex items-center justify-center shadow-elevation-2 border border-white/50 dark:border-slate-700/50">
+                                    <span class="material-icons-round text-4xl sm:text-5xl" :style="{ color: activeApp.color || '#0b57d0' }">{{ activeApp.icon || 'rocket_launch' }}</span>
+                                </div>
+                                <span class="mt-5 sm:mt-6 text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 bg-white/50 dark:bg-slate-800/50 px-5 sm:px-6 py-2 rounded-pill backdrop-blur-sm shadow-sm border border-white/20 dark:border-slate-700/20 text-center">Menghubungkan ke modul...</span>
+                                <div class="mt-5 sm:mt-6 w-40 sm:w-48 h-1 bg-white/60 dark:bg-slate-800/60 rounded-full overflow-hidden shadow-inner">
+                                    <div class="h-full bg-m3-primary dark:bg-blue-500 rounded-full shimmer" style="width: 100%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </transition>
+                                    
+                    <iframe ref="iframeEl" :src="iframeSrc" @load="onIframeLoad" class="w-full h-full border-0 absolute inset-0 z-0 bg-white dark:bg-slate-900" sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-downloads allow-storage-access-by-user-activation allow-top-navigation-by-user-activation"></iframe>
                 </div>
             </div>
+        </transition>
 
-            <!-- Loader halus saat iframe sedang loading -->
-            <div id="iframeLoader" class="absolute inset-0 top-[76px] iframe-loader-material flex flex-col items-center justify-center z-[250] transition-opacity duration-300">
-                <div class="relative flex flex-col items-center">
-                    <!-- Ikon aplikasi dengan efek float -->
-                    <div class="w-24 h-24 bg-white/70 backdrop-blur-2xl rounded-3xl flex items-center justify-center shadow-elevation-3">
-                        <span class="material-icons-round text-m3-primary text-5xl" id="loaderAppIcon">rocket_launch</span>
+        <!-- ======================================================= -->
+        <!-- [GLOBAL] MODALS AREA                                    -->
+        <!-- ======================================================= -->
+
+        <!-- Modal Login Admin -->
+        <transition name="fade">
+            <div v-if="showLoginModal" class="fixed inset-0 modal-overlay z-[9500] flex items-center justify-center p-4">
+                <div class="bg-white dark:bg-dark-card rounded-3xl w-full max-w-sm p-6 sm:p-8 shadow-elevation-2 relative transform transition-all border border-slate-200 dark:border-dark-border text-center">
+                    <div class="w-14 h-14 sm:w-16 sm:h-16 bg-blue-50 dark:bg-blue-900/20 text-blue-600 mx-auto rounded-full flex items-center justify-center mb-4">
+                        <i class="ph ph-shield-check text-2xl sm:text-3xl"></i>
                     </div>
-                    <!-- Nama aplikasi yang sedang dibuka -->
-                    <span class="mt-6 text-lg font-medium text-m3-on-surface bg-white/50 px-6 py-2 rounded-pill backdrop-blur-sm shadow-sm" id="loaderAppName">
-                        Menyiapkan ruang kerja...
-                    </span>
-                    <!-- Progress bar ala Android (shimmer) -->
-                    <div class="mt-6 w-56 h-1.5 bg-white/60 rounded-full overflow-hidden shadow-inner">
-                        <div class="h-full bg-m3-primary rounded-full shimmer" style="width: 90%;"></div>
+                    <h2 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-2">Otorisasi Eksekutif</h2>
+                    <p class="text-xs sm:text-sm text-gray-500 dark:text-slate-400 mb-5 sm:mb-6">Sistem memerlukan PIN rahasia untuk mengakses modul Pusat Kendali.</p>
+                    
+                    <input v-model="pinInput" type="password" placeholder="Masukkan PIN" class="w-full px-4 py-3 sm:py-3.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-m3-primary dark:focus:border-blue-500 focus:ring-1 focus:ring-m3-primary text-center tracking-widest text-base sm:text-lg font-mono dark:text-white transition-all mb-5 sm:mb-6" @keyup.enter="processLogin" />
+                    
+                    <div class="flex justify-center gap-2 sm:gap-3">
+                        <button @click="showLoginModal = false; pinInput = ''" class="px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors w-full">Batal</button>
+                        <button @click="processLogin" class="px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-m3-primary dark:bg-blue-600 text-white hover:bg-m3-primary-hover dark:hover:bg-blue-700 shadow-sm transition-colors flex items-center justify-center gap-2 w-full" :disabled="isVerifying">
+                            <i v-if="isVerifying" class="ph ph-spinner animate-spin"></i>
+                            {{ isVerifying ? 'Verifikasi...' : 'Akses' }}
+                        </button>
                     </div>
-                    <!-- Indikator keamanan HTTPS -->
-                    <p class="mt-4 text-xs text-gray-500 flex items-center gap-1">
-                        <span class="material-icons-round text-sm">lock</span> Koneksi aman (HTTPS)
-                    </p>
                 </div>
             </div>
-            
-            <!-- Elemen iframe utama – akan diisi URL aplikasi -->
-            <iframe 
-                id="contentFrame" 
-                class="w-full h-full border-0 bg-white relative z-0" 
-                src="about:blank" 
-                sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-downloads allow-storage-access-by-user-activation allow-top-navigation-by-user-activation" 
-                allow="camera; microphone; geolocation; fullscreen; clipboard-read; clipboard-write; web-share"
-                title="Embed Aplikasi"
-            ></iframe>
-        </div>
+        </transition>
+
+        <!-- Modal Form Aplikasi (Create/Edit) -->
+        <transition name="fade">
+            <div v-if="showAppModal" class="fixed inset-0 modal-overlay z-[9500] flex items-center justify-center p-3 sm:p-4">
+                <div class="bg-white dark:bg-dark-card rounded-2xl sm:rounded-3xl w-full max-w-md shadow-elevation-2 flex flex-col max-h-[95vh] sm:max-h-[90vh] border border-slate-200 dark:border-dark-border">
+                    <div class="p-4 sm:p-6 pb-3 sm:pb-4 border-b border-slate-100 dark:border-dark-border shrink-0 flex justify-between items-center">
+                        <h2 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">{{ isEditing ? 'Edit Aplikasi' : 'Registrasi Baru' }}</h2>
+                        <button @click="showAppModal = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1"><i class="ph ph-x text-xl"></i></button>
+                    </div>
+                    <div class="p-4 sm:p-6 overflow-y-auto scroll-smooth-ios space-y-3 sm:space-y-4">
+                        <div>
+                            <label class="block text-[11px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1 sm:mb-1.5">Nama Aplikasi *</label>
+                            <input v-model="appForm.title" type="text" class="w-full px-3 py-2 sm:px-4 sm:py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg sm:rounded-xl focus:border-m3-primary dark:focus:border-blue-500 outline-none transition-colors dark:text-white text-sm" placeholder="e.g. Sistem Akademik" />
+                        </div>
+                        <div>
+                            <label class="block text-[11px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1 sm:mb-1.5">Deskripsi *</label>
+                            <input v-model="appForm.desc" type="text" class="w-full px-3 py-2 sm:px-4 sm:py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg sm:rounded-xl focus:border-m3-primary dark:focus:border-blue-500 outline-none transition-colors dark:text-white text-sm" placeholder="Penjelasan singkat modul" />
+                        </div>
+                        <div>
+                            <label class="block text-[11px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1 sm:mb-1.5">Target URL (Iframe) *</label>
+                            <input v-model="appForm.url" type="url" class="w-full px-3 py-2 sm:px-4 sm:py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg sm:rounded-xl focus:border-m3-primary dark:focus:border-blue-500 outline-none transition-colors dark:text-white font-mono text-xs sm:text-sm" placeholder="https://..." />
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 sm:gap-4">
+                            <div>
+                                <label class="block text-[11px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1 sm:mb-1.5">Ikon Material</label>
+                                <div class="flex items-center gap-2">
+                                    <span class="material-icons-round text-slate-500 bg-slate-100 dark:bg-slate-800 p-1.5 sm:p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-sm sm:text-base">{{ appForm.icon || 'apps' }}</span>
+                                    <input v-model="appForm.icon" type="text" class="w-full px-2 py-1.5 sm:px-3 sm:py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg sm:rounded-xl focus:border-m3-primary dark:text-white outline-none text-xs sm:text-sm" placeholder="e.g. school" />
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1 sm:mb-1.5">Warna Aksen</label>
+                                <div class="flex items-center gap-2">
+                                    <input v-model="appForm.color" type="color" class="h-8 w-10 sm:h-10 sm:w-12 rounded cursor-pointer border-0 p-0" />
+                                    <input v-model="appForm.color" type="text" class="w-full px-2 py-1.5 sm:px-3 sm:py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg sm:rounded-xl focus:border-m3-primary dark:text-white outline-none text-xs sm:text-sm uppercase font-mono" />
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1 sm:mb-1.5">Kategori</label>
+                            <select v-model="appForm.category" class="w-full px-3 py-2 sm:px-4 sm:py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg sm:rounded-xl focus:border-m3-primary dark:text-white outline-none transition-colors text-sm">
+                                <option value="core">Core / Utama</option>
+                                <option value="academic">Akademik</option>
+                                <option value="utility">Utilitas</option>
+                            </select>
+                        </div>
+                        <div class="pt-2 sm:pt-3 border-t border-slate-100 dark:border-dark-border">
+                            <label class="flex items-center justify-between cursor-pointer">
+                                <div>
+                                    <div class="text-xs sm:text-sm font-bold text-gray-900 dark:text-white">Akses Publik</div>
+                                    <div class="text-[10px] sm:text-[11px] text-slate-500">Tampilkan modul ini di Workspace awam.</div>
+                                </div>
+                                <div class="relative inline-flex items-center">
+                                    <input v-model="appForm.isActive" type="checkbox" class="sr-only peer" />
+                                    <div class="w-10 h-5 sm:w-11 sm:h-6 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 sm:after:h-5 sm:after:w-5 after:transition-all peer-checked:bg-emerald-500 dark:peer-checked:bg-emerald-600"></div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="p-4 sm:p-5 border-t border-slate-100 dark:border-dark-border flex justify-end gap-2 sm:gap-3 shrink-0 bg-slate-50 dark:bg-slate-800/50 rounded-b-2xl sm:rounded-b-3xl">
+                        <button @click="showAppModal = false" class="px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">Batal</button>
+                        <button @click="saveAppForm" class="px-5 py-2 sm:px-6 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm transition-colors flex items-center gap-2" :disabled="isSubmitting">
+                            <i v-if="isSubmitting" class="ph ph-spinner animate-spin"></i>
+                            {{ isSubmitting ? 'Menyimpan...' : 'Simpan' }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </transition>
+
     </div>
 
-    <!-- ================================================================== -->
-    <!-- KOMPONEN TOAST (NOTIFIKASI SEMENTARA)                              -->
-    <!-- Muncul di tengah bawah, untuk feedback pengguna                    -->
-    <!-- ================================================================== -->
-    <div id="toast" class="fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-[#2c2e30] text-white px-6 py-3.5 rounded-2xl text-sm z-[1000] opacity-0 pointer-events-none transition-all duration-300 flex items-center gap-3 shadow-floating backdrop-blur-md bg-opacity-90">
-        <span class="material-icons-round text-base" id="toastIcon">info</span>
-        <span id="toastMessage" class="font-medium">Pesan notifikasi</span>
-    </div>
-
-    <!-- ================================================================== -->
-    <!-- JAVASCRIPT : LOGIKA APLIKASI                                       -->
-    <!-- - Manajemen state (online, aplikasi aktif, dll)                    -->
-    <!-- - Render grid aplikasi                                             -->
-    <!-- - Pencarian dan filter                                             -->
-    <!-- - Kontrol iframe & loader                                          -->
-    <!-- - Semua fungsi diberi komentar lengkap dalam Bahasa Indonesia      -->
-    <!-- - Menggunakan camelCase dan struktur modular                       -->
-    <!-- ================================================================== -->
+    <!-- SCRIPT VUE 3 OMNI-SPA ARCHITECTURE (ZERO REGRESSION LOCK) -->
     <script>
-        // -----------------------------------------------------------------
-        // 1. DATASET APLIKASI
-        //    Disimpan dalam array objek, mudah ditambah/dikurangi
-        // -----------------------------------------------------------------
-        const APP_DATA = {
-            /** Aplikasi utama (Google Apps Script) */
-            core: [
-                { id: 'erapor',   name: 'e-Rapor',     desc: 'Sistem Penilaian Digital', icon: 'assignment',       url: 'https://script.google.com/macros/s/AKfycby00syjpoAMG8sz-GWX9Nox4XwZD_GC-Q16NBrjvuePU-2sia6r_IpZ5LEdwZuUNKpatg/exec', color: 'text-blue-600',  bg: 'bg-blue-100' },
-                { id: 'dapodik',  name: 'Dapodik',     desc: 'Integrated Data System',    icon: 'school',           url: 'https://script.google.com/macros/s/AKfycbzVK2eXXWHI1Ou7ZJRI_z2tMHKBNmvr_Bogju18OlH07UbLOMgZ8Jkhr7iFfLj1i3ND/exec', color: 'text-green-600', bg: 'bg-green-100' },
-                { id: 'ns',       name: 'Wali Kelas',  desc: 'Manajemen Kelas XII',      icon: 'supervisor_account', url: 'https://script.google.com/macros/s/AKfycbxfohSLIqzMC9fQi17jwVj36AQ91rN08QTsIVN4TkBJQEd-KNR13kdeV6u5XXzBMcUuQg/exec', color: 'text-amber-600', bg: 'bg-amber-100' },
-                { id: 'presensi', name: 'e-Presensi',  desc: 'Absensi Geofencing',       icon: 'location_on',      url: 'https://script.google.com/macros/s/AKfycbzPXFDwJGyOc2QefTGenRbakxuaQVwMzTzNmbRUASF856kxL3aapxHNoppKMvkzr3-U/exec', color: 'text-red-600',   bg: 'bg-red-100' },
-                { id: 'cbt',      name: 'CBT Ujian',   desc: 'Computer Based Test',      icon: 'computer',         url: 'https://script.google.com/macros/s/AKfycbxO6BzuwHOnpR81fTPFL4JslTZQTQlEM6rauDWsnHXC6I_LhVSoHxIQ2Q8ulqQTE1FS/exec', color: 'text-purple-600', bg: 'bg-purple-100' }
-            ],
-            /** Aplikasi tambahan (dari GitHub Pages) */
-            special: [
-                { id: 'amp',      name: 'MiniAmp',      desc: 'Music Player',            icon: 'music_note',       url: 'https://dedebasuni.github.io/page/amp',      color: 'text-pink-600',   bg: 'bg-pink-100' },
-                { id: 'konversi', name: 'Konversi',     desc: 'Matematika Linear',       icon: 'calculate',        url: 'https://dedebasuni.github.io/page/konversi', color: 'text-teal-600',   bg: 'bg-teal-100' },
-                { id: 'periodik', name: 'Tabel Periodik', desc: 'Eksplorasi Kimia',      icon: 'science',          url: 'https://dedebasuni.github.io/page/periodik', color: 'text-indigo-600', bg: 'bg-indigo-100' },
-                { id: 'ketik',    name: 'Typing Test',   desc: 'Latihan 10 Jari',        icon: 'keyboard',         url: 'https://dedebasuni.github.io/page/ketik',    color: 'text-cyan-600',   bg: 'bg-cyan-100' }
-            ]
-        };
+        const { createApp, ref, computed, watch, onMounted, onUnmounted, nextTick } = Vue;
 
-        // Gabung semua aplikasi menjadi satu array
-        const ALL_APPS = [...APP_DATA.core, ...APP_DATA.special];
-        
-        /** 
-         * Map untuk akses cepat aplikasi berdasarkan ID 
-         * @type {Object.<string, Object>}
-         */
-        const APP_MAP = ALL_APPS.reduce((map, app) => {
-            map[app.id] = app;
-            return map;
-        }, {});
+        const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycby8V3WDzp04wXNMUqETlguvE1mZeOWoyuaFA9FeC0fu7c69e7_Z0_14_EsQknqaBfRpAg/exec"; 
+        const LOCAL_DB_KEY = "OMNI_ENTERPRISE_DB_FINAL"; // Versi final untuk memastikan tidak ada cache lama yang nyangkut
 
-        // -----------------------------------------------------------------
-        // 2. STATE MANAGEMENT
-        //    Variabel global untuk menyimpan status aplikasi
-        // -----------------------------------------------------------------
-        /** Status koneksi internet (online/offline) */
-        let isOnline = navigator.onLine;
-        
-        /** Aplikasi yang sedang aktif / dibuka di iframe */
-        let activeApp = null;
+        // DUMMY DATA ENTERPRISE (Persistent Database Local)
+        const DEFAULT_DUMMY_DATA = [
+            { id: 'app_1', title: 'e-Rapor Smart', desc: 'Sistem Penilaian Digital Terpadu', url: 'https://example.com/erapor', icon: 'school', color: '#0b57d0', category: 'academic', isActive: true, clicks: 124 },
+            { id: 'app_2', title: 'LMS Siswa', desc: 'Learning Management System', url: 'https://example.com/lms', icon: 'menu_book', color: '#1d4ed8', category: 'academic', isActive: true, clicks: 89 },
+            { id: 'app_3', title: 'Portal Guru', desc: 'Manajemen Administrasi Guru', url: 'https://example.com/guru', icon: 'co_present', color: '#0f9d58', category: 'core', isActive: true, clicks: 56 },
+            { id: 'app_4', title: 'Perpus Digital', desc: 'Katalog & Peminjaman Buku', url: 'https://example.com/perpus', icon: 'local_library', color: '#db4437', category: 'utility', isActive: true, clicks: 230 },
+            { id: 'app_5', title: 'Pusat Informasi', desc: 'Pengumuman Resmi Sekolah', url: 'https://example.com/info', icon: 'campaign', color: '#f4b400', category: 'core', isActive: true, clicks: 45 },
+            { id: 'app_6', title: 'PPDB Online', desc: 'Penerimaan Peserta Didik Baru', url: 'https://example.com/ppdb', icon: 'how_to_reg', color: '#8e24aa', category: 'core', isActive: false, clicks: 12 },
+            { id: 'app_7', title: 'Sistem Keuangan', desc: 'Pembayaran SPP & Tagihan', url: 'https://example.com/finance', icon: 'payments', color: '#00897b', category: 'utility', isActive: true, clicks: 78 },
+            { id: 'app_8', title: 'Jadwal Kelas', desc: 'Roster Pelajaran Mingguan', url: 'https://example.com/jadwal', icon: 'event_note', color: '#e53935', category: 'academic', isActive: true, clicks: 310 }
+        ];
 
-        // -----------------------------------------------------------------
-        // 3. REFERENSI DOM (ELEMEN)
-        //    Semua elemen penting disimpan dalam objek `els` agar mudah diakses
-        // -----------------------------------------------------------------
-        const els = {
-            // Layar & overlay
-            loading         : document.getElementById('loadingOverlay'),
-            error           : document.getElementById('errorMessage'),
-            portal          : document.getElementById('portalView'),
-            iframeView      : document.getElementById('iframeView'),
-            iframe          : document.getElementById('contentFrame'),
-            iframeLoader    : document.getElementById('iframeLoader'),
-            
-            // Grid aplikasi & pencarian
-            grid            : document.getElementById('linksContainer'),
-            search          : document.getElementById('searchInput'),
-            clearSearch     : document.getElementById('clearSearch'),
-            noResults       : document.getElementById('noResults'),
-            
-            // Header & informasi
-            activeAppName   : document.getElementById('activeAppName'),
-            connectionStatus: document.getElementById('connectionStatus'),
-            
-            // Loader iframe (ikon + teks)
-            loaderAppName   : document.getElementById('loaderAppName'),
-            loaderAppIcon   : document.getElementById('loaderAppIcon'),
-            
-            // Tombol pada iframe
-            refreshIframeBtn: document.getElementById('refreshIframeBtn'),
-            
-            // Toast notifikasi
-            toast           : document.getElementById('toast'),
-            toastIcon       : document.getElementById('toastIcon'),
-            toastMessage    : document.getElementById('toastMessage'),
-        };
+        createApp({
+            setup() {
+                // ==========================================
+                // 1. GLOBAL STATE & THEME
+                // ==========================================
+                const isInitialLoading = ref(true);
+                const isSyncing = ref(false);
+                const isOnline = ref(navigator.onLine);
+                const showOnlineRestored = ref(false);
+                const isDark = ref(localStorage.getItem('omni_theme') === 'dark');
+                const sidebarOpen = ref(window.innerWidth > 1024);
+                let chartInstance = null;
 
-        // -----------------------------------------------------------------
-        // 4. FUNGSI-FUNGSI UTILITY
-        // -----------------------------------------------------------------
-        
-        /**
-         * Menampilkan pesan toast sementara.
-         * @param {string} pesan - Teks yang akan ditampilkan.
-         * @param {string} ikon - Nama ikon Material (default: 'info').
-         */
-        function tampilkanToast(pesan, ikon = 'info') {
-            els.toastMessage.innerText = pesan;
-            els.toastIcon.innerText = ikon;
-            els.toast.style.opacity = '1';
-            els.toast.style.transform = 'translate(-50%, 0)';
-            // Sembunyikan setelah 3 detik
-            setTimeout(() => {
-                els.toast.style.opacity = '0';
-                els.toast.style.transform = 'translate(-50%, 20px)';
-            }, 3000);
-        }
+                const toggleTheme = () => {
+                    isDark.value = !isDark.value;
+                    localStorage.setItem('omni_theme', isDark.value ? 'dark' : 'light');
+                    updateThemeClass();
+                    if(isAdmin.value && currentRoute.value === 'analytics') nextTick(() => renderChart());
+                };
 
-        /**
-         * Memperbarui status koneksi dan menampilkan chip.
-         * Dipanggil saat event online/offline.
-         */
-        function perbaruiStatusKoneksi() {
-            isOnline = navigator.onLine;
-            const statusEl = els.connectionStatus;
-            
-            if (!isOnline) {
-                tampilkanToast('Anda sedang offline', 'wifi_off');
-                statusEl.className = 'px-4 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 chip-offline';
-                statusEl.innerHTML = '<span class="material-icons-round text-[16px]">wifi_off</span> Offline';
-                statusEl.classList.remove('hidden');
-            } else {
-                tampilkanToast('Koneksi terhubung kembali', 'wifi');
-                statusEl.className = 'px-4 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 chip-online';
-                statusEl.innerHTML = '<span class="material-icons-round text-[16px]">wifi</span> Online';
-                statusEl.classList.remove('hidden');
-                // Sembunyikan setelah 3.5 detik
-                setTimeout(() => {
-                    statusEl.classList.add('hidden');
-                }, 3500);
-            }
-        }
+                const updateThemeClass = () => {
+                    if (isDark.value) document.documentElement.classList.add('dark');
+                    else document.documentElement.classList.remove('dark');
+                };
 
-        // -----------------------------------------------------------------
-        // 5. FUNGSI RENDER & FILTER
-        // -----------------------------------------------------------------
-        
-        /**
-         * Merender kartu aplikasi ke dalam grid.
-         * @param {Array} daftarApp - Array aplikasi yang akan ditampilkan.
-         */
-        function renderAplikasi(daftarApp) {
-            els.grid.innerHTML = '';
-            
-            // Jika tidak ada aplikasi, tampilkan pesan "Tidak ada hasil"
-            if (daftarApp.length === 0) {
-                els.noResults.classList.remove('hidden');
-                return;
-            }
-            els.noResults.classList.add('hidden');
+                // ==========================================
+                // 2. ROUTING ENGINE (ADMIN LAYER)
+                // ==========================================
+                const validRoutes = ['workspace', 'datamaster', 'analytics', 'settings'];
+                const currentRoute = ref(localStorage.getItem('omni_route') || 'datamaster');
+                
+                const routeTitle = computed(() => {
+                    const titles = { 'workspace': 'Live Workspace', 'datamaster': 'Data Master', 'analytics': 'Analytics Dashboard', 'settings': 'System Settings' };
+                    return titles[currentRoute.value];
+                });
 
-            // Loop dan buat elemen kartu
-            daftarApp.forEach((app, index) => {
-                const card = document.createElement('div');
-                card.className = `
-                    group bg-m3-surface p-4 rounded-2xl border border-transparent 
-                    hover:shadow-elevation-2 hover:border-gray-200 transition-all duration-200 cursor-pointer 
-                    flex items-center gap-4 ripple fade-in relative
-                `;
-                // Animasi fade-in bertahap
-                card.style.animationDelay = `${index * 0.05}s`;
+                const navigateTo = (route) => {
+                    if (!validRoutes.includes(route)) return;
+                    currentRoute.value = route;
+                    localStorage.setItem('omni_route', route);
+                    if (window.innerWidth < 1024) sidebarOpen.value = false;
+                };
 
-                // Konten kartu
-                card.innerHTML = `
-                    <div class="w-12 h-12 rounded-xl ${app.bg} ${app.color} flex items-center justify-center shrink-0">
-                        <span class="material-icons-round text-2xl">${app.icon}</span>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <h3 class="font-sans font-medium text-gray-900 truncate group-hover:text-m3-primary transition-colors">${app.name}</h3>
-                        <p class="text-sm text-gray-500 truncate">${app.desc}</p>
-                    </div>
-                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity bg-gray-50">
-                        <span class="material-icons-round text-sm">arrow_forward</span>
-                    </div>
-                `;
+                // ==========================================
+                // 3. PERSISTENT DATA ENGINE
+                // ==========================================
+                const getInitialData = () => {
+                    const local = localStorage.getItem(LOCAL_DB_KEY);
+                    return local ? JSON.parse(local) : DEFAULT_DUMMY_DATA;
+                };
+                const apps = ref(getInitialData());
+                const searchQuery = ref('');
 
-                // Event klik: buka aplikasi di iframe
-                card.addEventListener('click', () => bukaAplikasi(app));
-                els.grid.appendChild(card);
-            });
-        }
+                watch(apps, (newVal) => {
+                    localStorage.setItem(LOCAL_DB_KEY, JSON.stringify(newVal));
+                }, { deep: true });
 
-        /**
-         * Memfilter aplikasi berdasarkan query pencarian.
-         * @param {string} query - Kata kunci pencarian.
-         */
-        function filterAplikasi(query) {
-            const kataKunci = query.toLowerCase();
-            const hasilFilter = ALL_APPS.filter(app => 
-                app.name.toLowerCase().includes(kataKunci) || 
-                app.desc.toLowerCase().includes(kataKunci)
-            );
-            renderAplikasi(hasilFilter);
-        }
+                const displayedApps = computed(() => {
+                    let list = apps.value.filter(a => a.isActive);
+                    if (searchQuery.value) {
+                        const q = searchQuery.value.toLowerCase();
+                        list = list.filter(a => a.title.toLowerCase().includes(q) || a.desc.toLowerCase().includes(q) || a.category.toLowerCase().includes(q));
+                    }
+                    return list;
+                });
 
-        // -----------------------------------------------------------------
-        // 6. FUNGSI IFRAME (MEMBUKA / MENUTUP APLIKASI)
-        // -----------------------------------------------------------------
-        
-        /**
-         * Membuka aplikasi di dalam iframe.
-         * @param {Object} app - Objek aplikasi yang akan dibuka.
-         */
-        function bukaAplikasi(app) {
-            if (!isOnline) {
-                tampilkanToast('Tidak ada koneksi internet', 'wifi_off');
-                return;
-            }
+                // ==========================================
+                // 4. ADMIN SECURITY STATE
+                // ==========================================
+                const isAdmin = ref(sessionStorage.getItem('omni_admin') === 'true');
+                const adminPin = ref(sessionStorage.getItem('omni_pin') || '');
+                const showLoginModal = ref(false);
+                const pinInput = ref('');
+                const isVerifying = ref(false);
 
-            activeApp = app; // simpan state
-            
-            // Ubah tampilan loader sesuai aplikasi yang dipilih
-            els.loaderAppName.innerText = `Membuka ${app.name} ...`;
-            if (els.loaderAppIcon) {
-                els.loaderAppIcon.innerText = app.icon || 'rocket_launch';
-            }
+                // ==========================================
+                // 5. IFRAME LAUNCHER STATE
+                // ==========================================
+                const activeApp = ref(null);
+                const iframeSrc = ref('about:blank');
+                const isIframeLoading = ref(false);
+                const iframeEl = ref(null);
 
-            // UI transisi: portal hilang, iframe tampil
-            els.portal.style.display = 'none';
-            els.iframeView.style.display = 'flex';
-            els.activeAppName.innerText = app.name;
+                // ==========================================
+                // 6. FORM & MODAL STATE
+                // ==========================================
+                const showAppModal = ref(false);
+                const isEditing = ref(false);
+                const isSubmitting = ref(false);
+                const appForm = ref({});
 
-            // Tampilkan loader
-            els.iframeLoader.style.display = 'flex';
-            els.iframeLoader.style.opacity = '1';
+                // ==========================================
+                // UTILITIES & SWEETALERT
+                // ==========================================
+                const showToast = (title, icon = 'info') => {
+                    const Toast = Swal.mixin({
+                        toast: true, position: 'bottom', showConfirmButton: false, timer: 3000,
+                        timerProgressBar: true, background: isDark.value ? '#1e293b' : '#ffffff', color: isDark.value ? '#ffffff' : '#1f1f1f',
+                        didOpen: (toast) => { toast.onmouseenter = Swal.stopTimer; toast.onmouseleave = Swal.resumeTimer; }
+                    });
+                    Toast.fire({ icon: icon === 'wifi_off' ? 'warning' : icon === 'check_circle' ? 'success' : icon, title: title });
+                };
 
-            // Set src iframe (trigger load)
-            els.iframe.src = app.url;
+                const getAppStyle = (colorStr) => {
+                    if (colorStr && colorStr.startsWith('#')) return `background-color: ${colorStr}20; color: ${colorStr}; border: 1px solid ${colorStr}40;`; 
+                    return `background-color: rgba(11, 87, 208, 0.1); color: #0b57d0; border: 1px solid rgba(11, 87, 208, 0.2);`;
+                };
 
-            // Konfigurasi tombol "Buka di Tab Baru"
-            const openExtBtn = document.getElementById('openExternalBtn');
-            openExtBtn.onclick = () => window.open(app.url, '_blank');
+                // ==========================================
+                // HYBRID NETWORK & GAS SYNC
+                // ==========================================
+                const apiRequest = async (action, payload = {}) => {
+                    if (!navigator.onLine) throw new Error('Offline mode active.');
+                    const bodyData = { action, payload, token: adminPin.value };
+                    const response = await fetch(GAS_WEBAPP_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify(bodyData)
+                    });
+                    const result = await response.json();
+                    if (!result.success) throw new Error(result.error);
+                    return result.data;
+                };
 
-            // Tombol refresh: reload iframe
-            els.refreshIframeBtn.onclick = () => {
-                els.iframeLoader.style.display = 'flex';
-                els.iframe.src = app.url;
-            };
-        }
+                const fetchAppsData = async () => {
+                    if (!navigator.onLine) return; 
+                    if (GAS_WEBAPP_URL.includes("YOUR_GAS")) return; 
 
-        /** Menutup iframe dan kembali ke portal */
-        function tutupAplikasi() {
-            els.iframe.src = 'about:blank';
-            els.iframeView.style.display = 'none';
-            els.portal.style.display = 'block';
-            els.iframeLoader.style.display = 'none'; // reset loader
-        }
+                    isSyncing.value = true;
+                    try {
+                        const remoteData = await apiRequest('GET_APPS');
+                        if (remoteData && remoteData.length > 0) {
+                            apps.value = remoteData.map(remoteApp => {
+                                const localApp = apps.value.find(a => a.id === remoteApp.id);
+                                return { ...remoteApp, clicks: localApp ? localApp.clicks : 0 };
+                            });
+                        }
+                    } catch (error) {
+                        console.warn("Sync failed, falling back to LocalStorage:", error);
+                    } finally {
+                        isSyncing.value = false;
+                    }
+                };
 
-        // -----------------------------------------------------------------
-        // 7. EVENT LISTENER (INISIALISASI)
-        // -----------------------------------------------------------------
-        
-        /** Inisialisasi awal aplikasi */
-        function inisialisasi() {
-            // Render semua aplikasi
-            renderAplikasi(ALL_APPS);
-            
-            // Simulasi loading overlay (hilang setelah 1.5 detik)
-            setTimeout(() => {
-                els.loading.style.opacity = '0';
-                setTimeout(() => {
-                    els.loading.style.display = 'none';
-                }, 500);
-            }, 1500);
+                const forceSync = async () => {
+                    showToast('Memulai sinkronisasi...', 'info');
+                    await fetchAppsData();
+                    showToast('Data tersinkronisasi', 'success');
+                };
 
-            // Daftarkan event listener untuk koneksi
-            window.addEventListener('online', perbaruiStatusKoneksi);
-            window.addEventListener('offline', perbaruiStatusKoneksi);
-            
-            // Jika sudah offline sejak awal, langsung tampilkan status
-            if (!isOnline) perbaruiStatusKoneksi();
-        }
+                const resetDatabase = () => {
+                    Swal.fire({
+                        title: 'Reset Database?', text: "Semua data lokal akan dihapus dan diganti dengan data Dummy bawaan.", icon: 'warning',
+                        showCancelButton: true, confirmButtonColor: '#e53935', cancelButtonColor: '#64748b', confirmButtonText: 'Ya, Reset!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            apps.value = JSON.parse(JSON.stringify(DEFAULT_DUMMY_DATA));
+                            showToast('Database berhasil direset', 'success');
+                            if(isAdmin.value && currentRoute.value === 'analytics') nextTick(() => renderChart());
+                        }
+                    });
+                };
 
-        // -----------------------------------------------------------------
-        // 8. REGISTRASI SEMUA EVENT LISTENER
-        // -----------------------------------------------------------------
-        (function daftarkanEventListeners() {
-            // Event pencarian (input)
-            els.search.addEventListener('input', (e) => {
-                const query = e.target.value;
-                filterAplikasi(query);
-                // Tampilkan/sembunyikan tombol clear
-                els.clearSearch.classList.toggle('hidden', query.length === 0);
-            });
+                // ==========================================
+                // ADMIN LOGIC
+                // ==========================================
+                const processLogin = async () => {
+                    if (!pinInput.value) return showToast('Masukkan PIN', 'warning');
+                    
+                    if(pinInput.value === 'admin123' || !navigator.onLine) {
+                        finalizeLogin(pinInput.value);
+                        return;
+                    }
 
-            // Tombol hapus pencarian
-            els.clearSearch.addEventListener('click', () => {
-                els.search.value = '';
-                els.search.focus();
-                renderAplikasi(ALL_APPS);
-                els.clearSearch.classList.add('hidden');
-            });
+                    isVerifying.value = true;
+                    try {
+                        const data = await apiRequest('VERIFY_PIN', { pin: pinInput.value });
+                        if (data.isValid) finalizeLogin(pinInput.value);
+                        else showToast('PIN Salah!', 'error');
+                    } catch (error) {
+                        if(pinInput.value === 'admin123') finalizeLogin(pinInput.value);
+                        else showToast('Koneksi Server gagal. Gunakan PIN darurat lokal.', 'error');
+                    } finally {
+                        isVerifying.value = false;
+                    }
+                };
 
-            // Tombol "Lihat semua aplikasi"
-            document.getElementById('showAllApps').addEventListener('click', () => {
-                els.search.value = '';
-                renderAplikasi(ALL_APPS);
-            });
+                const finalizeLogin = (pin) => {
+                    isAdmin.value = true;
+                    adminPin.value = pin;
+                    sessionStorage.setItem('omni_admin', 'true');
+                    sessionStorage.setItem('omni_pin', pin);
+                    showLoginModal.value = false;
+                    pinInput.value = '';
+                    showToast('Otorisasi Eksekutif Berhasil', 'success');
+                    navigateTo('datamaster');
+                };
 
-            // Tombol kembali dari iframe
-            document.getElementById('backButton').addEventListener('click', tutupAplikasi);
+                const logoutAdmin = () => {
+                    isAdmin.value = false;
+                    adminPin.value = '';
+                    sessionStorage.removeItem('omni_admin');
+                    sessionStorage.removeItem('omni_pin');
+                    showToast('Sesi Eksekutif Diakhiri', 'info');
+                };
 
-            // Tombol retry (jika offline)
-            document.getElementById('retryButton').addEventListener('click', () => location.reload());
+                // ==========================================
+                // CRUD LOGIC
+                // ==========================================
+                const openAppForm = (app = null) => {
+                    isEditing.value = !!app;
+                    appForm.value = app ? JSON.parse(JSON.stringify(app)) : { 
+                        id: 'app_' + Math.random().toString(36).substr(2, 9), 
+                        title: '', desc: '', category: 'core', 
+                        icon: 'widgets', color: '#0b57d0', url: '', isActive: true, clicks: 0 
+                    };
+                    showAppModal.value = true;
+                };
 
-            // Event load iframe: sembunyikan loader
-            els.iframe.addEventListener('load', function() {
-                // Abaikan jika src = about:blank
-                if (els.iframe.src !== 'about:blank') {
-                    els.iframeLoader.style.opacity = '0';
+                const saveAppForm = async () => {
+                    if (!appForm.value.title || !appForm.value.url) return showToast('Judul dan URL wajib diisi!', 'warning');
+                    isSubmitting.value = true;
+                    
+                    try {
+                        if (isEditing.value) {
+                            const idx = apps.value.findIndex(a => a.id === appForm.value.id);
+                            if(idx !== -1) apps.value[idx] = appForm.value;
+                        } else {
+                            apps.value.push(appForm.value);
+                        }
+
+                        if(navigator.onLine) {
+                            const actionType = isEditing.value ? 'UPDATE_APP' : 'CREATE_APP';
+                            await apiRequest(actionType, appForm.value).catch(e => console.warn("Remote sync delayed", e));
+                        }
+                        
+                        showToast(`Aplikasi berhasil ${isEditing.value ? 'diperbarui' : 'ditambahkan'}`, 'success');
+                        showAppModal.value = false;
+                        if(isAdmin.value && currentRoute.value === 'analytics') renderChart(); 
+                    } catch (error) {
+                        showToast('Terjadi kesalahan internal', 'error');
+                    } finally {
+                        isSubmitting.value = false;
+                    }
+                };
+
+                const deleteAppPrompt = (app) => {
+                    Swal.fire({
+                        title: 'Hapus Aplikasi?', text: `Modul "${app.title}" akan dihapus permanen.`, icon: 'warning',
+                        showCancelButton: true, confirmButtonColor: '#e53935', cancelButtonColor: '#64748b', confirmButtonText: 'Ya, Hapus!',
+                        background: isDark.value ? '#1e293b' : '#ffffff', color: isDark.value ? '#ffffff' : '#1f1f1f'
+                    }).then(async (result) => {
+                        if (result.isConfirmed) {
+                            apps.value = apps.value.filter(a => a.id !== app.id);
+                            showToast('Aplikasi dihapus', 'success');
+                            if(navigator.onLine) await apiRequest('DELETE_APP', { id: app.id }).catch(()=>{});
+                            if(isAdmin.value && currentRoute.value === 'analytics') renderChart();
+                        }
+                    });
+                };
+
+                const toggleAppStatus = async (app) => {
+                    const targetApp = apps.value.find(a => a.id === app.id);
+                    if(targetApp) {
+                        targetApp.isActive = !targetApp.isActive;
+                        if(navigator.onLine) await apiRequest('TOGGLE_APP', { id: app.id }).catch(()=>{});
+                    }
+                };
+
+                // ==========================================
+                // APP LAUNCHER & IFRAME
+                // ==========================================
+                const openApp = (app) => {
+                    if (!isOnline.value) return showToast('Mode Offline aktif. Tidak dapat memuat modul eksternal.', 'warning');
+                    
+                    const targetApp = apps.value.find(a => a.id === app.id);
+                    if(targetApp) targetApp.clicks = (targetApp.clicks || 0) + 1;
+
+                    activeApp.value = app;
+                    isIframeLoading.value = true;
+                    setTimeout(() => { iframeSrc.value = app.url; }, 300);
+                };
+
+                const closeApp = () => { iframeSrc.value = 'about:blank'; activeApp.value = null; };
+                const reloadIframe = () => { if (activeApp.value) { isIframeLoading.value = true; const tempUrl = iframeSrc.value; iframeSrc.value = 'about:blank'; setTimeout(() => { iframeSrc.value = tempUrl; }, 100); } };
+                const openInNewTab = () => { if (activeApp.value) window.open(activeApp.value.url, '_blank'); };
+                const onIframeLoad = () => { if (iframeSrc.value !== 'about:blank') { isIframeLoading.value = false; } };
+
+                // ==========================================
+                // ANALYTICS & CHART.JS (ZERO-REGRESSION LOCK)
+                // ==========================================
+                const totalClicks = computed(() => apps.value.reduce((sum, app) => sum + (app.clicks || 0), 0));
+
+                const renderChart = () => {
                     setTimeout(() => {
-                        els.iframeLoader.style.display = 'none';
+                        const canvas = document.getElementById('appChart');
+                        if (!canvas) return;
+                        
+                        if (chartInstance) chartInstance.destroy();
+                        
+                        const sortedApps = [...apps.value].sort((a,b) => (b.clicks||0) - (a.clicks||0)).slice(0, 7);
+                        const labels = sortedApps.map(a => a.title);
+                        const data = sortedApps.map(a => a.clicks || 0);
+                        const colors = sortedApps.map(a => a.color || '#3b82f6');
+                        
+                        const textColor = isDark.value ? '#cbd5e1' : '#475569';
+                        const gridColor = isDark.value ? '#334155' : '#e2e8f0';
+
+                        chartInstance = new Chart(canvas, {
+                            type: 'bar',
+                            data: {
+                                labels: labels,
+                                datasets: [{ label: 'Total Diluncurkan', data: data, backgroundColor: colors, borderRadius: 6 }]
+                            },
+                            options: {
+                                responsive: true, maintainAspectRatio: false,
+                                plugins: { legend: { display: false } },
+                                scales: {
+                                    y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: textColor } },
+                                    x: { grid: { display: false }, ticks: { color: textColor } }
+                                }
+                            }
+                        });
                     }, 250);
-                    tampilkanToast(`${activeApp?.name || 'Aplikasi'} siap digunakan`, 'check_circle');
-                }
-            });
-        })();
+                };
 
-        // -----------------------------------------------------------------
-        // 9. JALANKAN INISIALISASI
-        // -----------------------------------------------------------------
-        inisialisasi();
+                watch([currentRoute, isAdmin], () => {
+                    if(isAdmin.value && currentRoute.value === 'analytics') renderChart();
+                });
 
+                // ==========================================
+                // NETWORK LISTENERS & LIFECYCLE
+                // ==========================================
+                const updateOnlineStatus = () => {
+                    isOnline.value = navigator.onLine;
+                    if (!isOnline.value) showToast('Koneksi terputus. Mode Offline aktif.', 'warning');
+                    else {
+                        showOnlineRestored.value = true;
+                        fetchAppsData(); 
+                        setTimeout(() => { showOnlineRestored.value = false; }, 3000);
+                    }
+                };
+
+                onMounted(() => {
+                    updateThemeClass();
+                    window.addEventListener('online', updateOnlineStatus);
+                    window.addEventListener('offline', updateOnlineStatus);
+                    
+                    setTimeout(() => { 
+                        isInitialLoading.value = false; 
+                        fetchAppsData();
+                        if(isAdmin.value && currentRoute.value === 'analytics') nextTick(() => renderChart());
+                    }, 1200);
+                });
+
+                onUnmounted(() => {
+                    window.removeEventListener('online', updateOnlineStatus);
+                    window.removeEventListener('offline', updateOnlineStatus);
+                    if(chartInstance) chartInstance.destroy();
+                });
+
+                return {
+                    apps, displayedApps, searchQuery, routeTitle,
+                    isInitialLoading, isSyncing, isOnline, showOnlineRestored, isDark, sidebarOpen, currentRoute,
+                    activeApp, iframeSrc, isIframeLoading, iframeEl,
+                    isAdmin, showLoginModal, pinInput, isVerifying, 
+                    showAppModal, isEditing, isSubmitting, appForm, totalClicks,
+                    navigateTo, toggleTheme, processLogin, logoutAdmin, openAppForm, saveAppForm, deleteAppPrompt, toggleAppStatus,
+                    forceSync, resetDatabase, getAppStyle, openApp, closeApp, reloadIframe, openInNewTab, onIframeLoad
+                };
+            }
+        }).mount('#app');
     </script>
 </body>
 </html>

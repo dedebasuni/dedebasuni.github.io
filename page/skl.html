@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sistem Kelulusan SMAN 1 Konoha - 2026</title>
+
+    <!-- Icon Default -->
+    <link rel="icon" href="https://www.google.com/s2/favicons?domain=google.com&sz=128" type="image/png" />
+    
+    <!-- Ultra-Premium Typography: Plus Jakarta Sans & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Core Engine Dependencies -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <!-- Master Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff', 100: '#e0f2fe', 200: '#bae6fd', 300: '#7dd3fc',
+                            400: '#38bdf8', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1',
+                            800: '#075985', 900: '#0c4a6e', 950: '#082f49',
+                        },
+                        surface: {
+                            light: '#ffffff',
+                            dark: '#0f172a',
+                            darker: '#020617'
+                        }
+                    },
+                    animation: {
+                        'blob': 'blob 7s infinite',
+                        'scan': 'scan 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'fade-in-up': 'fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        },
+                        scan: {
+                            '0%': { transform: 'translateY(-100%)' },
+                            '100%': { transform: 'translateY(100%)' },
+                        },
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Dictator-Level CSS Overrides -->
+    <style>
+        /* Base Reset & Smooth Scrolling */
+        html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
+        body { 
+            background-color: #f8fafc; 
+            color: #0f172a; 
+            -webkit-font-smoothing: antialiased; 
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .dark body { background-color: #020617; color: #f8fafc; }
+
+        /* Custom Enterprise Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; border: 2px solid transparent; background-clip: padding-box; }
+        .dark ::-webkit-scrollbar-thumb { background: #334155; border: 2px solid transparent; background-clip: padding-box; }
+        ::-webkit-scrollbar-thumb:hover { background-color: #94a3b8; }
+        .dark ::-webkit-scrollbar-thumb:hover { background-color: #475569; }
+
+        /* Vue View Transitions */
+        .page-enter-active, .page-leave-active { transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .page-enter-from { opacity: 0; transform: translateY(15px) scale(0.98); }
+        .page-leave-to { opacity: 0; transform: translateY(-15px) scale(0.98); }
+
+        /* High-End Glassmorphism */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03), 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+        }
+        .dark .glass-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+        }
+
+        /* Ambient Background Mesh */
+        .ambient-bg {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -1; overflow: hidden; pointer-events: none;
+        }
+        .ambient-blob {
+            position: absolute; filter: blur(90px); opacity: 0.4; border-radius: 50%;
+            animation: blob 10s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .dark .ambient-blob { opacity: 0.2; }
+
+        /* Input Field Perfection */
+        .input-premium {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .input-premium:focus-within {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(14, 165, 233, 0.15);
+        }
+
+        /* Absolute Pixel-Perfect Print Styles */
+        @media print {
+            @page { size: A4 portrait; margin: 15mm; }
+            body { background: white !important; color: black !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            .glass-card { 
+                background: white !important; border: none !important; box-shadow: none !important; filter: none !important; backdrop-filter: none !important; 
+            }
+            #app { min-height: auto !important; height: auto !important; display: block !important; }
+            .print-container { width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
+            .text-white { color: white !important; } /* Force keep text white on colored backgrounds during print */
+            
+            /* Print Watermark */
+            .print-watermark {
+                position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg);
+                font-size: 8rem; font-weight: 800; color: rgba(0,0,0,0.03); z-index: -1; pointer-events: none; white-space: nowrap;
+            }
+        }
+    </style>
+</head>
+<body class="transition-colors duration-500">
+
+<!-- The Omni-SPA Mount Point -->
+<div id="app" class="relative min-h-screen flex flex-col w-full font-sans overflow-x-hidden">
+
+    <!-- Ambient Animated Background -->
+    <div class="ambient-bg no-print">
+        <div class="ambient-blob bg-brand-400 dark:bg-brand-600 w-96 h-96 -top-10 -left-10"></div>
+        <div class="ambient-blob bg-indigo-400 dark:bg-indigo-900 w-96 h-96 top-40 right-0 animation-delay-2000"></div>
+        <div class="ambient-blob bg-emerald-300 dark:bg-emerald-800 w-80 h-80 bottom-0 left-1/3 animation-delay-4000"></div>
+        <!-- Noise Overlay for texture -->
+        <div class="absolute inset-0 opacity-[0.03] dark:opacity-[0.05]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E');"></div>
+    </div>
+
+    <!-- Theme Switcher (Floating) -->
+    <button @click="toggleTheme" class="fixed top-6 right-6 z-50 p-3 rounded-full glass-card text-slate-600 dark:text-slate-300 hover:text-brand-500 dark:hover:text-brand-400 transition-all hover:scale-110 no-print" title="Toggle Theme">
+        <i :class="['text-xl ph-fill transition-transform duration-500', isDark ? 'ph-moon rotate-0' : 'ph-sun rotate-180']"></i>
+    </button>
+
+    <!-- MAIN VIEWPORT ROUTER -->
+    <transition name="page" mode="out-in">
+        
+        <!-- ============================================== -->
+        <!-- VIEW 1: SYSTEM BOOT (INITIAL LOADING)          -->
+        <!-- ============================================== -->
+        <div v-if="appState === 'booting'" key="boot" class="flex-1 flex flex-col items-center justify-center min-h-screen z-40">
+            <div class="relative flex items-center justify-center w-24 h-24 mb-6">
+                <div class="absolute inset-0 border-4 border-slate-200 dark:border-slate-800 rounded-full"></div>
+                <div class="absolute inset-0 border-4 border-brand-500 rounded-full border-t-transparent animate-spin"></div>
+                <i class="ph-fill ph-graduation-cap text-3xl text-brand-600 dark:text-brand-400 animate-pulse"></i>
+            </div>
+            <h1 class="text-xl font-bold tracking-[0.2em] text-slate-800 dark:text-white uppercase mb-2">SMA NEGERI 1 KONOHA</h1>
+            <p class="text-sm font-mono text-slate-500 dark:text-slate-400 tracking-wider">MENGINISIASI SISTEM KELULUSAN...</p>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- VIEW 2: CINEMATIC COUNTDOWN                    -->
+        <!-- ============================================== -->
+        <div v-else-if="appState === 'countdown'" key="countdown" class="flex-1 flex flex-col items-center justify-center min-h-screen px-4 py-12 z-40">
+            <div class="w-full max-w-4xl glass-card rounded-3xl overflow-hidden shadow-2xl animate-fade-in-up">
+                <div class="p-10 sm:p-16 text-center relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-b from-brand-500/10 to-transparent dark:from-brand-900/20"></div>
+                    
+                    <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-brand-100 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300 font-semibold text-sm mb-10 tracking-widest border border-brand-200 dark:border-brand-800 relative z-10">
+                        <span class="w-2 h-2 rounded-full bg-brand-500 animate-ping absolute left-4"></span>
+                        <span class="w-2 h-2 rounded-full bg-brand-500 mr-1 relative"></span>
+                        PORTAL KELULUSAN DITUTUP
+                    </div>
+                    
+                    <h2 class="text-3xl sm:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-12 relative z-10 leading-tight">
+                        Waktu Menuju Pembukaan <br class="hidden sm:block" />
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-indigo-600 dark:from-brand-400 dark:to-indigo-400">Tahun Ajaran 2025/2026</span>
+                    </h2>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 max-w-3xl mx-auto relative z-10">
+                        <div class="bg-white/50 dark:bg-slate-800/50 backdrop-blur-md rounded-2xl p-6 border border-white/20 dark:border-slate-700 shadow-lg transform transition hover:-translate-y-1">
+                            <div class="text-5xl sm:text-7xl font-mono font-black text-slate-800 dark:text-white tabular-nums drop-shadow-sm">{{ timer.days }}</div>
+                            <div class="text-xs sm:text-sm font-bold tracking-[0.2em] text-slate-500 dark:text-slate-400 mt-3 uppercase">Hari</div>
+                        </div>
+                        <div class="bg-white/50 dark:bg-slate-800/50 backdrop-blur-md rounded-2xl p-6 border border-white/20 dark:border-slate-700 shadow-lg transform transition hover:-translate-y-1">
+                            <div class="text-5xl sm:text-7xl font-mono font-black text-slate-800 dark:text-white tabular-nums drop-shadow-sm">{{ timer.hours }}</div>
+                            <div class="text-xs sm:text-sm font-bold tracking-[0.2em] text-slate-500 dark:text-slate-400 mt-3 uppercase">Jam</div>
+                        </div>
+                        <div class="bg-white/50 dark:bg-slate-800/50 backdrop-blur-md rounded-2xl p-6 border border-white/20 dark:border-slate-700 shadow-lg transform transition hover:-translate-y-1">
+                            <div class="text-5xl sm:text-7xl font-mono font-black text-brand-600 dark:text-brand-400 tabular-nums drop-shadow-sm">{{ timer.minutes }}</div>
+                            <div class="text-xs sm:text-sm font-bold tracking-[0.2em] text-slate-500 dark:text-slate-400 mt-3 uppercase">Menit</div>
+                        </div>
+                        <div class="bg-brand-600 dark:bg-brand-600 rounded-2xl p-6 shadow-xl shadow-brand-500/20 transform transition hover:-translate-y-1 border border-brand-500">
+                            <div class="text-5xl sm:text-7xl font-mono font-black text-white tabular-nums drop-shadow-md">{{ timer.seconds }}</div>
+                            <div class="text-xs sm:text-sm font-bold tracking-[0.2em] text-brand-100 mt-3 uppercase">Detik</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-slate-100 dark:bg-slate-900/80 p-6 flex flex-col sm:flex-row justify-between items-center border-t border-slate-200 dark:border-slate-800 gap-4">
+                    <p class="text-sm text-slate-500 dark:text-slate-400 font-medium flex items-center gap-2">
+                        <i class="ph-fill ph-info"></i> Portal akan terbuka otomatis.
+                    </p>
+                    <button @click="bypassCountdown" class="group text-xs font-bold tracking-widest text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors uppercase flex items-center gap-1">
+                        Akses Administrator <i class="ph-bold ph-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- VIEW 3: SECURE LOGIN PORTAL                    -->
+        <!-- ============================================== -->
+        <div v-else-if="appState === 'login'" key="login" class="flex-1 flex flex-col items-center justify-center min-h-screen px-4 py-12 z-40">
+            <div class="w-full max-w-xl glass-card rounded-[2rem] overflow-hidden shadow-2xl animate-fade-in-up border border-white/40 dark:border-slate-700/50 relative">
+                
+                <!-- Decorative Top Line -->
+                <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-brand-400 via-indigo-500 to-brand-400 bg-[length:200%_auto] animate-[gradient_3s_ease_infinite]"></div>
+
+                <div class="p-8 sm:p-12">
+                    <div class="flex items-center gap-5 mb-10">
+                        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-500 to-indigo-600 shadow-lg shadow-brand-500/30 flex items-center justify-center flex-shrink-0">
+                            <i class="ph-fill ph-shield-check text-3xl text-white"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Otentikasi Siswa</h1>
+                            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1 font-medium">Masukkan kredensial Dapodik untuk melihat hasil.</p>
+                        </div>
+                    </div>
+
+                    <form @submit.prevent="processAuthentication" class="space-y-8">
+                        <!-- Input NISN -->
+                        <div class="input-premium">
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 tracking-[0.15em] uppercase mb-2">Nomor Induk Siswa Nasional (NISN)</label>
+                            <div class="relative group">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <i class="ph-fill ph-identification-badge text-xl text-slate-400 group-focus-within:text-brand-500 transition-colors"></i>
+                                </div>
+                                <input type="text" v-model="authForm.nisn" @input="filterNumber($event, 'nisn', 10, 'input-dd')" id="input-nisn" required autocomplete="off"
+                                    class="block w-full pl-12 pr-4 py-4 bg-slate-50/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl text-lg font-mono tracking-widest text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 focus:bg-white dark:focus:bg-slate-800 transition-all shadow-inner"
+                                    placeholder="0000000000">
+                                <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none opacity-0 group-focus-within:opacity-100 transition-opacity">
+                                    <span class="text-xs font-bold text-brand-500 bg-brand-50 dark:bg-brand-900/30 px-2 py-1 rounded">10 DIGIT</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Input Tanggal Lahir (Unified UX) -->
+                        <div class="input-premium">
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 tracking-[0.15em] uppercase mb-2">Tanggal Lahir</label>
+                            <div class="flex items-center gap-3 relative">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
+                                    <i class="ph-fill ph-calendar-blank text-xl text-slate-400 transition-colors" id="calendar-icon"></i>
+                                </div>
+                                
+                                <input type="text" v-model="authForm.dd" @input="filterNumber($event, 'dd', 2, 'input-mm')" id="input-dd" required placeholder="DD"
+                                    class="w-full pl-12 pr-2 py-4 text-center bg-slate-50/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-l-xl text-lg font-mono text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:z-10 focus:bg-white dark:focus:bg-slate-800 transition-all shadow-inner">
+                                
+                                <div class="text-slate-300 dark:text-slate-600 font-light text-2xl -mx-1">/</div>
+                                
+                                <input type="text" v-model="authForm.mm" @input="filterNumber($event, 'mm', 2, 'input-yyyy', 'input-dd')" @keydown.delete="handleBackspace($event, 'dd')" id="input-mm" required placeholder="MM"
+                                    class="w-full px-2 py-4 text-center bg-slate-50/50 dark:bg-slate-900/50 border-y border-slate-200 dark:border-slate-700 text-lg font-mono text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:z-10 focus:bg-white dark:focus:bg-slate-800 transition-all shadow-inner">
+                                
+                                <div class="text-slate-300 dark:text-slate-600 font-light text-2xl -mx-1">/</div>
+                                
+                                <input type="text" v-model="authForm.yyyy" @input="filterNumber($event, 'yyyy', 4, null, 'input-mm')" @keydown.delete="handleBackspace($event, 'mm')" id="input-yyyy" required placeholder="YYYY"
+                                    class="w-full pr-4 pl-2 py-4 text-center bg-slate-50/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-r-xl text-lg font-mono text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:z-10 focus:bg-white dark:focus:bg-slate-800 transition-all shadow-inner">
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="pt-6 mt-2 flex flex-col-reverse sm:flex-row items-center justify-between gap-4">
+                            <button type="button" @click="showHelp" class="text-sm font-medium text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-colors flex items-center gap-2">
+                                <i class="ph-bold ph-question"></i> Butuh Bantuan?
+                            </button>
+                            
+                            <button type="submit" 
+                                class="w-full sm:w-auto relative group overflow-hidden bg-slate-900 dark:bg-brand-600 text-white font-bold tracking-wider py-4 px-10 rounded-xl transition-all hover:shadow-[0_0_30px_rgba(14,165,233,0.4)] active:scale-95">
+                                <span class="absolute inset-0 w-full h-full bg-gradient-to-r from-brand-600 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></span>
+                                <span class="relative flex items-center justify-center gap-2">
+                                    <i class="ph-bold ph-lock-key-open text-lg"></i>
+                                    DEKRIPSI DATA
+                                </span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <p class="mt-8 text-xs font-medium text-slate-400 dark:text-slate-500 flex items-center gap-2 max-w-md text-center leading-relaxed">
+                <i class="ph-fill ph-lock-key text-brand-500 text-lg"></i>
+                Sistem dienkripsi dengan standar keamanan tinggi. Seluruh akses tercatat dalam log server.
+            </p>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- VIEW 4: DECRYPTION ANIMATION (ILLUSION)        -->
+        <!-- ============================================== -->
+        <div v-else-if="appState === 'decrypting'" key="decrypting" class="flex-1 flex flex-col items-center justify-center min-h-screen px-4 z-50 bg-white/90 dark:bg-slate-950/90 backdrop-blur-xl absolute inset-0 w-full h-full">
+            <div class="text-center w-full max-w-md">
+                <div class="relative w-32 h-32 mx-auto mb-8">
+                    <svg class="w-full h-full text-brand-500 animate-[spin_3s_linear_infinite]" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-20" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <i class="ph-fill ph-fingerprint text-4xl text-slate-800 dark:text-white animate-pulse"></i>
+                    </div>
+                </div>
+                
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2 tracking-wide">Memverifikasi Identitas...</h3>
+                
+                <div class="h-1.5 w-full bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden mb-4 shadow-inner">
+                    <div class="h-full bg-brand-500 rounded-full transition-all duration-300 ease-out" :style="{ width: loadingProgress + '%' }"></div>
+                </div>
+                
+                <div class="font-mono text-xs text-brand-600 dark:text-brand-400 text-left h-24 overflow-hidden bg-slate-100 dark:bg-slate-900 p-3 rounded-lg border border-slate-200 dark:border-slate-800 shadow-inner">
+                    <div v-for="(log, idx) in fakeLogs" :key="idx" class="truncate opacity-80 animate-fade-in-up" :style="`animation-delay: ${idx * 0.1}s`">> {{ log }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- VIEW 5: RESULT / SURAT KETERANGAN LULUS        -->
+        <!-- ============================================== -->
+        <div v-else-if="appState === 'result' && activeStudent" key="result" class="flex-1 flex flex-col items-center justify-start min-h-screen py-10 px-4 z-40 relative">
+            
+            <div class="print-watermark hidden print-only">
+                SMA NEGERI 1 KONOHA
+            </div>
+
+            <!-- The Main SKL Document -->
+            <div class="w-full max-w-4xl glass-card rounded-2xl shadow-2xl animate-fade-in-up border border-slate-200 dark:border-slate-700 print-container overflow-hidden bg-white dark:bg-slate-900">
+                
+                <!-- Print Header (Hidden on Screen) -->
+                <div class="hidden print-only text-center pb-6 border-b-2 border-black mb-8 px-10 pt-10">
+                    <div class="flex items-center justify-center gap-6 mb-4">
+                        <div class="w-20 h-20 border-2 border-black rounded-full flex items-center justify-center font-bold text-xs">LOGO</div>
+                        <div>
+                            <h1 class="text-2xl font-bold uppercase tracking-wider">PEMERINTAH PROVINSI WAKANDA</h1>
+                            <h2 class="text-xl font-bold uppercase tracking-wider">DINAS PENDIDIKAN</h2>
+                            <h3 class="text-3xl font-black uppercase mt-1">SMA NEGERI 1 KONOHA</h3>
+                            <p class="text-sm mt-1">Jl. Hokage Raya No. 1, Desa Konoha. Telp: (021) 123456</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Digital Banner Header -->
+                <div :class="[
+                    'p-8 sm:p-12 relative overflow-hidden transition-colors duration-700 no-print',
+                    activeStudent.status === 'LULUS' 
+                        ? 'bg-gradient-to-br from-emerald-500 via-teal-600 to-emerald-700' 
+                        : activeStudent.status === 'TIDAK LULUS' 
+                            ? 'bg-gradient-to-br from-rose-600 via-red-600 to-rose-800' 
+                            : 'bg-gradient-to-br from-amber-500 via-orange-500 to-amber-700'
+                ]">
+                    <!-- Ornamental Background Elements inside banner -->
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
+                    <div class="absolute bottom-0 left-0 w-48 h-48 bg-black opacity-10 rounded-full blur-2xl translate-y-1/2 -translate-x-1/4"></div>
+                    
+                    <div class="relative z-10 flex flex-col sm:flex-row items-center sm:items-start justify-between gap-6 text-center sm:text-left">
+                        <div>
+                            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur text-white text-xs font-bold tracking-widest uppercase mb-4 shadow-sm">
+                                <i class="ph-bold ph-calendar-check"></i> TAHUN AJARAN 2025/2026
+                            </div>
+                            <h2 class="text-3xl sm:text-5xl font-black text-white tracking-tight mb-2 drop-shadow-md">
+                                {{ activeStudent.status === 'LULUS' ? 'SELAMAT, ANDA LULUS!' : 
+                                   activeStudent.status === 'TIDAK LULUS' ? 'MOHON MAAF, TIDAK LULUS' : 
+                                   'STATUS DITANGGUHKAN' }}
+                            </h2>
+                            <p class="text-white/90 font-medium text-sm sm:text-base max-w-xl drop-shadow-sm leading-relaxed">
+                                {{ activeStudent.status === 'LULUS' ? 'Berdasarkan rapat pleno Dewan Guru, Anda dinyatakan telah memenuhi seluruh kriteria standar kelulusan nasional dan institusi.' : 
+                                   activeStudent.status === 'TIDAK LULUS' ? 'Anda belum memenuhi kriteria kelulusan. Silakan hubungi pihak sekolah untuk informasi mengenai ujian perbaikan atau program kesetaraan.' :
+                                   'Terdapat kendala administratif atau nilai yang belum divalidasi. Segera hubungi Tata Usaha (TU).' }}
+                            </p>
+                        </div>
+                        
+                        <!-- Status Icon -->
+                        <div class="relative flex-shrink-0 animate-fade-in-up delay-300">
+                            <div class="absolute inset-0 bg-white/30 blur-xl rounded-full"></div>
+                            <div class="w-24 h-24 sm:w-32 sm:h-32 bg-white/20 backdrop-blur-md rounded-full border-2 border-white/50 shadow-2xl flex items-center justify-center relative z-10">
+                                <i :class="[
+                                    'text-6xl sm:text-7xl drop-shadow-lg text-white', 
+                                    activeStudent.status === 'LULUS' ? 'ph-fill ph-check-circle' : 
+                                    activeStudent.status === 'TIDAK LULUS' ? 'ph-fill ph-x-circle' : 'ph-fill ph-warning-circle'
+                                ]"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Print Title (Only visible in print) -->
+                <div class="hidden print-only text-center mb-6">
+                    <h3 class="text-xl font-bold uppercase underline">SURAT KETERANGAN LULUS</h3>
+                    <p class="text-sm mt-1">Nomor: 421.3/{{ activeStudent.nisn.substring(0,4) }}/SMAN1/2026</p>
+                </div>
+
+                <div class="hidden print-only px-10 mb-6 text-justify">
+                    <p>Kepala SMA Negeri 1 Konoha, selaku Ketua Penyelenggara Ujian Sekolah Tahun Pelajaran 2025/2026 berdasarkan kriteria kelulusan dari satuan pendidikan menerangkan bahwa:</p>
+                </div>
+
+                <!-- Data Section -->
+                <div class="p-8 sm:p-12 bg-white dark:bg-slate-900 text-slate-900 dark:text-white relative">
+                    
+                    <!-- Top Info Row with QR -->
+                    <div class="flex flex-col-reverse md:flex-row justify-between items-start gap-8 mb-10 pb-10 border-b border-slate-200 dark:border-slate-800 border-dashed">
+                        
+                        <div class="w-full space-y-6 flex-1">
+                            <div class="group">
+                                <p class="text-xs font-bold tracking-[0.2em] text-slate-400 uppercase mb-1">Nama Lengkap Siswa</p>
+                                <h3 class="text-2xl sm:text-4xl font-black uppercase tracking-tight text-slate-900 dark:text-white">{{ activeStudent.nama }}</h3>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                <div>
+                                    <p class="text-xs font-bold tracking-[0.2em] text-slate-400 uppercase mb-1">Tempat, Tanggal Lahir</p>
+                                    <p class="text-lg font-bold">{{ activeStudent.tempat_lahir }}, {{ formatDateDisplay(activeStudent.tgl, activeStudent.bln, activeStudent.thn) }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold tracking-[0.2em] text-slate-400 uppercase mb-1">Nomor Induk / NISN</p>
+                                    <p class="text-lg font-mono font-bold">{{ activeStudent.nis }} / {{ activeStudent.nisn }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold tracking-[0.2em] text-slate-400 uppercase mb-1">Peminatan / Jurusan</p>
+                                    <p class="text-lg font-bold uppercase">{{ activeStudent.jurusan }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold tracking-[0.2em] text-slate-400 uppercase mb-1">Asal Sekolah</p>
+                                    <p class="text-lg font-bold uppercase">{{ activeStudent.asal_sekolah }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Local generated QR Code -->
+                        <div class="flex-shrink-0 flex flex-col items-center p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700 w-full md:w-auto">
+                            <div id="qrcode-container" class="bg-white p-2 rounded-xl shadow-sm"></div>
+                            <p class="text-[10px] font-mono font-bold text-slate-500 mt-3 tracking-widest text-center">
+                                SCAN UNTUK<br>VALIDASI ASLI
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="hidden print-only mb-10 text-justify">
+                        <p>Dinyatakan <strong class="text-xl uppercase">{{ activeStudent.status }}</strong> dari satuan pendidikan SMA Negeri 1 Konoha.</p>
+                        <p class="mt-2">Surat Keterangan ini bersifat sementara dan berlaku sampai dengan diterbitkannya Ijazah asli. Demikian surat keterangan ini dibuat agar dapat dipergunakan sebagaimana mestinya.</p>
+                    </div>
+
+                    <div class="hidden print-only w-full flex justify-end mt-12 pr-10">
+                        <div class="text-center">
+                            <p>Konoha, 05 Mei 2026</p>
+                            <p class="mb-20">Kepala Sekolah,</p>
+                            <p class="font-bold underline">Hatake Kakashi, S.Pd., M.Si.</p>
+                            <p>NIP. 19700101 199512 1 001</p>
+                        </div>
+                    </div>
+
+                    <!-- Action Banner (UI Only) -->
+                    <div :class="[
+                        'rounded-2xl p-6 border no-print relative overflow-hidden',
+                        activeStudent.status === 'LULUS' ? 'bg-emerald-50 border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-800' : 
+                        activeStudent.status === 'TIDAK LULUS' ? 'bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800' : 
+                        'bg-amber-50 border-amber-200 dark:bg-amber-900/20 dark:border-amber-800'
+                    ]">
+                        <div class="absolute right-0 top-0 w-32 h-32 opacity-5 pointer-events-none">
+                            <i :class="['text-9xl', activeStudent.status === 'LULUS' ? 'ph-fill ph-check-fat' : activeStudent.status === 'TIDAK LULUS' ? 'ph-fill ph-x' : 'ph-fill ph-warning']"></i>
+                        </div>
+                        
+                        <div class="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+                            <div>
+                                <h4 :class="[
+                                    'font-bold text-lg mb-1 flex items-center gap-2',
+                                    activeStudent.status === 'LULUS' ? 'text-emerald-800 dark:text-emerald-400' : 
+                                    activeStudent.status === 'TIDAK LULUS' ? 'text-rose-800 dark:text-rose-400' : 
+                                    'text-amber-800 dark:text-amber-400'
+                                ]">
+                                    <i :class="activeStudent.status === 'LULUS' ? 'ph-fill ph-printer' : 'ph-fill ph-info'"></i>
+                                    {{ activeStudent.status === 'LULUS' ? 'Unduh Dokumen Resmi' : 'Tindak Lanjut' }}
+                                </h4>
+                                <p :class="[
+                                    'text-sm leading-relaxed max-w-2xl',
+                                    activeStudent.status === 'LULUS' ? 'text-emerald-700/80 dark:text-emerald-300/80' : 
+                                    activeStudent.status === 'TIDAK LULUS' ? 'text-rose-700/80 dark:text-rose-300/80' : 
+                                    'text-amber-800/80 dark:text-amber-300/80'
+                                ]">
+                                    {{ activeStudent.status === 'LULUS' ? 'Cetak halaman ini. Berlaku sebagai SKL sah dengan QR terenkripsi hingga blanko ijazah asli diterbitkan oleh Kementerian.' : 
+                                       activeStudent.status === 'TIDAK LULUS' ? 'Informasi pendaftaran ujian kejar paket / kesetaraan dapat dilihat di mading sekolah mulai esok hari.' : 
+                                       'Sistem mengunci hasil Anda. Mohon bawa kartu bebas pustaka dan bukti lunas SPP ke bagian Tata Usaha.' }}
+                                </p>
+                            </div>
+                            
+                            <button v-if="activeStudent.status === 'LULUS'" @click="triggerPrint" 
+                                class="w-full sm:w-auto flex-shrink-0 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-[0_4px_15px_rgba(16,185,129,0.3)] hover:shadow-[0_6px_20px_rgba(16,185,129,0.4)] flex items-center justify-center gap-2 active:scale-95">
+                                <i class="ph-bold ph-printer text-xl"></i> CETAK SKL
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Footer Warning (UI Only) -->
+                    <div class="mt-8 p-6 bg-slate-50 dark:bg-slate-800/30 rounded-2xl border border-slate-200 dark:border-slate-800 no-print flex gap-4">
+                        <i class="ph-fill ph-warning text-2xl text-amber-500 flex-shrink-0 mt-1"></i>
+                        <div>
+                            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
+                                <strong class="text-slate-900 dark:text-white block mb-1">PERINGATAN KEPALA SEKOLAH:</strong> 
+                                Dilarang keras melakukan selebrasi berlebihan (konvoi kendaraan, corat-coret seragam, vandalisme). Pelanggaran akan mengakibatkan penangguhan penerbitan Ijazah asli dan SKCK. Serahkan seragam layak pakai Anda ke pihak sekolah untuk didonasikan.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Controls -->
+                    <div class="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-center no-print">
+                        <button @click="resetToLogin" class="group text-sm font-bold tracking-widest text-slate-500 hover:text-brand-600 dark:hover:text-brand-400 transition-colors uppercase flex items-center gap-2 py-2 px-4 rounded-lg hover:bg-brand-50 dark:hover:bg-slate-800">
+                            <i class="ph-bold ph-arrow-left group-hover:-translate-x-1 transition-transform"></i>
+                            KEMBALI KE PORTAL
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+            
+            <p class="mt-8 text-xs font-mono text-slate-400 no-print">SYS_ID: SMAN1-KNH-{{ activeStudent.nisn }} | VER 2.0.26</p>
+        </div>
+    </transition>
+</div>
+
+<!-- ============================================== -->
+<!-- VUE 3 APPLICATION LOGIC                        -->
+<!-- ============================================== -->
+<script>
+const { createApp, ref, reactive, onMounted, nextTick } = Vue;
+
+// --- KONFIGURASI API ENTERPRISE ---
+// WAJIB: Ganti URL di bawah dengan URL Web App Apps Script Anda yang sudah di-deploy!
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw_W1vjTKkcuQKGmzLT7suxKJJx4GDYNB7-HyNcIrb8KHaMM0HZ7OEfcgZn4Hfbyuvr8A/exec';
+
+const app = createApp({
+    setup() {
+        // --- Core State ---
+        const isDark = ref(true); // Default Dark theme
+        const appState = ref('booting'); // booting -> countdown -> login -> decrypting -> result
+        
+        // --- Form & Data State ---
+        const authForm = reactive({ nisn: '', dd: '', mm: '', yyyy: '' });
+        const activeStudent = ref(null);
+        
+        // --- UI State ---
+        const timer = reactive({ days: '00', hours: '00', minutes: '00', seconds: '00' });
+        const loadingProgress = ref(0);
+        const fakeLogs = ref([]);
+        let countdownInterval = null;
+
+        // --- Methods ---
+
+        const toggleTheme = () => {
+            isDark.value = !isDark.value;
+            if (isDark.value) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        };
+
+        const startBootSequence = () => {
+            setTimeout(() => {
+                initCountdown();
+            }, 2500); // 2.5s premium boot time
+        };
+
+        const initCountdown = () => {
+            appState.value = 'countdown';
+            // Set target to tomorrow for realism, or just a fixed simulation
+            const targetDate = new Date().getTime() + (2 * 24 * 60 * 60 * 1000) + (5 * 60 * 1000) + 30000; 
+            
+            countdownInterval = setInterval(() => {
+                const now = new Date().getTime();
+                const distance = targetDate - now;
+
+                if (distance < 0) {
+                    clearInterval(countdownInterval);
+                    appState.value = 'login';
+                    return;
+                }
+
+                timer.days = String(Math.floor(distance / (1000 * 60 * 60 * 24))).padStart(2, '0');
+                timer.hours = String(Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+                timer.minutes = String(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+                timer.seconds = String(Math.floor((distance % (1000 * 60)) / 1000)).padStart(2, '0');
+            }, 1000);
+        };
+
+        const bypassCountdown = () => {
+            clearInterval(countdownInterval);
+            appState.value = 'login';
+        };
+
+        // UI UX: Auto tab and numeric filter
+        const filterNumber = (event, field, maxLength, nextFieldId, prevFieldId) => {
+            let val = event.target.value.replace(/\D/g, ''); // Remove non-digits
+            if (val.length > maxLength) val = val.slice(0, maxLength);
+            
+            authForm[field] = val;
+            
+            // Auto advance
+            if (val.length === maxLength && nextFieldId) {
+                const nextEl = document.getElementById(nextFieldId);
+                if (nextEl) nextEl.focus();
+            }
+        };
+
+        const handleBackspace = (event, prevFieldId) => {
+            if (event.target.value === '' && prevFieldId) {
+                const prevEl = document.getElementById(prevFieldId);
+                if (prevEl) {
+                    prevEl.focus();
+                    // Optional: highlight text on back
+                    setTimeout(() => prevEl.select(), 10);
+                }
+            }
+        };
+
+        const processAuthentication = () => {
+            // Basic validation
+            if (authForm.nisn.length < 10 || authForm.dd.length < 2 || authForm.mm.length < 2 || authForm.yyyy.length < 4) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Format Tidak Valid',
+                    text: 'Pastikan NISN 10 digit dan Tanggal Lahir lengkap.',
+                    background: isDark.value ? '#1e293b' : '#fff',
+                    color: isDark.value ? '#fff' : '#0f172a',
+                    confirmButtonColor: '#0ea5e9',
+                    customClass: { popup: 'rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700' }
+                });
+                return;
+            }
+
+            // Move to decryption state
+            appState.value = 'decrypting';
+            loadingProgress.value = 0;
+            fakeLogs.value = [];
+            
+            // Simulation sequence
+            const logs = [
+                "Menghubungkan ke server Dapodik pusat...",
+                "Handshake SSL v3.0 berhasil disepakati.",
+                `Mencari entitas ID: ${authForm.nisn}`,
+                "Mencocokkan sidik jari data kelahiran...",
+                "Verifikasi integritas block data kelulusan...",
+                "Mendekripsi hash payload (SHA-256)...",
+                "Membangun dokumen virtual SKL..."
+            ];
+
+            let logIndex = 0;
+            const logInterval = setInterval(() => {
+                if(logIndex < logs.length) {
+                    fakeLogs.value.unshift(logs[logIndex]);
+                    loadingProgress.value += (100 / logs.length);
+                    logIndex++;
+                } else {
+                    clearInterval(logInterval);
+                    evaluateResult();
+                }
+            }, 400); // Fast but readable
+        };
+
+        const evaluateResult = async () => {
+            try {
+                // Beri jeda 800ms agar UI "Memverifikasi Identitas..." sempat terlihat oleh User
+                await new Promise(resolve => setTimeout(resolve, 800));
+
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    // Gunakan text/plain untuk mem-bypass CORS Preflight yang memberatkan Browser
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        nisn: authForm.nisn,
+                        dd: authForm.dd,
+                        mm: authForm.mm,
+                        yyyy: authForm.yyyy
+                    })
+                });
+
+                if (!response.ok) throw new Error('Koneksi ke Server Cloud gagal. Periksa jaringan.');
+                
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    activeStudent.value = result.data;
+                    appState.value = 'result';
+                    
+                    nextTick(() => {
+                        generateQRCode();
+                        if (activeStudent.value.status === 'LULUS') fireConfetti();
+                    });
+                } else {
+                    throw new Error(result.message || 'Kombinasi NISN dan Tanggal Lahir tidak terdaftar di database kelulusan SMA Negeri 1 Konoha.');
+                }
+            } catch (error) {
+                appState.value = 'login';
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Akses Ditolak / Gagal',
+                    text: error.message,
+                    background: isDark.value ? '#1e293b' : '#fff',
+                    color: isDark.value ? '#fff' : '#0f172a',
+                    confirmButtonColor: '#ef4444',
+                    customClass: { popup: 'rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700' }
+                });
+            }
+        };
+
+        const generateQRCode = () => {
+            const container = document.getElementById('qrcode-container');
+            if (!container) return;
+            container.innerHTML = ''; // Clear previous
+            
+            // Using qrcode.js to generate locally (Dictator standard: no external image APIs that break on print)
+            const qrData = `VERIFIED: SMAN1/2026/${activeStudent.value.nisn}/${activeStudent.value.status}`;
+            new QRCode(container, {
+                text: qrData,
+                width: 128,
+                height: 128,
+                colorDark : "#0f172a",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+        };
+
+        const fireConfetti = () => {
+            var duration = 3 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100 };
+
+            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) return clearInterval(interval);
+
+                var particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 250);
+        };
+
+        const triggerPrint = () => {
+            window.print();
+        };
+
+        const resetToLogin = () => {
+            authForm.nisn = ''; authForm.dd = ''; authForm.mm = ''; authForm.yyyy = '';
+            activeStudent.value = null;
+            appState.value = 'login';
+            window.scrollTo(0, 0);
+        };
+
+        const showHelp = () => {
+            Swal.fire({
+                title: 'Bantuan Akses',
+                html: '<div class="text-left text-sm space-y-3"><p><strong>1. NISN:</strong> Terdiri dari 10 digit angka. Pastikan sesuai dengan data Dapodik pusat.</p><p><strong>2. Tanggal Lahir:</strong> Format DD/MM/YYYY. Contoh: Jika lahir 5 April 2008, tulis 05 - 04 - 2008.</p><p><strong>Note:</strong> Pastikan Anda terkoneksi dengan internet yang stabil saat mendekripsi data, karena sistem terhubung langsung ke Server Cloud.</p></div>',
+                icon: 'info',
+                background: isDark.value ? '#1e293b' : '#fff',
+                color: isDark.value ? '#fff' : '#0f172a',
+                confirmButtonColor: '#0ea5e9',
+                customClass: { popup: 'rounded-2xl' }
+            });
+        };
+
+        const formatDateDisplay = (d, m, y) => {
+            const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            const monthIdx = parseInt(m) - 1;
+            return `${d} ${months[monthIdx] || m} ${y}`;
+        };
+
+        // --- Lifecycle ---
+        onMounted(() => {
+            // Set initial theme based on HTML class
+            isDark.value = document.documentElement.classList.contains('dark');
+            startBootSequence();
+        });
+
+        return {
+            isDark, appState, authForm, activeStudent, timer, loadingProgress, fakeLogs,
+            toggleTheme, bypassCountdown, filterNumber, handleBackspace, processAuthentication,
+            triggerPrint, resetToLogin, showHelp, formatDateDisplay
+        };
+    }
+});
+
+app.mount('#app');
+</script>
+</body>
+</html>

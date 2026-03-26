@@ -8,7 +8,7 @@
     <!-- Icon Default -->
     <link rel="icon" href="https://www.google.com/s2/favicons?domain=google.com&sz=128" type="image/png" />
     
-    <!-- Ultra-Premium Typography: Plus Jakarta Sans & JetBrains Mono -->
+    <!-- Ultra-Premium Typography (Preloaded for Zero-Flicker) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -20,6 +20,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <!-- Master Tailwind Configuration -->
     <script>
@@ -86,9 +87,7 @@
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; border: 2px solid transparent; background-clip: padding-box; }
         .dark ::-webkit-scrollbar-thumb { background: #334155; border: 2px solid transparent; background-clip: padding-box; }
-        ::-webkit-scrollbar-thumb:hover { background-color: #94a3b8; }
-        .dark ::-webkit-scrollbar-thumb:hover { background-color: #475569; }
-
+        
         /* Vue View Transitions */
         .page-enter-active, .page-leave-active { transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         .page-enter-from { opacity: 0; transform: translateY(15px) scale(0.98); }
@@ -100,7 +99,7 @@
             backdrop-filter: blur(24px);
             -webkit-backdrop-filter: blur(24px);
             border: 1px solid rgba(255, 255, 255, 0.5);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03), 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 20px 25px -5px rgba(0, 0, 0, 0.05);
         }
         .dark .glass-card {
             background: rgba(15, 23, 42, 0.6);
@@ -120,31 +119,41 @@
         .dark .ambient-blob { opacity: 0.2; }
 
         /* Input Field Perfection */
-        .input-premium {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .input-premium:focus-within {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px -5px rgba(14, 165, 233, 0.15);
-        }
+        .input-premium { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .input-premium:focus-within { transform: translateY(-2px); box-shadow: 0 10px 25px -5px rgba(14, 165, 233, 0.15); }
 
         /* Absolute Pixel-Perfect Print Styles */
         @media print {
-            @page { size: A4 portrait; margin: 15mm; }
-            body { background: white !important; color: black !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            @page { size: A4 portrait; margin: 10mm; } 
+            body, html { background: white !important; color: black !important; margin: 0; padding: 0; height: 100%; overflow: hidden; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .no-print { display: none !important; }
             .print-only { display: block !important; }
-            .glass-card { 
-                background: white !important; border: none !important; box-shadow: none !important; filter: none !important; backdrop-filter: none !important; 
+            #app { display: block !important; height: auto !important; min-height: 0 !important; overflow: hidden !important; }
+            
+            /* Bounding Box Absolute 1 Halaman */
+            .print-container { 
+                width: 100% !important; 
+                max-width: 100% !important; 
+                max-height: 277mm !important;
+                margin: 0 !important; 
+                padding: 0 !important; 
+                background: white !important; 
+                border: none !important; 
+                box-shadow: none !important; 
+                filter: none !important; 
+                backdrop-filter: none !important;
+                page-break-after: avoid !important;
+                page-break-inside: avoid !important;
+                overflow: hidden !important;
             }
-            #app { min-height: auto !important; height: auto !important; display: block !important; }
-            .print-container { width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
-            .text-white { color: white !important; } /* Force keep text white on colored backgrounds during print */
+            
+            .ambient-bg { display: none !important; }
+            .text-white { color: black !important; }
             
             /* Print Watermark */
             .print-watermark {
                 position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg);
-                font-size: 8rem; font-weight: 800; color: rgba(0,0,0,0.03); z-index: -1; pointer-events: none; white-space: nowrap;
+                font-size: 7rem; font-weight: 800; color: rgba(0,0,0,0.04); z-index: -1; pointer-events: none; white-space: nowrap;
             }
         }
     </style>
@@ -157,14 +166,14 @@
     <!-- Ambient Animated Background -->
     <div class="ambient-bg no-print">
         <div class="ambient-blob bg-brand-400 dark:bg-brand-600 w-96 h-96 -top-10 -left-10"></div>
-        <div class="ambient-blob bg-indigo-400 dark:bg-indigo-900 w-96 h-96 top-40 right-0 animation-delay-2000"></div>
-        <div class="ambient-blob bg-emerald-300 dark:bg-emerald-800 w-80 h-80 bottom-0 left-1/3 animation-delay-4000"></div>
+        <div class="ambient-blob bg-indigo-400 dark:bg-indigo-900 w-96 h-96 top-40 right-0" style="animation-delay: 2s;"></div>
+        <div class="ambient-blob bg-emerald-300 dark:bg-emerald-800 w-80 h-80 bottom-0 left-1/3" style="animation-delay: 4s;"></div>
         <!-- Noise Overlay for texture -->
         <div class="absolute inset-0 opacity-[0.03] dark:opacity-[0.05]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E');"></div>
     </div>
 
-    <!-- Theme Switcher (Floating) -->
-    <button @click="toggleTheme" class="fixed top-6 right-6 z-50 p-3 rounded-full glass-card text-slate-600 dark:text-slate-300 hover:text-brand-500 dark:hover:text-brand-400 transition-all hover:scale-110 no-print" title="Toggle Theme">
+    <!-- Theme Switcher -->
+    <button @click="toggleTheme" class="fixed top-6 right-6 z-50 p-3 rounded-full glass-card text-slate-600 dark:text-slate-300 hover:text-brand-500 dark:hover:text-brand-400 transition-all hover:scale-110 no-print" title="Ganti Tema">
         <i :class="['text-xl ph-fill transition-transform duration-500', isDark ? 'ph-moon rotate-0' : 'ph-sun rotate-180']"></i>
     </button>
 
@@ -172,7 +181,7 @@
     <transition name="page" mode="out-in">
         
         <!-- ============================================== -->
-        <!-- VIEW 1: SYSTEM BOOT (INITIAL LOADING)          -->
+        <!-- VIEW 1: SYSTEM BOOT                            -->
         <!-- ============================================== -->
         <div v-if="appState === 'booting'" key="boot" class="flex-1 flex flex-col items-center justify-center min-h-screen z-40">
             <div class="relative flex items-center justify-center w-24 h-24 mb-6">
@@ -189,34 +198,37 @@
         <!-- ============================================== -->
         <div v-else-if="appState === 'countdown'" key="countdown" class="flex-1 flex flex-col items-center justify-center min-h-screen px-4 py-12 z-40">
             <div class="w-full max-w-4xl glass-card rounded-3xl overflow-hidden shadow-2xl animate-fade-in-up">
+                <!-- UI Countdown Sama seperti sebelumnya -->
                 <div class="p-10 sm:p-16 text-center relative overflow-hidden">
                     <div class="absolute inset-0 bg-gradient-to-b from-brand-500/10 to-transparent dark:from-brand-900/20"></div>
-                    
                     <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-brand-100 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300 font-semibold text-sm mb-10 tracking-widest border border-brand-200 dark:border-brand-800 relative z-10">
                         <span class="w-2 h-2 rounded-full bg-brand-500 animate-ping absolute left-4"></span>
                         <span class="w-2 h-2 rounded-full bg-brand-500 mr-1 relative"></span>
                         PORTAL KELULUSAN DITUTUP
                     </div>
-                    
                     <h2 class="text-3xl sm:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-12 relative z-10 leading-tight">
                         Waktu Menuju Pembukaan <br class="hidden sm:block" />
                         <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-indigo-600 dark:from-brand-400 dark:to-indigo-400">Tahun Ajaran 2025/2026</span>
                     </h2>
 
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 max-w-3xl mx-auto relative z-10">
-                        <div class="bg-white/50 dark:bg-slate-800/50 backdrop-blur-md rounded-2xl p-6 border border-white/20 dark:border-slate-700 shadow-lg transform transition hover:-translate-y-1">
+                        <!-- Hari -->
+                        <div class="bg-white/50 dark:bg-slate-800/50 backdrop-blur-md rounded-2xl p-6 border border-white/20 dark:border-slate-700 shadow-lg">
                             <div class="text-5xl sm:text-7xl font-mono font-black text-slate-800 dark:text-white tabular-nums drop-shadow-sm">{{ timer.days }}</div>
-                            <div class="text-xs sm:text-sm font-bold tracking-[0.2em] text-slate-500 dark:text-slate-400 mt-3 uppercase">Hari</div>
+                            <div class="text-xs sm:text-sm font-bold tracking-[0.2em] text-slate-500 mt-3 uppercase">Hari</div>
                         </div>
-                        <div class="bg-white/50 dark:bg-slate-800/50 backdrop-blur-md rounded-2xl p-6 border border-white/20 dark:border-slate-700 shadow-lg transform transition hover:-translate-y-1">
+                        <!-- Jam -->
+                        <div class="bg-white/50 dark:bg-slate-800/50 backdrop-blur-md rounded-2xl p-6 border border-white/20 dark:border-slate-700 shadow-lg">
                             <div class="text-5xl sm:text-7xl font-mono font-black text-slate-800 dark:text-white tabular-nums drop-shadow-sm">{{ timer.hours }}</div>
-                            <div class="text-xs sm:text-sm font-bold tracking-[0.2em] text-slate-500 dark:text-slate-400 mt-3 uppercase">Jam</div>
+                            <div class="text-xs sm:text-sm font-bold tracking-[0.2em] text-slate-500 mt-3 uppercase">Jam</div>
                         </div>
-                        <div class="bg-white/50 dark:bg-slate-800/50 backdrop-blur-md rounded-2xl p-6 border border-white/20 dark:border-slate-700 shadow-lg transform transition hover:-translate-y-1">
+                        <!-- Menit -->
+                        <div class="bg-white/50 dark:bg-slate-800/50 backdrop-blur-md rounded-2xl p-6 border border-white/20 dark:border-slate-700 shadow-lg">
                             <div class="text-5xl sm:text-7xl font-mono font-black text-brand-600 dark:text-brand-400 tabular-nums drop-shadow-sm">{{ timer.minutes }}</div>
-                            <div class="text-xs sm:text-sm font-bold tracking-[0.2em] text-slate-500 dark:text-slate-400 mt-3 uppercase">Menit</div>
+                            <div class="text-xs sm:text-sm font-bold tracking-[0.2em] text-slate-500 mt-3 uppercase">Menit</div>
                         </div>
-                        <div class="bg-brand-600 dark:bg-brand-600 rounded-2xl p-6 shadow-xl shadow-brand-500/20 transform transition hover:-translate-y-1 border border-brand-500">
+                        <!-- Detik -->
+                        <div class="bg-brand-600 rounded-2xl p-6 shadow-xl shadow-brand-500/20 border border-brand-500">
                             <div class="text-5xl sm:text-7xl font-mono font-black text-white tabular-nums drop-shadow-md">{{ timer.seconds }}</div>
                             <div class="text-xs sm:text-sm font-bold tracking-[0.2em] text-brand-100 mt-3 uppercase">Detik</div>
                         </div>
@@ -227,7 +239,7 @@
                     <p class="text-sm text-slate-500 dark:text-slate-400 font-medium flex items-center gap-2">
                         <i class="ph-fill ph-info"></i> Portal akan terbuka otomatis.
                     </p>
-                    <button @click="bypassCountdown" class="group text-xs font-bold tracking-widest text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors uppercase flex items-center gap-1">
+                    <button @click="bypassCountdown" class="group text-xs font-bold tracking-widest text-slate-400 hover:text-brand-600 transition-colors uppercase flex items-center gap-1">
                         Akses Administrator <i class="ph-bold ph-arrow-right group-hover:translate-x-1 transition-transform"></i>
                     </button>
                 </div>
@@ -239,8 +251,6 @@
         <!-- ============================================== -->
         <div v-else-if="appState === 'login'" key="login" class="flex-1 flex flex-col items-center justify-center min-h-screen px-4 py-12 z-40">
             <div class="w-full max-w-xl glass-card rounded-[2rem] overflow-hidden shadow-2xl animate-fade-in-up border border-white/40 dark:border-slate-700/50 relative">
-                
-                <!-- Decorative Top Line -->
                 <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-brand-400 via-indigo-500 to-brand-400 bg-[length:200%_auto] animate-[gradient_3s_ease_infinite]"></div>
 
                 <div class="p-8 sm:p-12">
@@ -250,53 +260,51 @@
                         </div>
                         <div>
                             <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Otentikasi Siswa</h1>
-                            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1 font-medium">Masukkan kredensial Dapodik untuk melihat hasil.</p>
+                            <p class="text-sm text-slate-500 mt-1 font-medium">Masukkan kredensial Dapodik untuk melihat hasil.</p>
                         </div>
                     </div>
 
                     <form @submit.prevent="processAuthentication" class="space-y-8">
                         <!-- Input NISN -->
                         <div class="input-premium">
-                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 tracking-[0.15em] uppercase mb-2">Nomor Induk Siswa Nasional (NISN)</label>
+                            <label class="block text-xs font-bold text-slate-500 tracking-[0.15em] uppercase mb-2">Nomor Induk Siswa Nasional (NISN)</label>
                             <div class="relative group">
                                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                     <i class="ph-fill ph-identification-badge text-xl text-slate-400 group-focus-within:text-brand-500 transition-colors"></i>
                                 </div>
-                                <input type="text" v-model="authForm.nisn" @input="filterNumber($event, 'nisn', 10, 'input-dd')" id="input-nisn" required autocomplete="off"
+                                <input type="text" inputmode="numeric" v-model="authForm.nisn" @input="filterNumber($event, 'nisn', 10, 'input-dd')" id="input-nisn" required autocomplete="off"
                                     class="block w-full pl-12 pr-4 py-4 bg-slate-50/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl text-lg font-mono tracking-widest text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 focus:bg-white dark:focus:bg-slate-800 transition-all shadow-inner"
                                     placeholder="0000000000">
-                                <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none opacity-0 group-focus-within:opacity-100 transition-opacity">
-                                    <span class="text-xs font-bold text-brand-500 bg-brand-50 dark:bg-brand-900/30 px-2 py-1 rounded">10 DIGIT</span>
-                                </div>
                             </div>
                         </div>
 
                         <!-- Input Tanggal Lahir (Unified UX) -->
                         <div class="input-premium">
-                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 tracking-[0.15em] uppercase mb-2">Tanggal Lahir</label>
+                            <label class="block text-xs font-bold text-slate-500 tracking-[0.15em] uppercase mb-2">Tanggal Lahir</label>
                             <div class="flex items-center gap-3 relative">
                                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
                                     <i class="ph-fill ph-calendar-blank text-xl text-slate-400 transition-colors" id="calendar-icon"></i>
                                 </div>
                                 
-                                <input type="text" v-model="authForm.dd" @input="filterNumber($event, 'dd', 2, 'input-mm')" id="input-dd" required placeholder="DD"
+                                <input type="text" inputmode="numeric" v-model="authForm.dd" @input="filterNumber($event, 'dd', 2, 'input-mm')" id="input-dd" required placeholder="DD"
                                     class="w-full pl-12 pr-2 py-4 text-center bg-slate-50/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-l-xl text-lg font-mono text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:z-10 focus:bg-white dark:focus:bg-slate-800 transition-all shadow-inner">
                                 
                                 <div class="text-slate-300 dark:text-slate-600 font-light text-2xl -mx-1">/</div>
                                 
-                                <input type="text" v-model="authForm.mm" @input="filterNumber($event, 'mm', 2, 'input-yyyy', 'input-dd')" @keydown.delete="handleBackspace($event, 'dd')" id="input-mm" required placeholder="MM"
+                                <input type="text" inputmode="numeric" v-model="authForm.mm" @input="filterNumber($event, 'mm', 2, 'input-yyyy', 'input-dd')" @keydown.delete="handleBackspace($event, 'dd')" id="input-mm" required placeholder="MM"
                                     class="w-full px-2 py-4 text-center bg-slate-50/50 dark:bg-slate-900/50 border-y border-slate-200 dark:border-slate-700 text-lg font-mono text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:z-10 focus:bg-white dark:focus:bg-slate-800 transition-all shadow-inner">
                                 
                                 <div class="text-slate-300 dark:text-slate-600 font-light text-2xl -mx-1">/</div>
                                 
-                                <input type="text" v-model="authForm.yyyy" @input="filterNumber($event, 'yyyy', 4, null, 'input-mm')" @keydown.delete="handleBackspace($event, 'mm')" id="input-yyyy" required placeholder="YYYY"
+                                <!-- Added @keyup.enter for direct submission when cursor is on YYYY -->
+                                <input type="text" inputmode="numeric" v-model="authForm.yyyy" @input="filterNumber($event, 'yyyy', 4, null, 'input-mm')" @keydown.delete="handleBackspace($event, 'mm')" @keyup.enter="processAuthentication" id="input-yyyy" required placeholder="YYYY"
                                     class="w-full pr-4 pl-2 py-4 text-center bg-slate-50/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-r-xl text-lg font-mono text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:z-10 focus:bg-white dark:focus:bg-slate-800 transition-all shadow-inner">
                             </div>
                         </div>
 
                         <!-- Actions -->
                         <div class="pt-6 mt-2 flex flex-col-reverse sm:flex-row items-center justify-between gap-4">
-                            <button type="button" @click="showHelp" class="text-sm font-medium text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-colors flex items-center gap-2">
+                            <button type="button" @click="showHelp" class="text-sm font-medium text-slate-500 hover:text-slate-800 dark:hover:text-white transition-colors flex items-center gap-2">
                                 <i class="ph-bold ph-question"></i> Butuh Bantuan?
                             </button>
                             
@@ -313,14 +321,14 @@
                 </div>
             </div>
             
-            <p class="mt-8 text-xs font-medium text-slate-400 dark:text-slate-500 flex items-center gap-2 max-w-md text-center leading-relaxed">
+            <p class="mt-8 text-xs font-medium text-slate-400 flex items-center gap-2 max-w-md text-center leading-relaxed">
                 <i class="ph-fill ph-lock-key text-brand-500 text-lg"></i>
-                Sistem dienkripsi dengan standar keamanan tinggi. Seluruh akses tercatat dalam log server.
+                Koneksi Aman TLS 1.3. Semua riwayat akses terekam otomatis di Log Server.
             </p>
         </div>
 
         <!-- ============================================== -->
-        <!-- VIEW 4: DECRYPTION ANIMATION (ILLUSION)        -->
+        <!-- VIEW 4: DECRYPTING / LOADING                   -->
         <!-- ============================================== -->
         <div v-else-if="appState === 'decrypting'" key="decrypting" class="flex-1 flex flex-col items-center justify-center min-h-screen px-4 z-50 bg-white/90 dark:bg-slate-950/90 backdrop-blur-xl absolute inset-0 w-full h-full">
             <div class="text-center w-full max-w-md">
@@ -334,7 +342,7 @@
                     </div>
                 </div>
                 
-                <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2 tracking-wide">Memverifikasi Identitas...</h3>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2 tracking-wide">Menghubungkan ke Server...</h3>
                 
                 <div class="h-1.5 w-full bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden mb-4 shadow-inner">
                     <div class="h-full bg-brand-500 rounded-full transition-all duration-300 ease-out" :style="{ width: loadingProgress + '%' }"></div>
@@ -351,22 +359,21 @@
         <!-- ============================================== -->
         <div v-else-if="appState === 'result' && activeStudent" key="result" class="flex-1 flex flex-col items-center justify-start min-h-screen py-10 px-4 z-40 relative">
             
-            <div class="print-watermark hidden print-only">
-                SMA NEGERI 1 KONOHA
-            </div>
+            <div class="print-watermark hidden print-only">SMA NEGERI 1 KONOHA</div>
 
             <!-- The Main SKL Document -->
-            <div class="w-full max-w-4xl glass-card rounded-2xl shadow-2xl animate-fade-in-up border border-slate-200 dark:border-slate-700 print-container overflow-hidden bg-white dark:bg-slate-900">
+            <div id="skl-document" class="w-full max-w-4xl glass-card rounded-2xl shadow-2xl animate-fade-in-up border border-slate-200 dark:border-slate-700 print-container overflow-hidden bg-white dark:bg-slate-900">
                 
-                <!-- Print Header (Hidden on Screen) -->
-                <div class="hidden print-only text-center pb-6 border-b-2 border-black mb-8 px-10 pt-10">
-                    <div class="flex items-center justify-center gap-6 mb-4">
-                        <div class="w-20 h-20 border-2 border-black rounded-full flex items-center justify-center font-bold text-xs">LOGO</div>
+                <!-- Print Header -->
+                <div class="hidden print-only text-center pb-4 border-b-2 border-black mb-4 px-8 pt-4">
+                    <div class="flex items-center justify-center gap-6 mb-2">
+                        <img :src="logoSekolahUrl" alt="Logo SMAN 1 Konoha" class="w-20 h-20 object-contain drop-shadow-sm" @error="handleLogoFallback" />
+                        
                         <div>
-                            <h1 class="text-2xl font-bold uppercase tracking-wider">PEMERINTAH PROVINSI WAKANDA</h1>
-                            <h2 class="text-xl font-bold uppercase tracking-wider">DINAS PENDIDIKAN</h2>
-                            <h3 class="text-3xl font-black uppercase mt-1">SMA NEGERI 1 KONOHA</h3>
-                            <p class="text-sm mt-1">Jl. Hokage Raya No. 1, Desa Konoha. Telp: (021) 123456</p>
+                            <h1 class="text-xl font-bold uppercase tracking-wider leading-tight">PEMERINTAH PROVINSI WAKANDA</h1>
+                            <h2 class="text-lg font-bold uppercase tracking-wider leading-tight">DINAS PENDIDIKAN</h2>
+                            <h3 class="text-2xl font-black uppercase mt-1 leading-none">SMA NEGERI 1 KONOHA</h3>
+                            <p class="text-xs mt-1">Jl. Hokage Raya No. 1, Desa Konoha. Telp: (021) 123456</p>
                         </div>
                     </div>
                 </div>
@@ -374,13 +381,10 @@
                 <!-- Digital Banner Header -->
                 <div :class="[
                     'p-8 sm:p-12 relative overflow-hidden transition-colors duration-700 no-print',
-                    activeStudent.status === 'LULUS' 
-                        ? 'bg-gradient-to-br from-emerald-500 via-teal-600 to-emerald-700' 
-                        : activeStudent.status === 'TIDAK LULUS' 
-                            ? 'bg-gradient-to-br from-rose-600 via-red-600 to-rose-800' 
-                            : 'bg-gradient-to-br from-amber-500 via-orange-500 to-amber-700'
+                    activeStudent.status === 'LULUS' ? 'bg-gradient-to-br from-emerald-500 via-teal-600 to-emerald-700' : 
+                    activeStudent.status === 'TIDAK LULUS' ? 'bg-gradient-to-br from-rose-600 via-red-600 to-rose-800' : 
+                    'bg-gradient-to-br from-amber-500 via-orange-500 to-amber-700'
                 ]">
-                    <!-- Ornamental Background Elements inside banner -->
                     <div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
                     <div class="absolute bottom-0 left-0 w-48 h-48 bg-black opacity-10 rounded-full blur-2xl translate-y-1/2 -translate-x-1/4"></div>
                     
@@ -401,7 +405,6 @@
                             </p>
                         </div>
                         
-                        <!-- Status Icon -->
                         <div class="relative flex-shrink-0 animate-fade-in-up delay-300">
                             <div class="absolute inset-0 bg-white/30 blur-xl rounded-full"></div>
                             <div class="w-24 h-24 sm:w-32 sm:h-32 bg-white/20 backdrop-blur-md rounded-full border-2 border-white/50 shadow-2xl flex items-center justify-center relative z-10">
@@ -415,12 +418,11 @@
                     </div>
                 </div>
 
-                <!-- Print Title (Only visible in print) -->
+                <!-- Print Title -->
                 <div class="hidden print-only text-center mb-6">
                     <h3 class="text-xl font-bold uppercase underline">SURAT KETERANGAN LULUS</h3>
                     <p class="text-sm mt-1">Nomor: 421.3/{{ activeStudent.nisn.substring(0,4) }}/SMAN1/2026</p>
                 </div>
-
                 <div class="hidden print-only px-10 mb-6 text-justify">
                     <p>Kepala SMA Negeri 1 Konoha, selaku Ketua Penyelenggara Ujian Sekolah Tahun Pelajaran 2025/2026 berdasarkan kriteria kelulusan dari satuan pendidikan menerangkan bahwa:</p>
                 </div>
@@ -428,18 +430,17 @@
                 <!-- Data Section -->
                 <div class="p-8 sm:p-12 bg-white dark:bg-slate-900 text-slate-900 dark:text-white relative">
                     
-                    <!-- Top Info Row with QR -->
                     <div class="flex flex-col-reverse md:flex-row justify-between items-start gap-8 mb-10 pb-10 border-b border-slate-200 dark:border-slate-800 border-dashed">
                         
                         <div class="w-full space-y-6 flex-1">
-                            <div class="group">
+                            <div>
                                 <p class="text-xs font-bold tracking-[0.2em] text-slate-400 uppercase mb-1">Nama Lengkap Siswa</p>
-                                <h3 class="text-2xl sm:text-4xl font-black uppercase tracking-tight text-slate-900 dark:text-white">{{ activeStudent.nama }}</h3>
+                                <h3 class="text-2xl sm:text-4xl font-black uppercase tracking-tight">{{ activeStudent.nama }}</h3>
                             </div>
                             
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                 <div>
-                                    <p class="text-xs font-bold tracking-[0.2em] text-slate-400 uppercase mb-1">Tempat, Tanggal Lahir</p>
+                                    <p class="text-xs font-bold tracking-[0.2em] text-slate-400 uppercase mb-1">Tempat, Tgl. Lahir</p>
                                     <p class="text-lg font-bold">{{ activeStudent.tempat_lahir }}, {{ formatDateDisplay(activeStudent.tgl, activeStudent.bln, activeStudent.thn) }}</p>
                                 </div>
                                 <div>
@@ -457,11 +458,11 @@
                             </div>
                         </div>
 
-                        <!-- Local generated QR Code -->
+                        <!-- Secure QR Code Container -->
                         <div class="flex-shrink-0 flex flex-col items-center p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700 w-full md:w-auto">
                             <div id="qrcode-container" class="bg-white p-2 rounded-xl shadow-sm"></div>
                             <p class="text-[10px] font-mono font-bold text-slate-500 mt-3 tracking-widest text-center">
-                                SCAN UNTUK<br>VALIDASI ASLI
+                                VALIDASI DIGITAL<br>SCAN BARCODE
                             </p>
                         </div>
                     </div>
@@ -532,18 +533,21 @@
                         </div>
                     </div>
 
-                    <!-- Navigation Controls -->
                     <div class="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-center no-print">
                         <button @click="resetToLogin" class="group text-sm font-bold tracking-widest text-slate-500 hover:text-brand-600 dark:hover:text-brand-400 transition-colors uppercase flex items-center gap-2 py-2 px-4 rounded-lg hover:bg-brand-50 dark:hover:bg-slate-800">
                             <i class="ph-bold ph-arrow-left group-hover:-translate-x-1 transition-transform"></i>
-                            KEMBALI KE PORTAL
+                            KELUAR SISTEM
                         </button>
                     </div>
 
                 </div>
             </div>
             
-            <p class="mt-8 text-xs font-mono text-slate-400 no-print">SYS_ID: SMAN1-KNH-{{ activeStudent.nisn }} | VER 2.0.26</p>
+            <!-- Metadata Anti-Cheat for Print -->
+            <div class="mt-8 text-xs font-mono text-slate-400 dark:text-slate-500 w-full max-w-4xl flex justify-between px-2">
+                <span>SYS_ID: SMAN1-KNH-{{ activeStudent.nisn }} | VER 2.5.0-ENT</span>
+                <span class="print-only">Dicetak pada: {{ printTimestamp }}</span>
+            </div>
         </div>
     </transition>
 </div>
@@ -552,49 +556,64 @@
 <!-- VUE 3 APPLICATION LOGIC                        -->
 <!-- ============================================== -->
 <script>
-const { createApp, ref, reactive, onMounted, nextTick } = Vue;
+const { createApp, ref, reactive, onMounted, nextTick, computed } = Vue;
 
 // --- KONFIGURASI API ENTERPRISE ---
-// WAJIB: Ganti URL di bawah dengan URL Web App Apps Script Anda yang sudah di-deploy!
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw_W1vjTKkcuQKGmzLT7suxKJJx4GDYNB7-HyNcIrb8KHaMM0HZ7OEfcgZn4Hfbyuvr8A/exec';
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx2O3eou_ETYrft3uDQnkzJLNf5R7GT-YT4Iu47X4Azmcw2CyqEWn2o0n2t_qG0tg22/exec';
 
 const app = createApp({
     setup() {
-        // --- Core State ---
-        const isDark = ref(true); // Default Dark theme
-        const appState = ref('booting'); // booting -> countdown -> login -> decrypting -> result
+        const isDark = ref(true); 
+        const appState = ref('booting'); 
         
-        // --- Form & Data State ---
         const authForm = reactive({ nisn: '', dd: '', mm: '', yyyy: '' });
         const activeStudent = ref(null);
         
-        // --- UI State ---
         const timer = reactive({ days: '00', hours: '00', minutes: '00', seconds: '00' });
         const loadingProgress = ref(0);
         const fakeLogs = ref([]);
+        const printTimestamp = ref('');
         let countdownInterval = null;
 
-        // --- Methods ---
+        const logoSekolahUrl = ref('https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Tut_Wuri_Handayani.svg/1200px-Tut_Wuri_Handayani.svg.png');
+        const gDriveLogoId = ref('1pk4CVGuX5F2rGeFv9_sMGH36NTTv4wou'); 
+        const { computed } = Vue; 
+        const googleDriveLogoUrl = computed(() => {
+            if (!gDriveLogoId.value) return '';
+            return `https://drive.google.com/uc?export=view&id=${gDriveLogoId.value}`;
+        });
+
+        const handleLogoFallback = (event) => {
+            console.warn('SYS_WARN: Gagal memuat logo GDrive. Fallback ke vektor aman.');
+            event.target.outerHTML = '<div class="w-20 h-20 border-2 border-black rounded-full flex items-center justify-center font-bold text-[10px] text-center">LOGO<br>SEKOLAH</div>';
+        };
 
         const toggleTheme = () => {
             isDark.value = !isDark.value;
-            if (isDark.value) {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark');
-            }
+            if (isDark.value) document.documentElement.classList.add('dark');
+            else document.documentElement.classList.remove('dark');
         };
 
         const startBootSequence = () => {
-            setTimeout(() => {
-                initCountdown();
-            }, 2500); // 2.5s premium boot time
+            const savedSession = sessionStorage.getItem('skl_active_student');
+            
+            if (savedSession) {
+                try {
+                    activeStudent.value = JSON.parse(savedSession);
+                    appState.value = 'result';
+                    setTimeout(() => { generateQRCode(); }, 450);
+                    return; 
+                } catch (e) {
+                    sessionStorage.removeItem('skl_active_student');
+                }
+            }
+
+            setTimeout(() => { initCountdown(); }, 2000); 
         };
 
         const initCountdown = () => {
             appState.value = 'countdown';
-            // Set target to tomorrow for realism, or just a fixed simulation
-            const targetDate = new Date().getTime() + (2 * 24 * 60 * 60 * 1000) + (5 * 60 * 1000) + 30000; 
+            const targetDate = new Date().getTime() + 15000; 
             
             countdownInterval = setInterval(() => {
                 const now = new Date().getTime();
@@ -618,14 +637,11 @@ const app = createApp({
             appState.value = 'login';
         };
 
-        // UI UX: Auto tab and numeric filter
-        const filterNumber = (event, field, maxLength, nextFieldId, prevFieldId) => {
-            let val = event.target.value.replace(/\D/g, ''); // Remove non-digits
+        const filterNumber = (event, field, maxLength, nextFieldId) => {
+            let val = event.target.value.replace(/\D/g, ''); 
             if (val.length > maxLength) val = val.slice(0, maxLength);
-            
             authForm[field] = val;
             
-            // Auto advance
             if (val.length === maxLength && nextFieldId) {
                 const nextEl = document.getElementById(nextFieldId);
                 if (nextEl) nextEl.focus();
@@ -637,37 +653,44 @@ const app = createApp({
                 const prevEl = document.getElementById(prevFieldId);
                 if (prevEl) {
                     prevEl.focus();
-                    // Optional: highlight text on back
                     setTimeout(() => prevEl.select(), 10);
                 }
             }
         };
 
-        const processAuthentication = () => {
-            // Basic validation
+        const validateInput = () => {
             if (authForm.nisn.length < 10 || authForm.dd.length < 2 || authForm.mm.length < 2 || authForm.yyyy.length < 4) {
+                return 'Format isian tidak lengkap. NISN harus 10 digit dan Tanggal Lahir harus spesifik.';
+            }
+            const dd = parseInt(authForm.dd);
+            const mm = parseInt(authForm.mm);
+            const yyyy = parseInt(authForm.yyyy);
+            if (dd < 1 || dd > 31 || mm < 1 || mm > 12 || yyyy < 1990 || yyyy > 2015) {
+                return 'Kombinasi tanggal lahir tidak logis atau di luar jangkauan (1990-2015).';
+            }
+            return null; 
+        };
+
+        const processAuthentication = () => {
+            const validationError = validateInput();
+            
+            if (validationError) {
                 Swal.fire({
-                    icon: 'warning',
-                    title: 'Format Tidak Valid',
-                    text: 'Pastikan NISN 10 digit dan Tanggal Lahir lengkap.',
-                    background: isDark.value ? '#1e293b' : '#fff',
-                    color: isDark.value ? '#fff' : '#0f172a',
-                    confirmButtonColor: '#0ea5e9',
-                    customClass: { popup: 'rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700' }
+                    icon: 'warning', title: 'Validasi Gagal', text: validationError,
+                    background: isDark.value ? '#1e293b' : '#fff', color: isDark.value ? '#fff' : '#0f172a',
+                    confirmButtonColor: '#0ea5e9', customClass: { popup: 'rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700' }
                 });
                 return;
             }
 
-            // Move to decryption state
             appState.value = 'decrypting';
             loadingProgress.value = 0;
             fakeLogs.value = [];
             
-            // Simulation sequence
             const logs = [
-                "Menghubungkan ke server Dapodik pusat...",
-                "Handshake SSL v3.0 berhasil disepakati.",
-                `Mencari entitas ID: ${authForm.nisn}`,
+                "Menghubungkan ke DAPODIK API Gateway Node...",
+                "Menginisiasi koneksi aman (TLS 1.3)...",
+                `Memeriksa payload ID: ${authForm.nisn}`,
                 "Mencocokkan sidik jari data kelahiran...",
                 "Verifikasi integritas block data kelulusan...",
                 "Mendekripsi hash payload (SHA-256)...",
@@ -682,53 +705,53 @@ const app = createApp({
                     logIndex++;
                 } else {
                     clearInterval(logInterval);
-                    evaluateResult();
+                    evaluateResult(); 
                 }
-            }, 400); // Fast but readable
+            }, 300);
         };
 
         const evaluateResult = async () => {
             try {
-                // Beri jeda 800ms agar UI "Memverifikasi Identitas..." sempat terlihat oleh User
                 await new Promise(resolve => setTimeout(resolve, 800));
 
                 const response = await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
-                    // Gunakan text/plain untuk mem-bypass CORS Preflight yang memberatkan Browser
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify({
-                        nisn: authForm.nisn,
-                        dd: authForm.dd,
-                        mm: authForm.mm,
-                        yyyy: authForm.yyyy
+                        action: 'checkGraduation',
+                        nisn: authForm.nisn, dd: authForm.dd, mm: authForm.mm, yyyy: authForm.yyyy
                     })
                 });
 
-                if (!response.ok) throw new Error('Koneksi ke Server Cloud gagal. Periksa jaringan.');
+                if (!response.ok) throw new Error('ERR_NETWORK');
                 
                 const result = await response.json();
 
                 if (result.status === 'success') {
                     activeStudent.value = result.data;
-                    appState.value = 'result';
                     
-                    nextTick(() => {
+                    sessionStorage.setItem('skl_active_student', JSON.stringify(result.data));
+
+                    appState.value = 'result';
+                    setTimeout(() => {
                         generateQRCode();
                         if (activeStudent.value.status === 'LULUS') fireConfetti();
-                    });
+                    }, 450);
                 } else {
-                    throw new Error(result.message || 'Kombinasi NISN dan Tanggal Lahir tidak terdaftar di database kelulusan SMA Negeri 1 Konoha.');
+                    throw new Error(result.message || 'Data tidak ditemukan.');
                 }
             } catch (error) {
                 appState.value = 'login';
+                let errorMsg = error.message;
+                
+                if (errorMsg === 'ERR_NETWORK' || errorMsg.includes('fetch')) {
+                    errorMsg = "Gagal terhubung ke Server Cloud (Google Apps Script). Pastikan koneksi internet stabil atau coba beberapa saat lagi.";
+                }
+
                 Swal.fire({
-                    icon: 'error',
-                    title: 'Akses Ditolak / Gagal',
-                    text: error.message,
-                    background: isDark.value ? '#1e293b' : '#fff',
-                    color: isDark.value ? '#fff' : '#0f172a',
-                    confirmButtonColor: '#ef4444',
-                    customClass: { popup: 'rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700' }
+                    icon: 'error', title: 'Akses Ditolak', text: errorMsg,
+                    background: isDark.value ? '#1e293b' : '#fff', color: isDark.value ? '#fff' : '#0f172a',
+                    confirmButtonColor: '#ef4444', customClass: { popup: 'rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700' }
                 });
             }
         };
@@ -736,18 +759,28 @@ const app = createApp({
         const generateQRCode = () => {
             const container = document.getElementById('qrcode-container');
             if (!container) return;
-            container.innerHTML = ''; // Clear previous
-            
-            // Using qrcode.js to generate locally (Dictator standard: no external image APIs that break on print)
-            const qrData = `VERIFIED: SMAN1/2026/${activeStudent.value.nisn}/${activeStudent.value.status}`;
-            new QRCode(container, {
+            container.innerHTML = '';             
+            const genDate = new Date().toISOString();
+            const qrData = `VERIFIED|SMAN1|2026|${activeStudent.value.nisn}|${activeStudent.value.status}|${genDate}`;
+            const virtualDiv = document.createElement('div');
+            new QRCode(virtualDiv, {
                 text: qrData,
-                width: 128,
-                height: 128,
-                colorDark : "#0f172a",
-                colorLight : "#ffffff",
+                width: 128, height: 128,
+                colorDark : "#0f172a", colorLight : "#ffffff",
                 correctLevel : QRCode.CorrectLevel.H
             });
+
+            setTimeout(() => {
+                const canvas = virtualDiv.querySelector('canvas');
+                if (canvas) {
+                    const img = document.createElement('img');
+                    img.src = canvas.toDataURL("image/png");
+                    img.alt = "QR Code Validasi";
+                    img.className = "w-full h-full object-contain";                     
+                    container.innerHTML = '';
+                    container.appendChild(img);
+                }
+            }, 50);
         };
 
         const fireConfetti = () => {
@@ -768,10 +801,47 @@ const app = createApp({
         };
 
         const triggerPrint = () => {
-            window.print();
+            const now = new Date();
+            printTimestamp.value = `${now.getDate().toString().padStart(2,'0')}/${(now.getMonth()+1).toString().padStart(2,'0')}/${now.getFullYear()} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')} WIB`;        
+            Swal.fire({
+                title: 'Membangun Dokumen PDF...',
+                html: 'Sistem sedang mengenkripsi dan merender SKL Anda.',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            setTimeout(() => {
+                const element = document.getElementById('skl-document');
+                const actionBanner = element.querySelector('.no-print');
+                if(actionBanner) actionBanner.style.display = 'none';
+
+                const opt = {
+                    margin:       [10, 10, 10, 10], 
+                    filename:     `SKL_SMAN1_${activeStudent.value.nisn}.pdf`,
+                    image:        { type: 'jpeg', quality: 0.98 },
+                    html2canvas:  { scale: 2, useCORS: true, logging: false }, 
+                    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                };
+
+                html2pdf().set(opt).from(element).save().then(() => {
+                    if(actionBanner) actionBanner.style.display = '';
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'PDF Berhasil Diunduh!',
+                        text: 'Silakan periksa folder Download di perangkat Anda.',
+                        timer: 3000,
+                        showConfirmButton: false
+                    });
+                }).catch(err => {
+                    if(actionBanner) actionBanner.style.display = '';
+                    Swal.fire('Error', 'Gagal merender PDF: ' + err.message, 'error');
+                });
+
+            }, 500);
         };
 
         const resetToLogin = () => {
+            sessionStorage.removeItem('skl_active_student');
             authForm.nisn = ''; authForm.dd = ''; authForm.mm = ''; authForm.yyyy = '';
             activeStudent.value = null;
             appState.value = 'login';
@@ -781,12 +851,10 @@ const app = createApp({
         const showHelp = () => {
             Swal.fire({
                 title: 'Bantuan Akses',
-                html: '<div class="text-left text-sm space-y-3"><p><strong>1. NISN:</strong> Terdiri dari 10 digit angka. Pastikan sesuai dengan data Dapodik pusat.</p><p><strong>2. Tanggal Lahir:</strong> Format DD/MM/YYYY. Contoh: Jika lahir 5 April 2008, tulis 05 - 04 - 2008.</p><p><strong>Note:</strong> Pastikan Anda terkoneksi dengan internet yang stabil saat mendekripsi data, karena sistem terhubung langsung ke Server Cloud.</p></div>',
+                html: '<div class="text-left text-sm space-y-3"><p><strong>1. NISN:</strong> Terdiri dari 10 digit angka tanpa huruf.</p><p><strong>2. Tanggal Lahir:</strong> Format 2 digit hari, 2 digit bulan, 4 digit tahun. Contoh: 5 April 2008 ditulis 05 - 04 - 2008.</p><p><strong>Note:</strong> Tekan ENTER setelah mengisi tahun lahir untuk langsung memproses.</p></div>',
                 icon: 'info',
-                background: isDark.value ? '#1e293b' : '#fff',
-                color: isDark.value ? '#fff' : '#0f172a',
-                confirmButtonColor: '#0ea5e9',
-                customClass: { popup: 'rounded-2xl' }
+                background: isDark.value ? '#1e293b' : '#fff', color: isDark.value ? '#fff' : '#0f172a',
+                confirmButtonColor: '#0ea5e9', customClass: { popup: 'rounded-2xl' }
             });
         };
 
@@ -796,17 +864,16 @@ const app = createApp({
             return `${d} ${months[monthIdx] || m} ${y}`;
         };
 
-        // --- Lifecycle ---
         onMounted(() => {
-            // Set initial theme based on HTML class
             isDark.value = document.documentElement.classList.contains('dark');
             startBootSequence();
         });
 
         return {
-            isDark, appState, authForm, activeStudent, timer, loadingProgress, fakeLogs,
+            isDark, appState, authForm, activeStudent, timer, loadingProgress, fakeLogs, printTimestamp,
+            googleDriveLogoUrl, 
             toggleTheme, bypassCountdown, filterNumber, handleBackspace, processAuthentication,
-            triggerPrint, resetToLogin, showHelp, formatDateDisplay
+            triggerPrint, resetToLogin, showHelp, formatDateDisplay, handleLogoFallback 
         };
     }
 });

@@ -1,72 +1,36 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="dark">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
-    <meta name="theme-color" content="#f0f4f9" />
-    <meta name="description" content="Portal Personal Enterprise Workspace - Omni SPA Edition" />
-    
-    <!-- PWA & Mobile Web App Capabilities -->
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <meta name="mobile-web-app-capable" content="yes" />
-    
-    <title>Workspace · Portal Personal</title>
+    <title>EduCore Enterprise Workspace</title>
+    <link rel="icon" href="https://www.google.com/s2/favicons?domain=google.com&sz=128" type="image/png" />
     
     <!-- ARSENAL CDN MANDATORI -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-    <link rel="dns-prefetch" href="https://cdn.tailwindcss.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <link rel="icon" href="https://www.google.com/s2/favicons?domain=google.com&sz=128" type="image/png" />
-    
-    <!-- Core Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined|Material+Icons+Round" rel="stylesheet" />
-    
-    <!-- Ekosistem Vue & Libraries -->
+    <!-- Tailwind, Vue 3, Lucide Icons, SweetAlert2 -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- TAILWIND CONFIGURATION - HYBRID OMNI-SPA -->
+    <!-- TAILWIND CONFIGURATION -->
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Google Sans', 'Inter', 'Roboto', 'sans-serif']
-                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
                     colors: {
-                        primary: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8' },
-                        dark: { bg: '#0f172a', card: '#1e293b', border: '#334155' },
-                        'm3-bg': '#f0f4f9',
-                        'm3-surface': '#ffffff',
-                        'm3-primary': '#0b57d0',
-                        'm3-primary-hover': '#0842a0',
-                        'm3-on-surface': '#1f1f1f',
-                        'm3-on-surface-variant': '#444746',
-                        'm3-outline': '#747775'
-                    },
-                    borderRadius: {
-                        'xl': '16px', '2xl': '24px', '3xl': '32px', 'pill': '9999px'
+                        dark: { bg: '#0f172a', surface: '#1e293b', border: '#334155' },
+                        primary: '#3b82f6'
                     },
                     boxShadow: {
-                        'elevation-1': '0 1px 2px 0 rgba(0,0,0,0.3), 0 1px 3px 1px rgba(0,0,0,0.15)',
-                        'elevation-2': '0 1px 2px 0 rgba(60,64,67,0.3), 0 2px 6px 2px rgba(60,64,67,0.15)',
-                        'floating': '0 4px 8px 3px rgba(0,0,0,0.15), 0 1px 3px rgba(0,0,0,0.3)'
-                    },
-                    animation: {
-                        'fade-in': 'fadeIn 0.3s ease-in-out',
-                        'slide-in': 'slideIn 0.3s ease-out'
-                    },
-                    keyframes: {
-                        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
-                        slideIn: { '0%': { transform: 'translateY(10px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } }
+                        'glass': '0 4px 30px rgba(0, 0, 0, 0.1)',
                     }
                 }
             }
@@ -76,614 +40,375 @@
     <style>
         [v-cloak] { display: none !important; }
         body { 
-            background-color: #f0f4f9; color: #1f1f1f; 
-            -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; 
-            transition: background-color 0.3s, color 0.3s;
+            background-color: #0f172a; /* Slate-900 */
+            color: #e2e8f0; /* Slate-200 */
+            -webkit-font-smoothing: antialiased;
         }
-        html.dark body { background-color: #0f172a; color: #e2e8f0; }
         
-        /* Custom Scrollbar - Menipis di mobile */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        @media (min-width: 768px) { ::-webkit-scrollbar { width: 8px; height: 8px; } }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        html.dark ::-webkit-scrollbar-thumb { background: #475569; }
-        html.dark ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+        /* Glassmorphism Classes (Dark Mode Tuned) */
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .glass-modal {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
 
-        /* Loader Original Google-style */
-        .spinner-container { position: relative; width: 48px; height: 48px; }
-        .circular { animation: rotate 2s linear infinite; height: 100%; transform-origin: center center; width: 100%; position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto; }
-        .path { stroke-dasharray: 1, 200; stroke-dashoffset: 0; animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite; stroke-linecap: round; }
-        @keyframes rotate { 100% { transform: rotate(360deg); } }
-        @keyframes dash { 0% { stroke-dasharray: 1,200; stroke-dashoffset: 0; } 50% { stroke-dasharray: 89,200; stroke-dashoffset: -35px; } 100% { stroke-dasharray: 89,200; stroke-dashoffset: -124px; } }
-        @keyframes color { 100%, 0% { stroke: #4285F4; } 40% { stroke: #DB4437; } 66% { stroke: #F4B400; } 80%, 90% { stroke: #0F9D58; } }
-        
-        /* Material Touch Ripple */
-        .ripple { position: relative; overflow: hidden; transform: translate3d(0,0,0); }
-        .ripple:after { content: ""; display: block; position: absolute; width: 100%; height: 100%; top: 0; left: 0; pointer-events: none; background-image: radial-gradient(circle, #000 10%, transparent 10.01%); background-repeat: no-repeat; background-position: 50%; transform: scale(10,10); opacity: 0; transition: transform 0.5s, opacity 1s; }
-        .ripple:active:after { transform: scale(0,0); opacity: 0.1; transition: 0s; }
-        html.dark .ripple:after { background-image: radial-gradient(circle, #fff 10%, transparent 10.01%); }
-        
-        /* Routing & Transisi Vue */
-        .fade-enter-active, .fade-leave-active { transition: opacity 0.25s ease; }
+        /* Scrollbar Stealth */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Vue Transitions */
+        .fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease; }
         .fade-enter-from, .fade-leave-to { opacity: 0; }
-        .slide-fade-enter-active { transition: all 0.3s cubic-bezier(0.0, 0.0, 0.2, 1); }
-        .slide-fade-leave-active { transition: all 0.25s cubic-bezier(0.4, 0.0, 1, 1); }
-        .slide-fade-enter-from, .slide-fade-leave-to { transform: translateY(15px); opacity: 0; }
-        .view-transition-enter-active, .view-transition-leave-active { transition: opacity 0.2s ease, transform 0.2s ease; }
-        .view-transition-enter-from { opacity: 0; transform: translateY(10px); }
-        .view-transition-leave-to { opacity: 0; transform: translateY(-10px); }
-
-        /* Iframe & Overlays */
-        .iframe-loader-material { background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 200; }
-        html.dark .iframe-loader-material { background: rgba(15, 23, 42, 0.8); }
-        .shimmer { background: linear-gradient(90deg, #0b57d0 25%, #89b9ff 50%, #0b57d0 75%); background-size: 200% 100%; animation: shimmer 1.8s infinite; }
-        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
         
-        .chip-online { background-color: #e6f4ea; color: #0d652d; border: 1px solid #a8dab5; }
-        .chip-offline { background-color: #fce8e6; color: #b31412; border: 1px solid #f6aea9; }
-        .modal-overlay { background-color: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
-        
-        /* Hardware Acceleration & iOS Smooth Scrolling */
-        iframe { transform: translateZ(0); }
-        .scroll-smooth-ios { -webkit-overflow-scrolling: touch; }
+        /* Skeleton Animation */
+        @keyframes pulse-subtle {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .animate-skeleton { animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
     </style>
 </head>
-<body class="h-screen overflow-hidden text-slate-800 dark:text-slate-200">
+<!-- Menggunakan h-[100dvh] untuk kompatibilitas Safari iOS (iPhone) -->
+<body class="h-[100dvh] w-full overflow-hidden no-scrollbar selection:bg-primary selection:text-white relative bg-[#0f172a]">
 
     <div id="app" class="w-full h-full flex relative" v-cloak>
 
-        <!-- ========================================== -->
-        <!-- [GLOBAL] OVERLAYS & STATUS                 -->
-        <!-- ========================================== -->
-        
+        <!-- Initial Loader -->
         <transition name="fade">
-            <div v-if="isInitialLoading" class="fixed inset-0 bg-white dark:bg-slate-900 z-[9999] flex flex-col justify-center items-center">
-                <div class="spinner-container mb-6">
-                    <svg class="circular" viewBox="25 25 50 50">
-                        <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="4" stroke-miterlimit="10" />
-                    </svg>
-                </div>
-                <div class="flex items-center gap-2">
-                    <span class="text-2xl font-sans font-medium text-gray-800 dark:text-gray-100">Enterprise</span>
-                    <span class="text-2xl font-sans font-normal text-gray-500 dark:text-gray-400">Workspace</span>
-                </div>
-            </div>
-        </transition>
-
-        <transition name="fade">
-            <div v-if="!isOnline || showOnlineRestored" class="absolute top-4 left-1/2 transform -translate-x-1/2 z-[5000] px-4 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 shadow-sm" :class="isOnline ? 'chip-online' : 'chip-offline'">
-                <span class="material-icons-round text-[16px]">{{ isOnline ? 'wifi' : 'wifi_off' }}</span> 
-                {{ isOnline ? 'Online Kembali' : 'Mode Offline' }}
+            <div v-if="isInitialLoading" class="fixed inset-0 z-[9999] flex flex-col justify-center items-center bg-[#0f172a]">
+                <i data-lucide="loader-2" class="w-10 h-10 md:w-12 md:h-12 text-primary animate-spin mb-4"></i>
+                <div class="text-lg md:text-xl font-bold tracking-widest text-slate-200 text-center">EDUCORE <span class="text-primary">ENTERPRISE</span></div>
+                <div class="text-[10px] md:text-xs text-slate-500 mt-2">Menginisiasi Sesi Sistem...</div>
             </div>
         </transition>
 
         <!-- ========================================== -->
-        <!-- [DIMENSI 1] TAMPILAN PUBLIK (TANPA SIDEBAR)-->
+        <!-- PUBLIC WORKSPACE (DIMENSI 1)               -->
         <!-- ========================================== -->
-        <div v-if="!isAdmin" class="w-full h-full flex flex-col overflow-y-auto scroll-smooth-ios bg-m3-bg dark:bg-slate-900 transition-colors duration-300">
-            <!-- Public Header -->
-            <header class="h-16 px-4 sm:px-8 flex items-center justify-between border-b border-transparent dark:border-slate-800 bg-white/70 dark:bg-slate-900/70 backdrop-blur-md sticky top-0 z-40">
-                <div class="flex items-center gap-2">
-                    <div class="w-9 h-9 rounded-xl bg-m3-primary flex items-center justify-center text-white shadow-sm">
-                        <span class="material-icons-round text-xl">all_inclusive</span>
+        <div v-if="!isAdmin" class="w-full h-full flex flex-col overflow-y-auto no-scrollbar relative z-10 pb-6">
+            <!-- Background Ornaments (Dark Version) -->
+            <div class="absolute top-[-5%] left-[-10%] w-64 h-64 md:w-96 md:h-96 bg-primary/20 rounded-full blur-[80px] md:blur-[100px] pointer-events-none"></div>
+            <div class="absolute bottom-[-5%] right-[-10%] w-64 h-64 md:w-96 md:h-96 bg-indigo-500/20 rounded-full blur-[80px] md:blur-[100px] pointer-events-none"></div>
+
+            <header class="h-16 md:h-20 px-4 md:px-8 flex items-center justify-between sticky top-0 z-40 glass-panel border-b border-white/10 border-x-0 rounded-none shrink-0">
+                <div class="flex items-center gap-2 md:gap-3">
+                    <div class="w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl bg-primary flex items-center justify-center text-white shadow-md shadow-primary/30">
+                        <i data-lucide="hexagon" class="w-4 h-4 md:w-6 md:h-6"></i>
                     </div>
-                    <span class="font-bold text-xl text-slate-800 dark:text-slate-100 tracking-tight hidden sm:block">Portal Personal</span>
+                    <span class="font-bold text-lg md:text-xl tracking-tight text-white">EduCore</span>
                 </div>
-                <div class="flex items-center gap-2 sm:gap-4">
-                    <button @click="toggleTheme" class="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors text-slate-600 dark:text-slate-300" title="Ubah Tema">
-                        <i class="ph text-2xl" :class="isDark ? 'ph-sun' : 'ph-moon'"></i>
-                    </button>
-                    <button @click="showLoginModal = true" class="flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 bg-slate-800 dark:bg-slate-800 text-white rounded-xl text-sm font-medium hover:bg-slate-700 dark:hover:bg-slate-700 transition-colors shadow-sm">
-                        <i class="ph ph-lock-key text-lg"></i> <span class="hidden sm:inline">Akses Admin</span>
+                <div>
+                    <button @click="showLoginModal = true" class="flex items-center gap-1.5 md:gap-2 px-3 py-1.5 md:px-5 md:py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white rounded-lg md:rounded-xl text-xs md:text-sm font-medium transition-all shadow-sm active:scale-95">
+                        <i data-lucide="shield-alert" class="w-3.5 h-3.5 md:w-4 md:h-4"></i> <span class="hidden sm:inline">Otorisasi Eksekutif</span><span class="sm:hidden">Sistem</span>
                     </button>
                 </div>
             </header>
 
-            <!-- Public Workspace Content -->
-            <main class="flex-1 max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 pb-24 w-full">
-                <!-- Hero & Search -->
-                <div class="flex flex-col items-center mb-10 sm:mb-12 mt-2 sm:mt-4 animate-slide-in">
-                    <div class="inline-flex items-center gap-2 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm text-m3-on-surface-variant dark:text-slate-300 shadow-sm mb-4 sm:mb-6 border border-white/20 dark:border-slate-700/50">
-                        <span class="material-icons-round text-base text-m3-primary dark:text-blue-400">bolt</span>
-                        <span>Sistem Akses Cepat</span>
-                    </div>
-                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-800 dark:text-white mb-6 sm:mb-8 text-center font-sans tracking-tight">Selamat Datang di Workspace</h1>
+            <main class="flex-1 max-w-6xl mx-auto px-4 md:px-6 py-8 md:py-16 w-full relative z-10">
+                <div class="flex flex-col items-center mb-8 md:mb-16">
+                    <h1 class="text-3xl md:text-5xl font-bold text-white mb-6 md:mb-8 text-center tracking-tight leading-tight">Sistem Resolusi Digital</h1>
                     
-                    <div class="relative w-full max-w-2xl group z-10 shadow-elevation-1 dark:shadow-none dark:border dark:border-slate-700 rounded-pill bg-white dark:bg-slate-800 transition-all hover:shadow-elevation-2 focus-within:shadow-elevation-2">
-                        <div class="absolute inset-y-0 left-0 pl-4 sm:pl-6 flex items-center pointer-events-none">
-                            <span class="material-icons-round text-gray-400 dark:text-slate-500 group-focus-within:text-m3-primary dark:group-focus-within:text-blue-400 transition-colors">search</span>
+                    <div class="relative w-full max-w-2xl group z-10 glass-panel rounded-full transition-all focus-within:ring-2 ring-primary/50">
+                        <div class="absolute inset-y-0 left-0 pl-4 md:pl-6 flex items-center pointer-events-none">
+                            <i data-lucide="search" class="w-4 h-4 md:w-5 md:h-5 text-slate-400 group-focus-within:text-primary transition-colors"></i>
                         </div>
-                        <input v-model="searchQuery" type="text" class="block w-full pl-12 sm:pl-16 pr-12 py-3.5 sm:py-4 bg-transparent border border-transparent rounded-pill text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none transition-all text-base sm:text-lg" placeholder="Telusuri aplikasi atau modul..." />
-                        <button v-show="searchQuery" @click="searchQuery = ''" class="absolute inset-y-0 right-0 pr-4 sm:pr-5 flex items-center p-2">
-                            <span class="material-icons-round text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">close</span>
-                        </button>
+                        <input v-model="searchQuery" type="text" class="block w-full pl-10 md:pl-14 pr-10 md:pr-12 py-3 md:py-4 bg-transparent border-none rounded-full text-white placeholder-slate-400 focus:outline-none focus:ring-0 text-sm md:text-lg" placeholder="Identifikasi modul..." />
                     </div>
                 </div>
 
-                <!-- Grid Aplikasi (Publik) -->
-                <div>
-                    <div class="flex justify-between items-center mb-4 sm:mb-5 px-2">
-                        <h3 class="text-xs sm:text-sm font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider" v-if="displayedApps.length > 0">Modul Tersedia</h3>
+                <!-- Grid Data -->
+                <div v-if="isLoadingData" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+                    <div v-for="i in 8" :key="i" class="glass-panel p-4 md:p-5 rounded-xl md:rounded-2xl h-20 md:h-24 animate-skeleton flex items-center gap-3 md:gap-4 border-white/5">
+                        <div class="w-10 h-10 md:w-12 md:h-12 bg-slate-700/50 rounded-lg md:rounded-xl"></div>
+                        <div class="flex-1 space-y-2">
+                            <div class="h-3 md:h-4 bg-slate-700/50 rounded w-3/4"></div>
+                            <div class="h-2 md:h-3 bg-slate-700/50 rounded w-1/2"></div>
+                        </div>
                     </div>
-                    
-                    <transition-group name="slide-fade" tag="div" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
-                        <div 
-                            v-for="app in displayedApps" :key="app.id"
-                            @click="openApp(app)"
-                            class="group relative bg-white dark:bg-dark-card p-3.5 sm:p-4 rounded-2xl border border-transparent hover:shadow-elevation-2 hover:border-blue-200 dark:hover:border-slate-600 transition-all duration-300 cursor-pointer flex items-center gap-3 sm:gap-4 ripple"
-                        >
-                            <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center shrink-0 shadow-sm" :style="getAppStyle(app.color)">
-                                <span class="material-icons-round text-2xl sm:text-3xl">{{ app.icon || 'apps' }}</span>
+                </div>
+
+                <div v-else>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+                        <div v-for="app in displayedApps" :key="app.id" @click="openApp(app)" class="group glass-panel p-4 md:p-5 rounded-xl md:rounded-2xl hover:border-primary/50 transition-all duration-300 cursor-pointer flex items-center gap-3 md:gap-4 active:scale-[0.98]">
+                            <div class="w-10 h-10 md:w-12 md:h-12 rounded-lg md:rounded-xl flex items-center justify-center shrink-0 shadow-lg" :style="getAppStyle(app.color)">
+                                <i :data-lucide="app.icon || 'box'" class="w-5 h-5 md:w-6 md:h-6"></i>
                             </div>
-                            <div class="flex-1 min-w-0 pr-2">
-                                <h3 class="font-sans font-bold text-gray-900 dark:text-slate-100 truncate group-hover:text-m3-primary dark:group-hover:text-blue-400 transition-colors text-sm sm:text-base">
-                                    {{ app.title }}
-                                </h3>
-                                <p class="text-xs sm:text-[13px] text-gray-500 dark:text-slate-400 truncate mt-0.5">{{ app.desc }}</p>
-                            </div>
-                            <div class="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 dark:text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity bg-gray-50 dark:bg-slate-800 absolute right-4">
-                                <span class="material-icons-round text-sm">open_in_new</span>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-bold text-slate-100 text-sm md:text-base truncate group-hover:text-primary transition-colors">{{ app.title }}</h3>
+                                <p class="text-[11px] md:text-[13px] text-slate-400 truncate mt-0.5 md:mt-1">{{ app.desc }}</p>
                             </div>
                         </div>
-                    </transition-group>
-
-                    <!-- Empty State -->
-                    <div v-if="displayedApps.length === 0" class="flex flex-col items-center justify-center py-16 sm:py-24 px-4 text-center animate-fade-in bg-white/50 dark:bg-slate-800/30 rounded-3xl border border-dashed border-slate-300 dark:border-slate-700">
-                        <i class="ph ph-magnifying-glass text-5xl sm:text-6xl text-slate-300 dark:text-slate-600 mb-4"></i>
-                        <h3 class="text-base sm:text-lg font-medium text-slate-700 dark:text-slate-300">Aplikasi tidak ditemukan</h3>
-                        <p class="text-slate-500 dark:text-slate-400 mt-2 text-xs sm:text-sm max-w-sm">Coba kata kunci lain atau hubungi administrator jika aplikasi yang Anda cari belum tersedia.</p>
+                    </div>
+                    
+                    <div v-if="displayedApps.length === 0" class="flex flex-col items-center justify-center py-12 md:py-20 px-4 text-center glass-panel rounded-2xl md:rounded-3xl border-dashed border-slate-600">
+                        <i data-lucide="package-open" class="w-12 h-12 md:w-16 md:h-16 text-slate-500 mb-3 md:mb-4"></i>
+                        <h3 class="text-base md:text-lg font-medium text-slate-300">Resolusi Gagal</h3>
+                        <p class="text-slate-500 mt-1 md:mt-2 text-xs md:text-sm max-w-xs md:max-w-sm">Modul sistem tidak teridentifikasi dalam basis data aktif.</p>
                     </div>
                 </div>
             </main>
         </div>
 
         <!-- ========================================== -->
-        <!-- [DIMENSI 2] TAMPILAN ADMIN (APP SHELL)     -->
+        <!-- ADMIN CONSOLE (DIMENSI 2)                  -->
         <!-- ========================================== -->
-        <div v-else class="w-full h-full flex relative overflow-hidden bg-m3-bg dark:bg-slate-900 transition-colors duration-300">
-            <!-- ADMIN SIDEBAR -->
-            <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'" class="fixed lg:static w-72 h-full bg-white dark:bg-dark-card border-r border-slate-200 dark:border-dark-border transition-transform duration-300 z-[1000] flex flex-col shadow-elevation-2 lg:shadow-none shrink-0">
-                <div class="h-16 flex items-center px-5 sm:px-6 border-b border-slate-100 dark:border-dark-border justify-between">
-                    <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center text-white">
-                            <i class="ph ph-shield-check text-xl"></i>
+        <div v-else class="w-full h-full flex relative overflow-hidden bg-transparent z-10">
+            <!-- Mobile Sidebar Overlay -->
+            <div v-if="isSidebarOpen" @click="isSidebarOpen = false" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[40] lg:hidden transition-opacity"></div>
+
+            <!-- Sidebar (Responsive: Off-Canvas on Mobile) -->
+            <aside :class="['w-72 h-full glass-panel border-y-0 border-l-0 border-r border-white/10 rounded-none flex flex-col shrink-0 z-[50] fixed lg:static transition-transform duration-300 ease-in-out', isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0']">
+                <div class="h-16 md:h-20 flex items-center px-4 md:px-6 border-b border-white/10 justify-between">
+                    <div class="flex items-center gap-2 md:gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                            <i data-lucide="cpu" class="w-4 h-4 md:w-5 md:h-5"></i>
                         </div>
-                        <span class="font-bold text-lg text-slate-800 dark:text-white tracking-tight">Admin Console</span>
+                        <span class="font-bold text-base md:text-lg tracking-tight text-white">Pusat Kendali</span>
                     </div>
-                    <button @click="sidebarOpen = false" class="lg:hidden text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 p-2 rounded-md -mr-2">
-                        <i class="ph ph-x text-xl"></i>
+                    <!-- Close button on mobile -->
+                    <button @click="isSidebarOpen = false" class="lg:hidden p-2 text-slate-400 hover:bg-white/5 rounded-lg">
+                        <i data-lucide="x" class="w-5 h-5"></i>
                     </button>
                 </div>
                 
-                <div class="flex-1 overflow-y-auto py-4 px-3 flex flex-col gap-1 scroll-smooth-ios">
-                    <div class="text-[11px] sm:text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-3 mt-2">Pusat Kendali</div>
+                <div class="flex-1 overflow-y-auto no-scrollbar py-4 md:py-6 px-3 md:px-4 flex flex-col gap-1 md:gap-2">
+                    <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1 md:mb-2 px-2">Infrastruktur</div>
                     
-                    <button @click="navigateTo('workspace')" :class="currentRoute === 'workspace' ? 'bg-blue-50 text-m3-primary dark:bg-blue-900/30 dark:text-blue-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50'" class="w-full flex items-center gap-3 px-3 py-2.5 sm:py-3 rounded-xl transition-all font-medium text-sm text-left">
-                        <i class="ph ph-squares-four text-lg"></i> Live Workspace
+                    <button @click="navigateAdmin('datamaster')" :class="currentRoute === 'datamaster' ? 'bg-primary/20 text-primary border border-primary/30' : 'text-slate-400 hover:bg-white/5 border border-transparent'" class="w-full flex items-center gap-3 px-3 py-2.5 md:px-4 md:py-3 rounded-lg md:rounded-xl transition-all font-medium text-xs md:text-sm text-left">
+                        <i data-lucide="database" class="w-4 h-4 md:w-5 md:h-5"></i> Data Master
                     </button>
                     
-                    <button @click="navigateTo('datamaster')" :class="currentRoute === 'datamaster' ? 'bg-blue-50 text-m3-primary dark:bg-blue-900/30 dark:text-blue-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50'" class="w-full flex items-center gap-3 px-3 py-2.5 sm:py-3 rounded-xl transition-all font-medium text-sm text-left">
-                        <i class="ph ph-database text-lg"></i> Data Master
-                    </button>
-                    
-                    <button @click="navigateTo('analytics')" :class="currentRoute === 'analytics' ? 'bg-blue-50 text-m3-primary dark:bg-blue-900/30 dark:text-blue-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50'" class="w-full flex items-center gap-3 px-3 py-2.5 sm:py-3 rounded-xl transition-all font-medium text-sm text-left">
-                        <i class="ph ph-chart-bar text-lg"></i> Analytics
-                    </button>
-
-                    <div class="text-[11px] sm:text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-3 mt-6">Sistem</div>
-                    
-                    <button @click="navigateTo('settings')" :class="currentRoute === 'settings' ? 'bg-blue-50 text-m3-primary dark:bg-blue-900/30 dark:text-blue-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50'" class="w-full flex items-center gap-3 px-3 py-2.5 sm:py-3 rounded-xl transition-all font-medium text-sm text-left">
-                        <i class="ph ph-gear text-lg"></i> Pengaturan
+                    <button @click="navigateAdmin('analytics')" :class="currentRoute === 'analytics' ? 'bg-primary/20 text-primary border border-primary/30' : 'text-slate-400 hover:bg-white/5 border border-transparent'" class="w-full flex items-center gap-3 px-3 py-2.5 md:px-4 md:py-3 rounded-lg md:rounded-xl transition-all font-medium text-xs md:text-sm text-left">
+                        <i data-lucide="activity" class="w-4 h-4 md:w-5 md:h-5"></i> Telemetri Server
                     </button>
                 </div>
 
-                <div class="p-4 border-t border-slate-100 dark:border-dark-border">
-                    <div class="bg-emerald-50 dark:bg-emerald-900/20 p-3 rounded-xl border border-emerald-100 dark:border-emerald-800/50 flex flex-col gap-2">
-                        <div class="flex items-center gap-2 text-emerald-700 dark:text-emerald-400">
-                            <span class="material-icons-round text-sm">verified_user</span>
-                            <span class="text-xs font-bold">Admin Terverifikasi</span>
-                        </div>
-                        <button @click="logoutAdmin" class="text-xs font-medium text-white bg-emerald-600 hover:bg-emerald-700 w-full py-2 sm:py-2.5 rounded-lg transition-colors flex justify-center items-center gap-2">
-                            <i class="ph ph-sign-out text-sm"></i> Akhiri Sesi
-                        </button>
-                    </div>
+                <div class="p-4 md:p-5 border-t border-white/10">
+                    <button @click="logoutAdmin" class="text-xs md:text-sm font-medium text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 w-full py-2.5 md:py-3 rounded-lg md:rounded-xl transition-all flex justify-center items-center gap-2 active:scale-95 shadow-lg shadow-rose-500/5">
+                        <i data-lucide="log-out" class="w-4 h-4"></i> Akhiri Sesi Eksekutif
+                    </button>
                 </div>
             </aside>
 
-            <!-- Overlay Sidebar Mobile (Admin) -->
-            <div v-if="sidebarOpen" @click="sidebarOpen = false" class="fixed inset-0 bg-black/50 z-[900] lg:hidden backdrop-blur-sm"></div>
-
-            <!-- ADMIN MAIN CONTENT -->
-            <div class="flex-1 flex flex-col min-w-0 h-full relative overflow-hidden">
-                <!-- Topbar Admin -->
-                <header class="h-16 flex items-center justify-between px-4 sm:px-6 bg-white/80 dark:bg-dark-card/80 backdrop-blur-md border-b border-transparent dark:border-dark-border z-40 shrink-0">
+            <!-- Main Admin Content -->
+            <div class="flex-1 flex flex-col min-w-0 h-full relative">
+                <header class="h-16 md:h-20 flex items-center justify-between px-4 md:px-8 glass-panel border-x-0 border-t-0 border-b border-white/10 rounded-none z-10 shrink-0">
                     <div class="flex items-center gap-3">
-                        <button @click="sidebarOpen = true" class="lg:hidden w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 -ml-2">
-                            <i class="ph ph-list text-2xl"></i>
+                        <button @click="isSidebarOpen = true" class="lg:hidden p-2 -ml-2 text-slate-400 rounded-lg hover:bg-white/5 transition-colors">
+                            <i data-lucide="menu" class="w-5 h-5"></i>
                         </button>
-                        <h2 class="text-base sm:text-lg font-bold text-slate-800 dark:text-slate-100 capitalize">{{ routeTitle }}</h2>
+                        <h2 class="text-lg md:text-xl font-bold capitalize tracking-wide text-white">{{ currentRoute === 'datamaster' ? 'Data Master' : 'Telemetri Server' }}</h2>
                     </div>
-                    
-                    <div class="flex items-center gap-2 sm:gap-4">
-                        <div v-if="isSyncing" class="hidden md:flex items-center gap-2 text-xs font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-full">
-                            <i class="ph ph-spinner animate-spin"></i> Menyinkronkan...
-                        </div>
-                        
-                        <button @click="toggleTheme" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors" title="Toggle Tema">
-                            <i class="ph text-xl" :class="isDark ? 'ph-sun' : 'ph-moon'"></i>
-                        </button>
-                        
-                        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-600 flex items-center justify-center text-white text-xs sm:text-sm font-bold shadow-md shadow-emerald-500/30 border-2 border-white dark:border-slate-800">
-                            AD
+                    <div class="flex items-center gap-2 md:gap-4">
+                        <div v-if="isSyncing" class="flex items-center gap-1.5 md:gap-2 text-[10px] md:text-xs font-medium text-primary bg-primary/10 px-3 py-1.5 md:px-4 md:py-2 rounded-full border border-primary/20 shadow-sm">
+                            <i data-lucide="refresh-cw" class="w-3 md:w-3.5 h-3 md:h-3.5 animate-spin"></i> <span class="hidden sm:inline">Sinkronisasi Aktif...</span><span class="sm:hidden">Sync...</span>
                         </div>
                     </div>
                 </header>
 
-                <!-- Router Admin -->
-                <main class="flex-1 overflow-y-auto w-full relative scroll-smooth-ios">
-                    <transition name="view-transition" mode="out-in">
-                        <div :key="currentRoute" class="w-full h-full pb-10">
-
-                            <!-- ADMIN: WORKSPACE PREVIEW -->
-                            <template v-if="currentRoute === 'workspace'">
-                                <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
-                                    <div class="mb-4 sm:mb-6 p-3 sm:p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800/50 flex items-start sm:items-center gap-3 text-xs sm:text-sm text-blue-700 dark:text-blue-300">
-                                        <i class="ph ph-info text-lg sm:text-xl shrink-0 mt-0.5 sm:mt-0"></i>
-                                        Ini adalah pratinjau (preview) bagaimana Workspace terlihat oleh pengguna publik di berbagai ukuran layar.
-                                    </div>
-                                    
-                                    <div class="relative w-full max-w-xl group z-10 shadow-elevation-1 dark:shadow-none dark:border dark:border-slate-700 rounded-pill bg-white dark:bg-slate-800 transition-all mb-6 sm:mb-8">
-                                        <div class="absolute inset-y-0 left-0 pl-4 sm:pl-5 flex items-center pointer-events-none">
-                                            <span class="material-icons-round text-gray-400 dark:text-slate-500 text-lg sm:text-xl">search</span>
-                                        </div>
-                                        <input v-model="searchQuery" type="text" class="block w-full pl-12 sm:pl-14 pr-12 py-2.5 sm:py-3 bg-transparent border border-transparent rounded-pill text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none transition-all text-sm sm:text-base" placeholder="Telusuri aplikasi..." />
-                                    </div>
-
-                                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
-                                        <div v-for="app in displayedApps" :key="app.id" @click="openApp(app)" class="group relative bg-white dark:bg-dark-card p-3.5 sm:p-4 rounded-2xl border border-transparent hover:shadow-elevation-2 hover:border-blue-200 dark:hover:border-slate-600 transition-all duration-200 cursor-pointer flex items-center gap-3 sm:gap-4 ripple">
-                                            <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-sm" :style="getAppStyle(app.color)">
-                                                <span class="material-icons-round text-2xl">{{ app.icon || 'apps' }}</span>
-                                            </div>
-                                            <div class="flex-1 min-w-0 pr-2">
-                                                <h3 class="font-sans font-bold text-gray-900 dark:text-slate-100 truncate text-sm sm:text-base">{{ app.title }}</h3>
-                                                <p class="text-[11px] sm:text-[13px] text-gray-500 dark:text-slate-400 truncate mt-0.5">{{ app.desc }}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </template>
-
-                            <!-- ADMIN: DATA MASTER -->
-                            <template v-if="currentRoute === 'datamaster'">
-                                <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6 h-full flex flex-col">
-                                    <div class="flex-1 flex flex-col animate-fade-in bg-white dark:bg-dark-card rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-dark-border shadow-sm overflow-hidden">
-                                        <div class="p-4 sm:p-6 border-b border-slate-200 dark:border-dark-border flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50/50 dark:bg-slate-800/50">
-                                            <div>
-                                                <h2 class="text-lg sm:text-xl font-bold text-slate-800 dark:text-slate-100">Manajemen Aplikasi</h2>
-                                                <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Total: {{ apps.length }} aplikasi terdaftar.</p>
-                                            </div>
-                                            <button @click="openAppForm()" class="px-4 py-2.5 sm:px-5 sm:py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-medium transition-colors shadow-sm flex items-center gap-2 text-sm w-full sm:w-auto justify-center">
-                                                <i class="ph ph-plus-circle text-lg"></i> Tambah Baru
-                                            </button>
-                                        </div>
-                                        
-                                        <!-- Container Tabel: overflow-x-auto menjamin tidak pecah di mobile -->
-                                        <div class="overflow-x-auto scroll-smooth-ios flex-1">
-                                            <table class="w-full text-left border-collapse min-w-[700px]">
-                                                <thead>
-                                                    <tr class="bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider">
-                                                        <th class="p-3 sm:p-4 font-semibold border-b border-slate-200 dark:border-dark-border">Aplikasi</th>
-                                                        <th class="p-3 sm:p-4 font-semibold border-b border-slate-200 dark:border-dark-border">Kategori</th>
-                                                        <th class="p-3 sm:p-4 font-semibold border-b border-slate-200 dark:border-dark-border">URL Target</th>
-                                                        <th class="p-3 sm:p-4 font-semibold border-b border-slate-200 dark:border-dark-border text-center">Status</th>
-                                                        <th class="p-3 sm:p-4 font-semibold border-b border-slate-200 dark:border-dark-border text-right">Aksi</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody class="divide-y divide-slate-100 dark:divide-dark-border">
-                                                    <tr v-for="app in apps" :key="app.id" class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors group">
-                                                        <td class="p-3 sm:p-4">
-                                                            <div class="flex items-center gap-3">
-                                                                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center shrink-0" :style="getAppStyle(app.color)">
-                                                                    <span class="material-icons-round text-base sm:text-lg">{{ app.icon || 'apps' }}</span>
-                                                                </div>
-                                                                <div>
-                                                                    <div class="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-200">{{ app.title }}</div>
-                                                                    <div class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-500 mt-0.5 max-w-[150px] sm:max-w-[200px] truncate">{{ app.desc }}</div>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td class="p-3 sm:p-4">
-                                                            <span class="inline-flex px-2 py-1 rounded text-[9px] sm:text-[10px] font-bold uppercase tracking-wide bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
-                                                                {{ app.category }}
-                                                            </span>
-                                                        </td>
-                                                        <td class="p-3 sm:p-4 text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-mono max-w-[150px] sm:max-w-[200px] truncate" :title="app.url">
-                                                            {{ app.url }}
-                                                        </td>
-                                                        <td class="p-3 sm:p-4 text-center">
-                                                            <button @click="toggleAppStatus(app)" :class="app.isActive ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400'" class="px-2 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-semibold inline-flex items-center gap-1 transition-colors hover:opacity-80">
-                                                                <span class="w-1.5 h-1.5 rounded-full" :class="app.isActive ? 'bg-emerald-500' : 'bg-rose-500'"></span>
-                                                                {{ app.isActive ? 'Publik' : 'Hidden' }}
-                                                            </button>
-                                                        </td>
-                                                        <td class="p-3 sm:p-4 text-right">
-                                                            <!-- Pada mobile, tombol aksi selalu terlihat. Di desktop hanya saat di-hover -->
-                                                            <div class="flex items-center justify-end gap-1 sm:gap-2 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
-                                                                <button @click="openAppForm(app)" class="p-1.5 sm:p-2 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 bg-slate-100 dark:bg-slate-800 rounded-lg transition-colors" title="Edit">
-                                                                    <i class="ph ph-pencil-simple text-sm sm:text-base"></i>
-                                                                </button>
-                                                                <button @click="deleteAppPrompt(app)" class="p-1.5 sm:p-2 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 bg-slate-100 dark:bg-slate-800 rounded-lg transition-colors" title="Hapus">
-                                                                    <i class="ph ph-trash text-sm sm:text-base"></i>
-                                                                </button>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr v-if="apps.length === 0">
-                                                        <td colspan="5" class="p-8 text-center text-sm text-slate-500 dark:text-slate-400">Belum ada data aplikasi yang terdaftar.</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </template>
-
-                            <!-- ADMIN: ANALYTICS -->
-                            <template v-if="currentRoute === 'analytics'">
-                                <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-6 animate-fade-in">
-                                    <h2 class="text-xl sm:text-2xl font-bold text-slate-800 dark:text-slate-100 mb-4 sm:mb-6">Analytics Overview</h2>
-                                    
-                                    <!-- Kpi Cards -->
-                                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8">
-                                        <div class="bg-white dark:bg-dark-card p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-dark-border shadow-sm flex items-center gap-4">
-                                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-xl flex items-center justify-center shrink-0">
-                                                <i class="ph ph-apps text-xl sm:text-2xl"></i>
-                                            </div>
-                                            <div>
-                                                <div class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Total Aplikasi</div>
-                                                <div class="text-xl sm:text-2xl font-bold text-slate-800 dark:text-white">{{ apps.length }}</div>
-                                            </div>
-                                        </div>
-                                        <div class="bg-white dark:bg-dark-card p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-dark-border shadow-sm flex items-center gap-4">
-                                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 rounded-xl flex items-center justify-center shrink-0">
-                                                <i class="ph ph-check-circle text-xl sm:text-2xl"></i>
-                                            </div>
-                                            <div>
-                                                <div class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Status Aktif</div>
-                                                <div class="text-xl sm:text-2xl font-bold text-slate-800 dark:text-white">{{ apps.filter(a=>a.isActive).length }}</div>
-                                            </div>
-                                        </div>
-                                        <div class="bg-white dark:bg-dark-card p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-dark-border shadow-sm flex items-center gap-4">
-                                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 rounded-xl flex items-center justify-center shrink-0">
-                                                <i class="ph ph-cursor-click text-xl sm:text-2xl"></i>
-                                            </div>
-                                            <div>
-                                                <div class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Total Interaksi</div>
-                                                <div class="text-xl sm:text-2xl font-bold text-slate-800 dark:text-white">{{ totalClicks }}</div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Chart Area -->
-                                    <div class="bg-white dark:bg-dark-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-dark-border shadow-sm">
-                                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 sm:mb-6">
-                                            <div>
-                                                <h3 class="font-bold text-base sm:text-lg text-slate-800 dark:text-slate-100">Popularitas Aplikasi</h3>
-                                                <p class="text-[11px] sm:text-xs text-slate-500">Berdasarkan jumlah peluncuran modul</p>
-                                            </div>
-                                        </div>
-                                        <!-- Container Grafik wajib memiliki tinggi relatif agar tidak gepeng di mobile -->
-                                        <div class="w-full h-[250px] sm:h-[400px] relative">
-                                            <canvas id="appChart"></canvas>
-                                        </div>
-                                    </div>
-                                </div>
-                            </template>
-
-                            <!-- ADMIN: SETTINGS -->
-                            <template v-if="currentRoute === 'settings'">
-                                <div class="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-6 animate-fade-in">
-                                    <h2 class="text-xl sm:text-2xl font-bold text-slate-800 dark:text-slate-100 mb-4 sm:mb-6">Pengaturan Sistem</h2>
-                                    
-                                    <div class="space-y-4 sm:space-y-6">
-                                        <!-- Theme Settings -->
-                                        <div class="bg-white dark:bg-dark-card rounded-2xl border border-slate-200 dark:border-dark-border overflow-hidden">
-                                            <div class="p-4 sm:p-5 border-b border-slate-100 dark:border-dark-border flex items-center gap-3 bg-slate-50/50 dark:bg-slate-800/50">
-                                                <i class="ph ph-palette text-lg sm:text-xl text-blue-500"></i>
-                                                <h3 class="font-bold text-sm sm:text-base text-slate-800 dark:text-slate-100">Personalisasi Tampilan</h3>
-                                            </div>
-                                            <div class="p-4 sm:p-6">
-                                                <div class="flex items-center justify-between gap-4">
-                                                    <div>
-                                                        <div class="font-bold text-sm sm:text-base text-slate-800 dark:text-slate-200">Mode Gelap (Dark Mode)</div>
-                                                        <div class="text-xs sm:text-sm text-slate-500">Ubah antarmuka ke skema warna gelap.</div>
-                                                    </div>
-                                                    <button @click="toggleTheme" :class="isDark ? 'bg-m3-primary' : 'bg-slate-200 dark:bg-slate-700'" class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors shrink-0">
-                                                        <span :class="isDark ? 'translate-x-6' : 'translate-x-1'" class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"></span>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- Data & Sync Settings -->
-                                        <div class="bg-white dark:bg-dark-card rounded-2xl border border-slate-200 dark:border-dark-border overflow-hidden">
-                                            <div class="p-4 sm:p-5 border-b border-slate-100 dark:border-dark-border flex items-center gap-3 bg-slate-50/50 dark:bg-slate-800/50">
-                                                <i class="ph ph-database-stroke text-lg sm:text-xl text-emerald-500"></i>
-                                                <h3 class="font-bold text-sm sm:text-base text-slate-800 dark:text-slate-100">Data & Sinkronisasi</h3>
-                                            </div>
-                                            <div class="p-4 sm:p-6 space-y-5 sm:space-y-6">
-                                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                                                    <div>
-                                                        <div class="font-bold text-sm sm:text-base text-slate-800 dark:text-slate-200">Sinkronisasi Paksa</div>
-                                                        <div class="text-xs sm:text-sm text-slate-500">Tarik data terbaru dari server utama.</div>
-                                                    </div>
-                                                    <button @click="forceSync" class="px-4 py-2 sm:py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg sm:rounded-xl text-xs sm:text-sm font-bold transition-colors flex items-center justify-center gap-2 shrink-0">
-                                                        <i class="ph ph-arrows-clockwise"></i> Sync Sekarang
-                                                    </button>
-                                                </div>
-                                                <hr class="border-slate-100 dark:border-dark-border">
-                                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                                                    <div>
-                                                        <div class="font-bold text-sm sm:text-base text-rose-600 dark:text-rose-400">Reset Sistem Basis Data</div>
-                                                        <div class="text-xs sm:text-sm text-slate-500">Hapus cache lokal dan kembalikan ke setelan pabrik.</div>
-                                                    </div>
-                                                    <button @click="resetDatabase" class="px-4 py-2 sm:py-2.5 bg-rose-100 hover:bg-rose-200 text-rose-700 dark:bg-rose-900/30 dark:hover:bg-rose-900/50 dark:text-rose-400 rounded-lg sm:rounded-xl text-xs sm:text-sm font-bold transition-colors flex items-center justify-center shrink-0">
-                                                        Reset Data
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </template>
-
+                <main class="flex-1 overflow-y-auto no-scrollbar p-4 md:p-8">
+                    <!-- ADMIN: DATA MASTER -->
+                    <div v-if="currentRoute === 'datamaster'" class="max-w-6xl mx-auto glass-panel rounded-2xl md:rounded-3xl border border-white/10 overflow-hidden flex flex-col h-full">
+                        <div class="p-4 md:p-6 border-b border-white/10 flex flex-col sm:flex-row justify-between sm:items-center gap-4 bg-white/5">
+                            <div>
+                                <h2 class="text-base md:text-lg font-bold text-white">Manajemen Modul</h2>
+                                <p class="text-xs md:text-sm text-slate-400 mt-0.5 md:mt-1">Total: {{ apps.length }} modul terdaftar.</p>
+                            </div>
+                            <button @click="openAppForm()" class="w-full sm:w-auto px-4 py-2.5 md:px-5 md:py-2.5 bg-primary hover:bg-blue-600 text-white rounded-lg md:rounded-xl font-medium transition-all shadow-lg shadow-primary/30 flex items-center justify-center gap-2 text-xs md:text-sm active:scale-95">
+                                <i data-lucide="plus-circle" class="w-4 h-4"></i> Registrasi Modul
+                            </button>
                         </div>
-                    </transition>
+                        
+                        <div class="overflow-x-auto no-scrollbar flex-1">
+                            <table class="w-full text-left border-collapse min-w-[600px]">
+                                <thead>
+                                    <tr class="text-slate-400 text-[10px] md:text-xs uppercase tracking-widest bg-black/20">
+                                        <th class="px-4 py-3 md:p-5 font-semibold border-b border-white/5 whitespace-nowrap">Identifikasi Modul</th>
+                                        <th class="px-4 py-3 md:p-5 font-semibold border-b border-white/5 text-center whitespace-nowrap">Status</th>
+                                        <th class="px-4 py-3 md:p-5 font-semibold border-b border-white/5 text-right whitespace-nowrap">Otorisasi Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-white/5">
+                                    <tr v-for="app in apps" :key="app.id" class="hover:bg-white/5 transition-colors group">
+                                        <td class="px-4 py-3 md:p-5">
+                                            <div class="flex items-center gap-3 md:gap-4">
+                                                <div class="w-8 h-8 md:w-10 md:h-10 rounded-lg flex items-center justify-center shrink-0 border border-white/5" :style="getAppStyle(app.color)">
+                                                    <i :data-lucide="app.icon || 'box'" class="w-4 h-4 md:w-5 md:h-5"></i>
+                                                </div>
+                                                <div>
+                                                    <div class="text-sm font-bold text-white">{{ app.title }}</div>
+                                                    <div class="text-[10px] md:text-xs text-slate-500 mt-0.5 md:mt-1 font-mono truncate max-w-[150px] md:max-w-[300px]">{{ app.url }}</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-4 py-3 md:p-5 text-center">
+                                            <button @click="toggleAppStatus(app)" :class="app.isActive ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'" class="px-2 py-1 md:px-3 rounded-full text-[10px] md:text-xs font-semibold transition-all active:scale-95 whitespace-nowrap">
+                                                {{ app.isActive ? 'ONLINE' : 'OFFLINE' }}
+                                            </button>
+                                        </td>
+                                        <td class="px-4 py-3 md:p-5 text-right">
+                                            <div class="flex items-center justify-end gap-1 md:gap-2">
+                                                <button @click="openAppForm(app)" class="p-1.5 md:p-2 text-slate-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all" title="Modifikasi">
+                                                    <i data-lucide="pencil" class="w-4 h-4"></i>
+                                                </button>
+                                                <button @click="deleteAppPrompt(app)" class="p-1.5 md:p-2 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-all" title="Terminasi">
+                                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr v-if="apps.length === 0">
+                                        <td colspan="3" class="px-4 py-8 text-center text-sm text-slate-500">Tidak ada data infrastruktur terdaftar.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- ADMIN: ANALYTICS -->
+                    <div v-if="currentRoute === 'analytics'" class="max-w-6xl mx-auto">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
+                            <div class="glass-panel p-5 md:p-6 rounded-2xl md:rounded-3xl flex items-center gap-4 md:gap-5">
+                                <div class="w-12 h-12 md:w-14 md:h-14 bg-primary/20 text-primary border border-primary/30 rounded-xl md:rounded-2xl flex items-center justify-center shrink-0">
+                                    <i data-lucide="hard-drive" class="w-6 h-6 md:w-7 md:h-7"></i>
+                                </div>
+                                <div>
+                                    <div class="text-xs md:text-sm text-slate-400 font-medium">Total Modul Infrastruktur</div>
+                                    <div class="text-2xl md:text-3xl font-bold text-white mt-1">{{ apps.length }}</div>
+                                </div>
+                            </div>
+                            <div class="glass-panel p-5 md:p-6 rounded-2xl md:rounded-3xl flex items-center gap-4 md:gap-5">
+                                <div class="w-12 h-12 md:w-14 md:h-14 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-xl md:rounded-2xl flex items-center justify-center shrink-0">
+                                    <i data-lucide="check-circle-2" class="w-6 h-6 md:w-7 md:h-7"></i>
+                                </div>
+                                <div>
+                                    <div class="text-xs md:text-sm text-slate-400 font-medium">Status Operasional Aktif</div>
+                                    <div class="text-2xl md:text-3xl font-bold text-white mt-1">{{ apps.filter(a=>a.isActive).length }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="glass-panel p-5 md:p-8 rounded-2xl md:rounded-3xl">
+                            <h3 class="font-bold text-base md:text-lg text-white mb-4 md:mb-6">Grafik Beban Transmisi Dummy</h3>
+                            <div class="w-full h-[250px] md:h-[300px] relative">
+                                <canvas id="appChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
                 </main>
             </div>
         </div>
 
         <!-- ========================================== -->
-        <!-- [GLOBAL] IFRAME LAUNCHER (OVERLAY)         -->
+        <!-- MODALS & OVERLAYS                          -->
         <!-- ========================================== -->
+
+        <!-- Iframe Launcher -->
         <transition name="fade">
-            <div v-if="activeApp" class="fixed inset-0 bg-slate-900 z-[9000] flex flex-col">
-                <!-- Mac-OS Style Toolbar - Touch optimized padding -->
-                <div class="bg-white dark:bg-[#0f172a] px-3 sm:px-4 py-2.5 sm:py-3 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 shrink-0 select-none shadow-sm relative z-10">
-                    <div class="flex items-center gap-3 sm:gap-4 flex-1">
-                        <!-- Window Controls (diperbesar area tap-nya untuk mobile) -->
-                        <div class="flex gap-2 sm:gap-2.5">
-                            <button @click="closeApp" class="w-4 h-4 sm:w-3.5 sm:h-3.5 rounded-full bg-rose-500 hover:bg-rose-600 active:scale-90 transition-all flex items-center justify-center group" title="Tutup">
-                                <i class="ph-bold ph-x text-[8px] text-white opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity"></i>
-                            </button>
-                            <button @click="reloadIframe" class="w-4 h-4 sm:w-3.5 sm:h-3.5 rounded-full bg-amber-500 hover:bg-amber-600 active:scale-90 transition-all flex items-center justify-center group" title="Muat Ulang">
-                                <i class="ph-bold ph-arrow-clockwise text-[8px] text-white opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity"></i>
-                            </button>
-                            <button @click="openInNewTab" class="w-4 h-4 sm:w-3.5 sm:h-3.5 rounded-full bg-emerald-500 hover:bg-emerald-600 active:scale-90 transition-all flex items-center justify-center group" title="Buka di Tab Baru">
-                                <i class="ph-bold ph-arrows-out text-[8px] text-white opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity"></i>
-                            </button>
-                        </div>
-                        <div class="h-4 w-px bg-slate-300 dark:bg-slate-700 mx-1 sm:mx-2"></div>
-                        <div class="flex items-center gap-1.5 sm:gap-2 text-slate-800 dark:text-slate-200 font-bold text-xs sm:text-sm truncate">
-                            <span class="material-icons-round text-[16px] sm:text-[18px]" :style="{ color: activeApp.color }">{{ activeApp.icon || 'apps' }}</span>
-                            <span class="truncate max-w-[150px] sm:max-w-none">{{ activeApp.title }}</span>
+            <div v-if="activeApp" class="fixed inset-0 bg-[#0f172a] z-[9000] flex flex-col">
+                <div class="glass-panel border-t-0 border-x-0 border-white/10 rounded-none px-3 md:px-5 py-2.5 md:py-3 flex items-center justify-between z-10 shrink-0">
+                    <div class="flex items-center gap-3 md:gap-4">
+                        <button @click="closeApp" class="w-7 h-7 md:w-8 md:h-8 rounded-full bg-rose-500/20 text-rose-400 hover:bg-rose-500/40 flex items-center justify-center transition-all">
+                            <i data-lucide="x" class="w-3.5 h-3.5 md:w-4 md:h-4"></i>
+                        </button>
+                        <div class="h-4 md:h-5 w-px bg-white/20"></div>
+                        <div class="flex items-center gap-2 text-white font-bold text-xs md:text-sm">
+                            <i :data-lucide="activeApp.icon || 'box'" class="w-3.5 h-3.5 md:w-4 md:h-4" :style="{ color: activeApp.color }"></i>
+                            <span class="truncate max-w-[150px] md:max-w-none">{{ activeApp.title }}</span>
                         </div>
                     </div>
                 </div>
                 
-                <div class="relative flex-1 bg-slate-50 dark:bg-[#0f172a] scroll-smooth-ios">
-                    <!-- Loading Overlay -->
+                <div class="relative flex-1 bg-white">
                     <transition name="fade">
-                        <div v-if="isIframeLoading" class="absolute inset-0 iframe-loader-material flex flex-col items-center justify-center z-[250]">
-                            <div class="relative flex flex-col items-center p-6">
-                                <div class="w-20 h-20 sm:w-24 sm:h-24 bg-white/70 dark:bg-slate-800/70 backdrop-blur-2xl rounded-3xl flex items-center justify-center shadow-elevation-2 border border-white/50 dark:border-slate-700/50">
-                                    <span class="material-icons-round text-4xl sm:text-5xl" :style="{ color: activeApp.color || '#0b57d0' }">{{ activeApp.icon || 'rocket_launch' }}</span>
-                                </div>
-                                <span class="mt-5 sm:mt-6 text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 bg-white/50 dark:bg-slate-800/50 px-5 sm:px-6 py-2 rounded-pill backdrop-blur-sm shadow-sm border border-white/20 dark:border-slate-700/20 text-center">Menghubungkan ke modul...</span>
-                                <div class="mt-5 sm:mt-6 w-40 sm:w-48 h-1 bg-white/60 dark:bg-slate-800/60 rounded-full overflow-hidden shadow-inner">
-                                    <div class="h-full bg-m3-primary dark:bg-blue-500 rounded-full shimmer" style="width: 100%;"></div>
-                                </div>
-                            </div>
+                        <div v-if="isIframeLoading" class="absolute inset-0 bg-slate-900/90 backdrop-blur-sm flex flex-col items-center justify-center z-50">
+                            <i data-lucide="loader-2" class="w-8 h-8 md:w-10 md:h-10 text-primary animate-spin mb-3 md:mb-4"></i>
+                            <span class="text-xs md:text-sm font-bold text-white tracking-widest">TRANSMISI DATA...</span>
                         </div>
                     </transition>
-                                    
-                    <iframe ref="iframeEl" :src="iframeSrc" @load="onIframeLoad" class="w-full h-full border-0 absolute inset-0 z-0 bg-white dark:bg-slate-900" sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-downloads allow-storage-access-by-user-activation allow-top-navigation-by-user-activation"></iframe>
+                    <iframe :src="iframeSrc" @load="onIframeLoad" class="w-full h-full border-0 absolute inset-0 z-0"></iframe>
                 </div>
             </div>
         </transition>
 
-        <!-- ======================================================= -->
-        <!-- [GLOBAL] MODALS AREA                                    -->
-        <!-- ======================================================= -->
-
-        <!-- Modal Login Admin -->
+        <!-- Modal Otorisasi -->
         <transition name="fade">
-            <div v-if="showLoginModal" class="fixed inset-0 modal-overlay z-[9500] flex items-center justify-center p-4">
-                <div class="bg-white dark:bg-dark-card rounded-3xl w-full max-w-sm p-6 sm:p-8 shadow-elevation-2 relative transform transition-all border border-slate-200 dark:border-dark-border text-center">
-                    <div class="w-14 h-14 sm:w-16 sm:h-16 bg-blue-50 dark:bg-blue-900/20 text-blue-600 mx-auto rounded-full flex items-center justify-center mb-4">
-                        <i class="ph ph-shield-check text-2xl sm:text-3xl"></i>
+            <div v-if="showLoginModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9500] flex items-center justify-center p-4">
+                <div class="glass-modal rounded-2xl md:rounded-3xl w-full max-w-sm p-6 md:p-8 text-center mx-4 shadow-2xl">
+                    <div class="w-12 h-12 md:w-16 md:h-16 bg-rose-500/20 border border-rose-500/30 text-rose-400 mx-auto rounded-xl md:rounded-2xl flex items-center justify-center mb-4 md:mb-6 shadow-lg shadow-rose-500/20">
+                        <i data-lucide="fingerprint" class="w-6 h-6 md:w-8 md:h-8"></i>
                     </div>
-                    <h2 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-2">Otorisasi Eksekutif</h2>
-                    <p class="text-xs sm:text-sm text-gray-500 dark:text-slate-400 mb-5 sm:mb-6">Sistem memerlukan PIN rahasia untuk mengakses modul Pusat Kendali.</p>
+                    <h2 class="text-lg md:text-xl font-bold text-white mb-1 md:mb-2 tracking-wide">Otorisasi Eksekutif</h2>
+                    <p class="text-[11px] md:text-xs text-slate-400 mb-6 md:mb-8">Dibutuhkan PIN Rahasia untuk mengakses Pusat Kendali Infrastruktur.</p>
                     
-                    <input v-model="pinInput" type="password" placeholder="Masukkan PIN" class="w-full px-4 py-3 sm:py-3.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-m3-primary dark:focus:border-blue-500 focus:ring-1 focus:ring-m3-primary text-center tracking-widest text-base sm:text-lg font-mono dark:text-white transition-all mb-5 sm:mb-6" @keyup.enter="processLogin" />
+                    <input v-model="pinInput" type="password" placeholder="••••••••" class="w-full px-4 py-3 md:px-5 md:py-4 bg-black/30 border border-white/10 rounded-lg md:rounded-xl focus:border-primary focus:ring-1 focus:ring-primary text-center tracking-[0.5em] text-lg md:text-xl font-mono text-white transition-all mb-6 md:mb-8 outline-none" @keyup.enter="processLogin" />
                     
-                    <div class="flex justify-center gap-2 sm:gap-3">
-                        <button @click="showLoginModal = false; pinInput = ''" class="px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors w-full">Batal</button>
-                        <button @click="processLogin" class="px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-m3-primary dark:bg-blue-600 text-white hover:bg-m3-primary-hover dark:hover:bg-blue-700 shadow-sm transition-colors flex items-center justify-center gap-2 w-full" :disabled="isVerifying">
-                            <i v-if="isVerifying" class="ph ph-spinner animate-spin"></i>
-                            {{ isVerifying ? 'Verifikasi...' : 'Akses' }}
+                    <div class="flex gap-2 md:gap-3">
+                        <button @click="showLoginModal = false; pinInput = ''" class="flex-1 py-2.5 md:py-3 rounded-lg md:rounded-xl text-xs md:text-sm font-bold text-slate-300 bg-white/5 border border-white/10 hover:bg-white/10 transition-all active:scale-95">Batal</button>
+                        <button @click="processLogin" class="flex-1 py-2.5 md:py-3 rounded-lg md:rounded-xl text-xs md:text-sm font-bold bg-primary hover:bg-blue-600 text-white shadow-lg shadow-primary/30 transition-all flex items-center justify-center gap-2 active:scale-95" :disabled="isSubmitting">
+                            <i v-if="isSubmitting" data-lucide="loader-2" class="w-3.5 h-3.5 md:w-4 md:h-4 animate-spin"></i>
+                            {{ isSubmitting ? 'Verifikasi...' : 'Akses Sistem' }}
                         </button>
                     </div>
                 </div>
             </div>
         </transition>
 
-        <!-- Modal Form Aplikasi (Create/Edit) -->
+        <!-- Modal Form Modul -->
         <transition name="fade">
-            <div v-if="showAppModal" class="fixed inset-0 modal-overlay z-[9500] flex items-center justify-center p-3 sm:p-4">
-                <div class="bg-white dark:bg-dark-card rounded-2xl sm:rounded-3xl w-full max-w-md shadow-elevation-2 flex flex-col max-h-[95vh] sm:max-h-[90vh] border border-slate-200 dark:border-dark-border">
-                    <div class="p-4 sm:p-6 pb-3 sm:pb-4 border-b border-slate-100 dark:border-dark-border shrink-0 flex justify-between items-center">
-                        <h2 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">{{ isEditing ? 'Edit Aplikasi' : 'Registrasi Baru' }}</h2>
-                        <button @click="showAppModal = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1"><i class="ph ph-x text-xl"></i></button>
+            <div v-if="showAppModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9500] flex items-center justify-center p-4">
+                <div class="glass-modal rounded-2xl md:rounded-3xl w-full max-w-md flex flex-col max-h-[85dvh] mx-4 shadow-2xl border border-white/10">
+                    <div class="p-4 md:p-6 border-b border-white/10 flex justify-between items-center bg-white/5 rounded-t-2xl md:rounded-t-3xl shrink-0">
+                        <h2 class="text-base md:text-lg font-bold text-white tracking-wide">{{ isEditing ? 'Modifikasi Infrastruktur' : 'Registrasi Baru' }}</h2>
+                        <button @click="showAppModal = false" class="text-slate-400 hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-1 md:p-1.5 rounded-full">
+                            <i data-lucide="x" class="w-4 h-4"></i>
+                        </button>
                     </div>
-                    <div class="p-4 sm:p-6 overflow-y-auto scroll-smooth-ios space-y-3 sm:space-y-4">
+                    <div class="p-4 md:p-6 overflow-y-auto no-scrollbar space-y-4 md:space-y-5">
                         <div>
-                            <label class="block text-[11px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1 sm:mb-1.5">Nama Aplikasi *</label>
-                            <input v-model="appForm.title" type="text" class="w-full px-3 py-2 sm:px-4 sm:py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg sm:rounded-xl focus:border-m3-primary dark:focus:border-blue-500 outline-none transition-colors dark:text-white text-sm" placeholder="e.g. Sistem Akademik" />
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 md:mb-2">Identitas Modul *</label>
+                            <input v-model="appForm.title" type="text" class="w-full px-3 py-2.5 md:px-4 md:py-3 bg-black/30 border border-white/10 rounded-lg md:rounded-xl focus:border-primary outline-none text-white text-xs md:text-sm" placeholder="Contoh: Sistem Akademik" />
                         </div>
                         <div>
-                            <label class="block text-[11px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1 sm:mb-1.5">Deskripsi *</label>
-                            <input v-model="appForm.desc" type="text" class="w-full px-3 py-2 sm:px-4 sm:py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg sm:rounded-xl focus:border-m3-primary dark:focus:border-blue-500 outline-none transition-colors dark:text-white text-sm" placeholder="Penjelasan singkat modul" />
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 md:mb-2">Deskripsi Fungsi *</label>
+                            <input v-model="appForm.desc" type="text" class="w-full px-3 py-2.5 md:px-4 md:py-3 bg-black/30 border border-white/10 rounded-lg md:rounded-xl focus:border-primary outline-none text-white text-xs md:text-sm" placeholder="Penjelasan singkat modul" />
                         </div>
                         <div>
-                            <label class="block text-[11px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1 sm:mb-1.5">Target URL (Iframe) *</label>
-                            <input v-model="appForm.url" type="url" class="w-full px-3 py-2 sm:px-4 sm:py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg sm:rounded-xl focus:border-m3-primary dark:focus:border-blue-500 outline-none transition-colors dark:text-white font-mono text-xs sm:text-sm" placeholder="https://..." />
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 md:mb-2">Target URL Transmisi *</label>
+                            <input v-model="appForm.url" type="url" class="w-full px-3 py-2.5 md:px-4 md:py-3 bg-black/30 border border-white/10 rounded-lg md:rounded-xl focus:border-primary outline-none text-white font-mono text-xs md:text-sm" placeholder="https://..." />
                         </div>
-                        <div class="grid grid-cols-2 gap-3 sm:gap-4">
+                        <div class="grid grid-cols-2 gap-3 md:gap-4">
                             <div>
-                                <label class="block text-[11px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1 sm:mb-1.5">Ikon Material</label>
-                                <div class="flex items-center gap-2">
-                                    <span class="material-icons-round text-slate-500 bg-slate-100 dark:bg-slate-800 p-1.5 sm:p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-sm sm:text-base">{{ appForm.icon || 'apps' }}</span>
-                                    <input v-model="appForm.icon" type="text" class="w-full px-2 py-1.5 sm:px-3 sm:py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg sm:rounded-xl focus:border-m3-primary dark:text-white outline-none text-xs sm:text-sm" placeholder="e.g. school" />
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 md:mb-2">Lucide Icon</label>
+                                <div class="flex items-center gap-2 md:gap-3">
+                                    <div class="w-8 h-8 md:w-10 md:h-10 bg-white/5 border border-white/10 rounded-lg md:rounded-xl flex items-center justify-center shrink-0">
+                                        <i :data-lucide="appForm.icon || 'box'" class="w-4 h-4 md:w-5 md:h-5 text-slate-300" id="iconPreview"></i>
+                                    </div>
+                                    <input v-model="appForm.icon" type="text" class="w-full px-2 py-2 md:px-3 md:py-2.5 bg-black/30 border border-white/10 rounded-lg md:rounded-xl focus:border-primary outline-none text-white text-xs md:text-sm" placeholder="box" @input="updateIconPreview" />
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-[11px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1 sm:mb-1.5">Warna Aksen</label>
-                                <div class="flex items-center gap-2">
-                                    <input v-model="appForm.color" type="color" class="h-8 w-10 sm:h-10 sm:w-12 rounded cursor-pointer border-0 p-0" />
-                                    <input v-model="appForm.color" type="text" class="w-full px-2 py-1.5 sm:px-3 sm:py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg sm:rounded-xl focus:border-m3-primary dark:text-white outline-none text-xs sm:text-sm uppercase font-mono" />
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 md:mb-2">Warna Aksen</label>
+                                <div class="flex items-center gap-2 md:gap-3">
+                                    <input v-model="appForm.color" type="color" class="h-8 w-8 md:h-10 md:w-10 rounded-lg md:rounded-xl cursor-pointer border-0 p-0 bg-transparent shrink-0" />
+                                    <input v-model="appForm.color" type="text" class="w-full px-2 py-2 md:px-3 md:py-2.5 bg-black/30 border border-white/10 rounded-lg md:rounded-xl focus:border-primary outline-none text-white text-xs md:text-sm uppercase font-mono" />
                                 </div>
                             </div>
                         </div>
-                        <div>
-                            <label class="block text-[11px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1 sm:mb-1.5">Kategori</label>
-                            <select v-model="appForm.category" class="w-full px-3 py-2 sm:px-4 sm:py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg sm:rounded-xl focus:border-m3-primary dark:text-white outline-none transition-colors text-sm">
-                                <option value="core">Core / Utama</option>
-                                <option value="academic">Akademik</option>
-                                <option value="utility">Utilitas</option>
-                            </select>
-                        </div>
-                        <div class="pt-2 sm:pt-3 border-t border-slate-100 dark:border-dark-border">
-                            <label class="flex items-center justify-between cursor-pointer">
-                                <div>
-                                    <div class="text-xs sm:text-sm font-bold text-gray-900 dark:text-white">Akses Publik</div>
-                                    <div class="text-[10px] sm:text-[11px] text-slate-500">Tampilkan modul ini di Workspace awam.</div>
-                                </div>
-                                <div class="relative inline-flex items-center">
-                                    <input v-model="appForm.isActive" type="checkbox" class="sr-only peer" />
-                                    <div class="w-10 h-5 sm:w-11 sm:h-6 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 sm:after:h-5 sm:after:w-5 after:transition-all peer-checked:bg-emerald-500 dark:peer-checked:bg-emerald-600"></div>
-                                </div>
-                            </label>
-                        </div>
                     </div>
-                    <div class="p-4 sm:p-5 border-t border-slate-100 dark:border-dark-border flex justify-end gap-2 sm:gap-3 shrink-0 bg-slate-50 dark:bg-slate-800/50 rounded-b-2xl sm:rounded-b-3xl">
-                        <button @click="showAppModal = false" class="px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">Batal</button>
-                        <button @click="saveAppForm" class="px-5 py-2 sm:px-6 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm transition-colors flex items-center gap-2" :disabled="isSubmitting">
-                            <i v-if="isSubmitting" class="ph ph-spinner animate-spin"></i>
-                            {{ isSubmitting ? 'Menyimpan...' : 'Simpan' }}
+                    <div class="p-4 md:p-6 border-t border-white/10 flex gap-2 md:gap-3 bg-white/5 rounded-b-2xl md:rounded-b-3xl shrink-0">
+                        <button @click="showAppModal = false" class="flex-1 py-2.5 md:py-3 rounded-lg md:rounded-xl text-xs md:text-sm font-bold text-slate-300 bg-white/5 border border-white/10 hover:bg-white/10 transition-all active:scale-95">Batal</button>
+                        <button @click="saveAppForm" class="flex-1 py-2.5 md:py-3 rounded-lg md:rounded-xl text-xs md:text-sm font-bold bg-primary hover:bg-blue-600 text-white shadow-lg shadow-primary/30 transition-all flex items-center justify-center gap-2 active:scale-95" :disabled="isSubmitting">
+                            <i v-if="isSubmitting" data-lucide="loader-2" class="w-3.5 h-3.5 md:w-4 md:h-4 animate-spin"></i>
+                            {{ isSubmitting ? 'Transmisi...' : 'Simpan' }}
                         </button>
                     </div>
                 </div>
@@ -692,266 +417,202 @@
 
     </div>
 
-    <!-- SCRIPT VUE 3 OMNI-SPA ARCHITECTURE (ZERO REGRESSION LOCK) -->
+    <!-- SCRIPT VUE 3 NATIVE RPC ARCHITECTURE -->
     <script>
-        const { createApp, ref, computed, watch, onMounted, onUnmounted, nextTick } = Vue;
-
-        const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycby8V3WDzp04wXNMUqETlguvE1mZeOWoyuaFA9FeC0fu7c69e7_Z0_14_EsQknqaBfRpAg/exec"; 
-        const LOCAL_DB_KEY = "OMNI_ENTERPRISE_DB_FINAL"; // Versi final untuk memastikan tidak ada cache lama yang nyangkut
-
-        // DUMMY DATA ENTERPRISE (Persistent Database Local)
-        const DEFAULT_DUMMY_DATA = [
-            { id: 'app_1', title: 'e-Rapor Smart', desc: 'Sistem Penilaian Digital Terpadu', url: 'https://example.com/erapor', icon: 'school', color: '#0b57d0', category: 'academic', isActive: true, clicks: 124 },
-            { id: 'app_2', title: 'LMS Siswa', desc: 'Learning Management System', url: 'https://example.com/lms', icon: 'menu_book', color: '#1d4ed8', category: 'academic', isActive: true, clicks: 89 },
-            { id: 'app_3', title: 'Portal Guru', desc: 'Manajemen Administrasi Guru', url: 'https://example.com/guru', icon: 'co_present', color: '#0f9d58', category: 'core', isActive: true, clicks: 56 },
-            { id: 'app_4', title: 'Perpus Digital', desc: 'Katalog & Peminjaman Buku', url: 'https://example.com/perpus', icon: 'local_library', color: '#db4437', category: 'utility', isActive: true, clicks: 230 },
-            { id: 'app_5', title: 'Pusat Informasi', desc: 'Pengumuman Resmi Sekolah', url: 'https://example.com/info', icon: 'campaign', color: '#f4b400', category: 'core', isActive: true, clicks: 45 },
-            { id: 'app_6', title: 'PPDB Online', desc: 'Penerimaan Peserta Didik Baru', url: 'https://example.com/ppdb', icon: 'how_to_reg', color: '#8e24aa', category: 'core', isActive: false, clicks: 12 },
-            { id: 'app_7', title: 'Sistem Keuangan', desc: 'Pembayaran SPP & Tagihan', url: 'https://example.com/finance', icon: 'payments', color: '#00897b', category: 'utility', isActive: true, clicks: 78 },
-            { id: 'app_8', title: 'Jadwal Kelas', desc: 'Roster Pelajaran Mingguan', url: 'https://example.com/jadwal', icon: 'event_note', color: '#e53935', category: 'academic', isActive: true, clicks: 310 }
-        ];
+        const { createApp, ref, computed, watch, onMounted, nextTick, onUpdated } = Vue;
 
         createApp({
             setup() {
-                // ==========================================
-                // 1. GLOBAL STATE & THEME
-                // ==========================================
                 const isInitialLoading = ref(true);
+                const isLoadingData = ref(true);
                 const isSyncing = ref(false);
-                const isOnline = ref(navigator.onLine);
-                const showOnlineRestored = ref(false);
-                const isDark = ref(localStorage.getItem('omni_theme') === 'dark');
-                const sidebarOpen = ref(window.innerWidth > 1024);
-                let chartInstance = null;
-
-                const toggleTheme = () => {
-                    isDark.value = !isDark.value;
-                    localStorage.setItem('omni_theme', isDark.value ? 'dark' : 'light');
-                    updateThemeClass();
-                    if(isAdmin.value && currentRoute.value === 'analytics') nextTick(() => renderChart());
-                };
-
-                const updateThemeClass = () => {
-                    if (isDark.value) document.documentElement.classList.add('dark');
-                    else document.documentElement.classList.remove('dark');
-                };
-
-                // ==========================================
-                // 2. ROUTING ENGINE (ADMIN LAYER)
-                // ==========================================
-                const validRoutes = ['workspace', 'datamaster', 'analytics', 'settings'];
-                const currentRoute = ref(localStorage.getItem('omni_route') || 'datamaster');
+                const isAdmin = ref(false);
+                const adminPin = ref('');
                 
-                const routeTitle = computed(() => {
-                    const titles = { 'workspace': 'Live Workspace', 'datamaster': 'Data Master', 'analytics': 'Analytics Dashboard', 'settings': 'System Settings' };
-                    return titles[currentRoute.value];
-                });
-
-                const navigateTo = (route) => {
-                    if (!validRoutes.includes(route)) return;
-                    currentRoute.value = route;
-                    localStorage.setItem('omni_route', route);
-                    if (window.innerWidth < 1024) sidebarOpen.value = false;
-                };
-
-                // ==========================================
-                // 3. PERSISTENT DATA ENGINE
-                // ==========================================
-                const getInitialData = () => {
-                    const local = localStorage.getItem(LOCAL_DB_KEY);
-                    return local ? JSON.parse(local) : DEFAULT_DUMMY_DATA;
-                };
-                const apps = ref(getInitialData());
+                const currentRoute = ref('datamaster');
+                const apps = ref([]);
                 const searchQuery = ref('');
 
-                watch(apps, (newVal) => {
-                    localStorage.setItem(LOCAL_DB_KEY, JSON.stringify(newVal));
-                }, { deep: true });
+                // Modifikasi state vue untuk mengelola responsivitas Sidebar
+                const isSidebarOpen = ref(false);
+
+                const showLoginModal = ref(false);
+                const pinInput = ref('');
+                const isSubmitting = ref(false);
+
+                const activeApp = ref(null);
+                const iframeSrc = ref('about:blank');
+                const isIframeLoading = ref(false);
+
+                const showAppModal = ref(false);
+                const isEditing = ref(false);
+                const appForm = ref({});
+                
+                let chartInstance = null;
+
+                // ==========================================
+                // KONFIGURASI HYBRID & RPC ADAPTER
+                // ==========================================
+                const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxkonq5E3IPzjMxTuZxB9o1K2zTwiVF6NjqBjo7E3euoSOD23R84lKGVbtWHLVvCy3cIA/exec"; 
+
+                const rpcCall = (action, payload = {}) => {
+                    return new Promise((resolve, reject) => {
+                        const requestData = JSON.stringify({ action, payload, token: adminPin.value });
+
+                        if (typeof google === 'undefined') {
+                            if (GAS_WEBAPP_URL) {
+                                fetch(GAS_WEBAPP_URL, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                                    body: requestData
+                                })
+                                .then(res => res.json())
+                                .then(result => {
+                                    if (!result.success) reject(new Error(result.error));
+                                    else resolve(result.data);
+                                })
+                                .catch(err => reject(new Error("Kegagalan transmisi Hybrid: " + err.message)));
+                                return;
+                            } else {
+                                console.warn("Environment & GAS_WEBAPP_URL tidak terdeteksi. Simulasi RPC Local.");
+                                setTimeout(() => {
+                                    if (action === 'GET_APPS') resolve([{ id: 'mock1', title: 'Sistem Akademik', desc: 'Mock Data Lokal', url: 'https://example.com', icon: 'server', color: '#3b82f6', isActive: true }]);
+                                    else if (action === 'VERIFY_PIN') resolve({ isValid: payload.pin === 'admin' });
+                                    else resolve({ success: true });
+                                }, 800);
+                                return;
+                            }
+                        }
+
+                        google.script.run
+                            .withSuccessHandler((responseStr) => {
+                                try {
+                                    const result = JSON.parse(responseStr);
+                                    if (!result.success) reject(new Error(result.error));
+                                    else resolve(result.data);
+                                } catch (e) { reject(new Error("Gagal mengurai respons sistem.")); }
+                            })
+                            .withFailureHandler((err) => reject(new Error(err.message)))
+                            .serverRouter(requestData);
+                    });
+                };
+
+                // ==========================================
+                // UTILITIES & RENDERER
+                // ==========================================
+                const refreshIcons = () => {
+                    nextTick(() => {
+                        if (window.lucide) window.lucide.createIcons();
+                    });
+                };
+
+                const updateIconPreview = () => { refreshIcons(); };
+
+                const navigateAdmin = (route) => {
+                    currentRoute.value = route;
+                    // Auto tutup sidebar di mobile saat berpindah menu
+                    if (window.innerWidth < 1024) {
+                        isSidebarOpen.value = false;
+                    }
+                };
+
+                const showToast = (title, iconType = 'info') => {
+                    let iconColor = iconType === 'success' ? '#10b981' : iconType === 'error' ? '#f43f5e' : '#3b82f6';
+                    let htmlContent = '<div style="display:flex; align-items:center; gap:12px; font-family:Inter, sans-serif;">';
+                    htmlContent += '<div style="width:12px; height:12px; border-radius:50%; background-color:' + iconColor + '"></div>';
+                    // Warna font disesuaikan untuk Dark Mode
+                    htmlContent += '<span style="color:#e2e8f0; font-size:13px; font-weight:600;">' + title + '</span></div>';
+                    
+                    Swal.fire({
+                        toast: true, position: 'bottom-end', showConfirmButton: false, timer: 3000,
+                        background: '#1e293b', // Background dark
+                        html: htmlContent,
+                        customClass: { popup: 'border border-slate-700 rounded-xl shadow-lg !m-4' }
+                    });
+                };
+
+                const getAppStyle = (colorStr) => {
+                    const c = colorStr || '#3b82f6';
+                    return `background-color: ${c}20; color: ${c}; border: 1px solid ${c}40;`;
+                };
 
                 const displayedApps = computed(() => {
                     let list = apps.value.filter(a => a.isActive);
                     if (searchQuery.value) {
                         const q = searchQuery.value.toLowerCase();
-                        list = list.filter(a => a.title.toLowerCase().includes(q) || a.desc.toLowerCase().includes(q) || a.category.toLowerCase().includes(q));
+                        list = list.filter(a => a.title.toLowerCase().includes(q) || a.desc.toLowerCase().includes(q));
                     }
                     return list;
                 });
 
                 // ==========================================
-                // 4. ADMIN SECURITY STATE
+                // CORE LOGIC
                 // ==========================================
-                const isAdmin = ref(sessionStorage.getItem('omni_admin') === 'true');
-                const adminPin = ref(sessionStorage.getItem('omni_pin') || '');
-                const showLoginModal = ref(false);
-                const pinInput = ref('');
-                const isVerifying = ref(false);
-
-                // ==========================================
-                // 5. IFRAME LAUNCHER STATE
-                // ==========================================
-                const activeApp = ref(null);
-                const iframeSrc = ref('about:blank');
-                const isIframeLoading = ref(false);
-                const iframeEl = ref(null);
-
-                // ==========================================
-                // 6. FORM & MODAL STATE
-                // ==========================================
-                const showAppModal = ref(false);
-                const isEditing = ref(false);
-                const isSubmitting = ref(false);
-                const appForm = ref({});
-
-                // ==========================================
-                // UTILITIES & SWEETALERT
-                // ==========================================
-                const showToast = (title, icon = 'info') => {
-                    const Toast = Swal.mixin({
-                        toast: true, position: 'bottom', showConfirmButton: false, timer: 3000,
-                        timerProgressBar: true, background: isDark.value ? '#1e293b' : '#ffffff', color: isDark.value ? '#ffffff' : '#1f1f1f',
-                        didOpen: (toast) => { toast.onmouseenter = Swal.stopTimer; toast.onmouseleave = Swal.resumeTimer; }
-                    });
-                    Toast.fire({ icon: icon === 'wifi_off' ? 'warning' : icon === 'check_circle' ? 'success' : icon, title: title });
-                };
-
-                const getAppStyle = (colorStr) => {
-                    if (colorStr && colorStr.startsWith('#')) return `background-color: ${colorStr}20; color: ${colorStr}; border: 1px solid ${colorStr}40;`; 
-                    return `background-color: rgba(11, 87, 208, 0.1); color: #0b57d0; border: 1px solid rgba(11, 87, 208, 0.2);`;
-                };
-
-                // ==========================================
-                // HYBRID NETWORK & GAS SYNC
-                // ==========================================
-                const apiRequest = async (action, payload = {}) => {
-                    if (!navigator.onLine) throw new Error('Offline mode active.');
-                    const bodyData = { action, payload, token: adminPin.value };
-                    const response = await fetch(GAS_WEBAPP_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                        body: JSON.stringify(bodyData)
-                    });
-                    const result = await response.json();
-                    if (!result.success) throw new Error(result.error);
-                    return result.data;
-                };
-
-                const fetchAppsData = async () => {
-                    if (!navigator.onLine) return; 
-                    if (GAS_WEBAPP_URL.includes("YOUR_GAS")) return; 
-
-                    isSyncing.value = true;
+                const loadData = async () => {
                     try {
-                        const remoteData = await apiRequest('GET_APPS');
-                        if (remoteData && remoteData.length > 0) {
-                            apps.value = remoteData.map(remoteApp => {
-                                const localApp = apps.value.find(a => a.id === remoteApp.id);
-                                return { ...remoteApp, clicks: localApp ? localApp.clicks : 0 };
-                            });
-                        }
+                        isSyncing.value = true;
+                        const data = await rpcCall('GET_APPS');
+                        apps.value = data || [];
+                        refreshIcons();
                     } catch (error) {
-                        console.warn("Sync failed, falling back to LocalStorage:", error);
+                        showToast('Gagal sinkronisasi data.', 'error');
                     } finally {
                         isSyncing.value = false;
+                        isLoadingData.value = false;
                     }
                 };
 
-                const forceSync = async () => {
-                    showToast('Memulai sinkronisasi...', 'info');
-                    await fetchAppsData();
-                    showToast('Data tersinkronisasi', 'success');
-                };
-
-                const resetDatabase = () => {
-                    Swal.fire({
-                        title: 'Reset Database?', text: "Semua data lokal akan dihapus dan diganti dengan data Dummy bawaan.", icon: 'warning',
-                        showCancelButton: true, confirmButtonColor: '#e53935', cancelButtonColor: '#64748b', confirmButtonText: 'Ya, Reset!'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            apps.value = JSON.parse(JSON.stringify(DEFAULT_DUMMY_DATA));
-                            showToast('Database berhasil direset', 'success');
-                            if(isAdmin.value && currentRoute.value === 'analytics') nextTick(() => renderChart());
-                        }
-                    });
-                };
-
-                // ==========================================
-                // ADMIN LOGIC
-                // ==========================================
                 const processLogin = async () => {
-                    if (!pinInput.value) return showToast('Masukkan PIN', 'warning');
-                    
-                    if(pinInput.value === 'admin123' || !navigator.onLine) {
-                        finalizeLogin(pinInput.value);
-                        return;
-                    }
-
-                    isVerifying.value = true;
+                    if (!pinInput.value) return showToast('Kredensial wajib diisi.', 'error');
+                    isSubmitting.value = true;
                     try {
-                        const data = await apiRequest('VERIFY_PIN', { pin: pinInput.value });
-                        if (data.isValid) finalizeLogin(pinInput.value);
-                        else showToast('PIN Salah!', 'error');
+                        const data = await rpcCall('VERIFY_PIN', { pin: pinInput.value });
+                        if (data.isValid) {
+                            isAdmin.value = true;
+                            adminPin.value = pinInput.value;
+                            showLoginModal.value = false;
+                            pinInput.value = '';
+                            showToast('Otorisasi Diterima.', 'success');
+                            refreshIcons();
+                            if(currentRoute.value === 'analytics') renderChart();
+                        } else {
+                            showToast('Otorisasi Ditolak.', 'error');
+                        }
                     } catch (error) {
-                        if(pinInput.value === 'admin123') finalizeLogin(pinInput.value);
-                        else showToast('Koneksi Server gagal. Gunakan PIN darurat lokal.', 'error');
+                        showToast('Kegagalan komunikasi server.', 'error');
                     } finally {
-                        isVerifying.value = false;
+                        isSubmitting.value = false;
                     }
-                };
-
-                const finalizeLogin = (pin) => {
-                    isAdmin.value = true;
-                    adminPin.value = pin;
-                    sessionStorage.setItem('omni_admin', 'true');
-                    sessionStorage.setItem('omni_pin', pin);
-                    showLoginModal.value = false;
-                    pinInput.value = '';
-                    showToast('Otorisasi Eksekutif Berhasil', 'success');
-                    navigateTo('datamaster');
                 };
 
                 const logoutAdmin = () => {
                     isAdmin.value = false;
                     adminPin.value = '';
-                    sessionStorage.removeItem('omni_admin');
-                    sessionStorage.removeItem('omni_pin');
-                    showToast('Sesi Eksekutif Diakhiri', 'info');
+                    isSidebarOpen.value = false;
+                    showToast('Sesi Eksekutif Diakhiri.', 'info');
+                    refreshIcons();
                 };
 
-                // ==========================================
-                // CRUD LOGIC
-                // ==========================================
                 const openAppForm = (app = null) => {
                     isEditing.value = !!app;
                     appForm.value = app ? JSON.parse(JSON.stringify(app)) : { 
-                        id: 'app_' + Math.random().toString(36).substr(2, 9), 
-                        title: '', desc: '', category: 'core', 
-                        icon: 'widgets', color: '#0b57d0', url: '', isActive: true, clicks: 0 
+                        id: 'AC_' + new Date().getTime(), title: '', desc: '', url: '', icon: 'box', color: '#3b82f6', isActive: true 
                     };
                     showAppModal.value = true;
+                    refreshIcons();
                 };
 
                 const saveAppForm = async () => {
-                    if (!appForm.value.title || !appForm.value.url) return showToast('Judul dan URL wajib diisi!', 'warning');
+                    if (!appForm.value.title || !appForm.value.url) return showToast('Data krusial tidak lengkap.', 'error');
                     isSubmitting.value = true;
-                    
                     try {
-                        if (isEditing.value) {
-                            const idx = apps.value.findIndex(a => a.id === appForm.value.id);
-                            if(idx !== -1) apps.value[idx] = appForm.value;
-                        } else {
-                            apps.value.push(appForm.value);
-                        }
-
-                        if(navigator.onLine) {
-                            const actionType = isEditing.value ? 'UPDATE_APP' : 'CREATE_APP';
-                            await apiRequest(actionType, appForm.value).catch(e => console.warn("Remote sync delayed", e));
-                        }
-                        
-                        showToast(`Aplikasi berhasil ${isEditing.value ? 'diperbarui' : 'ditambahkan'}`, 'success');
+                        const action = isEditing.value ? 'UPDATE_APP' : 'CREATE_APP';
+                        await rpcCall(action, appForm.value);
+                        showToast('Resolusi sistem tersimpan.', 'success');
                         showAppModal.value = false;
-                        if(isAdmin.value && currentRoute.value === 'analytics') renderChart(); 
+                        await loadData();
                     } catch (error) {
-                        showToast('Terjadi kesalahan internal', 'error');
+                        showToast(error.message, 'error');
                     } finally {
                         isSubmitting.value = false;
                     }
@@ -959,127 +620,89 @@
 
                 const deleteAppPrompt = (app) => {
                     Swal.fire({
-                        title: 'Hapus Aplikasi?', text: `Modul "${app.title}" akan dihapus permanen.`, icon: 'warning',
-                        showCancelButton: true, confirmButtonColor: '#e53935', cancelButtonColor: '#64748b', confirmButtonText: 'Ya, Hapus!',
-                        background: isDark.value ? '#1e293b' : '#ffffff', color: isDark.value ? '#ffffff' : '#1f1f1f'
+                        title: 'Konfirmasi Terminasi',
+                        text: "Modul " + app.title + " akan dihapus.",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        background: '#1e293b', color: '#f8fafc',
+                        confirmButtonColor: '#e11d48', cancelButtonColor: '#334155',
+                        confirmButtonText: 'Ya, Eksekusi', cancelButtonText: 'Batalkan',
+                        customClass: { popup: 'border border-slate-700 rounded-xl shadow-lg !m-4' }
                     }).then(async (result) => {
                         if (result.isConfirmed) {
-                            apps.value = apps.value.filter(a => a.id !== app.id);
-                            showToast('Aplikasi dihapus', 'success');
-                            if(navigator.onLine) await apiRequest('DELETE_APP', { id: app.id }).catch(()=>{});
-                            if(isAdmin.value && currentRoute.value === 'analytics') renderChart();
+                            try {
+                                await rpcCall('DELETE_APP', { id: app.id });
+                                showToast('Terminasi berhasil.', 'success');
+                                await loadData();
+                            } catch (e) { showToast('Gagal melakukan terminasi.', 'error'); }
                         }
                     });
                 };
 
                 const toggleAppStatus = async (app) => {
-                    const targetApp = apps.value.find(a => a.id === app.id);
-                    if(targetApp) {
-                        targetApp.isActive = !targetApp.isActive;
-                        if(navigator.onLine) await apiRequest('TOGGLE_APP', { id: app.id }).catch(()=>{});
-                    }
+                    try {
+                        await rpcCall('TOGGLE_APP', { id: app.id });
+                        await loadData();
+                    } catch (e) { showToast('Gagal merubah status operasi.', 'error'); }
                 };
 
-                // ==========================================
-                // APP LAUNCHER & IFRAME
-                // ==========================================
                 const openApp = (app) => {
-                    if (!isOnline.value) return showToast('Mode Offline aktif. Tidak dapat memuat modul eksternal.', 'warning');
-                    
-                    const targetApp = apps.value.find(a => a.id === app.id);
-                    if(targetApp) targetApp.clicks = (targetApp.clicks || 0) + 1;
-
                     activeApp.value = app;
                     isIframeLoading.value = true;
-                    setTimeout(() => { iframeSrc.value = app.url; }, 300);
+                    setTimeout(() => { iframeSrc.value = app.url; refreshIcons(); }, 300);
                 };
 
                 const closeApp = () => { iframeSrc.value = 'about:blank'; activeApp.value = null; };
-                const reloadIframe = () => { if (activeApp.value) { isIframeLoading.value = true; const tempUrl = iframeSrc.value; iframeSrc.value = 'about:blank'; setTimeout(() => { iframeSrc.value = tempUrl; }, 100); } };
-                const openInNewTab = () => { if (activeApp.value) window.open(activeApp.value.url, '_blank'); };
-                const onIframeLoad = () => { if (iframeSrc.value !== 'about:blank') { isIframeLoading.value = false; } };
+                const onIframeLoad = () => { if (iframeSrc.value !== 'about:blank') isIframeLoading.value = false; };
 
-                // ==========================================
-                // ANALYTICS & CHART.JS (ZERO-REGRESSION LOCK)
-                // ==========================================
-                const totalClicks = computed(() => apps.value.reduce((sum, app) => sum + (app.clicks || 0), 0));
-
+                // Analytics Chart (Dark Mode Config)
                 const renderChart = () => {
-                    setTimeout(() => {
+                    nextTick(() => {
                         const canvas = document.getElementById('appChart');
                         if (!canvas) return;
-                        
                         if (chartInstance) chartInstance.destroy();
                         
-                        const sortedApps = [...apps.value].sort((a,b) => (b.clicks||0) - (a.clicks||0)).slice(0, 7);
-                        const labels = sortedApps.map(a => a.title);
-                        const data = sortedApps.map(a => a.clicks || 0);
-                        const colors = sortedApps.map(a => a.color || '#3b82f6');
-                        
-                        const textColor = isDark.value ? '#cbd5e1' : '#475569';
-                        const gridColor = isDark.value ? '#334155' : '#e2e8f0';
+                        const labels = apps.value.map(a => a.title);
+                        const data = apps.value.map(() => Math.floor(Math.random() * 100) + 10); 
+                        const colors = apps.value.map(a => a.color || '#3b82f6');
 
                         chartInstance = new Chart(canvas, {
                             type: 'bar',
-                            data: {
-                                labels: labels,
-                                datasets: [{ label: 'Total Diluncurkan', data: data, backgroundColor: colors, borderRadius: 6 }]
-                            },
+                            data: { labels: labels, datasets: [{ data: data, backgroundColor: colors, borderRadius: 8 }] },
                             options: {
-                                responsive: true, maintainAspectRatio: false,
-                                plugins: { legend: { display: false } },
+                                responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
                                 scales: {
-                                    y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: textColor } },
-                                    x: { grid: { display: false }, ticks: { color: textColor } }
+                                    y: { grid: { color: '#334155' }, ticks: { color: '#94a3b8' } },
+                                    x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
                                 }
                             }
                         });
-                    }, 250);
+                    });
                 };
 
-                watch([currentRoute, isAdmin], () => {
-                    if(isAdmin.value && currentRoute.value === 'analytics') renderChart();
+                watch(currentRoute, (newRoute) => {
+                    refreshIcons();
+                    if (newRoute === 'analytics') renderChart();
                 });
 
-                // ==========================================
-                // NETWORK LISTENERS & LIFECYCLE
-                // ==========================================
-                const updateOnlineStatus = () => {
-                    isOnline.value = navigator.onLine;
-                    if (!isOnline.value) showToast('Koneksi terputus. Mode Offline aktif.', 'warning');
-                    else {
-                        showOnlineRestored.value = true;
-                        fetchAppsData(); 
-                        setTimeout(() => { showOnlineRestored.value = false; }, 3000);
-                    }
-                };
+                onUpdated(() => {
+                    refreshIcons();
+                });
 
                 onMounted(() => {
-                    updateThemeClass();
-                    window.addEventListener('online', updateOnlineStatus);
-                    window.addEventListener('offline', updateOnlineStatus);
-                    
                     setTimeout(() => { 
                         isInitialLoading.value = false; 
-                        fetchAppsData();
-                        if(isAdmin.value && currentRoute.value === 'analytics') nextTick(() => renderChart());
-                    }, 1200);
-                });
-
-                onUnmounted(() => {
-                    window.removeEventListener('online', updateOnlineStatus);
-                    window.removeEventListener('offline', updateOnlineStatus);
-                    if(chartInstance) chartInstance.destroy();
+                        loadData();
+                    }, 1500);
                 });
 
                 return {
-                    apps, displayedApps, searchQuery, routeTitle,
-                    isInitialLoading, isSyncing, isOnline, showOnlineRestored, isDark, sidebarOpen, currentRoute,
-                    activeApp, iframeSrc, isIframeLoading, iframeEl,
-                    isAdmin, showLoginModal, pinInput, isVerifying, 
-                    showAppModal, isEditing, isSubmitting, appForm, totalClicks,
-                    navigateTo, toggleTheme, processLogin, logoutAdmin, openAppForm, saveAppForm, deleteAppPrompt, toggleAppStatus,
-                    forceSync, resetDatabase, getAppStyle, openApp, closeApp, reloadIframe, openInNewTab, onIframeLoad
+                    isInitialLoading, isLoadingData, isSyncing, isAdmin, currentRoute, apps, searchQuery, displayedApps,
+                    isSidebarOpen, navigateAdmin,
+                    showLoginModal, pinInput, isSubmitting, activeApp, iframeSrc, isIframeLoading,
+                    showAppModal, isEditing, appForm,
+                    processLogin, logoutAdmin, openAppForm, saveAppForm, deleteAppPrompt, toggleAppStatus,
+                    openApp, closeApp, onIframeLoad, getAppStyle, updateIconPreview
                 };
             }
         }).mount('#app');

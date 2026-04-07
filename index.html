@@ -1,273 +1,346 @@
 <!DOCTYPE html>
-<html lang="id" class="dark">
+<html lang="id" class="light">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
-    <title>EduCore Enterprise Workspace</title>
+    <title>EduCore Workspace</title>
     <link rel="icon" href="https://www.google.com/s2/favicons?domain=google.com&sz=128" type="image/png" />
     
     <!-- ARSENAL CDN MANDATORI -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Tailwind, Vue 3, Lucide Icons, SweetAlert2 -->
+    <!-- Tailwind, Vue 3, Lucide Icons, SweetAlert2, DOMPurify -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
 
-    <!-- TAILWIND CONFIGURATION -->
+    <!-- TAILWIND NEOBRUTALISM CONFIGURATION -->
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'] },
-                    colors: {
-                        dark: { bg: '#0f172a', surface: '#1e293b', border: '#334155' },
-                        primary: '#3b82f6'
-                    },
-                    boxShadow: {
-                        'glass': '0 4px 30px rgba(0, 0, 0, 0.1)',
-                    }
+                    fontFamily: { sans: ['Google Sans', 'sans-serif'] }
                 }
             }
         };
     </script>
 
+    <!-- MASTER CSS VARIABLES FOR DUAL MODE NEOBRUTALISM -->
     <style>
-        [v-cloak] { display: none !important; }
-        body { 
-            background-color: #0f172a; /* Slate-900 */
-            color: #e2e8f0; /* Slate-200 */
-            -webkit-font-smoothing: antialiased;
+        :root {
+            --neo-bg: #e6f0fa;
+            --neo-panel: #ffffff;
+            --neo-border: #000000;
+            --neo-text: #000000;
+            --neo-text-muted: #4b5563;
+            --neo-shadow: #000000;
+            --neo-modal-overlay: rgba(0, 0, 0, 0.6);
         }
         
-        /* Glassmorphism Classes (Dark Mode Tuned) */
-        .glass-panel {
-            background: rgba(30, 41, 59, 0.6);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-        }
-        
-        .glass-modal {
-            background: rgba(15, 23, 42, 0.85);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+        .dark {
+            --neo-bg: #0f172a; /* Slate 900 */
+            --neo-panel: #1e293b; /* Slate 800 */
+            --neo-border: #f8fafc; /* Slate 50 */
+            --neo-text: #f8fafc;
+            --neo-text-muted: #94a3b8; /* Slate 400 */
+            --neo-shadow: #f8fafc;
+            --neo-modal-overlay: rgba(15, 23, 42, 0.8);
         }
 
-        /* Scrollbar Stealth */
+        [v-cloak] { display: none !important; }
+        
+        body { 
+            background-color: var(--neo-bg);
+            color: var(--neo-text);
+            -webkit-font-smoothing: antialiased;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        /* Core Neobrutalism Utilities */
+        .neo-border { border: 3px solid var(--neo-border); }
+        .neo-border-b { border-bottom: 3px solid var(--neo-border); }
+        .neo-border-t { border-top: 3px solid var(--neo-border); }
+        .neo-border-r { border-right: 3px solid var(--neo-border); }
+        
+        .neo-shadow { box-shadow: 4px 4px 0px 0px var(--neo-shadow); }
+        .neo-shadow-sm { box-shadow: 2px 2px 0px 0px var(--neo-shadow); }
+        .neo-shadow-lg { box-shadow: 6px 6px 0px 0px var(--neo-shadow); }
+        .neo-shadow-modal { box-shadow: 8px 8px 0px 0px var(--neo-shadow); }
+
+        .neo-panel {
+            background-color: var(--neo-panel);
+            border: 3px solid var(--neo-border);
+            box-shadow: 4px 4px 0px 0px var(--neo-shadow);
+            border-radius: 8px;
+            transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        /* Interactive Cards */
+        .neo-card-interactive {
+            transition: all 0.15s ease-in-out;
+        }
+        .neo-card-interactive:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px 0px var(--neo-shadow);
+        }
+        .neo-card-interactive:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px 0px var(--neo-shadow);
+        }
+
+        .neo-input {
+            background-color: var(--neo-panel);
+            color: var(--neo-text);
+            border: 3px solid var(--neo-border);
+            border-radius: 8px;
+            box-shadow: 4px 4px 0px 0px var(--neo-shadow);
+            transition: all 0.1s ease;
+        }
+        .neo-input:focus {
+            outline: none;
+            box-shadow: 6px 6px 0px 0px var(--neo-shadow);
+            transform: translate(-2px, -2px);
+        }
+        .neo-input::placeholder { color: var(--neo-text-muted); }
+
+        .neo-button {
+            background-color: var(--neo-panel);
+            color: var(--neo-text);
+            border: 3px solid var(--neo-border);
+            box-shadow: 4px 4px 0px 0px var(--neo-shadow);
+            border-radius: 8px;
+            font-weight: 700;
+            transition: all 0.15s ease-in-out;
+        }
+        .neo-button:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px 0px var(--neo-shadow); }
+        .neo-button:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px 0px var(--neo-shadow); }
+        
+        /* Custom Neobrutalism Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--neo-bg); border-left: 2px solid var(--neo-border); }
+        ::-webkit-scrollbar-thumb { background: var(--neo-border); border-radius: 0px; }
+        ::-webkit-scrollbar-thumb:hover { background: #4f8aef; }
+
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
         /* Vue Transitions */
-        .fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease; }
-        .fade-enter-from, .fade-leave-to { opacity: 0; }
+        .fade-enter-active, .fade-leave-active { transition: opacity 0.2s ease, transform 0.2s ease; }
+        .fade-enter-from, .fade-leave-to { opacity: 0; transform: scale(0.98); }
         
         /* Skeleton Animation */
-        @keyframes pulse-subtle {
+        @keyframes neo-pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
         }
-        .animate-skeleton { animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        .animate-neo-skeleton { animation: neo-pulse 1.5s ease-in-out infinite; }
     </style>
 </head>
-<!-- Menggunakan h-[100dvh] untuk kompatibilitas Safari iOS (iPhone) -->
-<body class="h-[100dvh] w-full overflow-hidden no-scrollbar selection:bg-primary selection:text-white relative bg-[#0f172a]">
+<body class="h-[100dvh] w-full overflow-hidden selection:bg-[#ffde59] selection:text-black relative">
 
     <div id="app" class="w-full h-full flex relative" v-cloak>
 
-        <!-- Initial Loader -->
-        <transition name="fade">
-            <div v-if="isInitialLoading" class="fixed inset-0 z-[9999] flex flex-col justify-center items-center bg-[#0f172a]">
-                <i data-lucide="loader-2" class="w-10 h-10 md:w-12 md:h-12 text-primary animate-spin mb-4"></i>
-                <div class="text-lg md:text-xl font-bold tracking-widest text-slate-200 text-center">EDUCORE <span class="text-primary">ENTERPRISE</span></div>
-                <div class="text-[10px] md:text-xs text-slate-500 mt-2">Menginisiasi Sesi Sistem...</div>
+        <!-- ========================================== -->
+        <!-- PUBLIC WORKSPACE (BENTO LAYOUT)            -->
+        <!-- ========================================== -->
+        <div v-if="!isAdmin" key="public-workspace" class="w-full h-full overflow-y-auto relative z-10 p-4 sm:p-6 md:p-8 lg:p-12 pb-12">
+            
+            <div class="max-w-6xl mx-auto flex flex-col lg:flex-row gap-8 lg:gap-16 relative">
+                
+                <!-- LEFT COLUMN: Profile & Info -->
+                <div class="w-full lg:w-1/3 flex flex-col gap-4 md:gap-5 shrink-0 lg:sticky lg:top-12 h-fit pt-2">
+                    <!-- Circular Avatar -->
+                    <div class="w-24 h-24 md:w-32 md:h-32 rounded-full flex items-center justify-center neo-shadow neo-border transition-all" style="background-color: var(--neo-text);">
+                        <l-icon name="hexagon" icon-class="w-10 h-10 md:w-12 md:h-12 stroke-[2.5]" icon-style="color: var(--neo-bg);"></l-icon>
+                    </div>
+                    
+                    <!-- Titles -->
+                    <div class="mt-2">
+                        <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight leading-none" style="color: var(--neo-text);">EduCore</h1>
+                        <h2 class="text-xl md:text-2xl font-bold mt-1 uppercase tracking-wider" style="color: var(--neo-text);">Workspace</h2>
+                    </div>
+                                        
+                    <!-- Search Input -->
+                    <div class="relative w-full max-w-sm mt-1">
+                        <input v-model="searchQuery" type="text" class="block w-full pl-10 pr-4 py-3 md:py-3.5 neo-input font-bold text-sm md:text-base" placeholder="Sistem Informasi dan Manajemen Terpadu..." />
+                        <l-icon name="search" icon-class="w-4 h-4 md:w-5 md:h-5 absolute left-3.5 top-1/2 -translate-y-1/2 stroke-[3]" icon-style="color: var(--neo-text);"></l-icon>
+                    </div>
+
+                    <!-- ACTION ROW: Theme Toggle & Admin Login -->
+                    <div class="flex items-center gap-3 mt-2 w-full max-w-sm">
+                        <!-- Theme Toggle Button -->
+                        <button @click="toggleTheme" class="w-[52px] h-[52px] flex items-center justify-center neo-panel neo-card-interactive shrink-0" title="Ganti Tema Visual">
+                            <l-icon :name="isDarkMode ? 'sun' : 'moon'" icon-class="w-5 h-5 stroke-[3]" icon-style="color: var(--neo-text);"></l-icon>
+                        </button>
+                        
+                        <!-- Admin Otorisasi Button -->
+                        <button @click="showLoginModal = true" class="flex-1 h-[52px] flex items-center justify-center gap-2 neo-card-interactive rounded-md font-extrabold uppercase text-xs md:text-sm" style="background-color: #ffde59; border: 3px solid #000; color: #000; box-shadow: 4px 4px 0px 0px var(--neo-shadow);" title="Otorisasi Eksekutif">
+                            <l-icon name="shield-alert" icon-class="w-4 h-4 md:w-5 md:h-5 stroke-[3]"></l-icon>
+                            Otorisasi Eksekutif
+                        </button>
+                    </div>
+                </div>
+
+                <!-- RIGHT COLUMN: Bento Grid -->
+                <div class="w-full lg:w-2/3 flex-1 pb-8">
+                    
+                    <!-- Skeleton Loader -->
+                    <div v-if="isLoadingData" class="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-5">
+                        <div v-for="i in 9" :key="i" class="neo-panel p-4 md:p-5 aspect-square md:aspect-auto md:h-40 animate-neo-skeleton"></div>
+                    </div>
+
+                    <!-- App Data Grid -->
+                    <div v-else>
+                        <!-- Grid responsif: 2 kolom untuk iPhone SE, 3 kolom di layar lebih besar -->
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-5">
+                            
+                            <!-- Card Design -->
+                            <div v-for="app in displayedApps" :key="app.id" @click="openApp(app)" 
+                                 class="p-3.5 md:p-5 cursor-pointer flex flex-col justify-between aspect-square sm:aspect-auto sm:h-40 rounded-lg neo-card-interactive" 
+                                 :style="`background-color: ${app.color || '#4f8aef'}; border: 3px solid #000; box-shadow: 4px 4px 0px 0px var(--neo-shadow);`">
+                                
+                                <div class="flex justify-start">
+                                    <l-icon :name="app.icon || 'box'" icon-class="w-6 h-6 md:w-8 md:h-8 stroke-[2.5]" icon-style="color: #000;"></l-icon>
+                                </div>
+                                
+                                <div class="mt-auto flex flex-col items-start text-left">
+                                    <h3 class="font-extrabold text-[13px] sm:text-sm md:text-base leading-tight w-full truncate" style="color: #000;">{{ app.title }}</h3>
+                                    <p class="text-[10px] md:text-xs font-bold truncate mt-0.5 w-full" style="color: #222;">@{{ app.id.toLowerCase() }}</p>
+                                </div>
+                            </div>
+
+                        </div>
+                        
+                        <!-- Empty State -->
+                        <div v-if="displayedApps.length === 0" class="flex flex-col items-center justify-center py-12 md:py-16 px-4 text-center neo-panel w-full mt-2">
+                            <l-icon name="package-open" icon-class="w-12 h-12 md:w-16 md:h-16 mb-4 stroke-[2]" icon-style="color: var(--neo-text);"></l-icon>
+                            <h3 class="text-lg md:text-xl font-extrabold uppercase" style="color: var(--neo-text);">Resolusi Gagal</h3>
+                            <p class="text-sm mt-2 font-bold max-w-xs md:max-w-sm" style="color: var(--neo-text-muted);">Modul sistem tidak teridentifikasi dalam basis data aktif.</p>
+                        </div>
+                    </div>
+
+                </div>
+
             </div>
-        </transition>
-
-        <!-- ========================================== -->
-        <!-- PUBLIC WORKSPACE (DIMENSI 1)               -->
-        <!-- ========================================== -->
-        <div v-if="!isAdmin" class="w-full h-full flex flex-col overflow-y-auto no-scrollbar relative z-10 pb-6">
-            <!-- Background Ornaments (Dark Version) -->
-            <div class="absolute top-[-5%] left-[-10%] w-64 h-64 md:w-96 md:h-96 bg-primary/20 rounded-full blur-[80px] md:blur-[100px] pointer-events-none"></div>
-            <div class="absolute bottom-[-5%] right-[-10%] w-64 h-64 md:w-96 md:h-96 bg-indigo-500/20 rounded-full blur-[80px] md:blur-[100px] pointer-events-none"></div>
-
-            <header class="h-16 md:h-20 px-4 md:px-8 flex items-center justify-between sticky top-0 z-40 glass-panel border-b border-white/10 border-x-0 rounded-none shrink-0">
-                <div class="flex items-center gap-2 md:gap-3">
-                    <div class="w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl bg-primary flex items-center justify-center text-white shadow-md shadow-primary/30">
-                        <i data-lucide="hexagon" class="w-4 h-4 md:w-6 md:h-6"></i>
-                    </div>
-                    <span class="font-bold text-lg md:text-xl tracking-tight text-white">EduCore</span>
-                </div>
-                <div>
-                    <button @click="showLoginModal = true" class="flex items-center gap-1.5 md:gap-2 px-3 py-1.5 md:px-5 md:py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white rounded-lg md:rounded-xl text-xs md:text-sm font-medium transition-all shadow-sm active:scale-95">
-                        <i data-lucide="shield-alert" class="w-3.5 h-3.5 md:w-4 md:h-4"></i> <span class="hidden sm:inline">Otorisasi Eksekutif</span><span class="sm:hidden">Sistem</span>
-                    </button>
-                </div>
-            </header>
-
-            <main class="flex-1 max-w-6xl mx-auto px-4 md:px-6 py-8 md:py-16 w-full relative z-10">
-                <div class="flex flex-col items-center mb-8 md:mb-16">
-                    <h1 class="text-3xl md:text-5xl font-bold text-white mb-6 md:mb-8 text-center tracking-tight leading-tight">Sistem Resolusi Digital</h1>
-                    
-                    <div class="relative w-full max-w-2xl group z-10 glass-panel rounded-full transition-all focus-within:ring-2 ring-primary/50">
-                        <div class="absolute inset-y-0 left-0 pl-4 md:pl-6 flex items-center pointer-events-none">
-                            <i data-lucide="search" class="w-4 h-4 md:w-5 md:h-5 text-slate-400 group-focus-within:text-primary transition-colors"></i>
-                        </div>
-                        <input v-model="searchQuery" type="text" class="block w-full pl-10 md:pl-14 pr-10 md:pr-12 py-3 md:py-4 bg-transparent border-none rounded-full text-white placeholder-slate-400 focus:outline-none focus:ring-0 text-sm md:text-lg" placeholder="Identifikasi modul..." />
-                    </div>
-                </div>
-
-                <!-- Grid Data -->
-                <div v-if="isLoadingData" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
-                    <div v-for="i in 8" :key="i" class="glass-panel p-4 md:p-5 rounded-xl md:rounded-2xl h-20 md:h-24 animate-skeleton flex items-center gap-3 md:gap-4 border-white/5">
-                        <div class="w-10 h-10 md:w-12 md:h-12 bg-slate-700/50 rounded-lg md:rounded-xl"></div>
-                        <div class="flex-1 space-y-2">
-                            <div class="h-3 md:h-4 bg-slate-700/50 rounded w-3/4"></div>
-                            <div class="h-2 md:h-3 bg-slate-700/50 rounded w-1/2"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div v-else>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
-                        <div v-for="app in displayedApps" :key="app.id" @click="openApp(app)" class="group glass-panel p-4 md:p-5 rounded-xl md:rounded-2xl hover:border-primary/50 transition-all duration-300 cursor-pointer flex items-center gap-3 md:gap-4 active:scale-[0.98]">
-                            <div class="w-10 h-10 md:w-12 md:h-12 rounded-lg md:rounded-xl flex items-center justify-center shrink-0 shadow-lg" :style="getAppStyle(app.color)">
-                                <i :data-lucide="app.icon || 'box'" class="w-5 h-5 md:w-6 md:h-6"></i>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <h3 class="font-bold text-slate-100 text-sm md:text-base truncate group-hover:text-primary transition-colors">{{ app.title }}</h3>
-                                <p class="text-[11px] md:text-[13px] text-slate-400 truncate mt-0.5 md:mt-1">{{ app.desc }}</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div v-if="displayedApps.length === 0" class="flex flex-col items-center justify-center py-12 md:py-20 px-4 text-center glass-panel rounded-2xl md:rounded-3xl border-dashed border-slate-600">
-                        <i data-lucide="package-open" class="w-12 h-12 md:w-16 md:h-16 text-slate-500 mb-3 md:mb-4"></i>
-                        <h3 class="text-base md:text-lg font-medium text-slate-300">Resolusi Gagal</h3>
-                        <p class="text-slate-500 mt-1 md:mt-2 text-xs md:text-sm max-w-xs md:max-w-sm">Modul sistem tidak teridentifikasi dalam basis data aktif.</p>
-                    </div>
-                </div>
-            </main>
         </div>
 
         <!-- ========================================== -->
-        <!-- ADMIN CONSOLE (DIMENSI 2)                  -->
+        <!-- ADMIN CONSOLE                              -->
         <!-- ========================================== -->
-        <div v-else class="w-full h-full flex relative overflow-hidden bg-transparent z-10">
+        <div v-else key="admin-workspace" class="w-full h-full flex relative overflow-hidden z-10" style="background-color: var(--neo-bg);">
             <!-- Mobile Sidebar Overlay -->
-            <div v-if="isSidebarOpen" @click="isSidebarOpen = false" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[40] lg:hidden transition-opacity"></div>
+            <div v-if="isSidebarOpen" @click="isSidebarOpen = false" class="fixed inset-0 z-[40] lg:hidden" style="background-color: var(--neo-modal-overlay);"></div>
 
-            <!-- Sidebar (Responsive: Off-Canvas on Mobile) -->
-            <aside :class="['w-72 h-full glass-panel border-y-0 border-l-0 border-r border-white/10 rounded-none flex flex-col shrink-0 z-[50] fixed lg:static transition-transform duration-300 ease-in-out', isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0']">
-                <div class="h-16 md:h-20 flex items-center px-4 md:px-6 border-b border-white/10 justify-between">
-                    <div class="flex items-center gap-2 md:gap-3">
-                        <div class="w-8 h-8 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-                            <i data-lucide="cpu" class="w-4 h-4 md:w-5 md:h-5"></i>
-                        </div>
-                        <span class="font-bold text-base md:text-lg tracking-tight text-white">Pusat Kendali</span>
+            <!-- Sidebar -->
+            <aside :class="['w-72 h-full flex flex-col shrink-0 z-[50] fixed lg:static transition-transform duration-200 ease-in-out neo-border-r', isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0']" style="background-color: var(--neo-panel);">
+                <div class="h-16 md:h-20 flex items-center px-6 justify-between neo-border-b" style="background-color: #4f8aef;">
+                    <div class="flex items-center gap-3">
+                        <l-icon name="cpu" icon-class="w-6 h-6 stroke-[3]" icon-style="color: #000;"></l-icon>
+                        <span class="font-extrabold text-lg tracking-tight uppercase" style="color: #000;">Pusat Kendali</span>
                     </div>
-                    <!-- Close button on mobile -->
-                    <button @click="isSidebarOpen = false" class="lg:hidden p-2 text-slate-400 hover:bg-white/5 rounded-lg">
-                        <i data-lucide="x" class="w-5 h-5"></i>
+                    <button @click="isSidebarOpen = false" class="lg:hidden p-1 rounded-md neo-card-interactive" style="background-color: var(--neo-panel); border: 2px solid var(--neo-border);">
+                        <l-icon name="x" icon-class="w-5 h-5" icon-style="color: var(--neo-text);"></l-icon>
                     </button>
                 </div>
                 
-                <div class="flex-1 overflow-y-auto no-scrollbar py-4 md:py-6 px-3 md:px-4 flex flex-col gap-1 md:gap-2">
-                    <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1 md:mb-2 px-2">Infrastruktur</div>
+                <div class="flex-1 overflow-y-auto no-scrollbar py-6 px-4 flex flex-col gap-3">
+                    <div class="text-xs font-extrabold uppercase tracking-widest px-2" style="color: var(--neo-text-muted);">Infrastruktur</div>
                     
-                    <button @click="navigateAdmin('datamaster')" :class="currentRoute === 'datamaster' ? 'bg-primary/20 text-primary border border-primary/30' : 'text-slate-400 hover:bg-white/5 border border-transparent'" class="w-full flex items-center gap-3 px-3 py-2.5 md:px-4 md:py-3 rounded-lg md:rounded-xl transition-all font-medium text-xs md:text-sm text-left">
-                        <i data-lucide="database" class="w-4 h-4 md:w-5 md:h-5"></i> Data Master
+                    <button @click="navigateAdmin('datamaster')" :class="currentRoute === 'datamaster' ? 'translate-x-2' : 'hover:opacity-80'" class="w-full flex items-center gap-3 px-4 py-3 neo-border rounded-lg font-bold text-sm text-left transition-all" :style="currentRoute === 'datamaster' ? 'background-color: var(--neo-bg); box-shadow: -4px 4px 0px 0px var(--neo-shadow); color: var(--neo-text);' : 'background-color: var(--neo-panel); color: var(--neo-text);'">
+                        <l-icon name="database" icon-class="w-5 h-5 stroke-[2.5]"></l-icon> Data Master
                     </button>
                     
-                    <button @click="navigateAdmin('analytics')" :class="currentRoute === 'analytics' ? 'bg-primary/20 text-primary border border-primary/30' : 'text-slate-400 hover:bg-white/5 border border-transparent'" class="w-full flex items-center gap-3 px-3 py-2.5 md:px-4 md:py-3 rounded-lg md:rounded-xl transition-all font-medium text-xs md:text-sm text-left">
-                        <i data-lucide="activity" class="w-4 h-4 md:w-5 md:h-5"></i> Telemetri Server
+                    <button @click="navigateAdmin('analytics')" :class="currentRoute === 'analytics' ? 'translate-x-2' : 'hover:opacity-80'" class="w-full flex items-center gap-3 px-4 py-3 neo-border rounded-lg font-bold text-sm text-left transition-all" :style="currentRoute === 'analytics' ? 'background-color: var(--neo-bg); box-shadow: -4px 4px 0px 0px var(--neo-shadow); color: var(--neo-text);' : 'background-color: var(--neo-panel); color: var(--neo-text);'">
+                        <l-icon name="activity" icon-class="w-5 h-5 stroke-[2.5]"></l-icon> Telemetri Server
                     </button>
                 </div>
 
-                <div class="p-4 md:p-5 border-t border-white/10">
-                    <button @click="logoutAdmin" class="text-xs md:text-sm font-medium text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 w-full py-2.5 md:py-3 rounded-lg md:rounded-xl transition-all flex justify-center items-center gap-2 active:scale-95 shadow-lg shadow-rose-500/5">
-                        <i data-lucide="log-out" class="w-4 h-4"></i> Akhiri Sesi Eksekutif
+                <div class="p-5 neo-border-t" style="background-color: var(--neo-panel);">
+                    <button @click="logoutAdmin" class="neo-card-interactive w-full py-3 flex justify-center items-center gap-2 uppercase tracking-wide text-sm font-bold rounded-lg" style="background-color: #f43f5e; color: #000; border: 3px solid #000; box-shadow: 4px 4px 0px 0px var(--neo-shadow);">
+                        <l-icon name="log-out" icon-class="w-4 h-4 md:w-5 h-5 stroke-[3]"></l-icon> Akhiri Sesi
                     </button>
                 </div>
             </aside>
 
             <!-- Main Admin Content -->
             <div class="flex-1 flex flex-col min-w-0 h-full relative">
-                <header class="h-16 md:h-20 flex items-center justify-between px-4 md:px-8 glass-panel border-x-0 border-t-0 border-b border-white/10 rounded-none z-10 shrink-0">
-                    <div class="flex items-center gap-3">
-                        <button @click="isSidebarOpen = true" class="lg:hidden p-2 -ml-2 text-slate-400 rounded-lg hover:bg-white/5 transition-colors">
-                            <i data-lucide="menu" class="w-5 h-5"></i>
+                <header class="h-16 md:h-20 flex items-center justify-between px-4 md:px-6 z-10 shrink-0 neo-border-b" style="background-color: var(--neo-panel);">
+                    <div class="flex items-center gap-3 md:gap-4">
+                        <button @click="isSidebarOpen = true" class="lg:hidden p-2 rounded-lg neo-card-interactive" style="background-color: var(--neo-bg); border: 2px solid var(--neo-border);">
+                            <l-icon name="menu" icon-class="w-5 h-5" icon-style="color: var(--neo-text);"></l-icon>
                         </button>
-                        <h2 class="text-lg md:text-xl font-bold capitalize tracking-wide text-white">{{ currentRoute === 'datamaster' ? 'Data Master' : 'Telemetri Server' }}</h2>
+                        <h2 class="text-lg md:text-2xl font-extrabold uppercase tracking-tight truncate" style="color: var(--neo-text);">{{ currentRoute === 'datamaster' ? 'Data Master' : 'Telemetri Server' }}</h2>
                     </div>
-                    <div class="flex items-center gap-2 md:gap-4">
-                        <div v-if="isSyncing" class="flex items-center gap-1.5 md:gap-2 text-[10px] md:text-xs font-medium text-primary bg-primary/10 px-3 py-1.5 md:px-4 md:py-2 rounded-full border border-primary/20 shadow-sm">
-                            <i data-lucide="refresh-cw" class="w-3 md:w-3.5 h-3 md:h-3.5 animate-spin"></i> <span class="hidden sm:inline">Sinkronisasi Aktif...</span><span class="sm:hidden">Sync...</span>
+                    <div class="flex items-center gap-4">
+                        <!-- Theme Toggle in Admin -->
+                        <button @click="toggleTheme" class="p-2 rounded-lg neo-card-interactive" style="background-color: var(--neo-bg); border: 2px solid var(--neo-border);" title="Ganti Tema Visual">
+                            <l-icon :name="isDarkMode ? 'sun' : 'moon'" icon-class="w-4 h-4 stroke-[3]" icon-style="color: var(--neo-text);"></l-icon>
+                        </button>
+                        <div v-if="isSyncing" class="flex items-center gap-2 text-[10px] md:text-xs font-bold px-3 md:px-4 py-1.5 md:py-2 rounded-md" style="background-color: #ffde59; color: #000; border: 2px solid #000; box-shadow: 2px 2px 0px 0px var(--neo-shadow);">
+                            <l-icon name="refresh-cw" icon-class="w-3.5 h-3.5 md:w-4 h-4 animate-spin stroke-[3]"></l-icon> <span class="hidden sm:inline">Sinkronisasi Aktif...</span>
                         </div>
                     </div>
                 </header>
 
-                <main class="flex-1 overflow-y-auto no-scrollbar p-4 md:p-8">
+                <main class="flex-1 overflow-y-auto p-4 md:p-8">
                     <!-- ADMIN: DATA MASTER -->
-                    <div v-if="currentRoute === 'datamaster'" class="max-w-6xl mx-auto glass-panel rounded-2xl md:rounded-3xl border border-white/10 overflow-hidden flex flex-col h-full">
-                        <div class="p-4 md:p-6 border-b border-white/10 flex flex-col sm:flex-row justify-between sm:items-center gap-4 bg-white/5">
+                    <div v-if="currentRoute === 'datamaster'" class="max-w-6xl mx-auto neo-panel overflow-hidden flex flex-col h-full">
+                        <div class="p-4 md:p-6 flex flex-col sm:flex-row justify-between sm:items-center gap-4 neo-border-b" style="background-color: var(--neo-bg);">
                             <div>
-                                <h2 class="text-base md:text-lg font-bold text-white">Manajemen Modul</h2>
-                                <p class="text-xs md:text-sm text-slate-400 mt-0.5 md:mt-1">Total: {{ apps.length }} modul terdaftar.</p>
+                                <h2 class="text-base md:text-lg font-extrabold uppercase" style="color: var(--neo-text);">Manajemen Modul</h2>
+                                <p class="text-xs md:text-sm font-bold mt-1" style="color: var(--neo-text-muted);">Total: {{ apps.length }} modul terdaftar.</p>
                             </div>
-                            <button @click="openAppForm()" class="w-full sm:w-auto px-4 py-2.5 md:px-5 md:py-2.5 bg-primary hover:bg-blue-600 text-white rounded-lg md:rounded-xl font-medium transition-all shadow-lg shadow-primary/30 flex items-center justify-center gap-2 text-xs md:text-sm active:scale-95">
-                                <i data-lucide="plus-circle" class="w-4 h-4"></i> Registrasi Modul
+                            <button @click="openAppForm()" class="neo-card-interactive px-4 md:px-5 py-2.5 md:py-3 flex items-center justify-center gap-2 text-xs md:text-sm uppercase font-bold rounded-lg w-full sm:w-auto" style="background-color: #4f8aef; color: #000; border: 3px solid #000; box-shadow: 4px 4px 0px 0px var(--neo-shadow);">
+                                <l-icon name="plus-circle" icon-class="w-4 h-4 md:w-5 h-5 stroke-[3]"></l-icon> Registrasi Modul
                             </button>
                         </div>
                         
-                        <div class="overflow-x-auto no-scrollbar flex-1">
-                            <table class="w-full text-left border-collapse min-w-[600px]">
+                        <div class="overflow-x-auto flex-1">
+                            <table class="w-full text-left border-collapse min-w-[500px] md:min-w-[600px]">
                                 <thead>
-                                    <tr class="text-slate-400 text-[10px] md:text-xs uppercase tracking-widest bg-black/20">
-                                        <th class="px-4 py-3 md:p-5 font-semibold border-b border-white/5 whitespace-nowrap">Identifikasi Modul</th>
-                                        <th class="px-4 py-3 md:p-5 font-semibold border-b border-white/5 text-center whitespace-nowrap">Status</th>
-                                        <th class="px-4 py-3 md:p-5 font-semibold border-b border-white/5 text-right whitespace-nowrap">Otorisasi Aksi</th>
+                                    <tr class="text-[10px] md:text-xs uppercase tracking-widest neo-border-b" style="background-color: var(--neo-bg); color: var(--neo-text);">
+                                        <th class="px-4 md:px-5 py-3 md:py-4 font-extrabold neo-border-r whitespace-nowrap">Identifikasi Modul</th>
+                                        <th class="px-4 md:px-5 py-3 md:py-4 font-extrabold neo-border-r text-center whitespace-nowrap">Status</th>
+                                        <th class="px-4 md:px-5 py-3 md:py-4 font-extrabold text-right whitespace-nowrap">Otorisasi Aksi</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-white/5">
-                                    <tr v-for="app in apps" :key="app.id" class="hover:bg-white/5 transition-colors group">
-                                        <td class="px-4 py-3 md:p-5">
+                                <tbody>
+                                    <tr v-for="app in apps" :key="app.id" class="group" style="border-bottom: 2px solid var(--neo-border);">
+                                        <td class="px-4 md:px-5 py-3 md:py-4 neo-border-r">
                                             <div class="flex items-center gap-3 md:gap-4">
-                                                <div class="w-8 h-8 md:w-10 md:h-10 rounded-lg flex items-center justify-center shrink-0 border border-white/5" :style="getAppStyle(app.color)">
-                                                    <i :data-lucide="app.icon || 'box'" class="w-4 h-4 md:w-5 md:h-5"></i>
+                                                <div class="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center shrink-0 rounded-md" :style="`background-color: ${app.color || '#4f8aef'}; border: 2px solid #000;`">
+                                                    <l-icon :name="app.icon || 'box'" icon-class="w-4 h-4 md:w-5 h-5 stroke-[3]" icon-style="color: #000;"></l-icon>
                                                 </div>
-                                                <div>
-                                                    <div class="text-sm font-bold text-white">{{ app.title }}</div>
-                                                    <div class="text-[10px] md:text-xs text-slate-500 mt-0.5 md:mt-1 font-mono truncate max-w-[150px] md:max-w-[300px]">{{ app.url }}</div>
+                                                <div class="min-w-0">
+                                                    <div class="text-sm md:text-base font-extrabold truncate" style="color: var(--neo-text);">{{ app.title }}</div>
+                                                    <div class="text-[10px] md:text-xs mt-0.5 md:mt-1 font-bold truncate max-w-[150px] md:max-w-[300px]" style="color: var(--neo-text-muted);">{{ app.url }}</div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="px-4 py-3 md:p-5 text-center">
-                                            <button @click="toggleAppStatus(app)" :class="app.isActive ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'" class="px-2 py-1 md:px-3 rounded-full text-[10px] md:text-xs font-semibold transition-all active:scale-95 whitespace-nowrap">
+                                        <td class="px-4 md:px-5 py-3 md:py-4 text-center neo-border-r">
+                                            <button @click="toggleAppStatus(app)" :style="app.isActive ? 'background-color: #00c950; color: #000; border: 2px solid #000;' : 'background-color: #f43f5e; color: #000; border: 2px solid #000;'" class="px-2 md:px-3 py-1 md:py-1.5 rounded-md text-[10px] md:text-xs font-extrabold uppercase neo-card-interactive whitespace-nowrap">
                                                 {{ app.isActive ? 'ONLINE' : 'OFFLINE' }}
                                             </button>
                                         </td>
-                                        <td class="px-4 py-3 md:p-5 text-right">
-                                            <div class="flex items-center justify-end gap-1 md:gap-2">
-                                                <button @click="openAppForm(app)" class="p-1.5 md:p-2 text-slate-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all" title="Modifikasi">
-                                                    <i data-lucide="pencil" class="w-4 h-4"></i>
+                                        <td class="px-4 md:px-5 py-3 md:py-4 text-right">
+                                            <div class="flex items-center justify-end gap-1.5 md:gap-2">
+                                                <button @click="openAppForm(app)" class="p-1.5 md:p-2 rounded-md neo-card-interactive" style="background-color: var(--neo-bg); border: 2px solid var(--neo-border); box-shadow: 2px 2px 0px 0px var(--neo-shadow);" title="Modifikasi">
+                                                    <l-icon name="pencil" icon-class="w-3.5 h-3.5 md:w-4 h-4 stroke-[3]" icon-style="color: var(--neo-text);"></l-icon>
                                                 </button>
-                                                <button @click="deleteAppPrompt(app)" class="p-1.5 md:p-2 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-all" title="Terminasi">
-                                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                                <button @click="deleteAppPrompt(app)" class="p-1.5 md:p-2 rounded-md neo-card-interactive" style="background-color: var(--neo-bg); border: 2px solid var(--neo-border); box-shadow: 2px 2px 0px 0px var(--neo-shadow);" title="Terminasi">
+                                                    <l-icon name="trash-2" icon-class="w-3.5 h-3.5 md:w-4 h-4 stroke-[3]" icon-style="color: var(--neo-text);"></l-icon>
                                                 </button>
                                             </div>
                                         </td>
                                     </tr>
                                     <tr v-if="apps.length === 0">
-                                        <td colspan="3" class="px-4 py-8 text-center text-sm text-slate-500">Tidak ada data infrastruktur terdaftar.</td>
+                                        <td colspan="3" class="px-5 py-8 md:py-10 text-center font-bold uppercase text-xs md:text-sm" style="color: var(--neo-text-muted);">Tidak ada data infrastruktur.</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -276,29 +349,29 @@
 
                     <!-- ADMIN: ANALYTICS -->
                     <div v-if="currentRoute === 'analytics'" class="max-w-6xl mx-auto">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
-                            <div class="glass-panel p-5 md:p-6 rounded-2xl md:rounded-3xl flex items-center gap-4 md:gap-5">
-                                <div class="w-12 h-12 md:w-14 md:h-14 bg-primary/20 text-primary border border-primary/30 rounded-xl md:rounded-2xl flex items-center justify-center shrink-0">
-                                    <i data-lucide="hard-drive" class="w-6 h-6 md:w-7 md:h-7"></i>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
+                            <div class="neo-panel p-4 md:p-6 flex items-center gap-4 md:gap-5">
+                                <div class="w-12 h-12 md:w-16 md:h-16 rounded-lg flex items-center justify-center shrink-0" style="background-color: #ffde59; border: 3px solid #000; box-shadow: 4px 4px 0px 0px var(--neo-shadow);">
+                                    <l-icon name="hard-drive" icon-class="w-6 h-6 md:w-8 h-8 stroke-[3]" icon-style="color: #000;"></l-icon>
                                 </div>
                                 <div>
-                                    <div class="text-xs md:text-sm text-slate-400 font-medium">Total Modul Infrastruktur</div>
-                                    <div class="text-2xl md:text-3xl font-bold text-white mt-1">{{ apps.length }}</div>
+                                    <div class="text-[10px] md:text-sm font-extrabold uppercase" style="color: var(--neo-text-muted);">Total Modul Infrastruktur</div>
+                                    <div class="text-2xl md:text-4xl font-black mt-0.5 md:mt-1" style="color: var(--neo-text);">{{ apps.length }}</div>
                                 </div>
                             </div>
-                            <div class="glass-panel p-5 md:p-6 rounded-2xl md:rounded-3xl flex items-center gap-4 md:gap-5">
-                                <div class="w-12 h-12 md:w-14 md:h-14 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-xl md:rounded-2xl flex items-center justify-center shrink-0">
-                                    <i data-lucide="check-circle-2" class="w-6 h-6 md:w-7 md:h-7"></i>
+                            <div class="neo-panel p-4 md:p-6 flex items-center gap-4 md:gap-5">
+                                <div class="w-12 h-12 md:w-16 md:h-16 rounded-lg flex items-center justify-center shrink-0" style="background-color: #00c950; border: 3px solid #000; box-shadow: 4px 4px 0px 0px var(--neo-shadow);">
+                                    <l-icon name="check-circle-2" icon-class="w-6 h-6 md:w-8 h-8 stroke-[3]" icon-style="color: #000;"></l-icon>
                                 </div>
                                 <div>
-                                    <div class="text-xs md:text-sm text-slate-400 font-medium">Status Operasional Aktif</div>
-                                    <div class="text-2xl md:text-3xl font-bold text-white mt-1">{{ apps.filter(a=>a.isActive).length }}</div>
+                                    <div class="text-[10px] md:text-sm font-extrabold uppercase" style="color: var(--neo-text-muted);">Status Operasional Aktif</div>
+                                    <div class="text-2xl md:text-4xl font-black mt-0.5 md:mt-1" style="color: var(--neo-text);">{{ apps.filter(a=>a.isActive).length }}</div>
                                 </div>
                             </div>
                         </div>
-                        <div class="glass-panel p-5 md:p-8 rounded-2xl md:rounded-3xl">
-                            <h3 class="font-bold text-base md:text-lg text-white mb-4 md:mb-6">Grafik Beban Transmisi Dummy</h3>
-                            <div class="w-full h-[250px] md:h-[300px] relative">
+                        <div class="neo-panel p-4 md:p-6 lg:p-8">
+                            <h3 class="font-extrabold text-base md:text-xl uppercase mb-4 md:mb-6 neo-border-b pb-2 md:pb-4 inline-block" style="color: var(--neo-text);">Grafik Beban Transmisi</h3>
+                            <div class="w-full h-[250px] md:h-[300px] relative mt-2 md:mt-4">
                                 <canvas id="appChart"></canvas>
                             </div>
                         </div>
@@ -308,120 +381,166 @@
         </div>
 
         <!-- ========================================== -->
-        <!-- MODALS & OVERLAYS                          -->
+        <!-- MODALS & OVERLAYS (TELEPORTED TO BODY)     -->
+        <!-- Dipindahkan KE DALAM kontainer Vue #app  -->
         <!-- ========================================== -->
+        
+        <!-- Initial Loader -->
+        <Teleport to="body">
+            <transition name="fade">
+                <div v-if="isInitialLoading" class="fixed inset-0 z-[9999] flex flex-col justify-center items-center" style="background-color: var(--neo-bg);">
+                    <div class="neo-panel p-6 flex flex-col items-center mx-4">
+                        <l-icon name="loader" icon-class="w-10 h-10 md:w-12 md:h-12 animate-spin mb-4 stroke-[3]" icon-style="color: var(--neo-text);"></l-icon>
+                        <div class="text-lg md:text-xl font-extrabold tracking-widest uppercase text-center" style="color: var(--neo-text);">EDUCORE <span class="text-[#4f8aef]">WORKSPACE</span></div>
+                        <div class="text-[10px] md:text-xs font-bold mt-2 uppercase tracking-widest pt-2 w-full text-center neo-border-t" style="color: var(--neo-text-muted);">Menginisiasi Sesi Sistem...</div>
+                    </div>
+                </div>
+            </transition>
+        </Teleport>
 
         <!-- Iframe Launcher -->
-        <transition name="fade">
-            <div v-if="activeApp" class="fixed inset-0 bg-[#0f172a] z-[9000] flex flex-col">
-                <div class="glass-panel border-t-0 border-x-0 border-white/10 rounded-none px-3 md:px-5 py-2.5 md:py-3 flex items-center justify-between z-10 shrink-0">
-                    <div class="flex items-center gap-3 md:gap-4">
-                        <button @click="closeApp" class="w-7 h-7 md:w-8 md:h-8 rounded-full bg-rose-500/20 text-rose-400 hover:bg-rose-500/40 flex items-center justify-center transition-all">
-                            <i data-lucide="x" class="w-3.5 h-3.5 md:w-4 md:h-4"></i>
-                        </button>
-                        <div class="h-4 md:h-5 w-px bg-white/20"></div>
-                        <div class="flex items-center gap-2 text-white font-bold text-xs md:text-sm">
-                            <i :data-lucide="activeApp.icon || 'box'" class="w-3.5 h-3.5 md:w-4 md:h-4" :style="{ color: activeApp.color }"></i>
-                            <span class="truncate max-w-[150px] md:max-w-none">{{ activeApp.title }}</span>
+        <Teleport to="body">
+            <transition name="fade">
+                <div v-if="activeApp" class="fixed inset-0 z-[9000] flex flex-col" style="background-color: var(--neo-bg);">
+                    <div class="neo-border-b px-3 md:px-4 py-2 md:py-3 flex items-center justify-between z-10 shrink-0" style="background-color: var(--neo-panel);">
+                        <div class="flex items-center gap-3 md:gap-4">
+                            <button @click="closeApp" class="w-8 h-8 md:w-10 md:h-10 rounded-md flex items-center justify-center neo-card-interactive" style="background-color: #f43f5e; border: 3px solid #000; box-shadow: 2px 2px 0px 0px var(--neo-shadow);">
+                                <l-icon name="x" icon-class="w-4 h-4 md:w-5 h-5 stroke-[3]" icon-style="color: #000;"></l-icon>
+                            </button>
+                            <div class="h-5 md:h-6 w-1 rounded-full" style="background-color: var(--neo-border);"></div>
+                            <div class="flex items-center gap-2 md:gap-3 font-extrabold text-[11px] md:text-sm lg:text-base uppercase tracking-wide" style="color: var(--neo-text);">
+                                <l-icon :name="activeApp.icon || 'box'" icon-class="w-4 h-4 md:w-5 h-5 stroke-[3]"></l-icon>
+                                <span class="truncate max-w-[180px] sm:max-w-[300px] md:max-w-none">{{ activeApp.title }}</span>
+                            </div>
                         </div>
                     </div>
+                    
+                    <div class="relative flex-1" style="background-color: var(--neo-bg);">
+                        <transition name="fade">
+                            <div v-if="isIframeLoading" class="absolute inset-0 flex flex-col items-center justify-center z-50" style="background-color: var(--neo-modal-overlay); backdrop-filter: blur(4px);">
+                                <l-icon name="loader" icon-class="w-10 h-10 md:w-12 md:h-12 animate-spin mb-3 md:mb-4 stroke-[3]" icon-style="color: #fff;"></l-icon>
+                                <span class="text-xs md:text-sm font-extrabold uppercase tracking-widest px-3 md:px-4 py-1.5 md:py-2 rounded-md" style="background-color: #ffde59; color: #000; border: 2px solid #000; box-shadow: 2px 2px 0px 0px #fff;">TRANSMISI DATA...</span>
+                            </div>
+                        </transition>
+                        <iframe :src="iframeSrc" @load="onIframeLoad" class="w-full h-full border-0 absolute inset-0 z-0"></iframe>
+                    </div>
                 </div>
-                
-                <div class="relative flex-1 bg-white">
-                    <transition name="fade">
-                        <div v-if="isIframeLoading" class="absolute inset-0 bg-slate-900/90 backdrop-blur-sm flex flex-col items-center justify-center z-50">
-                            <i data-lucide="loader-2" class="w-8 h-8 md:w-10 md:h-10 text-primary animate-spin mb-3 md:mb-4"></i>
-                            <span class="text-xs md:text-sm font-bold text-white tracking-widest">TRANSMISI DATA...</span>
-                        </div>
-                    </transition>
-                    <iframe :src="iframeSrc" @load="onIframeLoad" class="w-full h-full border-0 absolute inset-0 z-0"></iframe>
-                </div>
-            </div>
-        </transition>
+            </transition>
+        </Teleport>
 
         <!-- Modal Otorisasi -->
-        <transition name="fade">
-            <div v-if="showLoginModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9500] flex items-center justify-center p-4">
-                <div class="glass-modal rounded-2xl md:rounded-3xl w-full max-w-sm p-6 md:p-8 text-center mx-4 shadow-2xl">
-                    <div class="w-12 h-12 md:w-16 md:h-16 bg-rose-500/20 border border-rose-500/30 text-rose-400 mx-auto rounded-xl md:rounded-2xl flex items-center justify-center mb-4 md:mb-6 shadow-lg shadow-rose-500/20">
-                        <i data-lucide="fingerprint" class="w-6 h-6 md:w-8 md:h-8"></i>
-                    </div>
-                    <h2 class="text-lg md:text-xl font-bold text-white mb-1 md:mb-2 tracking-wide">Otorisasi Eksekutif</h2>
-                    <p class="text-[11px] md:text-xs text-slate-400 mb-6 md:mb-8">Dibutuhkan PIN Rahasia untuk mengakses Pusat Kendali Infrastruktur.</p>
-                    
-                    <input v-model="pinInput" type="password" placeholder="••••••••" class="w-full px-4 py-3 md:px-5 md:py-4 bg-black/30 border border-white/10 rounded-lg md:rounded-xl focus:border-primary focus:ring-1 focus:ring-primary text-center tracking-[0.5em] text-lg md:text-xl font-mono text-white transition-all mb-6 md:mb-8 outline-none" @keyup.enter="processLogin" />
-                    
-                    <div class="flex gap-2 md:gap-3">
-                        <button @click="showLoginModal = false; pinInput = ''" class="flex-1 py-2.5 md:py-3 rounded-lg md:rounded-xl text-xs md:text-sm font-bold text-slate-300 bg-white/5 border border-white/10 hover:bg-white/10 transition-all active:scale-95">Batal</button>
-                        <button @click="processLogin" class="flex-1 py-2.5 md:py-3 rounded-lg md:rounded-xl text-xs md:text-sm font-bold bg-primary hover:bg-blue-600 text-white shadow-lg shadow-primary/30 transition-all flex items-center justify-center gap-2 active:scale-95" :disabled="isSubmitting">
-                            <i v-if="isSubmitting" data-lucide="loader-2" class="w-3.5 h-3.5 md:w-4 md:h-4 animate-spin"></i>
-                            {{ isSubmitting ? 'Verifikasi...' : 'Akses Sistem' }}
-                        </button>
+        <Teleport to="body">
+            <transition name="fade">
+                <div v-if="showLoginModal" class="fixed inset-0 z-[9500] flex items-center justify-center p-4" style="background-color: var(--neo-modal-overlay);">
+                    <div class="neo-panel w-full max-w-sm p-6 md:p-8 text-center mx-4" style="box-shadow: 8px 8px 0px 0px var(--neo-shadow);">
+                        <div class="w-16 h-16 md:w-20 md:h-20 mx-auto rounded-xl flex items-center justify-center mb-5 md:mb-6 rotate-[-5deg]" style="background-color: #ffde59; border: 4px solid #000; box-shadow: 4px 4px 0px 0px var(--neo-shadow);">
+                            <l-icon name="fingerprint" icon-class="w-8 h-8 md:w-10 h-10 stroke-[3]" icon-style="color: #000;"></l-icon>
+                        </div>
+                        <h2 class="text-xl md:text-2xl font-black mb-2 uppercase" style="color: var(--neo-text);">Otorisasi Eksekutif</h2>
+                        <p class="text-[11px] md:text-sm font-bold mb-6 md:mb-8 neo-border-b pb-4" style="color: var(--neo-text-muted);">Masukan PIN Rahasia Infrastruktur.</p>
+                        
+                        <input v-model="pinInput" type="password" placeholder="••••••••" class="w-full px-4 md:px-5 py-3 md:py-4 neo-input text-center tracking-[0.5em] text-xl md:text-2xl font-mono mb-6 md:mb-8" @keyup.enter="processLogin" />
+                        
+                        <div class="flex gap-3 md:gap-4 flex-col">
+                            <button @click="processLogin" class="neo-card-interactive w-full py-3 md:py-4 text-sm md:text-base uppercase flex items-center justify-center gap-2 font-extrabold rounded-lg" style="background-color: #4f8aef; color: #000; border: 3px solid #000; box-shadow: 4px 4px 0px 0px var(--neo-shadow);" :disabled="isSubmitting">
+                                <l-icon v-if="isSubmitting" name="loader" icon-class="w-4 h-4 md:w-5 h-5 animate-spin"></l-icon>
+                                {{ isSubmitting ? 'Verifikasi...' : 'Akses Sistem' }}
+                            </button>
+                            <button @click="showLoginModal = false; pinInput = ''" class="neo-card-interactive w-full py-2.5 md:py-3 text-xs md:text-sm uppercase font-bold rounded-lg" style="background-color: var(--neo-bg); color: var(--neo-text); border: 3px solid var(--neo-border);">Batal</button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </transition>
+            </transition>
+        </Teleport>
 
         <!-- Modal Form Modul -->
-        <transition name="fade">
-            <div v-if="showAppModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9500] flex items-center justify-center p-4">
-                <div class="glass-modal rounded-2xl md:rounded-3xl w-full max-w-md flex flex-col max-h-[85dvh] mx-4 shadow-2xl border border-white/10">
-                    <div class="p-4 md:p-6 border-b border-white/10 flex justify-between items-center bg-white/5 rounded-t-2xl md:rounded-t-3xl shrink-0">
-                        <h2 class="text-base md:text-lg font-bold text-white tracking-wide">{{ isEditing ? 'Modifikasi Infrastruktur' : 'Registrasi Baru' }}</h2>
-                        <button @click="showAppModal = false" class="text-slate-400 hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-1 md:p-1.5 rounded-full">
-                            <i data-lucide="x" class="w-4 h-4"></i>
-                        </button>
-                    </div>
-                    <div class="p-4 md:p-6 overflow-y-auto no-scrollbar space-y-4 md:space-y-5">
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 md:mb-2">Identitas Modul *</label>
-                            <input v-model="appForm.title" type="text" class="w-full px-3 py-2.5 md:px-4 md:py-3 bg-black/30 border border-white/10 rounded-lg md:rounded-xl focus:border-primary outline-none text-white text-xs md:text-sm" placeholder="Contoh: Sistem Akademik" />
+        <Teleport to="body">
+            <transition name="fade">
+                <div v-if="showAppModal" class="fixed inset-0 z-[9500] flex items-center justify-center p-4" style="background-color: var(--neo-modal-overlay);">
+                    <div class="neo-panel w-full max-w-md flex flex-col max-h-[85dvh] mx-4 p-0 overflow-hidden" style="box-shadow: 8px 8px 0px 0px var(--neo-shadow);">
+                        <div class="p-4 md:p-6 neo-border-b flex justify-between items-center shrink-0" style="background-color: #ffde59;">
+                            <h2 class="text-lg md:text-xl font-black uppercase" style="color: #000;">{{ isEditing ? 'Modifikasi Modul' : 'Registrasi Baru' }}</h2>
+                            <button @click="showAppModal = false" class="p-1 md:p-1.5 rounded-md neo-card-interactive" style="background-color: var(--neo-panel); border: 2px solid var(--neo-border); box-shadow: 2px 2px 0px 0px var(--neo-shadow);">
+                                <l-icon name="x" icon-class="w-4 h-4 md:w-5 h-5 stroke-[3]" icon-style="color: var(--neo-text);"></l-icon>
+                            </button>
                         </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 md:mb-2">Deskripsi Fungsi *</label>
-                            <input v-model="appForm.desc" type="text" class="w-full px-3 py-2.5 md:px-4 md:py-3 bg-black/30 border border-white/10 rounded-lg md:rounded-xl focus:border-primary outline-none text-white text-xs md:text-sm" placeholder="Penjelasan singkat modul" />
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 md:mb-2">Target URL Transmisi *</label>
-                            <input v-model="appForm.url" type="url" class="w-full px-3 py-2.5 md:px-4 md:py-3 bg-black/30 border border-white/10 rounded-lg md:rounded-xl focus:border-primary outline-none text-white font-mono text-xs md:text-sm" placeholder="https://..." />
-                        </div>
-                        <div class="grid grid-cols-2 gap-3 md:gap-4">
+                        <div class="p-4 md:p-6 overflow-y-auto no-scrollbar space-y-4 md:space-y-6" style="background-color: var(--neo-panel);">
                             <div>
-                                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 md:mb-2">Lucide Icon</label>
-                                <div class="flex items-center gap-2 md:gap-3">
-                                    <div class="w-8 h-8 md:w-10 md:h-10 bg-white/5 border border-white/10 rounded-lg md:rounded-xl flex items-center justify-center shrink-0">
-                                        <i :data-lucide="appForm.icon || 'box'" class="w-4 h-4 md:w-5 md:h-5 text-slate-300" id="iconPreview"></i>
+                                <label class="block text-[10px] md:text-xs font-extrabold uppercase tracking-widest mb-1.5 md:mb-2" style="color: var(--neo-text);">Identitas Modul *</label>
+                                <input v-model="appForm.title" type="text" class="w-full px-3 md:px-4 py-2.5 md:py-3 neo-input font-bold text-xs md:text-sm" placeholder="Sistem Akademik" />
+                            </div>
+                            <div>
+                                <label class="block text-[10px] md:text-xs font-extrabold uppercase tracking-widest mb-1.5 md:mb-2" style="color: var(--neo-text);">Deskripsi Fungsi *</label>
+                                <input v-model="appForm.desc" type="text" class="w-full px-3 md:px-4 py-2.5 md:py-3 neo-input font-bold text-xs md:text-sm" placeholder="Penjelasan operasional" />
+                            </div>
+                            <div>
+                                <label class="block text-[10px] md:text-xs font-extrabold uppercase tracking-widest mb-1.5 md:mb-2" style="color: var(--neo-text);">Target URL Transmisi *</label>
+                                <input v-model="appForm.url" type="url" class="w-full px-3 md:px-4 py-2.5 md:py-3 neo-input font-mono font-bold text-xs md:text-sm" placeholder="https://..." />
+                            </div>
+                            <div class="grid grid-cols-2 gap-3 md:gap-4">
+                                <div>
+                                    <label class="block text-[10px] md:text-xs font-extrabold uppercase tracking-widest mb-1.5 md:mb-2" style="color: var(--neo-text);">Lucide Icon</label>
+                                    <div class="flex items-center gap-2 md:gap-3">
+                                        <div class="w-10 h-10 md:w-12 md:h-12 rounded-lg flex items-center justify-center shrink-0 neo-border" style="background-color: var(--neo-bg); box-shadow: 2px 2px 0px 0px var(--neo-shadow);">
+                                            <l-icon :name="appForm.icon || 'box'" icon-class="w-5 h-5 md:w-6 h-6 stroke-[3]" icon-style="color: var(--neo-text);"></l-icon>
+                                        </div>
+                                        <input v-model="appForm.icon" type="text" class="w-full px-2 md:px-3 py-2.5 md:py-3 neo-input font-bold text-[10px] md:text-sm" placeholder="box" />
                                     </div>
-                                    <input v-model="appForm.icon" type="text" class="w-full px-2 py-2 md:px-3 md:py-2.5 bg-black/30 border border-white/10 rounded-lg md:rounded-xl focus:border-primary outline-none text-white text-xs md:text-sm" placeholder="box" @input="updateIconPreview" />
                                 </div>
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 md:mb-2">Warna Aksen</label>
-                                <div class="flex items-center gap-2 md:gap-3">
-                                    <input v-model="appForm.color" type="color" class="h-8 w-8 md:h-10 md:w-10 rounded-lg md:rounded-xl cursor-pointer border-0 p-0 bg-transparent shrink-0" />
-                                    <input v-model="appForm.color" type="text" class="w-full px-2 py-2 md:px-3 md:py-2.5 bg-black/30 border border-white/10 rounded-lg md:rounded-xl focus:border-primary outline-none text-white text-xs md:text-sm uppercase font-mono" />
+                                <div>
+                                    <label class="block text-[10px] md:text-xs font-extrabold uppercase tracking-widest mb-1.5 md:mb-2" style="color: var(--neo-text);">Warna Aksen</label>
+                                    <div class="flex items-center gap-2 md:gap-3">
+                                        <input v-model="appForm.color" type="color" class="h-10 w-10 md:h-12 md:w-12 rounded-lg cursor-pointer p-0 shrink-0 neo-border" style="box-shadow: 2px 2px 0px 0px var(--neo-shadow);" />
+                                        <input v-model="appForm.color" type="text" class="w-full px-2 md:px-3 py-2.5 md:py-3 neo-input text-[10px] md:text-sm uppercase font-mono font-bold" />
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="p-4 md:p-6 border-t border-white/10 flex gap-2 md:gap-3 bg-white/5 rounded-b-2xl md:rounded-b-3xl shrink-0">
-                        <button @click="showAppModal = false" class="flex-1 py-2.5 md:py-3 rounded-lg md:rounded-xl text-xs md:text-sm font-bold text-slate-300 bg-white/5 border border-white/10 hover:bg-white/10 transition-all active:scale-95">Batal</button>
-                        <button @click="saveAppForm" class="flex-1 py-2.5 md:py-3 rounded-lg md:rounded-xl text-xs md:text-sm font-bold bg-primary hover:bg-blue-600 text-white shadow-lg shadow-primary/30 transition-all flex items-center justify-center gap-2 active:scale-95" :disabled="isSubmitting">
-                            <i v-if="isSubmitting" data-lucide="loader-2" class="w-3.5 h-3.5 md:w-4 md:h-4 animate-spin"></i>
-                            {{ isSubmitting ? 'Transmisi...' : 'Simpan' }}
-                        </button>
+                        <div class="p-4 md:p-6 neo-border-t flex gap-3 md:gap-4 shrink-0" style="background-color: var(--neo-bg);">
+                            <button @click="showAppModal = false" class="neo-card-interactive flex-1 py-2.5 md:py-3 text-[10px] md:text-sm uppercase font-bold rounded-lg" style="background-color: var(--neo-panel); color: var(--neo-text); border: 3px solid var(--neo-border);">Batal</button>
+                            <button @click="saveAppForm" class="neo-card-interactive flex-1 py-2.5 md:py-3 text-[10px] md:text-sm uppercase flex items-center justify-center gap-1.5 md:gap-2 font-bold rounded-lg" style="background-color: #4f8aef; color: #000; border: 3px solid #000; box-shadow: 4px 4px 0px 0px var(--neo-shadow);" :disabled="isSubmitting">
+                                <l-icon v-if="isSubmitting" name="loader" icon-class="w-3.5 h-3.5 md:w-4 h-4 animate-spin stroke-[3]"></l-icon>
+                                {{ isSubmitting ? 'Transmisi...' : 'Simpan' }}
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </transition>
+            </transition>
+        </Teleport>
 
-    </div>
+    </div> <!-- End of #app -->
 
     <!-- SCRIPT VUE 3 NATIVE RPC ARCHITECTURE -->
     <script>
-        const { createApp, ref, computed, watch, onMounted, nextTick, onUpdated } = Vue;
+        const { createApp, ref, computed, watch, onMounted, nextTick } = Vue;
 
-        createApp({
+        // === KOMPONEN ISOLASI LUCIDE ICON (MENCEGAH BENTROKAN VIRTUAL DOM) ===
+        const LucideIcon = {
+            props: {
+                name: { type: String, required: true },
+                iconClass: { type: String, default: '' },
+                iconStyle: { type: String, default: '' }
+            },
+            // Gunakan v-html untuk mengisolasi update DOM dari Vue
+            // display: contents memastikan tag span tidak merusak layout flex/grid
+            template: `<span v-html="iconHtml" style="display: contents;"></span>`,
+            computed: {
+                iconHtml() {
+                    return `<i data-lucide="${this.name || 'box'}" class="${this.iconClass}" style="${this.iconStyle}"></i>`;
+                }
+            },
+            mounted() { this.renderIcon(); },
+            updated() { this.renderIcon(); },
+            methods: {
+                renderIcon() {
+                    this.$nextTick(() => {
+                        if (window.lucide) window.lucide.createIcons({ root: this.$el });
+                    });
+                }
+            }
+        };
+
+        const app = createApp({
             setup() {
                 const isInitialLoading = ref(true);
                 const isLoadingData = ref(true);
@@ -429,11 +548,13 @@
                 const isAdmin = ref(false);
                 const adminPin = ref('');
                 
+                // Theme State
+                const isDarkMode = ref(false);
+
                 const currentRoute = ref('datamaster');
                 const apps = ref([]);
                 const searchQuery = ref('');
 
-                // Modifikasi state vue untuk mengelola responsivitas Sidebar
                 const isSidebarOpen = ref(false);
 
                 const showLoginModal = ref(false);
@@ -451,9 +572,42 @@
                 let chartInstance = null;
 
                 // ==========================================
+                // UTILITIES & RENDERER
+                // ==========================================
+                const navigateAdmin = (route) => {
+                    currentRoute.value = route;
+                    if (window.innerWidth < 1024) isSidebarOpen.value = false;
+                };
+
+                // ==========================================
+                // TEMA VISUAL (THEME ENGINE)
+                // ==========================================
+                const toggleTheme = () => {
+                    isDarkMode.value = !isDarkMode.value;
+                    if (isDarkMode.value) {
+                        document.documentElement.classList.add('dark');
+                        localStorage.setItem('educore_theme', 'dark');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                        localStorage.setItem('educore_theme', 'light');
+                    }
+                    if (currentRoute.value === 'analytics') renderChart();
+                };
+
+                const initTheme = () => {
+                    const savedTheme = localStorage.getItem('educore_theme');
+                    if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                        isDarkMode.value = true;
+                        document.documentElement.classList.add('dark');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                    }
+                };
+
+                // ==========================================
                 // KONFIGURASI HYBRID & RPC ADAPTER
                 // ==========================================
-                const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxkonq5E3IPzjMxTuZxB9o1K2zTwiVF6NjqBjo7E3euoSOD23R84lKGVbtWHLVvCy3cIA/exec"; 
+                const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbx7Bx5UV-rKIjRqVVVwoUn3auP_KsC7OqQgAOrdpiNuxoY3qt_ILjSPwoXjGcvCDFhF/exec"; 
 
                 const rpcCall = (action, payload = {}) => {
                     return new Promise((resolve, reject) => {
@@ -474,9 +628,8 @@
                                 .catch(err => reject(new Error("Kegagalan transmisi Hybrid: " + err.message)));
                                 return;
                             } else {
-                                console.warn("Environment & GAS_WEBAPP_URL tidak terdeteksi. Simulasi RPC Local.");
                                 setTimeout(() => {
-                                    if (action === 'GET_APPS') resolve([{ id: 'mock1', title: 'Sistem Akademik', desc: 'Mock Data Lokal', url: 'https://example.com', icon: 'server', color: '#3b82f6', isActive: true }]);
+                                    if (action === 'GET_APPS') resolve([{ id: 'AKADEMIK', title: 'Sistem Akademik', desc: 'Mock Data Lokal', url: 'https://example.com', icon: 'server', color: '#4f8aef', isActive: true }]);
                                     else if (action === 'VERIFY_PIN') resolve({ isValid: payload.pin === 'admin' });
                                     else resolve({ success: true });
                                 }, 800);
@@ -497,43 +650,29 @@
                     });
                 };
 
-                // ==========================================
-                // UTILITIES & RENDERER
-                // ==========================================
-                const refreshIcons = () => {
-                    nextTick(() => {
-                        if (window.lucide) window.lucide.createIcons();
-                    });
-                };
-
-                const updateIconPreview = () => { refreshIcons(); };
-
-                const navigateAdmin = (route) => {
-                    currentRoute.value = route;
-                    // Auto tutup sidebar di mobile saat berpindah menu
-                    if (window.innerWidth < 1024) {
-                        isSidebarOpen.value = false;
-                    }
-                };
-
                 const showToast = (title, iconType = 'info') => {
-                    let iconColor = iconType === 'success' ? '#10b981' : iconType === 'error' ? '#f43f5e' : '#3b82f6';
-                    let htmlContent = '<div style="display:flex; align-items:center; gap:12px; font-family:Inter, sans-serif;">';
-                    htmlContent += '<div style="width:12px; height:12px; border-radius:50%; background-color:' + iconColor + '"></div>';
-                    // Warna font disesuaikan untuk Dark Mode
-                    htmlContent += '<span style="color:#e2e8f0; font-size:13px; font-weight:600;">' + title + '</span></div>';
+                    let iconColor = iconType === 'success' ? '#00c950' : iconType === 'error' ? '#f43f5e' : '#4f8aef';
+                    const styles = getComputedStyle(document.documentElement);
+                    const bgColor = styles.getPropertyValue('--neo-panel').trim();
+                    const textColor = styles.getPropertyValue('--neo-text').trim();
+                    const shadowColor = styles.getPropertyValue('--neo-shadow').trim();
+                    const borderColor = styles.getPropertyValue('--neo-border').trim();
                     
+                    let htmlRaw = `
+                        <div style="display:flex; align-items:center; gap:12px; font-family:Google Sans, sans-serif;">
+                            <div style="width:14px; height:14px; border: 2px solid #000; border-radius: 4px; background-color:${iconColor}; box-shadow: 2px 2px 0px 0px #000;"></div>
+                            <span style="color:${textColor}; font-size:12px; font-weight:800; text-transform: uppercase;">${title}</span>
+                        </div>
+                    `;
+                    
+                    let htmlSafe = DOMPurify.sanitize(htmlRaw);
+
                     Swal.fire({
                         toast: true, position: 'bottom-end', showConfirmButton: false, timer: 3000,
-                        background: '#1e293b', // Background dark
-                        html: htmlContent,
-                        customClass: { popup: 'border border-slate-700 rounded-xl shadow-lg !m-4' }
+                        background: bgColor,
+                        html: htmlSafe,
+                        customClass: { popup: `!border-[3px] !border-[${borderColor}] !rounded-lg !shadow-[4px_4px_0px_0px_${shadowColor}] !m-4` }
                     });
-                };
-
-                const getAppStyle = (colorStr) => {
-                    const c = colorStr || '#3b82f6';
-                    return `background-color: ${c}20; color: ${c}; border: 1px solid ${c}40;`;
                 };
 
                 const displayedApps = computed(() => {
@@ -553,13 +692,8 @@
                         isSyncing.value = true;
                         const data = await rpcCall('GET_APPS');
                         apps.value = data || [];
-                        refreshIcons();
-                    } catch (error) {
-                        showToast('Gagal sinkronisasi data.', 'error');
-                    } finally {
-                        isSyncing.value = false;
-                        isLoadingData.value = false;
-                    }
+                    } catch (error) { showToast('Gagal sinkronisasi data.', 'error'); } 
+                    finally { isSyncing.value = false; isLoadingData.value = false; }
                 };
 
                 const processLogin = async () => {
@@ -573,16 +707,10 @@
                             showLoginModal.value = false;
                             pinInput.value = '';
                             showToast('Otorisasi Diterima.', 'success');
-                            refreshIcons();
                             if(currentRoute.value === 'analytics') renderChart();
-                        } else {
-                            showToast('Otorisasi Ditolak.', 'error');
-                        }
-                    } catch (error) {
-                        showToast('Kegagalan komunikasi server.', 'error');
-                    } finally {
-                        isSubmitting.value = false;
-                    }
+                        } else { showToast('Otorisasi Ditolak.', 'error'); }
+                    } catch (error) { showToast('Kegagalan komunikasi server.', 'error'); } 
+                    finally { isSubmitting.value = false; }
                 };
 
                 const logoutAdmin = () => {
@@ -590,16 +718,14 @@
                     adminPin.value = '';
                     isSidebarOpen.value = false;
                     showToast('Sesi Eksekutif Diakhiri.', 'info');
-                    refreshIcons();
                 };
 
                 const openAppForm = (app = null) => {
                     isEditing.value = !!app;
                     appForm.value = app ? JSON.parse(JSON.stringify(app)) : { 
-                        id: 'AC_' + new Date().getTime(), title: '', desc: '', url: '', icon: 'box', color: '#3b82f6', isActive: true 
+                        id: 'AC_' + new Date().getTime(), title: '', desc: '', url: '', icon: 'box', color: '#4f8aef', isActive: true 
                     };
                     showAppModal.value = true;
-                    refreshIcons();
                 };
 
                 const saveAppForm = async () => {
@@ -611,23 +737,32 @@
                         showToast('Resolusi sistem tersimpan.', 'success');
                         showAppModal.value = false;
                         await loadData();
-                    } catch (error) {
-                        showToast(error.message, 'error');
-                    } finally {
-                        isSubmitting.value = false;
-                    }
+                    } catch (error) { showToast(error.message, 'error'); } 
+                    finally { isSubmitting.value = false; }
                 };
 
                 const deleteAppPrompt = (app) => {
+                    const safeTitle = DOMPurify.sanitize(app.title);
+                    
+                    const styles = getComputedStyle(document.documentElement);
+                    const bgColor = styles.getPropertyValue('--neo-panel').trim();
+                    const textColor = styles.getPropertyValue('--neo-text').trim();
+                    const shadowColor = styles.getPropertyValue('--neo-shadow').trim();
+
                     Swal.fire({
-                        title: 'Konfirmasi Terminasi',
-                        text: "Modul " + app.title + " akan dihapus.",
+                        title: `<span style="color:${textColor}; font-weight:900;">KONFIRMASI TERMINASI</span>`,
+                        html: `<p style="font-weight: 700; color: ${textColor}; font-size: 14px; opacity:0.8;">Modul <span style="color:${textColor}; font-weight:900;">${safeTitle}</span> akan dihapus permanen.</p>`,
                         icon: 'warning',
                         showCancelButton: true,
-                        background: '#1e293b', color: '#f8fafc',
-                        confirmButtonColor: '#e11d48', cancelButtonColor: '#334155',
-                        confirmButtonText: 'Ya, Eksekusi', cancelButtonText: 'Batalkan',
-                        customClass: { popup: 'border border-slate-700 rounded-xl shadow-lg !m-4' }
+                        background: bgColor,
+                        confirmButtonColor: '#f43f5e', cancelButtonColor: 'var(--neo-bg)',
+                        confirmButtonText: '<span style="font-weight:800; font-size: 12px; color:#000;">EKSEKUSI</span>', 
+                        cancelButtonText: `<span style="font-weight:800; color: ${textColor}; font-size: 12px;">BATAL</span>`,
+                        customClass: { 
+                            popup: `!border-4 !border-[var(--neo-border)] !rounded-lg !shadow-[6px_6px_0px_0px_${shadowColor}] !m-4`,
+                            confirmButton: `!border-2 !border-[#000] !shadow-[4px_4px_0px_0px_${shadowColor}] hover:-translate-y-0.5 transition-transform !rounded-md px-4 py-2`,
+                            cancelButton: `!border-2 !border-[var(--neo-border)] !shadow-[4px_4px_0px_0px_${shadowColor}] hover:-translate-y-0.5 transition-transform !rounded-md px-4 py-2`
+                        }
                     }).then(async (result) => {
                         if (result.isConfirmed) {
                             try {
@@ -649,13 +784,13 @@
                 const openApp = (app) => {
                     activeApp.value = app;
                     isIframeLoading.value = true;
-                    setTimeout(() => { iframeSrc.value = app.url; refreshIcons(); }, 300);
+                    setTimeout(() => { iframeSrc.value = app.url; }, 300);
                 };
 
                 const closeApp = () => { iframeSrc.value = 'about:blank'; activeApp.value = null; };
                 const onIframeLoad = () => { if (iframeSrc.value !== 'about:blank') isIframeLoading.value = false; };
 
-                // Analytics Chart (Dark Mode Config)
+                // Analytics Chart
                 const renderChart = () => {
                     nextTick(() => {
                         const canvas = document.getElementById('appChart');
@@ -664,16 +799,24 @@
                         
                         const labels = apps.value.map(a => a.title);
                         const data = apps.value.map(() => Math.floor(Math.random() * 100) + 10); 
-                        const colors = apps.value.map(a => a.color || '#3b82f6');
+                        const colors = apps.value.map(a => a.color || '#4f8aef');
+
+                        const gridColor = isDarkMode.value ? '#334155' : '#e5e7eb';
+                        const tickColor = isDarkMode.value ? '#f8fafc' : '#000000';
+                        const borderColor = isDarkMode.value ? '#f8fafc' : '#000000';
 
                         chartInstance = new Chart(canvas, {
                             type: 'bar',
-                            data: { labels: labels, datasets: [{ data: data, backgroundColor: colors, borderRadius: 8 }] },
+                            data: { labels: labels, datasets: [{ 
+                                data: data, backgroundColor: colors, 
+                                borderColor: borderColor, borderWidth: 3, borderRadius: 4,
+                                hoverBackgroundColor: borderColor
+                            }] },
                             options: {
                                 responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
                                 scales: {
-                                    y: { grid: { color: '#334155' }, ticks: { color: '#94a3b8' } },
-                                    x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                                    y: { grid: { color: gridColor, lineWidth: 2 }, ticks: { color: tickColor, font: { weight: 'bold', family: 'Google Sans', size: 10 } } },
+                                    x: { grid: { display: false }, ticks: { color: tickColor, font: { weight: 'bold', family: 'Google Sans', size: 10 } } }
                                 }
                             }
                         });
@@ -681,31 +824,31 @@
                 };
 
                 watch(currentRoute, (newRoute) => {
-                    refreshIcons();
                     if (newRoute === 'analytics') renderChart();
                 });
 
-                onUpdated(() => {
-                    refreshIcons();
-                });
-
                 onMounted(() => {
+                    initTheme();
                     setTimeout(() => { 
                         isInitialLoading.value = false; 
                         loadData();
-                    }, 1500);
+                    }, 1200);
                 });
 
                 return {
                     isInitialLoading, isLoadingData, isSyncing, isAdmin, currentRoute, apps, searchQuery, displayedApps,
-                    isSidebarOpen, navigateAdmin,
+                    isSidebarOpen, navigateAdmin, isDarkMode, toggleTheme,
                     showLoginModal, pinInput, isSubmitting, activeApp, iframeSrc, isIframeLoading,
                     showAppModal, isEditing, appForm,
                     processLogin, logoutAdmin, openAppForm, saveAppForm, deleteAppPrompt, toggleAppStatus,
-                    openApp, closeApp, onIframeLoad, getAppStyle, updateIconPreview
+                    openApp, closeApp, onIframeLoad
                 };
             }
-        }).mount('#app');
+        });
+
+        // Daftarkan komponen isolasi Lucide sebelum inisiasi aplikasi
+        app.component('l-icon', LucideIcon);
+        app.mount('#app');
     </script>
 </body>
 </html>

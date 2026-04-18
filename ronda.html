@@ -1,9 +1,11 @@
+
 <!DOCTYPE html>
 <html lang="su" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jadwal Ronda Kp. Cisujen</title>
+    <link rel="icon" href="https://www.google.com/s2/favicons?domain=google.com&sz=128" type="image/png" />
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -90,7 +92,7 @@
         /* Print Specific Styles */
         @page {
             size: A4 landscape;
-            margin: 10mm;
+            margin: 8mm; /* Diubah janten 8mm sangkan asup kana margin aman sadaya jenis printer */
         }
         @media print {
             body { 
@@ -99,44 +101,58 @@
                 -webkit-print-color-adjust: exact; 
                 print-color-adjust: exact; 
             }
+            /* Mupus sadaya margin sareng padding gede bawaan Tailwind sangkan cekap 1 lambar */
+            .py-6 { padding-top: 0 !important; padding-bottom: 0 !important; }
+            .mb-8, .mb-10, .mt-12, .mb-4, .mb-5, .mt-6 { margin-bottom: 0.25rem !important; margin-top: 0.25rem !important; }
+            .gap-8, .gap-6, .gap-5 { gap: 0.25rem !important; }
+            
             .no-print { display: none !important; }
             
             /* Compact Header for Print */
             header { 
-                padding: 1rem !important; 
+                padding: 0.5rem 1rem !important; 
                 border-radius: 0.5rem !important; 
             }
-            header h1 { font-size: 1.5rem !important; margin-bottom: 0.25rem !important; }
+            header h1 { font-size: 1.15rem !important; margin-bottom: 0 !important; line-height: 1.2 !important; }
+            header p { font-size: 0.75rem !important; }
+            header .inline-flex { margin-bottom: 0.25rem !important; padding: 0.15rem 0.5rem !important; }
             
             /* Adjust Grid for Print */
             .print-grid { 
                 display: grid !important;
                 grid-template-columns: repeat(4, 1fr) !important; 
-                gap: 0.5rem !important; 
+                gap: 0.35rem !important; 
             }
             
             .day-card { 
                 box-shadow: none !important; 
-                border: 1px solid #e2e8f0 !important; 
-                padding: 0.75rem !important;
+                border: 1px solid #cbd5e1 !important; 
+                padding: 0.4rem 0.6rem !important;
                 break-inside: avoid;
             }
             
             /* Compact text in cards */
-            .day-card h2 { font-size: 1rem !important; margin-bottom: 0.5rem !important; padding-bottom: 0.5rem !important; }
-            .day-card ul li { font-size: 0.75rem !important; margin-bottom: 0.25rem !important; }
+            .day-card h2 { font-size: 0.85rem !important; margin-bottom: 0.2rem !important; padding-bottom: 0.2rem !important; }
+            .day-card ul li { font-size: 0.65rem !important; margin-bottom: 0 !important; padding: 0.15rem 0 !important; line-height: 1.1 !important; }
             
             /* Info Box Print Adjustments */
             .info-box {
-                border: 1px solid #16a34a !important;
-                padding: 0.75rem !important;
+                border: 1.5px solid #16a34a !important; 
+                padding: 0.4rem 0.75rem !important;
+                border-radius: 0.5rem !important;
             }
+            .info-box h3 { font-size: 0.8rem !important; margin-bottom: 0.2rem !important; padding-bottom: 0.2rem !important;}
             .info-box ul {
                 display: grid !important;
                 grid-template-columns: repeat(3, 1fr) !important;
                 gap: 0.5rem !important;
             }
-            .info-box ul li { font-size: 0.75rem !important; }
+            .info-box ul li { font-size: 0.6rem !important; margin: 0 !important; }
+            .info-box p { font-size: 0.6rem !important; margin: 0 !important; line-height: 1.2 !important; }
+            
+            /* Footer */
+            .text-center.text-slate-400 { font-size: 0.55rem !important; margin-top: 0.25rem !important; }
+            .text-center.text-slate-400 p.text-xs { font-size: 0.65rem !important; margin-bottom: 0.1rem !important; }
         }
     </style>
 </head>
@@ -167,14 +183,14 @@
                     Kp. Cisujen RT.004 / RW.001
                 </p>
                 <p class="text-green-200/80 text-sm mt-1 ml-0 lg:ml-7">
-                    Ds. Cisujen, Kec. Takokak, Kab. Cianjur
+                    Ds. Cisujen, Kac. Takokak, Kab. Cianjur
                 </p>
             </div>
 
             <!-- Right Side: Clock & Actions -->
             <div class="relative z-10 flex flex-col items-center lg:items-end gap-4 w-full lg:w-auto">
-                <!-- Live Clock Card -->
-                <div class="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-2xl text-center w-full sm:w-auto min-w-[200px] shadow-lg">
+                <!-- Live Clock Card (Ditambihan class no-print didieu) -->
+                <div class="no-print bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-2xl text-center w-full sm:w-auto min-w-[200px] shadow-lg">
                     <p id="live-date" class="text-green-100 text-xs font-medium uppercase tracking-widest mb-1">Dinten Ieu</p>
                     <p id="live-time" class="text-white font-black text-3xl tabular-nums tracking-tight drop-shadow-sm">--:--:--</p>
                 </div>
@@ -201,7 +217,7 @@
                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                     <i data-lucide="search" class="w-5 h-5 text-slate-400 group-focus-within:text-green-500 transition-colors"></i>
                 </div>
-                <input type="text" id="searchInput" autocomplete="off" placeholder="Parian nami wargi di dieu... (Cth: Asep, Deni)" class="w-full bg-white border border-slate-200 text-slate-800 text-base rounded-2xl block pl-12 pr-4 py-4 shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all placeholder-slate-400">
+                <input type="text" id="searchInput" autocomplete="off" placeholder="Pilari nami wargi di dieu... (Cth: Asep, Deni)" class="w-full bg-white border border-slate-200 text-slate-800 text-base rounded-2xl block pl-12 pr-4 py-4 shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all placeholder-slate-400">
                 <div class="absolute inset-y-0 right-0 pr-4 flex items-center">
                     <button id="clearSearch" class="text-slate-400 hover:text-slate-600 hidden bg-slate-100 p-1.5 rounded-full transition-colors">
                         <i data-lucide="x" class="w-4 h-4"></i>
@@ -244,7 +260,7 @@
                 </div>
                 <ul class="space-y-2 relative z-10 wargi-list">
                     <li class="flex items-center gap-3 text-slate-700 font-medium py-1 px-2 rounded-lg hover:bg-slate-50 transition-colors"><i data-lucide="user" class="w-4 h-4 text-slate-400"></i><span>Ened</span></li>
-                    <li class="flex items-center gap-3 text-slate-700 font-medium py-1 px-2 rounded-lg hover:bg-slate-50 transition-colors"><i data-lucide="user" class="w-4 h-4 text-slate-400"></i><span>Pirmansyah</span></li>
+                    <li class="flex items-center gap-3 text-slate-700 font-medium py-1 px-2 rounded-lg hover:bg-slate-50 transition-colors"><i data-lucide="user" class="w-4 h-4 text-slate-400"></i><span>Dirmansyah</span></li>
                     <li class="flex items-center gap-3 text-slate-700 font-medium py-1 px-2 rounded-lg hover:bg-slate-50 transition-colors"><i data-lucide="user" class="w-4 h-4 text-slate-400"></i><span>Tedi</span></li>
                     <li class="flex items-center gap-3 text-slate-700 font-medium py-1 px-2 rounded-lg hover:bg-slate-50 transition-colors"><i data-lucide="user" class="w-4 h-4 text-slate-400"></i><span>Aris</span></li>
                     <li class="flex items-center gap-3 text-slate-700 font-medium py-1 px-2 rounded-lg hover:bg-slate-50 transition-colors"><i data-lucide="user" class="w-4 h-4 text-slate-400"></i><span>Risman</span></li>
@@ -381,7 +397,7 @@
                         <i data-lucide="phone-call" class="w-6 h-6"></i>
                     </div>
                     <h3 class="text-lg font-bold text-red-800 mb-1">Kontak Darurat</h3>
-                    <p class="text-xs text-red-600/80 font-medium px-2">Bilih aya hal nu teu dipiharep, gancang hubungi:</p>
+                    <p class="text-xs text-red-600/80 font-medium px-2">Bilih aya hal nu teu dipiharep, mangga énggal hubungi:</p>
                 </div>
                 
                 <div class="flex flex-col gap-3">
@@ -425,16 +441,16 @@
                     <input type="text" id="lapNami" placeholder="Nami anjeun..." class="w-full bg-slate-50 border border-slate-200 text-slate-800 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
                 </div>
                 <div>
-                    <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1.5">Kaayaan Peuting Ieu</label>
+                    <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1.5">Kaayaan Wengi Ieu</label>
                     <select id="lapKaayaan" class="w-full bg-slate-50 border border-slate-200 text-slate-800 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
                         <option value="Aman Terkendali">Aman Terkendali ✅</option>
-                        <option value="Hujan Girimis/Badag">Hujan Girimis/Badag 🌧️</option>
+                        <option value="Hujan Girimis/Ageung">Hujan Girimis/Ageung 🌧️</option>
                         <option value="Aya Nu Nyurigakeun">Aya Nu Nyurigakeun ⚠️</option>
                         <option value="Kacilakaan/Musibah">Kacilakaan/Musibah 🚨</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1.5">Catatan Tambahan</label>
+                    <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1.5">Catetan Tambihan</label>
                     <input type="text" id="lapCatatan" placeholder="Cth: Ngalilingan pos wétan parantos aman..." class="w-full bg-slate-50 border border-slate-200 text-slate-800 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
                 </div>
             </div>
@@ -448,7 +464,8 @@
         <!-- Signature -->
         <div class="text-center mt-12 mb-4 text-slate-400 text-sm font-medium">
             <p class="tracking-widest uppercase text-xs mb-2">Ngajaga Lembur, Ngariksa Dulur.</p>
-            <p>&copy; Warga Kp. Cisujen RT.004/001 Ds. Cisujen Kec. Takokak Kab. Cianjur</p>
+            <!-- Dirobah sakedik ditambihan simbol bullet (&bull;) ambeh teksna teu ngahiji (001Ds.) -->
+            <p>&copy; Warga Kp. Cisujen RT.004/001 &nbsp;&bull;&nbsp; Ds. Cisujen Kec. Takokak Kab. Cianjur</p>
         </div>
 
     </div>

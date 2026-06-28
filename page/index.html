@@ -1,16 +1,1060 @@
 <!DOCTYPE html>
-<html lang="su" class="scroll-smooth">
+<html lang="id" class="light">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
-    <title>Dede Basuni - Portfolio</title>
+    <meta name="theme-color" content="#e6f0fa" id="meta-theme-color" />
+    <title>EduCore Workspace | Ultimate</title>
     <link rel="icon" href="https://www.google.com/s2/favicons?domain=google.com&sz=128" type="image/png" />
-  <style>
-    body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; }
-    iframe { border: none; width: 100%; height: 100%; }
-  </style>
+    
+    <!-- ARSENAL CDN MANDATORI -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind, Vue 3, Lucide Icons, SweetAlert2, DOMPurify -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+
+    <!-- TAILWIND CONFIGURATION -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        background: 'var(--background)',
+                        'secondary-background': 'var(--secondary-background)',
+                        foreground: 'var(--foreground)',
+                        'main-foreground': 'var(--main-foreground)',
+                        main: 'var(--main)',
+                        border: 'var(--border)',
+                        ring: 'var(--ring)',
+                        overlay: 'var(--overlay)',
+                        chart: {
+                            1: 'var(--chart-1)', 2: 'var(--chart-2)', 3: 'var(--chart-3)', 4: 'var(--chart-4)', 5: 'var(--chart-5)',
+                        }
+                    },
+                    boxShadow: { 
+                        base: 'var(--shadow)',
+                        hover: 'var(--shadow-hover)'
+                    },
+                    borderRadius: { base: 'var(--radius-base)' },
+                    fontWeight: { base: 'var(--font-weight-base)', heading: 'var(--font-weight-heading)' },
+                    fontFamily: { sans: ['Google Sans', 'sans-serif'] },
+                    transitionTimingFunction: { 'neo-bounce': 'cubic-bezier(0.25, 1.5, 0.5, 1)' }
+                }
+            }
+        };
+    </script>
+
+    <!-- MASTER CSS VARIABLES & STYLES -->
+    <style>
+        :root {
+            /* Light Theme (oklch) */
+            --background: oklch(93.46% 0.0305 255.11);
+            --secondary-background: oklch(100% 0 0);
+            --foreground: oklch(0% 0 0);
+            --main-foreground: oklch(0% 0 0);
+            --main: oklch(67.47% 0.1726 259.49);
+            --border: oklch(0% 0 0);
+            --ring: oklch(0% 0 0);
+            --overlay: rgba(0, 0, 0, 0.4);
+            
+            --shadow: 4px 4px 0px 0px var(--border);
+            --shadow-hover: 6px 6px 0px 0px var(--border);
+            
+            --chart-1: #5294FF;
+            --chart-2: #FF4D50;
+            --chart-3: #FACC00;
+            --chart-4: #05E17A;
+            --chart-5: #7A83FF;
+
+            --radius-base: 8px;
+            --font-weight-base: 500;
+            --font-weight-heading: 800;
+            --muted-foreground: color-mix(in srgb, var(--foreground) 65%, transparent);
+        }
+        
+        .dark {
+            /* Dark Theme (oklch) */
+            --background: oklch(29.23% 0.0626 270.49);
+            --secondary-background: oklch(23.93% 0 0);
+            --foreground: oklch(92.49% 0 0);
+            --main-foreground: oklch(0% 0 0);
+            --main: oklch(67.47% 0.1726 259.49);
+            --border: oklch(0% 0 0);
+            --ring: oklch(100% 0 0);
+            --overlay: rgba(15, 23, 42, 0.7);
+            
+            --shadow: 4px 4px 0px 0px var(--border);
+            --shadow-hover: 6px 6px 0px 0px var(--border);
+            
+            --chart-1: #5294FF;
+            --chart-2: #FF6669;
+            --chart-3: #E0B700;
+            --chart-4: #04C86D;
+            --chart-5: #7A83FF;
+        }
+
+        [v-cloak] { display: none !important; }
+        
+        body { 
+            background-color: var(--background);
+            color: var(--foreground);
+            font-weight: var(--font-weight-base);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            transition: background-color 0.4s ease, color 0.4s ease;
+        }
+
+        h1, h2, h3, h4, h5, h6 { font-weight: var(--font-weight-heading); }
+        
+        /* Core Utilities */
+        .neo-border { border: 3px solid var(--border); }
+        .neo-border-b { border-bottom: 3px solid var(--border); }
+        .neo-border-t { border-top: 3px solid var(--border); }
+        .neo-border-r { border-right: 3px solid var(--border); }
+        
+        .neo-shadow { box-shadow: var(--shadow); }
+        
+        .neo-focus { outline: none; }
+        .neo-focus:focus-visible {
+            box-shadow: 0 0 0 4px var(--background), 0 0 0 7px var(--border);
+            transform: translateY(-2px);
+        }
+
+        .neo-panel {
+            background-color: var(--secondary-background);
+            border: 3px solid var(--border);
+            box-shadow: var(--shadow);
+            border-radius: var(--radius-base);
+            transition: all 0.3s ease;
+        }
+        
+        /* Interactive Elements */
+        .neo-card-interactive {
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, background-color 0.3s ease;
+            will-change: transform, box-shadow;
+        }
+        .neo-card-interactive:hover {
+            transform: translate(-3px, -3px) rotate(-0.5deg);
+            box-shadow: var(--shadow-hover);
+            z-index: 10;
+        }
+        .neo-card-interactive:active {
+            transform: translate(2px, 2px) rotate(0deg);
+            box-shadow: 2px 2px 0px 0px var(--border);
+        }
+
+        .neo-input {
+            background-color: var(--secondary-background);
+            color: var(--foreground);
+            border: 3px solid var(--border);
+            border-radius: var(--radius-base);
+            box-shadow: var(--shadow);
+            transition: all 0.2s ease;
+        }
+        .neo-input:focus {
+            outline: none;
+            box-shadow: var(--shadow-hover);
+            transform: translate(-2px, -2px);
+            background-color: var(--background);
+        }
+        .neo-input::placeholder { color: var(--muted-foreground); font-weight: 500; }
+        
+        /* Modals & Overlays */
+        .neo-glass {
+            background-color: var(--overlay);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 10px; height: 10px; }
+        ::-webkit-scrollbar-track { background: var(--background); border-left: 3px solid var(--border); }
+        ::-webkit-scrollbar-thumb { background: var(--foreground); border: 2px solid var(--background); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--main); border-color: var(--border); }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Animations */
+        .fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .fade-enter-from, .fade-leave-to { opacity: 0; transform: scale(0.96) translateY(10px); }
+        
+        .slide-enter-active, .slide-leave-active { transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1); }
+        .slide-enter-from, .slide-leave-to { transform: translateX(-100%); }
+
+        @keyframes neo-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        .animate-neo-skeleton { animation: neo-pulse 1.5s ease-in-out infinite; }
+        
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+        .animate-float { animation: float 3s ease-in-out infinite; }
+    </style>
 </head>
-<body>
-  <iframe src="https://script.google.com/macros/s/AKfycby25GhPtX7dds2HUnCOEyNSeexelHx-b7987J3_gr11Jl_z_WQSPvV3zljFDietsUNy/exec"></iframe>
+<body class="h-[100dvh] w-full overflow-hidden selection:bg-[var(--chart-3)] selection:text-[var(--main-foreground)] relative">
+
+    <div id="app" class="w-full h-full flex relative" v-cloak>
+
+        <!-- ========================================== -->
+        <!-- PUBLIC WORKSPACE (BENTO LAYOUT)            -->
+        <!-- ========================================== -->
+        <div v-if="!isAdmin" key="public-workspace" class="w-full h-full overflow-y-auto relative z-10 p-4 sm:p-6 md:p-8 lg:p-12 pb-12">
+            
+            <div class="max-w-6xl mx-auto flex flex-col lg:flex-row gap-8 lg:gap-16 relative">
+                
+                <!-- LEFT COLUMN: Profile & Info -->
+                <div class="w-full lg:w-1/3 flex flex-col gap-5 md:gap-6 shrink-0 lg:sticky lg:top-12 h-fit pt-2">
+                    
+                    <!-- Header Profil & Titles -->
+                    <div class="flex flex-row lg:flex-col items-center lg:items-start gap-4 lg:gap-5">
+                        <div class="w-20 h-20 md:w-28 md:h-28 lg:w-32 lg:h-32 rounded-full flex items-center justify-center neo-shadow neo-border transition-all animate-float hover:animate-none" style="background-color: var(--foreground);">
+                            <l-icon name="hexagon" icon-class="w-10 h-10 md:w-14 md:h-14 lg:w-16 lg:h-16 stroke-[2.5]" icon-style="color: var(--background);"></l-icon>
+                        </div>
+                        <div class="flex-1">
+                            <h1 class="text-3xl md:text-5xl lg:text-6xl font-black tracking-tighter leading-none" style="color: var(--foreground);">EduCore<span class="text-[var(--main)]">.</span></h1>
+                            <h2 class="text-sm md:text-xl font-bold mt-1 uppercase tracking-[0.15em]" style="color: var(--muted-foreground);">Workspace</h2>
+                        </div>
+                    </div>
+                    
+                    <!-- Live Clock Widget (OS Feel) -->
+                    <div class="neo-panel p-4 flex items-center justify-between mt-2">
+                        <div class="flex flex-col">
+                            <span class="text-[10px] font-black uppercase tracking-widest text-[var(--muted-foreground)]">Waktu Sistem</span>
+                            <span class="text-xl md:text-2xl font-black font-mono mt-0.5">{{ currentTime }}</span>
+                        </div>
+                        <l-icon name="clock" icon-class="w-6 h-6 stroke-[3] text-[var(--main)]"></l-icon>
+                    </div>
+                                        
+                    <!-- Search Input -->
+                    <div class="relative w-full mt-1 group">
+                        <input v-model="searchQuery" type="text" class="block w-full pl-12 pr-4 py-3.5 md:py-4 neo-input neo-focus font-bold text-sm md:text-base transition-all" placeholder="Cari modul atau fungsi..." aria-label="Pencarian Modul" />
+                        <l-icon name="search" icon-class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 stroke-[3] text-[var(--foreground)] group-focus-within:text-[var(--main)] transition-colors"></l-icon>
+                    </div>
+
+                    <!-- ACTION ROW: Theme Toggle & Admin Login -->
+                    <div class="flex items-center gap-3 w-full">
+                        <button @click="toggleTheme" class="w-[56px] h-[56px] flex items-center justify-center neo-panel neo-card-interactive neo-focus shrink-0" aria-label="Ganti Tema Visual" title="Ganti Tema">
+                            <l-icon :name="isDarkMode ? 'sun' : 'moon'" icon-class="w-6 h-6 stroke-[2.5]" icon-style="color: var(--foreground);"></l-icon>
+                        </button>
+                        
+                        <button @click="showLoginModal = true" class="flex-1 h-[56px] flex items-center justify-center gap-2 neo-card-interactive neo-focus rounded-[var(--radius-base)] font-black uppercase text-xs md:text-sm tracking-wide" style="background-color: var(--main); border: 3px solid var(--border); color: var(--main-foreground); box-shadow: var(--shadow);" aria-label="Otorisasi Eksekutif">
+                            <l-icon name="shield-check" icon-class="w-5 h-5 stroke-[2.5]"></l-icon>
+                            Otorisasi
+                        </button>
+                    </div>
+                </div>
+
+                <!-- RIGHT COLUMN: Bento Grid -->
+                <div class="w-full lg:w-2/3 flex-1 pb-8">
+                    
+                    <!-- Section Title -->
+                    <div class="flex items-center justify-between mb-4 md:mb-6">
+                        <h3 class="font-black text-lg md:text-xl uppercase tracking-tight">Modul Tersedia</h3>
+                        <div class="h-1 flex-1 mx-4 bg-[var(--border)] opacity-20 rounded-full"></div>
+                        <span class="text-xs font-bold text-[var(--muted-foreground)]">{{ displayedApps.length }} Modul</span>
+                    </div>
+
+                    <!-- Skeleton Loader -->
+                    <div v-if="isLoadingData" class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-5">
+                        <div v-for="i in 6" :key="i" class="neo-panel p-5 aspect-square sm:aspect-auto sm:h-44 animate-neo-skeleton"></div>
+                    </div>
+
+                    <!-- App Data Grid -->
+                    <div v-else>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-5">
+                            
+                            <!-- App Card (Bento Style) -->
+                            <div v-for="app in displayedApps" :key="app.id" @click="openApp(app)" tabindex="0" @keyup.enter="openApp(app)"
+                                 class="relative p-4 md:p-5 cursor-pointer flex flex-col justify-between aspect-square sm:aspect-auto sm:h-44 rounded-[var(--radius-base)] neo-card-interactive neo-focus group overflow-hidden" 
+                                 :style="`background-color: ${app.color || 'var(--main)'}; border: 3px solid var(--border); box-shadow: var(--shadow);`"
+                                 :aria-label="`Buka modul ${app.title}`">
+                                
+                                <!-- Decorational Abstract Shape behind icon -->
+                                <div class="absolute -right-4 -top-4 w-16 h-16 bg-white opacity-20 rounded-full mix-blend-overlay group-hover:scale-150 transition-transform duration-500"></div>
+
+                                <div class="flex justify-between items-start z-10">
+                                    <div class="w-10 h-10 md:w-12 md:h-12 bg-white/20 rounded-lg flex items-center justify-center border-2 border-[var(--border)] neo-shadow-sm group-hover:-translate-y-1 group-hover:rotate-6 transition-transform">
+                                        <l-icon :name="app.icon || 'box'" icon-class="w-5 h-5 md:w-6 md:h-6 stroke-[3]" icon-style="color: var(--main-foreground);"></l-icon>
+                                    </div>
+                                    <l-icon name="arrow-up-right" icon-class="w-5 h-5 stroke-[3] opacity-0 group-hover:opacity-100 transition-opacity text-[var(--main-foreground)]"></l-icon>
+                                </div>
+                                
+                                <div class="mt-auto flex flex-col items-start text-left z-10">
+                                    <h3 class="font-black text-sm md:text-base lg:text-lg leading-tight w-full truncate" style="color: var(--main-foreground);">{{ app.title }}</h3>
+                                    <p class="text-[10px] md:text-xs font-bold truncate mt-1 w-full mix-blend-color-burn" style="color: var(--main-foreground); opacity: 0.85;">{{ app.desc || 'Modul Sistem' }}</p>
+                                </div>
+                            </div>
+
+                        </div>
+                        
+                        <!-- Empty State -->
+                        <div v-if="displayedApps.length === 0" class="flex flex-col items-center justify-center py-16 px-4 text-center neo-panel w-full mt-2 border-dashed border-4 border-[var(--muted-foreground)] bg-transparent">
+                            <div class="w-20 h-20 bg-[var(--chart-2)] rounded-full flex items-center justify-center border-3 border-[var(--border)] neo-shadow animate-float mb-6">
+                                <l-icon name="ghost" icon-class="w-10 h-10 stroke-[2.5] text-[var(--main-foreground)]"></l-icon>
+                            </div>
+                            <h3 class="text-xl md:text-2xl font-black uppercase tracking-tight text-[var(--foreground)]">Resolusi Nihil</h3>
+                            <p class="text-sm mt-2 font-bold max-w-sm text-[var(--muted-foreground)]">Modul dengan kueri tersebut tidak teridentifikasi dalam database operasional.</p>
+                            <button @click="searchQuery = ''" class="mt-6 px-6 py-2 bg-[var(--foreground)] text-[var(--background)] font-bold uppercase text-xs rounded-md border-2 border-[var(--border)] hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_var(--border)] transition-all">Reset Kueri</button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- ADMIN CONSOLE                              -->
+        <!-- ========================================== -->
+        <div v-else key="admin-workspace" class="w-full h-full flex relative overflow-hidden z-10 bg-[var(--background)]">
+            <!-- Mobile Sidebar Overlay -->
+            <transition name="fade">
+                <div v-if="isSidebarOpen" @click="isSidebarOpen = false" class="fixed inset-0 z-[40] lg:hidden neo-glass"></div>
+            </transition>
+
+            <!-- Sidebar -->
+            <aside :class="['w-72 h-full flex flex-col shrink-0 z-[50] fixed lg:static transition-transform duration-300 cubic-bezier(0.25, 1, 0.5, 1) neo-border-r bg-[var(--secondary-background)]', isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0']">
+                <div class="h-16 md:h-20 flex items-center px-6 justify-between neo-border-b bg-[var(--main)]">
+                    <div class="flex items-center gap-3">
+                        <div class="p-1.5 bg-white/20 border-2 border-[var(--border)] rounded-md shadow-[2px_2px_0px_0px_var(--border)]">
+                            <l-icon name="terminal-square" icon-class="w-5 h-5 stroke-[3] text-[var(--main-foreground)]"></l-icon>
+                        </div>
+                        <span class="font-black text-lg tracking-tight uppercase text-[var(--main-foreground)]">Kendali Pusat</span>
+                    </div>
+                    <button @click="isSidebarOpen = false" class="lg:hidden p-1.5 rounded-md neo-card-interactive neo-focus bg-[var(--secondary-background)] border-2 border-[var(--border)]">
+                        <l-icon name="x" icon-class="w-5 h-5 text-[var(--foreground)]"></l-icon>
+                    </button>
+                </div>
+                
+                <div class="flex-1 overflow-y-auto no-scrollbar py-6 px-4 flex flex-col gap-2">
+                    <div class="text-[10px] font-black uppercase tracking-widest px-3 mb-2 text-[var(--muted-foreground)]">Infrastruktur & Logika</div>
+                    
+                    <button @click="navigateAdmin('datamaster')" :class="currentRoute === 'datamaster' ? 'bg-[var(--background)] shadow-[inset_4px_0px_0px_0px_var(--foreground)] translate-x-1' : 'hover:bg-[var(--background)] hover:translate-x-1'" class="w-full flex items-center gap-3 px-4 py-3.5 rounded-lg font-bold text-sm text-left transition-all neo-focus text-[var(--foreground)]">
+                        <l-icon name="database" icon-class="w-5 h-5 stroke-[2.5]"></l-icon> Data Master
+                    </button>
+                    
+                    <button @click="navigateAdmin('analytics')" :class="currentRoute === 'analytics' ? 'bg-[var(--background)] shadow-[inset_4px_0px_0px_0px_var(--foreground)] translate-x-1' : 'hover:bg-[var(--background)] hover:translate-x-1'" class="w-full flex items-center gap-3 px-4 py-3.5 rounded-lg font-bold text-sm text-left transition-all neo-focus text-[var(--foreground)]">
+                        <l-icon name="activity" icon-class="w-5 h-5 stroke-[2.5]"></l-icon> Telemetri Server
+                    </button>
+                </div>
+
+                <div class="p-5 neo-border-t bg-[var(--secondary-background)]">
+                    <button @click="logoutAdmin" class="neo-card-interactive neo-focus w-full py-3.5 flex justify-center items-center gap-2 uppercase tracking-widest text-xs font-black rounded-[var(--radius-base)] bg-[var(--chart-2)] text-[var(--main-foreground)] border-3 border-[var(--border)] shadow-[var(--shadow)]">
+                        <l-icon name="power" icon-class="w-4 h-4 stroke-[3]"></l-icon> Terminasi Sesi
+                    </button>
+                </div>
+            </aside>
+
+            <!-- Main Admin Content -->
+            <div class="flex-1 flex flex-col min-w-0 h-full relative">
+                <header class="h-16 md:h-20 flex items-center justify-between px-4 md:px-8 z-10 shrink-0 neo-border-b bg-[var(--secondary-background)]">
+                    <div class="flex items-center gap-4">
+                        <button @click="isSidebarOpen = true" class="lg:hidden p-2 rounded-md neo-card-interactive neo-focus bg-[var(--background)] border-2 border-[var(--border)]">
+                            <l-icon name="menu" icon-class="w-5 h-5 text-[var(--foreground)]"></l-icon>
+                        </button>
+                        <div>
+                            <h2 class="text-xl md:text-2xl font-black uppercase tracking-tight text-[var(--foreground)] leading-none">{{ currentRoute === 'datamaster' ? 'Data Master' : 'Telemetri' }}</h2>
+                            <span class="text-[10px] font-bold text-[var(--muted-foreground)] uppercase tracking-wider hidden md:inline-block mt-1">Sistem Pengaturan Inti</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 md:gap-5">
+                        <button @click="toggleTheme" class="p-2.5 rounded-md neo-card-interactive neo-focus bg-[var(--background)] border-2 border-[var(--border)]" aria-label="Ganti Tema Visual">
+                            <l-icon :name="isDarkMode ? 'sun' : 'moon'" icon-class="w-5 h-5 stroke-[2.5] text-[var(--foreground)]"></l-icon>
+                        </button>
+                        <div v-if="isSyncing" class="flex items-center gap-2 text-[10px] md:text-xs font-black px-3 md:px-4 py-2 rounded-md bg-[var(--chart-3)] text-[var(--main-foreground)] border-2 border-[var(--border)] shadow-[2px_2px_0px_0px_var(--border)]">
+                            <l-icon name="refresh-cw" icon-class="w-3.5 h-3.5 md:w-4 md:h-4 animate-spin stroke-[3]"></l-icon> 
+                            <span class="hidden sm:inline tracking-wider">SINKRONISASI...</span>
+                        </div>
+                    </div>
+                </header>
+
+                <main class="flex-1 overflow-y-auto p-4 md:p-8 no-scrollbar scroll-smooth">
+                    
+                    <!-- ADMIN: DATA MASTER -->
+                    <transition name="fade" mode="out-in">
+                        <div v-if="currentRoute === 'datamaster'" class="max-w-6xl mx-auto neo-panel overflow-hidden flex flex-col h-full bg-[var(--secondary-background)]">
+                            
+                            <!-- Toolbar -->
+                            <div class="p-5 md:p-6 flex flex-col sm:flex-row justify-between sm:items-center gap-4 neo-border-b bg-[var(--background)]">
+                                <div>
+                                    <h3 class="text-lg font-black uppercase text-[var(--foreground)]">Registri Modul</h3>
+                                    <p class="text-xs font-bold mt-1 text-[var(--muted-foreground)]">Total: <span class="text-[var(--foreground)]">{{ apps.length }}</span> terdaftar.</p>
+                                </div>
+                                <div class="flex gap-3">
+                                    <button @click="loadData" class="p-3 neo-card-interactive neo-focus rounded-[var(--radius-base)] bg-[var(--background)] border-3 border-[var(--border)]" aria-label="Refresh Data">
+                                        <l-icon name="rotate-cw" icon-class="w-5 h-5 stroke-[3] text-[var(--foreground)]"></l-icon>
+                                    </button>
+                                    <button @click="openAppForm()" class="neo-card-interactive neo-focus px-5 py-3 flex items-center justify-center gap-2 text-sm uppercase font-black rounded-[var(--radius-base)] flex-1 sm:flex-none bg-[var(--main)] text-[var(--main-foreground)] border-3 border-[var(--border)] shadow-[var(--shadow)]">
+                                        <l-icon name="plus" icon-class="w-5 h-5 stroke-[3]"></l-icon> Registrasi Baru
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Table -->
+                            <div class="overflow-x-auto flex-1">
+                                <table class="w-full text-left border-collapse min-w-[600px]">
+                                    <thead>
+                                        <tr class="text-[10px] md:text-xs uppercase tracking-widest neo-border-b bg-[var(--background)] text-[var(--foreground)]">
+                                            <th class="px-5 py-4 font-black neo-border-r whitespace-nowrap">Identitas Visual & URI</th>
+                                            <th class="px-5 py-4 font-black neo-border-r text-center whitespace-nowrap">Status Operasi</th>
+                                            <th class="px-5 py-4 font-black text-right whitespace-nowrap">Aksi Sistem</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="app in apps" :key="app.id" class="group border-b-2 border-[var(--border)] hover:bg-[var(--background)] transition-colors">
+                                            <td class="px-5 py-4 neo-border-r">
+                                                <div class="flex items-center gap-4">
+                                                    <div class="w-10 h-10 flex items-center justify-center shrink-0 rounded-lg border-2 border-[var(--border)] shadow-[2px_2px_0px_0px_var(--border)] group-hover:-translate-y-1 transition-transform" :style="`background-color: ${app.color || 'var(--main)'};`">
+                                                        <l-icon :name="app.icon || 'box'" icon-class="w-5 h-5 stroke-[3]" icon-style="color: var(--main-foreground);"></l-icon>
+                                                    </div>
+                                                    <div class="min-w-0">
+                                                        <div class="text-sm md:text-base font-black truncate text-[var(--foreground)]">{{ app.title }}</div>
+                                                        <div class="text-xs mt-1 font-bold truncate max-w-[200px] md:max-w-[350px] text-[var(--muted-foreground)]">{{ app.url }}</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-5 py-4 text-center neo-border-r align-middle">
+                                                <button @click="toggleAppStatus(app)" 
+                                                    :class="['px-3 py-1.5 rounded-md text-[10px] font-black uppercase neo-card-interactive neo-focus whitespace-nowrap border-2 border-[var(--border)] shadow-[2px_2px_0px_0px_var(--border)]', app.isActive ? 'bg-[var(--chart-4)] text-[var(--main-foreground)]' : 'bg-[var(--chart-2)] text-[var(--main-foreground)]']">
+                                                    {{ app.isActive ? 'ONLINE' : 'OFFLINE' }}
+                                                </button>
+                                            </td>
+                                            <td class="px-5 py-4 text-right align-middle">
+                                                <div class="flex items-center justify-end gap-2">
+                                                    <button @click="openAppForm(app)" class="p-2 rounded-md neo-card-interactive neo-focus bg-[var(--secondary-background)] border-2 border-[var(--border)] shadow-[2px_2px_0px_0px_var(--border)]" aria-label="Modifikasi">
+                                                        <l-icon name="pen-line" icon-class="w-4 h-4 stroke-[3] text-[var(--foreground)]"></l-icon>
+                                                    </button>
+                                                    <button @click="deleteAppPrompt(app)" class="p-2 rounded-md neo-card-interactive neo-focus bg-[var(--chart-2)] border-2 border-[var(--border)] shadow-[2px_2px_0px_0px_var(--border)]" aria-label="Terminasi">
+                                                        <l-icon name="trash-2" icon-class="w-4 h-4 stroke-[3] text-[var(--main-foreground)]"></l-icon>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr v-if="apps.length === 0">
+                                            <td colspan="3" class="px-5 py-12 text-center">
+                                                <div class="flex flex-col items-center justify-center gap-3">
+                                                    <l-icon name="database-zap" icon-class="w-12 h-12 stroke-[2] text-[var(--muted-foreground)]"></l-icon>
+                                                    <span class="font-bold uppercase text-sm text-[var(--muted-foreground)]">Basis data kosong. Registrasikan modul baru.</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    <!-- ADMIN: ANALYTICS -->
+                        <div v-else-if="currentRoute === 'analytics'" class="max-w-6xl mx-auto">
+                            <!-- KPI Cards -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 md:gap-6 mb-8">
+                                <div class="neo-panel p-6 flex items-center justify-between group cursor-default">
+                                    <div>
+                                        <div class="text-[10px] md:text-xs font-black uppercase tracking-widest text-[var(--muted-foreground)] mb-1">Total Modul Aktif</div>
+                                        <div class="text-3xl md:text-5xl font-black text-[var(--foreground)] flex items-baseline gap-2">
+                                            {{ apps.filter(a=>a.isActive).length }} <span class="text-sm text-[var(--muted-foreground)] font-bold">/ {{ apps.length }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="w-14 h-14 md:w-16 md:h-16 rounded-[var(--radius-base)] flex items-center justify-center shrink-0 bg-[var(--chart-4)] border-3 border-[var(--border)] shadow-[var(--shadow)] group-hover:-translate-y-1 group-hover:rotate-6 transition-transform">
+                                        <l-icon name="server" icon-class="w-7 h-7 md:w-8 md:h-8 stroke-[2.5] text-[var(--main-foreground)]"></l-icon>
+                                    </div>
+                                </div>
+                                <div class="neo-panel p-6 flex items-center justify-between group cursor-default">
+                                    <div>
+                                        <div class="text-[10px] md:text-xs font-black uppercase tracking-widest text-[var(--muted-foreground)] mb-1">Status Jaringan</div>
+                                        <div class="text-2xl md:text-3xl font-black text-[var(--foreground)] mt-2">STABIL</div>
+                                    </div>
+                                    <div class="w-14 h-14 md:w-16 md:h-16 rounded-[var(--radius-base)] flex items-center justify-center shrink-0 bg-[var(--chart-1)] border-3 border-[var(--border)] shadow-[var(--shadow)] group-hover:-translate-y-1 group-hover:-rotate-6 transition-transform">
+                                        <l-icon name="activity" icon-class="w-7 h-7 md:w-8 md:h-8 stroke-[2.5] text-[var(--main-foreground)]"></l-icon>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Chart Panel -->
+                            <div class="neo-panel p-5 md:p-8">
+                                <div class="flex items-center justify-between mb-6 neo-border-b pb-4">
+                                    <h3 class="font-black text-lg md:text-xl uppercase tracking-tight text-[var(--foreground)]">Grafik Kepadatan Transmisi</h3>
+                                    <l-icon name="bar-chart-2" icon-class="w-6 h-6 stroke-[3] text-[var(--muted-foreground)]"></l-icon>
+                                </div>
+                                <div class="w-full h-[300px] md:h-[400px] relative">
+                                    <canvas id="appChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </transition>
+                </main>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- MODALS & OVERLAYS                          -->
+        <!-- ========================================== -->
+        
+        <!-- Initial Loader -->
+        <Teleport to="body">
+            <transition name="fade">
+                <div v-if="isInitialLoading" class="fixed inset-0 z-[9999] flex flex-col justify-center items-center bg-[var(--background)]">
+                    <div class="neo-panel p-8 flex flex-col items-center mx-4 min-w-[280px]">
+                        <div class="relative mb-6">
+                            <div class="absolute inset-0 bg-[var(--main)] rounded-full animate-ping opacity-20"></div>
+                            <l-icon name="hexagon" icon-class="w-16 h-16 animate-spin-slow stroke-[2] text-[var(--foreground)] relative z-10" style="animation: spin 3s linear infinite;"></l-icon>
+                        </div>
+                        <div class="text-2xl font-black tracking-tighter uppercase text-center text-[var(--foreground)]">EDUCORE<span class="text-[var(--main)]">.</span></div>
+                        <div class="w-full h-1 bg-[var(--border)] mt-4 mb-3 opacity-10 rounded-full"></div>
+                        <div class="text-[10px] font-black uppercase tracking-widest text-[var(--muted-foreground)] animate-pulse">Menghidupkan Mesin...</div>
+                    </div>
+                </div>
+            </transition>
+        </Teleport>
+
+        <!-- Iframe Launcher -->
+        <Teleport to="body">
+            <transition name="fade">
+                <div v-if="activeApp" class="fixed inset-0 z-[9000] flex flex-col bg-[var(--background)]">
+                    <!-- Title Bar Window -->
+                    <div class="neo-border-b px-4 py-3 flex items-center justify-between z-10 shrink-0 bg-[var(--secondary-background)]">
+                        <div class="flex items-center gap-4 w-full">
+                            <button @click="closeApp" class="w-10 h-10 rounded-lg flex items-center justify-center neo-card-interactive neo-focus bg-[var(--chart-2)] border-3 border-[var(--border)] shadow-[2px_2px_0px_0px_var(--border)] shrink-0" aria-label="Tutup Modul">
+                                <l-icon name="x" icon-class="w-5 h-5 stroke-[3] text-[var(--main-foreground)]"></l-icon>
+                            </button>
+                            <div class="h-6 w-1 rounded-full bg-[var(--border)] opacity-30"></div>
+                            <div class="flex items-center gap-3 font-black text-sm md:text-base uppercase tracking-wider text-[var(--foreground)] truncate">
+                                <l-icon :name="activeApp.icon || 'box'" icon-class="w-5 h-5 stroke-[3] text-[var(--main)]"></l-icon>
+                                <span class="truncate">{{ activeApp.title }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="relative flex-1 bg-[var(--background)]">
+                        <transition name="fade">
+                            <div v-if="isIframeLoading" class="absolute inset-0 flex flex-col items-center justify-center z-50 neo-glass">
+                                <div class="bg-[var(--secondary-background)] border-3 border-[var(--border)] shadow-[var(--shadow)] p-6 rounded-[var(--radius-base)] flex flex-col items-center">
+                                    <l-icon name="loader-2" icon-class="w-12 h-12 animate-spin mb-4 stroke-[3] text-[var(--main)]"></l-icon>
+                                    <span class="text-sm font-black uppercase tracking-widest text-[var(--foreground)]">Memuat Modul...</span>
+                                </div>
+                            </div>
+                        </transition>
+                        <iframe :src="iframeSrc" @load="onIframeLoad" class="w-full h-full border-0 absolute inset-0 z-0 bg-white" title="Modul Aktif"></iframe>
+                    </div>
+                </div>
+            </transition>
+        </Teleport>
+
+        <!-- Modal Otorisasi -->
+        <Teleport to="body">
+            <transition name="fade">
+                <div v-if="showLoginModal" class="fixed inset-0 z-[9500] flex items-center justify-center p-4 neo-glass">
+                    <div class="neo-panel w-full max-w-sm p-8 text-center mx-4 shadow-[8px_8px_0px_0px_var(--border)] animate-float" style="animation-duration: 4s;">
+                        <div class="w-20 h-20 mx-auto rounded-2xl flex items-center justify-center mb-6 -rotate-6 bg-[var(--chart-3)] border-4 border-[var(--border)] shadow-[var(--shadow)]">
+                            <l-icon name="fingerprint" icon-class="w-10 h-10 stroke-[3] text-[var(--main-foreground)]"></l-icon>
+                        </div>
+                        <h2 class="text-2xl font-black mb-2 uppercase tracking-tight text-[var(--foreground)]">Protokol Keamanan</h2>
+                        <p class="text-[11px] font-bold mb-8 neo-border-b pb-4 text-[var(--muted-foreground)]">Otentikasi Kredensial Eksekutif</p>
+                        
+                        <input v-model="pinInput" ref="pinInputRef" type="password" placeholder="••••••••" class="w-full px-5 py-4 neo-input neo-focus text-center tracking-[0.5em] text-2xl font-mono mb-8 font-black" @keyup.enter="processLogin" aria-label="PIN Otorisasi" />
+                        
+                        <div class="flex gap-4 flex-col">
+                            <button @click="processLogin" class="neo-card-interactive neo-focus w-full py-4 text-sm uppercase flex items-center justify-center gap-2 font-black rounded-[var(--radius-base)] bg-[var(--main)] text-[var(--main-foreground)] border-3 border-[var(--border)] shadow-[var(--shadow)]" :disabled="isSubmitting">
+                                <l-icon v-if="isSubmitting" name="loader-2" icon-class="w-5 h-5 animate-spin"></l-icon>
+                                <l-icon v-else name="unlock" icon-class="w-5 h-5 stroke-[2.5]"></l-icon>
+                                {{ isSubmitting ? 'Verifikasi...' : 'Akses Sistem' }}
+                            </button>
+                            <button @click="showLoginModal = false; pinInput = ''" class="neo-card-interactive neo-focus w-full py-3 text-xs uppercase font-black rounded-[var(--radius-base)] bg-[var(--background)] text-[var(--foreground)] border-3 border-[var(--border)] shadow-[2px_2px_0px_0px_var(--border)]">Batal</button>
+                        </div>
+                    </div>
+                </div>
+            </transition>
+        </Teleport>
+
+        <!-- Modal Form Modul -->
+        <Teleport to="body">
+            <transition name="fade">
+                <div v-if="showAppModal" class="fixed inset-0 z-[9500] flex items-center justify-center p-4 neo-glass">
+                    <div class="neo-panel w-full max-w-md flex flex-col max-h-[85dvh] mx-4 p-0 overflow-hidden shadow-[8px_8px_0px_0px_var(--border)]">
+                        <!-- Header -->
+                        <div class="p-5 neo-border-b flex justify-between items-center shrink-0 bg-[var(--chart-3)]">
+                            <h2 class="text-xl font-black uppercase text-[var(--main-foreground)] flex items-center gap-2">
+                                <l-icon :name="isEditing ? 'pen-tool' : 'plus-square'" icon-class="w-5 h-5 stroke-[3]"></l-icon>
+                                {{ isEditing ? 'Edit Modul' : 'Modul Baru' }}
+                            </h2>
+                            <button @click="showAppModal = false" class="p-1.5 rounded-md neo-card-interactive neo-focus bg-[var(--secondary-background)] border-2 border-[var(--border)] shadow-[2px_2px_0px_0px_var(--border)]" aria-label="Tutup">
+                                <l-icon name="x" icon-class="w-5 h-5 stroke-[3] text-[var(--foreground)]"></l-icon>
+                            </button>
+                        </div>
+                        
+                        <!-- Body -->
+                        <div class="p-6 overflow-y-auto no-scrollbar space-y-6 bg-[var(--secondary-background)]">
+                            <div>
+                                <label class="block text-[10px] font-black uppercase tracking-widest mb-2 text-[var(--foreground)]">Identitas Kustom *</label>
+                                <input v-model="appForm.title" type="text" class="w-full px-4 py-3 neo-input neo-focus font-bold text-sm" placeholder="Contoh: Sistem Akademik" />
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-black uppercase tracking-widest mb-2 text-[var(--foreground)]">Deskripsi Subjudul *</label>
+                                <input v-model="appForm.desc" type="text" class="w-full px-4 py-3 neo-input neo-focus font-bold text-sm" placeholder="Penjelasan ringkas fungsionalitas" />
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-black uppercase tracking-widest mb-2 text-[var(--foreground)]">End Point URL *</label>
+                                <div class="relative">
+                                    <l-icon name="link-2" icon-class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)]"></l-icon>
+                                    <input v-model="appForm.url" type="url" class="w-full pl-10 pr-4 py-3 neo-input neo-focus font-mono font-bold text-sm" placeholder="https://..." />
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-[10px] font-black uppercase tracking-widest mb-2 text-[var(--foreground)]">Kode Ikon (Lucide)</label>
+                                    <div class="flex items-center gap-3 relative">
+                                        <div class="w-12 h-12 rounded-[var(--radius-base)] flex items-center justify-center shrink-0 border-2 border-[var(--border)] bg-[var(--background)] shadow-[2px_2px_0px_0px_var(--border)] z-10">
+                                            <l-icon :name="appForm.icon || 'box'" icon-class="w-6 h-6 stroke-[3] text-[var(--foreground)]"></l-icon>
+                                        </div>
+                                        <input v-model="appForm.icon" type="text" class="w-full pl-3 pr-3 py-3 -ml-4 neo-input neo-focus font-mono font-bold text-xs" placeholder="box" />
+                                    </div>
+                                    <p class="text-[8px] mt-1 text-[var(--muted-foreground)] uppercase font-bold text-right"><a href="https://lucide.dev/icons/" target="_blank" class="hover:underline">Referensi Ikon &rarr;</a></p>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-black uppercase tracking-widest mb-2 text-[var(--foreground)]">Warna Aksen</label>
+                                    <div class="flex items-center gap-3 relative">
+                                        <input v-model="appForm.color" type="color" class="h-12 w-12 rounded-[var(--radius-base)] cursor-pointer p-0 shrink-0 border-2 border-[var(--border)] shadow-[2px_2px_0px_0px_var(--border)] z-10 bg-white" />
+                                        <input v-model="appForm.color" type="text" class="w-full pl-3 pr-3 py-3 -ml-4 neo-input neo-focus text-xs uppercase font-mono font-black" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Footer -->
+                        <div class="p-5 neo-border-t flex gap-4 shrink-0 bg-[var(--background)]">
+                            <button @click="showAppModal = false" class="neo-card-interactive neo-focus flex-1 py-3 text-xs uppercase font-black rounded-[var(--radius-base)] bg-[var(--secondary-background)] text-[var(--foreground)] border-3 border-[var(--border)] shadow-[2px_2px_0px_0px_var(--border)]">Batal</button>
+                            <button @click="saveAppForm" class="neo-card-interactive neo-focus flex-[2] py-3 text-xs uppercase flex items-center justify-center gap-2 font-black rounded-[var(--radius-base)] bg-[var(--main)] text-[var(--main-foreground)] border-3 border-[var(--border)] shadow-[var(--shadow)]" :disabled="isSubmitting">
+                                <l-icon v-if="isSubmitting" name="loader-2" icon-class="w-4 h-4 animate-spin stroke-[3]"></l-icon>
+                                <l-icon v-else name="save" icon-class="w-4 h-4 stroke-[3]"></l-icon>
+                                {{ isSubmitting ? 'Menyimpan...' : 'Simpan Data' }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </transition>
+        </Teleport>
+
+    </div>
+
+    <!-- SCRIPT VUE 3 NATIVE RPC ARCHITECTURE -->
+    <script>
+        const { createApp, ref, computed, watch, onMounted, nextTick } = Vue;
+
+        const LucideIcon = {
+            props: {
+                name: { type: String, required: true },
+                iconClass: { type: String, default: '' },
+                iconStyle: { type: String, default: '' }
+            },
+            template: `<span v-html="iconHtml" style="display: contents;"></span>`,
+            computed: {
+                iconHtml() { return `<i data-lucide="${this.name || 'box'}" class="${this.iconClass}" style="${this.iconStyle}"></i>`; }
+            },
+            mounted() { this.renderIcon(); },
+            updated() { this.renderIcon(); },
+            methods: {
+                renderIcon() {
+                    this.$nextTick(() => { if (window.lucide) window.lucide.createIcons({ root: this.$el }); });
+                }
+            }
+        };
+
+        const app = createApp({
+            setup() {
+                // State Core
+                const isInitialLoading = ref(true);
+                const isLoadingData = ref(true);
+                const isSyncing = ref(false);
+                const isAdmin = ref(false);
+                
+                // Simpan JWT Token
+                const authToken = ref('');
+                
+                const isDarkMode = ref(false);
+                
+                // Clock State
+                const currentTime = ref('');
+
+                // Routing & Data
+                const currentRoute = ref('datamaster');
+                const apps = ref([]);
+                const searchQuery = ref('');
+
+                // UI States
+                const isSidebarOpen = ref(false);
+                const showLoginModal = ref(false);
+                const pinInputRef = ref(null);
+                const pinInput = ref('');
+                const isSubmitting = ref(false);
+
+                // Iframe States
+                const activeApp = ref(null);
+                const iframeSrc = ref('about:blank');
+                const isIframeLoading = ref(false);
+
+                // Form States
+                const showAppModal = ref(false);
+                const isEditing = ref(false);
+                const appForm = ref({});
+                
+                let chartInstance = null;
+
+                // --- CLOCK LOGIC ---
+                const updateClock = () => {
+                    const now = new Date();
+                    currentTime.value = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                };
+
+                // --- NAVIGATION & THEME ---
+                const navigateAdmin = (route) => {
+                    currentRoute.value = route;
+                    if (window.innerWidth < 1024) isSidebarOpen.value = false;
+                };
+
+                const toggleTheme = () => {
+                    isDarkMode.value = !isDarkMode.value;
+                    const docEl = document.documentElement;
+                    const metaTheme = document.getElementById('meta-theme-color');
+                    
+                    if (isDarkMode.value) {
+                        docEl.classList.add('dark');
+                        localStorage.setItem('educore_theme', 'dark');
+                        if(metaTheme) metaTheme.setAttribute('content', '#0f172a');
+                    } else {
+                        docEl.classList.remove('dark');
+                        localStorage.setItem('educore_theme', 'light');
+                        if(metaTheme) metaTheme.setAttribute('content', '#e6f0fa');
+                    }
+                    if (currentRoute.value === 'analytics') renderChart();
+                };
+
+                const initTheme = () => {
+                    const savedTheme = localStorage.getItem('educore_theme');
+                    if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                        isDarkMode.value = true;
+                        document.documentElement.classList.add('dark');
+                        const metaTheme = document.getElementById('meta-theme-color');
+                        if(metaTheme) metaTheme.setAttribute('content', '#0f172a');
+                    }
+                };
+
+                // --- RPC & HYBRID ADAPTER ---
+                const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwasR_A2nFS5pAdAB0dZIKWf7w0An9k7TtqF-O4oUaOH7fz5lcWGE-a_qMmI5aJCpRW/exec"; 
+
+                const rpcCall = (action, payload = {}) => {
+                    return new Promise((resolve, reject) => {
+                        const requestData = JSON.stringify({ action, payload, token: authToken.value });
+
+                        if (typeof google === 'undefined') {
+                            if (GAS_WEBAPP_URL) {
+                                fetch(GAS_WEBAPP_URL, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                                    body: requestData
+                                })
+                                .then(res => res.json())
+                                .then(result => {
+                                    if (!result.success) reject(new Error(result.error));
+                                    else resolve(result.data);
+                                })
+                                .catch(err => reject(new Error("Kegagalan transmisi Hybrid: " + err.message)));
+                                return;
+                            } else {
+                                // Mock Fallback untuk lingkungan pengembangan non-GAS
+                                setTimeout(() => {
+                                    if (action === 'GET_APPS') resolve([
+                                        { id: 'AKD', title: 'Sistem Akademik', desc: 'Manajemen nilai & KBM', url: 'https://example.com', icon: 'graduation-cap', color: '#5294FF', isActive: true },
+                                        { id: 'FIN', title: 'Keuangan Terpadu', desc: 'Sistem SPP & Akuntansi', url: 'https://example.com', icon: 'wallet', color: '#05E17A', isActive: true },
+                                        { id: 'HRD', title: 'Kepegawaian', desc: 'Absensi & Data Guru', url: 'https://example.com', icon: 'users', color: '#FACC00', isActive: false },
+                                    ]);
+                                    else if (action === 'AUTHORIZE') {
+                                        if (payload.pin === 'admin') resolve({ token: 'mock_jwt_token_header.payload.signature' });
+                                        else reject(new Error("401 UNAUTHORIZED: Kredensial tidak valid."));
+                                    }
+                                    else resolve({ success: true });
+                                }, 800);
+                                return;
+                            }
+                        }
+
+                        google.script.run
+                            .withSuccessHandler((responseStr) => {
+                                try {
+                                    const result = JSON.parse(responseStr);
+                                    if (!result.success) reject(new Error(result.error));
+                                    else resolve(result.data);
+                                } catch (e) { reject(new Error("Gagal mengurai respons sistem.")); }
+                            })
+                            .withFailureHandler((err) => reject(new Error(err.message)))
+                            .serverRouter(requestData);
+                    });
+                };
+
+                // --- TOAST/FEEDBACK ENGINE ---
+                const showToast = (title, iconType = 'info') => {
+                    const styles = getComputedStyle(document.documentElement);
+                    let iconColor = iconType === 'success' ? styles.getPropertyValue('--chart-4').trim() : 
+                                    iconType === 'error' ? styles.getPropertyValue('--chart-2').trim() : 
+                                    styles.getPropertyValue('--main').trim();
+                    
+                    const bgColor = styles.getPropertyValue('--secondary-background').trim();
+                    const textColor = styles.getPropertyValue('--foreground').trim();
+                    const borderColor = styles.getPropertyValue('--border').trim();
+                    
+                    let htmlRaw = `
+                        <div style="display:flex; align-items:center; gap:14px; font-family:'Google Sans', sans-serif;">
+                            <div style="width:16px; height:16px; border: 3px solid var(--border); border-radius: 4px; background-color:${iconColor}; box-shadow: 2px 2px 0px 0px var(--border);"></div>
+                            <span style="color:${textColor}; font-size:13px; font-weight:800; text-transform: uppercase; letter-spacing: 0.05em;">${title}</span>
+                        </div>
+                    `;
+                    
+                    let htmlSafe = DOMPurify.sanitize(htmlRaw);
+
+                    Swal.fire({
+                        toast: true, position: 'bottom-end', showConfirmButton: false, timer: 3500,
+                        background: bgColor,
+                        html: htmlSafe,
+                        customClass: { popup: `!border-[3px] !border-[var(--border)] !rounded-[var(--radius-base)] !shadow-[6px_6px_0px_0px_var(--border)] !m-4 !p-4` }
+                    });
+                };
+
+                const displayedApps = computed(() => {
+                    let list = apps.value.filter(a => a.isActive);
+                    if (searchQuery.value) {
+                        const q = searchQuery.value.toLowerCase();
+                        list = list.filter(a => a.title.toLowerCase().includes(q) || a.desc.toLowerCase().includes(q));
+                    }
+                    return list;
+                });
+
+                // --- CORE ACTIONS ---
+                const loadData = async () => {
+                    try {
+                        isSyncing.value = true;
+                        const data = await rpcCall('GET_APPS');
+                        apps.value = data || [];
+                    } catch (error) { showToast('Gagal sinkronisasi data.', 'error'); } 
+                    finally { isSyncing.value = false; isLoadingData.value = false; }
+                };
+
+                watch(showLoginModal, (val) => {
+                    if (val) nextTick(() => pinInputRef.value?.focus());
+                });
+
+                const processLogin = async () => {
+                    if (!pinInput.value) return showToast('Kredensial wajib diisi.', 'error');
+                    isSubmitting.value = true;
+                    try {
+                        const data = await rpcCall('AUTHORIZE', { pin: pinInput.value });
+                        
+                        if (data && data.token) {
+                            isAdmin.value = true;
+                            authToken.value = data.token; // Simpan JWT Token yang aman
+                            showLoginModal.value = false;
+                            pinInput.value = '';
+                            showToast('Otorisasi Diterima.', 'success');
+                            if(currentRoute.value === 'analytics') renderChart();
+                        } else { 
+                            showToast('Respons server tidak valid.', 'error'); 
+                        }
+                    } catch (error) { 
+                        // Menangani error dari backend (termasuk 401 UNAUTHORIZED)
+                        const isAuthError = error.message.includes('401');
+                        showToast(isAuthError ? 'Kredensial Tidak Valid.' : 'Kegagalan komunikasi server.', 'error'); 
+                    } 
+                    finally { isSubmitting.value = false; }
+                };
+
+                const logoutAdmin = () => {
+                    isAdmin.value = false;
+                    authToken.value = '';
+                    isSidebarOpen.value = false;
+                    showToast('Sesi Eksekutif Diakhiri.', 'info');
+                };
+
+                const openAppForm = (app = null) => {
+                    isEditing.value = !!app;
+                    appForm.value = app ? JSON.parse(JSON.stringify(app)) : { 
+                        id: 'MDL_' + new Date().getTime().toString().slice(-4), title: '', desc: '', url: '', icon: 'box', color: '#5294FF', isActive: true 
+                    };
+                    showAppModal.value = true;
+                };
+
+                const saveAppForm = async () => {
+                    if (!appForm.value.title || !appForm.value.url) return showToast('Data krusial tidak lengkap.', 'error');
+                    isSubmitting.value = true;
+                    try {
+                        const action = isEditing.value ? 'UPDATE_APP' : 'CREATE_APP';
+                        await rpcCall(action, appForm.value);
+                        showToast('Resolusi sistem tersimpan.', 'success');
+                        showAppModal.value = false;
+                        await loadData();
+                    } catch (error) { 
+                        // Jika token JWT sudah kadaluwarsa, error 401 akan muncul di sini
+                        showToast(error.message.includes('401') ? 'Sesi habis, silakan login ulang.' : 'Gagal menyimpan.', 'error');
+                        if (error.message.includes('401')) logoutAdmin();
+                    } 
+                    finally { isSubmitting.value = false; }
+                };
+
+                const deleteAppPrompt = (app) => {
+                    const safeTitle = DOMPurify.sanitize(app.title);
+                    const styles = getComputedStyle(document.documentElement);
+                    const bgColor = styles.getPropertyValue('--secondary-background').trim();
+                    const textColor = styles.getPropertyValue('--foreground').trim();
+
+                    Swal.fire({
+                        title: `<span style="color:${textColor}; font-weight:900; letter-spacing: -0.02em;">KONFIRMASI TERMINASI</span>`,
+                        html: `<p style="font-weight: 700; color: ${textColor}; font-size: 14px; opacity:0.8;">Modul <span style="color:var(--chart-2); font-weight:900; background: rgba(255, 77, 80, 0.1); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--chart-2);">${safeTitle}</span> akan dihapus permanen.</p>`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        background: bgColor,
+                        confirmButtonColor: 'var(--chart-2)', cancelButtonColor: 'var(--background)',
+                        confirmButtonText: '<span style="font-weight:900; font-size: 12px; color:var(--main-foreground);">EKSEKUSI HAPUS</span>', 
+                        cancelButtonText: `<span style="font-weight:900; color: ${textColor}; font-size: 12px;">BATAL</span>`,
+                        customClass: { 
+                            popup: `!border-[4px] !border-[var(--border)] !rounded-[var(--radius-base)] !shadow-[8px_8px_0px_0px_var(--border)] !m-4`,
+                            confirmButton: `!border-3 !border-[var(--border)] !shadow-[4px_4px_0px_0px_var(--border)] hover:-translate-y-1 transition-transform !rounded-md px-5 py-3`,
+                            cancelButton: `!border-3 !border-[var(--border)] !shadow-[4px_4px_0px_0px_var(--border)] hover:-translate-y-1 transition-transform !rounded-md px-5 py-3`
+                        }
+                    }).then(async (result) => {
+                        if (result.isConfirmed) {
+                            try {
+                                await rpcCall('DELETE_APP', { id: app.id });
+                                showToast('Terminasi berhasil.', 'success');
+                                await loadData();
+                            } catch (error) { 
+                                showToast(error.message.includes('401') ? 'Akses ditolak.' : 'Gagal melakukan terminasi.', 'error');
+                                if (error.message.includes('401')) logoutAdmin();
+                            }
+                        }
+                    });
+                };
+
+                const toggleAppStatus = async (app) => {
+                    try {
+                        const original = app.isActive;
+                        app.isActive = !app.isActive; // Optimistic UI update
+                        await rpcCall('TOGGLE_APP', { id: app.id });
+                        // Silently reload in background to ensure consistency
+                        rpcCall('GET_APPS').then(data => apps.value = data); 
+                    } catch (error) { 
+                        app.isActive = !app.isActive; // Revert on fail
+                        showToast(error.message.includes('401') ? 'Sesi habis, silakan login ulang.' : 'Gagal merubah status.', 'error'); 
+                        if (error.message.includes('401')) logoutAdmin();
+                    }
+                };
+
+                const openApp = (app) => {
+                    activeApp.value = app;
+                    isIframeLoading.value = true;
+                    // Slightly longer timeout to allow modal animation to start smoothly
+                    setTimeout(() => { iframeSrc.value = app.url; }, 400);
+                };
+
+                const closeApp = () => { iframeSrc.value = 'about:blank'; activeApp.value = null; };
+                const onIframeLoad = () => { if (iframeSrc.value !== 'about:blank') isIframeLoading.value = false; };
+
+                // --- CHART.JS LOGIC ---
+                const renderChart = () => {
+                    nextTick(() => {
+                        const canvas = document.getElementById('appChart');
+                        if (!canvas) return;
+                        if (chartInstance) chartInstance.destroy();
+                        
+                        const styles = getComputedStyle(document.documentElement);
+                        const labels = apps.value.map(a => a.title);
+                        // Generate mock realistic looking data
+                        const data = apps.value.map(() => Math.floor(Math.random() * 80) + 20); 
+                        const colors = apps.value.map(a => a.color || styles.getPropertyValue('--main').trim());
+
+                        const gridColor = isDarkMode.value ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)';
+                        const tickColor = styles.getPropertyValue('--foreground').trim();
+                        const borderColor = styles.getPropertyValue('--border').trim();
+
+                        chartInstance = new Chart(canvas, {
+                            type: 'bar',
+                            data: { 
+                                labels: labels, 
+                                datasets: [{ 
+                                    data: data, 
+                                    backgroundColor: colors, 
+                                    borderColor: borderColor, 
+                                    borderWidth: 3, 
+                                    borderRadius: 4,
+                                    hoverBackgroundColor: borderColor,
+                                    barPercentage: 0.6
+                                }] 
+                            },
+                            options: {
+                                responsive: true, 
+                                maintainAspectRatio: false, 
+                                plugins: { 
+                                    legend: { display: false },
+                                    tooltip: {
+                                        backgroundColor: styles.getPropertyValue('--secondary-background').trim(),
+                                        titleColor: tickColor,
+                                        bodyColor: tickColor,
+                                        borderColor: borderColor,
+                                        borderWidth: 3,
+                                        titleFont: { family: 'Google Sans', size: 14, weight: 'bold' },
+                                        bodyFont: { family: 'Google Sans', size: 13, weight: 'bold' },
+                                        padding: 12,
+                                        cornerRadius: 6,
+                                        displayColors: false
+                                    }
+                                },
+                                animation: {
+                                    tension: { duration: 1000, easing: 'linear', from: 1, to: 0, loop: true }
+                                },
+                                scales: {
+                                    y: { 
+                                        beginAtZero: true,
+                                        grid: { color: gridColor, lineWidth: 2, drawBorder: false }, 
+                                        ticks: { color: tickColor, font: { weight: '900', family: 'Google Sans', size: 11 }, padding: 10 } 
+                                    },
+                                    x: { 
+                                        grid: { display: false, drawBorder: false }, 
+                                        ticks: { color: tickColor, font: { weight: '900', family: 'Google Sans', size: 11 }, padding: 10 } 
+                                    }
+                                }
+                            }
+                        });
+                    });
+                };
+
+                watch(currentRoute, (newRoute) => { if (newRoute === 'analytics') renderChart(); });
+
+                onMounted(() => {
+                    initTheme();
+                    updateClock();
+                    setInterval(updateClock, 1000);
+                    
+                    // Artificial delay for cool loading animation
+                    setTimeout(() => { 
+                        isInitialLoading.value = false; 
+                        loadData();
+                    }, 1800); 
+                });
+
+                return {
+                    isInitialLoading, isLoadingData, isSyncing, isAdmin, currentRoute, apps, searchQuery, displayedApps,
+                    isSidebarOpen, navigateAdmin, isDarkMode, toggleTheme, currentTime,
+                    showLoginModal, pinInputRef, pinInput, isSubmitting, activeApp, iframeSrc, isIframeLoading,
+                    showAppModal, isEditing, appForm, loadData,
+                    processLogin, logoutAdmin, openAppForm, saveAppForm, deleteAppPrompt, toggleAppStatus,
+                    openApp, closeApp, onIframeLoad
+                };
+            }
+        });
+
+        app.component('l-icon', LucideIcon);
+        app.mount('#app');
+    </script>
 </body>
 </html>

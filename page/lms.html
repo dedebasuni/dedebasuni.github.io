@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=yes">
+  <title>MiniLMS - SMA PGRI Takokak</title>
+  <link rel="icon" href="https://www.google.com/s2/favicons?domain=google.com&sz=128" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --primary-glow: rgba(37, 99, 235, .28);
+      --primary-soft: rgba(37, 99, 235, .10);
+      --accent: #06b6d4;
+      --bg-primary: #f8fafc;
+      --bg-card: rgba(255,255,255,.72);
+      --border-color: #e2e8f0;
+      --text-primary: #0f172a;
+      --text-muted: #64748b;
+      --radius-full: 999px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      font-family: 'Google Sans', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      background: var(--bg-primary);
+    }
+
+    iframe {
+      display: block;
+      border: none;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* ==================================================
+       PAGE START LOADER
+    ================================================== */
+
+    .page-loader {
+      position: fixed;
+      inset: 0;
+      z-index: 12000;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      overflow: hidden;
+
+      background:
+        radial-gradient(
+          circle at 50% 38%,
+          var(--primary-glow),
+          transparent 30%
+        ),
+        radial-gradient(
+          circle at 18% 78%,
+          var(--primary-soft),
+          transparent 32%
+        ),
+        var(--bg-primary);
+
+      opacity: 1;
+      visibility: visible;
+      transition:
+        opacity .58s cubic-bezier(.4,0,.2,1),
+        visibility .58s ease;
+
+      overscroll-behavior: contain;
+      isolation: isolate;
+    }
+
+    .page-loader::before,
+    .page-loader::after {
+      content: '';
+      position: absolute;
+      width: min(52vw, 520px);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      pointer-events: none;
+      filter: blur(48px);
+      opacity: .18;
+      z-index: -1;
+      will-change: transform;
+    }
+
+    .page-loader::before {
+      top: -18%;
+      right: -15%;
+      background: var(--primary);
+      animation: page-loader-blob-a 5.6s ease-in-out infinite alternate;
+    }
+
+    .page-loader::after {
+      bottom: -22%;
+      left: -18%;
+      background: var(--accent);
+      animation: page-loader-blob-b 6.4s ease-in-out infinite alternate;
+    }
+
+    .page-loader.is-hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .page-loader.is-hidden .page-loader-card {
+      transform: translateY(-8px) scale(.985);
+      opacity: 0;
+      filter: blur(2px);
+    }
+
+    .page-loader[hidden] {
+      display: none !important;
+    }
+
+    .page-loader-card {
+      position: relative;
+      width: min(330px, 88vw);
+      text-align: center;
+      padding: 28px 22px 22px;
+
+      backdrop-filter: blur(22px) saturate(135%);
+      -webkit-backdrop-filter: blur(22px) saturate(135%);
+
+      animation:
+        page-loader-enter
+        .72s cubic-bezier(.16,1,.3,1) both;
+
+      transition:
+        opacity .42s ease,
+        transform .42s ease,
+        filter .42s ease;
+
+      overflow: hidden;
+    }
+
+    .page-loader-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+
+      background:
+        linear-gradient(
+          115deg,
+          transparent 25%,
+          rgba(255,255,255,.14) 45%,
+          transparent 64%
+        );
+
+      transform: translateX(-130%);
+      animation: page-loader-shine 2.8s ease-in-out .45s infinite;
+    }
+
+    .page-loader-visual {
+      position: relative;
+      width: 92px;
+      height: 92px;
+      margin: 0 auto 17px;
+      display: grid;
+      place-items: center;
+    }
+
+    .page-loader-ring,
+    .page-loader-ring::before,
+    .page-loader-ring::after {
+      position: absolute;
+      border-radius: 50%;
+      content: '';
+    }
+
+    .page-loader-ring {
+      inset: 0;
+      border: 2px solid rgba(37,99,235,.14);
+      border-top-color: var(--primary);
+      border-right-color: var(--accent);
+      animation: page-loader-spin 1.05s linear infinite;
+      filter: drop-shadow(0 0 7px var(--primary-glow));
+    }
+
+    .page-loader-ring::before {
+      inset: 7px;
+      border: 2px dashed rgba(37,99,235,.28);
+      animation: page-loader-spin-reverse 2.4s linear infinite;
+    }
+
+    .page-loader-ring::after {
+      inset: -6px;
+      border: 1px solid rgba(6,182,212,.20);
+      animation: page-loader-pulse-ring 1.8s ease-in-out infinite;
+    }
+
+    .page-loader-mark {
+      position: relative;
+      width: 68px;
+      height: 68px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+
+      background:
+        linear-gradient(
+          145deg,
+          var(--primary),
+          var(--primary-dark)
+        );
+
+      color: #fff;
+
+      box-shadow:
+        0 12px 30px var(--primary-glow),
+        0 0 0 5px rgba(255,255,255,.70);
+
+      animation: page-loader-logo-pulse 1.7s ease-in-out infinite;
+      z-index: 2;
+    }
+
+    .page-loader-mark::after {
+      content: '';
+      position: absolute;
+      inset: 8px;
+      border-radius: inherit;
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(255,255,255,.20),
+          transparent 52%
+        );
+
+      pointer-events: none;
+    }
+
+    .page-loader-mark svg {
+      width: 36px;
+      height: 36px;
+      position: relative;
+      z-index: 2;
+      animation: page-loader-icon-float 1.7s ease-in-out infinite;
+    }
+
+    .page-loader-dots {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      margin-bottom: 9px;
+      height: 7px;
+    }
+
+    .page-loader-dots span {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--primary);
+      opacity: .32;
+      animation: page-loader-dot 1.05s ease-in-out infinite;
+    }
+
+    .page-loader-dots span:nth-child(2) {
+      animation-delay: .14s;
+    }
+
+    .page-loader-dots span:nth-child(3) {
+      animation-delay: .28s;
+    }
+
+    .page-loader-title {
+      font-size: 1rem;
+      line-height: 1.3;
+      font-weight: 760;
+      letter-spacing: -.015em;
+      color: var(--text-primary);
+    }
+
+    .page-loader-sub {
+      min-height: 1.25em;
+      margin-top: 5px;
+      font-size: .76rem;
+      color: var(--text-muted);
+      transition:
+        opacity .2s ease,
+        transform .2s ease;
+    }
+
+    .page-loader-line {
+      position: relative;
+      height: 5px;
+      margin-top: 19px;
+      overflow: hidden;
+      border-radius: var(--radius-full);
+      background: rgba(226,232,240,.82);
+      box-shadow:
+        inset 0 1px 2px rgba(15,23,42,.06);
+    }
+
+    .page-loader-line .bar {
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 7%;
+      border-radius: inherit;
+
+      background:
+        linear-gradient(
+          90deg,
+          var(--primary),
+          var(--accent),
+          var(--primary)
+        );
+
+      background-size: 180% 100%;
+
+      box-shadow:
+        0 0 12px var(--primary-glow);
+
+      transition:
+        width .34s cubic-bezier(.22,.61,.36,1);
+
+      animation:
+        page-loader-bar-glow
+        1.2s linear infinite;
+    }
+
+    .page-loader-percent {
+      margin-top: 8px;
+      font-size: .66rem;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+      color: var(--text-muted);
+      opacity: .8;
+    }
+
+    /* ==================================================
+       ANIMATIONS
+    ================================================== */
+
+    @keyframes page-loader-enter {
+      0% {
+        opacity: 0;
+        transform: translateY(18px) scale(.96);
+        filter: blur(4px);
+      }
+
+      60% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+      }
+    }
+
+    @keyframes page-loader-spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes page-loader-spin-reverse {
+      to {
+        transform: rotate(-360deg);
+      }
+    }
+
+    @keyframes page-loader-pulse-ring {
+      0%, 100% {
+        transform: scale(.96);
+        opacity: .25;
+      }
+
+      50% {
+        transform: scale(1.055);
+        opacity: .8;
+      }
+    }
+
+    @keyframes page-loader-logo-pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.035);
+      }
+    }
+
+    @keyframes page-loader-icon-float {
+      0%, 100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-2px);
+      }
+    }
+
+    @keyframes page-loader-dot {
+      0%, 70%, 100% {
+        transform: translateY(0) scale(.82);
+        opacity: .28;
+      }
+
+      35% {
+        transform: translateY(-3px) scale(1);
+        opacity: .95;
+      }
+    }
+
+    @keyframes page-loader-bar-glow {
+      from {
+        background-position: 100% 0;
+      }
+
+      to {
+        background-position: -80% 0;
+      }
+    }
+
+    @keyframes page-loader-shine {
+      0%, 52% {
+        transform: translateX(-135%);
+        opacity: 0;
+      }
+
+      62% {
+        opacity: 1;
+      }
+
+      82%, 100% {
+        transform: translateX(135%);
+        opacity: 0;
+      }
+    }
+
+    @keyframes page-loader-blob-a {
+      from {
+        transform: translate3d(0,0,0) scale(.92);
+      }
+
+      to {
+        transform: translate3d(-8%,10%,0) scale(1.08);
+      }
+    }
+
+    @keyframes page-loader-blob-b {
+      from {
+        transform: translate3d(0,0,0) scale(1);
+      }
+
+      to {
+        transform: translate3d(12%,-8%,0) scale(.9);
+      }
+    }
+
+    /* Menghormati preferensi pengguna untuk mengurangi animasi */
+    @media (prefers-reduced-motion: reduce) {
+      .page-loader *,
+      .page-loader::before,
+      .page-loader::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ==================================================
+       PAGE START LOADER
+  ================================================== -->
+  <div
+    id="pageLoader"
+    class="page-loader"
+    role="status"
+    aria-live="polite"
+    aria-hidden="false"
+  >
+    <div class="page-loader-card">
+
+      <div
+        class="page-loader-visual"
+        aria-hidden="true"
+      >
+        <div class="page-loader-ring"></div>
+
+        <div class="page-loader-mark">
+          <svg viewBox="0 0 64 64" fill="none">
+            <path
+              d="M10 25 32 13l22 12-22 12L10 25Z"
+              fill="currentColor"
+              opacity=".96"
+            />
+
+            <path
+              d="M18 34v12c8 6 20 6 28 0V34l-14 8-14-8Z"
+              fill="currentColor"
+              opacity=".76"
+            />
+
+            <path
+              d="M53 27v14"
+              stroke="currentColor"
+              stroke-width="4"
+              stroke-linecap="round"
+            />
+          </svg>
+        </div>
+      </div>
+
+      <div class="page-loader-dots" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+
+      <div class="page-loader-title">
+        Memuat MiniLMS SMAS PGRI Takokak
+      </div>
+
+      <div
+        class="page-loader-sub"
+        id="pageLoaderSub"
+      >
+        Menyiapkan layanan digital untuk Anda...
+      </div>
+
+      <div
+        class="page-loader-line"
+        aria-hidden="true"
+      >
+        <div
+          class="bar"
+          id="pageLoaderBar"
+        ></div>
+      </div>
+
+      <div
+        class="page-loader-percent"
+        id="pageLoaderPercent"
+        aria-hidden="true"
+      >
+        7%
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ==================================================
+       MINILMS
+  ================================================== -->
+  <iframe
+    id="lmsFrame"
+    src="https://script.google.com/macros/s/AKfycbzg2BvrrwfZzHmvKWs0Nc6bwR2Jzo42gGKaS9PUcVzqMs5FGkHjZK0ZuFE7MNwug5R-/exec"
+    title="MiniLMS SMA PGRI Takokak"
+    allow="fullscreen"
+  ></iframe>
+
+
+  <script>
+    (() => {
+      const pageLoader =
+        document.getElementById('pageLoader');
+
+      const pageLoaderSub =
+        document.getElementById('pageLoaderSub');
+
+      const pageLoaderBar =
+        document.getElementById('pageLoaderBar');
+
+      const pageLoaderPercent =
+        document.getElementById('pageLoaderPercent');
+
+      const lmsFrame =
+        document.getElementById('lmsFrame');
+
+      const pageLoaderStartedAt =
+        performance.now();
+
+      let pageLoaderProgress = 7;
+      let pageLoaderProgressTimer = null;
+      let loaderHidden = false;
+
+
+      function setPageLoaderProgress(value, message) {
+        pageLoaderProgress = Math.max(
+          pageLoaderProgress,
+          Math.min(100, Number(value) || 0)
+        );
+
+        if (pageLoaderBar) {
+          pageLoaderBar.style.width =
+            `${pageLoaderProgress}%`;
+        }
+
+        if (pageLoaderPercent) {
+          pageLoaderPercent.textContent =
+            `${Math.round(pageLoaderProgress)}%`;
+        }
+
+        if (message && pageLoaderSub) {
+          pageLoaderSub.textContent = message;
+        }
+      }
+
+
+      function startPageLoaderProgress() {
+        if (!pageLoader || pageLoader.hidden) {
+          return;
+        }
+
+        if (pageLoaderProgressTimer) {
+          clearInterval(pageLoaderProgressTimer);
+        }
+
+        setPageLoaderProgress(
+          7,
+          'Menyiapkan layanan digital untuk Anda...'
+        );
+
+        pageLoaderProgressTimer = setInterval(() => {
+
+          if (pageLoaderProgress >= 91) {
+            return;
+          }
+
+          const remaining =
+            91 - pageLoaderProgress;
+
+          const step = Math.max(
+            .55,
+            Math.min(4.8, remaining * .095)
+          );
+
+          const jitter =
+            .68 + Math.random() * .58;
+
+          setPageLoaderProgress(
+            pageLoaderProgress + step * jitter
+          );
+
+          if (
+            pageLoaderProgress > 68 &&
+            pageLoaderSub
+          ) {
+            pageLoaderSub.textContent =
+              'Menyelesaikan tampilan portal...';
+
+          } else if (
+            pageLoaderProgress > 34 &&
+            pageLoaderSub
+          ) {
+            pageLoaderSub.textContent =
+              'Memuat data dan layanan sekolah...';
+          }
+
+        }, 180);
+      }
+
+
+      function hidePageLoader() {
+
+        if (
+          loaderHidden ||
+          !pageLoader ||
+          pageLoader.hidden
+        ) {
+          return;
+        }
+
+        loaderHidden = true;
+
+        if (pageLoaderProgressTimer) {
+          clearInterval(pageLoaderProgressTimer);
+          pageLoaderProgressTimer = null;
+        }
+
+        const minimumVisible = 900;
+
+        const elapsed =
+          performance.now() -
+          pageLoaderStartedAt;
+
+        const delay =
+          Math.max(
+            0,
+            minimumVisible - elapsed
+          );
+
+        setTimeout(() => {
+
+          if (!pageLoader) {
+            return;
+          }
+
+          setPageLoaderProgress(
+            100,
+            'Portal siap dibuka'
+          );
+
+          setTimeout(() => {
+
+            pageLoader.classList.add(
+              'is-hidden'
+            );
+
+            pageLoader.setAttribute(
+              'aria-hidden',
+              'true'
+            );
+
+            setTimeout(() => {
+
+              if (
+                pageLoader.classList.contains(
+                  'is-hidden'
+                )
+              ) {
+                pageLoader.hidden = true;
+              }
+
+            }, 620);
+
+          }, 240);
+
+        }, delay);
+      }
+
+
+      /* Mulai progress loader */
+      startPageLoaderProgress();
+
+
+      /*
+       * Loader akan ditutup setelah iframe
+       * Google Apps Script selesai melakukan load.
+       */
+      if (lmsFrame) {
+        lmsFrame.addEventListener(
+          'load',
+          () => {
+            hidePageLoader();
+          },
+          { once: true }
+        );
+      }
+
+
+      /*
+       * Fallback:
+       * Jika iframe terlalu lama merespons,
+       * loader tetap dilepas setelah 15 detik.
+       */
+      setTimeout(() => {
+
+        if (!loaderHidden) {
+          if (pageLoaderSub) {
+            pageLoaderSub.textContent =
+              'Portal sedang dibuka...';
+          }
+
+          hidePageLoader();
+        }
+
+      }, 15000);
+
+    })();
+  </script>
+
+</body>
+</html>

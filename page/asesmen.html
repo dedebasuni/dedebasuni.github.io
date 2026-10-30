@@ -1,0 +1,2751 @@
+<!DOCTYPE html>
+<html lang="id" class="antialiased">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise Secured | Computer Based Test v4.5.0 — Kurikulum Nasional</title>
+           
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&amp;family=Google&#43;Sans:wght@400;500;700&amp;family=Noto&#43;Sans&#43;JP:wght@400;700&amp;family=Noto&#43;Sans&#43;Sundanese:wght@400;700&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/mhchem.min.js"></script>
+  
+    
+    <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+    <script src="https://unpkg.com/vue@3.3.4/dist/vue.global.prod.js"></script>
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.9/dist/purify.min.js"></script>
+  
+    
+    <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=default,es2015,es2016,es2017,fetch,Promises,Object.assign,Array.prototype.includes"></script>
+
+    
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Google Sans', 'Amiri', 'Noto Sans Sundanese', 'Noto Sans JP', 'ui-sans-serif', 'system-ui', 'sans-serif'] },
+                    colors: {
+                        primary: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 900: '#1e3a8a' },
+                        brand: '#0f172a'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .dark ::-webkit-scrollbar-thumb { background: #475569; }
+        
+        .fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease; }
+        .fade-enter-from, .fade-leave-to { opacity: 0; }
+        
+        .slide-up-enter-active, .slide-up-leave-active { transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .slide-up-enter-from, .slide-up-leave-to { transform: translateY(20px); opacity: 0; }
+
+        .katex-display { margin: 0.65em 0; overflow-x: auto; overflow-y: hidden; padding: 0.25em 0; }
+        .katex { font-size: 1.08em; line-height: 1.35; }
+        
+        .glass-panel { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.3); }
+        .dark .glass-panel { background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255,255,255,0.05); }
+
+        .markdown-inline-fix > p:first-child { margin-top: 0; }
+        .markdown-inline-fix > p:last-child { margin-bottom: 0; }
+
+        .prose table { width: 100%; border-collapse: collapse; margin: 0.85em 0; font-size: 0.92em; overflow-x: auto; display: block; }
+        @media (min-width: 640px) { .prose table { display: table; } }
+        .prose th, .prose td { border: 1px solid #cbd5e1 !important; padding: 0.5rem 0.75rem !important; text-align: left; }
+        .prose th { background-color: #f1f5f9; font-weight: 700; color: #0f172a; }
+        .dark .prose th, .dark .prose td { border-color: #334155 !important; }
+        .dark .prose th { background-color: #1e293b; color: #f8fafc; }
+        .prose blockquote { border-left: 4px solid #3b82f6; background-color: #eff6ff; padding: 0.6rem 1rem; border-radius: 0 0.5rem 0.5rem 0; font-style: italic; margin: 0.75em 0; }
+        .dark .prose blockquote { background-color: rgba(30, 58, 138, 0.25); border-left-color: #60a5fa; color: #e2e8f0; }
+
+        label:active { transform: scale(0.99); }
+        
+        .overflow-hidden-mobile { overflow: hidden; height: 100vh; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 transition-colors duration-300 dark:bg-slate-900 dark:text-slate-100 selection:bg-primary-500 selection:text-white">
+    <div id="app" :class="[fontSizeClass, {'dark': isDarkMode}]" class="min-h-screen flex flex-col font-sans">
+        
+        
+        <transition name="fade">
+            <div v-if="globalUiState === 'loading'" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-900 px-4 text-center">
+                <i class="ph ph-spinner-gap animate-spin text-5xl text-primary-600 mb-4"></i>
+                <h2 class="text-xl font-bold tracking-tight">Enterprise Secured System v4.5.0</h2>
+                <p class="text-sm text-slate-500 mt-2">{{ loadingSubtitle }}</p>
+            </div>
+        </transition>
+
+        
+        <transition name="fade">
+            <div v-if="sessionGuardModal.show" class="fixed inset-0 z-[190] flex items-center justify-center bg-slate-900/85 backdrop-blur-md p-4">
+                <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-primary-500/30 text-center">
+                    <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="ph-fill ph-users-three text-3xl"></i>
+                    </div>
+                    <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-blue-50 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                        Shared Device Session Guard
+                    </span>
+                    <h3 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mt-3 mb-2">Sesi Asesmen Aktif Ditemukan</h3>
+                    <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mb-5">
+                        Perangkat ini memiliki sesi asesmen yang belum dikumpulkan. Pastikan identitas di bawah ini adalah milik Anda sebelum melanjutkan:
+                    </p>
+
+                    <div v-if="sessionGuardModal.candidate" class="bg-slate-50 dark:bg-slate-900/70 rounded-2xl p-4 mb-6 text-left border border-slate-200 dark:border-slate-700 space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-slate-400 font-semibold uppercase">Nama Peserta</span>
+                            <span class="text-sm font-bold text-slate-900 dark:text-white">{{ sessionGuardModal.candidate.userSession.name }}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-slate-400 font-semibold uppercase">Nomor Peserta</span>
+                            <span class="text-xs font-mono font-bold bg-slate-200 dark:bg-slate-700 px-2 py-0.5 rounded">{{ sessionGuardModal.candidate.userSession.id }}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-slate-400 font-semibold uppercase">Mata Pelajaran</span>
+                            <span class="text-xs font-bold text-primary-600 dark:text-primary-400">{{ sessionGuardModal.candidate.userSession.subject }}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-slate-400 font-semibold uppercase">Progress &amp; Sisa Waktu</span>
+                            <span class="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                                {{ sessionGuardModal.answeredCount }}/{{ sessionGuardModal.totalCount }} Soal • {{ Math.ceil(sessionGuardModal.remainingSec / 60) }} Menit Tersisa
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <button @click="confirmResumeCandidateSession" class="w-full py-3.5 px-4 rounded-xl font-bold text-white bg-primary-600 hover:bg-primary-700 shadow-lg shadow-primary-600/25 transition-all flex items-center justify-center gap-2 text-sm">
+                            <i class="ph-bold ph-play-circle text-lg"></i>
+                            <span>Ya, Lanjutkan Sesi {{ sessionGuardModal.candidate ? sessionGuardModal.candidate.userSession.name : 'Saya' }}</span>
+                        </button>
+                        <button @click="switchToNewParticipant" class="w-full py-3 px-4 rounded-xl font-bold text-slate-700 dark:text-slate-200 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 transition-colors flex items-center justify-center gap-2 text-xs sm:text-sm">
+                            <i class="ph-bold ph-user-switch text-lg text-amber-500"></i>
+                            <span>Bukan Saya / Ganti Peserta Baru (Parkir Sesi Ini)</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </transition>
+
+        
+        <transition name="fade">
+            <div v-if="showSwitchUserModal" class="fixed inset-0 z-[190] flex items-center justify-center bg-slate-900/80 backdrop-blur-md p-4">
+                <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-slate-200 dark:border-slate-700 text-center">
+                    <div class="w-16 h-16 bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="ph-fill ph-user-switch text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Parkir Sesi &amp; Ganti Peserta?</h3>
+                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
+                        Jawaban <strong>{{ userSession.name }} ({{ answeredCount }}/{{ questions.length }} soal)</strong> akan disinkronkan ke RAM Server dan disimpan di slot Vault pribadi perangkat ini (tanpa mengakhiri asesmen), lalu layar akan kembali ke menu Login untuk peserta berikutnya.
+                    </p>
+                    <div class="flex gap-3">
+                        <button @click="showSwitchUserModal = false" :disabled="isParkingSession" class="flex-1 py-3 rounded-xl font-bold text-slate-600 dark:text-slate-300 border-2 border-slate-200 dark:border-slate-700 text-sm">
+                            Batal
+                        </button>
+                        <button @click="parkCurrentSessionAndLogout" :disabled="isParkingSession" class="flex-1 py-3 rounded-xl font-bold text-white bg-amber-600 hover:bg-amber-700 transition-colors flex items-center justify-center gap-2 text-sm">
+                            <i v-if="isParkingSession" class="ph-bold ph-spinner animate-spin"></i>
+                            <span>{{ isParkingSession ? 'Mengamankan...' : 'Parkir & Keluar' }}</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </transition>
+
+        
+        <transition name="fade">
+            <div v-if="drainState.active" class="fixed inset-0 z-[180] flex items-center justify-center bg-slate-900/90 backdrop-blur-md p-4">
+                <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 max-w-md w-full text-center shadow-2xl border border-primary-500/30">
+                    <div class="w-20 h-20 bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400 rounded-full flex items-center justify-center mx-auto mb-5 relative">
+                        <i class="ph-bold ph-cloud-arrow-up text-4xl animate-bounce"></i>
+                    </div>
+                    <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">
+                        Smart Queue Drain Aktif
+                    </span>
+                    <h2 class="text-2xl font-bold text-slate-900 dark:text-white mt-3 mb-2">Waktu Asesmen Berakhir</h2>
+                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
+                        Seluruh jawaban Anda ({{ answeredCount }}/{{ questions.length }} soal) telah <strong>dikunci dengan aman di Vault Perangkat</strong>. Mengirim ke server dalam antrean terdistribusi agar bebas tabrakan trafik...
+                    </p>
+                    <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-3 overflow-hidden mb-3">
+                        <div class="bg-primary-600 h-full transition-all duration-500" :style="{ width: drainProgressPct &#43; '%' }"></div>
+                    </div>
+                    <p class="text-xs font-mono font-bold text-primary-600 dark:text-primary-400 mb-6">
+                        Sinkronisasi otomatis dalam {{ drainState.remainingSec }} detik...
+                    </p>
+                    <button @click="executeImmediateDrain" class="w-full py-3 rounded-xl font-bold text-xs sm:text-sm bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition-colors">
+                        Kirim Sekarang Tanpa Menunggu Antrean
+                    </button>
+                </div>
+            </div>
+        </transition>
+
+        
+        <transition name="fade">
+            <div v-if="isOffline" class="fixed top-0 inset-x-0 z-[9999] bg-red-600 text-white text-center py-3 px-4 shadow-lg border-b-4 border-red-800 flex items-center justify-center gap-3">
+                <i class="fa-solid fa-wifi fa-fade text-xl"></i>
+                <div class="text-left">
+                    <p class="font-bold text-sm md:text-base">KONEKSI INTERNET TERPUTUS (OFFLINE VAULT AKTIF)!</p>
+                    <p class="text-xs md:text-sm text-red-100">Tetap tenang &amp; lanjutkan mengerjakan. Jawaban tersimpan ganda di IndexedDB &amp; LocalStorage per-peserta. <b>JANGAN TUTUP ATAU REFRESH HALAMAN INI!</b></p>
+                </div>
+            </div>
+        </transition>
+
+        
+        <transition name="fade">
+            <div v-if="globalUiState === 'error'" class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-50 dark:bg-slate-900 p-4">
+                <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 sm:p-8 max-w-md w-full text-center shadow-2xl border border-red-100 dark:border-red-900/30">
+                    <div class="w-20 h-20 bg-red-100 dark:bg-red-900/30 text-red-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="ph-fill ph-warning-circle text-4xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-2">Sistem Terhenti</h2>
+                    <p class="text-slate-600 dark:text-slate-400 mb-8">{{ globalErrorMessage }}</p>
+                    <button @click="initApp" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-medium py-3 rounded-xl transition-colors">Muat Ulang Sistem</button>
+                </div>
+            </div>
+        </transition>
+
+        
+        <transition name="fade">
+            <div v-if="noticeModal.show" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[200] flex items-center justify-center p-4">
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-md w-full p-6 border border-slate-200 dark:border-slate-700 text-center">
+                    <div :class="['w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4', noticeModal.type === 'error' ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400' : (noticeModal.type === 'success' ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400' : 'bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400')]">
+                        <i :class="['text-3xl', noticeModal.type === 'error' ? 'ph-fill ph-warning-octagon' : (noticeModal.type === 'success' ? 'ph-fill ph-check-circle' : 'ph-fill ph-info')]"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">{{ noticeModal.title }}</h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-300 whitespace-pre-line mb-6 leading-relaxed">{{ noticeModal.message }}</p>
+                    <button @click="closeNoticeModal" class="w-full py-3 rounded-xl font-bold bg-brand hover:bg-slate-800 text-white dark:bg-primary-600 dark:hover:bg-primary-500 transition-colors">
+                        Mengerti
+                    </button>
+                </div>
+            </div>
+        </transition>
+
+        <template v-if="globalUiState === 'ready'">
+            
+            <transition name="fade" mode="out-in">
+                <div v-if="currentPhase === 'pre-exam'" class="flex-1 flex items-center justify-center p-4 sm:p-8 relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-br from-primary-50 to-slate-100 dark:from-slate-900 dark:to-brand -z-10"></div>
+                    
+                    <div class="max-w-5xl w-full bg-white dark:bg-slate-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col lg:flex-row min-h-[500px] lg:min-h-[600px] border border-slate-200/50 dark:border-slate-700/50">
+                    
+                        
+                        <div class="w-full lg:w-5/12 bg-primary-700 p-6 sm:p-10 text-white flex flex-col justify-between relative overflow-hidden">
+                            <div class="absolute inset-0 bg-[url('data:image/svg&#43;xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI&#43;PHBhdGggZD0iTTM2IDM0djI2aDJWMzRoLTJ6bTAtMzRWMEgzNHYyNmgyek0wIDM0aDI2di0ySDB2MnptMzQtMmgzMHYtMmgtMzB2MnoiLz48L2c&#43;PC9nPjwvc3ZnPg==')]"></div>
+                            <div class="relative z-10">
+                                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 mb-6 sm:mb-8 text-xs sm:text-sm font-medium tracking-wide">
+                                    <i class="ph ph-shield-check text-green-400"></i> Kurikulum Nasional • Deep Learning v4.5.0
+                                </div>
+            
+                                <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4 leading-tight tracking-tight">{{ examInfo.name }}</h1>
+            
+                                <p class="text-primary-100 text-sm sm:text-base opacity-90 leading-relaxed">
+                                    Sistem Asesmen Formatif &amp; Sumatif berbasis Pembelajaran Mendalam (<em>Berkesadaran, Bermakna, Menggembirakan</em>) dan Kriteria Ketercapaian Tujuan Pembelajaran (KKTP) sesuai Permendikdasmen No. 13/2025 &amp; PPA Revisi 2025.
+                                </p>
+                            </div>
+                            <div class="relative z-10 mt-6 sm:mt-12 space-y-3 text-xs sm:text-sm text-primary-100 hidden sm:block">
+                                <div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center"><i class="ph ph-brain"></i></div> Multi-Instrumen: PG, PG Kompleks, Benar-Salah, Isian &amp; Esai</div>
+                                <div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center"><i class="ph ph-chart-polar"></i></div> Evaluasi Berbasis KKTP &amp; Refleksi Metakognitif</div>
+                                <div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center"><i class="ph ph-users-three"></i></div> Isolasi Vault Per-Peserta (Multi-Sesi Aman)</div>
+                            </div>
+                            <div class="absolute -bottom-32 -right-32 w-80 h-80 bg-primary-500 rounded-full blur-3xl opacity-40"></div>
+                        </div>
+
+                        
+                        <div class="w-full lg:w-7/12 p-6 sm:p-8 md:p-12 flex flex-col justify-center bg-white dark:bg-slate-800">                            
+                            <transition name="slide-up" mode="out-in">
+                                
+                                <div v-if="setupStep === 'login'" class="w-full max-w-sm mx-auto" key="login">
+                                    <div class="mb-6 sm:mb-8 text-center sm:text-left">
+                                        <div class="flex items-center justify-between mb-1">
+                                            <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">Otentikasi Peserta</h2>
+                                            <span v-if="isStandaloneMode &amp;&amp; hasEmbeddedPrimaryUrl" class="text-[11px] px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 font-semibold flex items-center gap-1" title="Terhubung langsung ke Server Asesmen">
+                                                <i class="ph-fill ph-check-circle text-emerald-500"></i> Server Terhubung
+                                            </span>
+                                        </div>
+                                        <p class="text-sm sm:text-base text-slate-500 dark:text-slate-400">Masukkan Nomor Peserta dan Token Akses Asesmen.</p>
+                                    </div>
+
+                                    
+                                    <div v-if="isStandaloneMode &amp;&amp; !hasEmbeddedPrimaryUrl &amp;&amp; (showEndpointModal || !primaryGasUrl)" class="mb-5 p-3.5 rounded-2xl bg-amber-50/90 dark:bg-slate-900 border border-amber-200 dark:border-slate-700 text-xs space-y-2">
+                                        <div class="font-bold text-amber-800 dark:text-amber-300 flex items-center justify-between">
+                                            <span><i class="ph-fill ph-warning-circle"></i> URL Server (/exec) Belum Ditanam dari Setup Admin</span>
+                                            <button v-if="primaryGasUrl" @click="showEndpointModal = false" type="button" class="text-slate-400 hover:text-slate-600"><i class="ph-bold ph-x"></i></button>
+                                        </div>
+                                        <p class="text-[11px] text-amber-700 dark:text-amber-400 leading-relaxed">
+                                            Unduh file <b>index.html</b> melalui tombol <b>"Simpan Setup &amp; Unduh index.html Siap Pakai"</b> di menu Setup Admin agar kotak ini tidak muncul di layar peserta.
+                                        </p>
+                                        <input type="url" v-model="customEndpointInput" class="w-full px-3 py-2 rounded-lg border border-amber-200 dark:border-slate-700 bg-white dark:bg-slate-800 font-mono text-[11px] outline-none focus:border-primary-500" placeholder="https://script.google.com/macros/s/AKfycb.../exec">
+                                        <div class="flex justify-end gap-2">
+                                            <button @click="saveCustomEndpoint" type="button" class="px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-lg transition-colors">
+                                                Hubungkan Sementara
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <form @submit.prevent="nextSetupStep" class="space-y-4 sm:space-y-5">
+                                        <div class="space-y-1">
+                                            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300">Nomor Peserta / NISN</label>
+                                            <div class="relative">
+                                                <i class="ph ph-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg"></i>
+                                                <input type="text" v-model="loginData.id" required class="w-full pl-11 pr-4 py-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 focus:bg-white focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 outline-none transition-all font-medium text-sm sm:text-base" placeholder="Nomor Peserta">
+                                            </div>
+                                        </div>
+                                        <div class="space-y-1">
+                                            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300">Token Asesmen</label>
+                                            <div class="relative">
+                                                <i class="ph ph-key absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg"></i>
+                                                <input type="password" v-model="loginData.token" required class="w-full pl-11 pr-4 py-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 focus:bg-white focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 outline-none transition-all font-medium tracking-widest text-sm sm:text-base" placeholder="••••••">
+                                            </div>
+                                        </div>
+                
+                                        <div v-if="formError" class="p-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-sm rounded-lg flex gap-2 items-start border border-red-100 dark:border-red-800">
+                                            <i class="ph-fill ph-warning-circle text-lg mt-0.5"></i>
+                                            <span>{{ formError }}</span>
+                                        </div>
+
+                                        <button type="submit" :disabled="isLoading" class="w-full mt-2 bg-brand hover:bg-slate-800 text-white dark:bg-primary-600 dark:hover:bg-primary-500 font-semibold py-3 sm:py-3.5 rounded-xl transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex justify-center items-center gap-2 disabled:opacity-70 disabled:cursor-wait disabled:hover:translate-y-0">
+                                            <i v-if="isLoading" class="ph ph-spinner animate-spin text-xl"></i>
+                                            <span v-if="isLoading">{{ retryStatusText || 'Memvalidasi Akses...' }}</span>    
+                                            <span v-if="!isLoading">Verifikasi Identitas</span>
+                                            <i v-if="!isLoading" class="ph ph-arrow-right text-lg"></i>
+                                        </button>
+                                    </form>
+                                </div>
+
+                                
+                                <div v-else-if="setupStep === 'check'" class="w-full max-w-md mx-auto" key="check">
+                                    <h2 class="text-2xl sm:text-3xl font-bold mb-2">Diagnostik Sistem</h2>
+                                    <p class="text-sm sm:text-base text-slate-500 dark:text-slate-400 mb-6">Memastikan perangkat &amp; paket instrumen asesmen siap di memori lokal.</p>
+
+                                    <div class="mb-6 sm:mb-8 bg-green-50 dark:bg-green-900/20 border-2 border-green-200 dark:border-green-800/50 rounded-2xl p-4 sm:p-5 flex items-start gap-4 shadow-sm relative overflow-hidden">
+                                        <div class="absolute -right-4 -top-4 text-green-100 dark:text-green-900/30">
+                                            <i class="ph-fill ph-check-circle text-8xl"></i>
+                                        </div>
+        
+                                        <div class="relative z-10 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-green-100 dark:bg-green-900/50 text-green-600 dark:text-green-400 flex items-center justify-center shrink-0 shadow-sm border border-green-200 dark:border-green-800">
+                                            <i class="ph-fill ph-calendar-check text-xl sm:text-2xl"></i>
+                                        </div>
+                                        <div class="relative z-10">
+                                            <p class="text-[10px] sm:text-xs font-bold text-green-600 dark:text-green-500 uppercase tracking-widest mb-1">Otentikasi Berhasil ({{ userSession.name }})</p>
+                                            <h3 class="text-lg sm:text-xl font-bold text-slate-800 dark:text-white leading-tight mb-2">{{ userSession.subject }}</h3>
+                                            <div class="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium">
+                                                <span class="flex items-center gap-1.5 bg-white dark:bg-slate-800 px-2.5 py-1 rounded-md border border-slate-200 dark:border-slate-700 shadow-sm">
+                                                    <i class="ph-fill ph-door text-primary-500"></i> Ruang: {{ userSession.room || 'Umum' }}
+                                                </span>
+                                                <span class="flex items-center gap-1.5 bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 px-2.5 py-1 rounded-md border border-indigo-200 dark:border-indigo-800 shadow-sm">
+                                                    <i class="ph-fill ph-compass"></i> {{ formatAssessmentModeLabel(userSession.assessmentType || examInfo.assessmentMode) }}
+                                                </span>
+                                                <span v-if="prefetchedQuestions.length &gt; 0" class="flex items-center gap-1.5 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 px-2.5 py-1 rounded-md border border-emerald-200 dark:border-emerald-800 shadow-sm">
+                                                    <i class="ph-fill ph-lightning"></i> {{ prefetchedQuestions.length }} Butir Siap (Wave Prefetch)
+                                                </span>
+                                                <span v-if="recoveredAnswers &amp;&amp; recoveredAnswers.length &gt; 0" class="flex items-center gap-1.5 bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 px-2.5 py-1 rounded-md border border-blue-200 dark:border-blue-800 shadow-sm">
+                                                    <i class="ph-fill ph-cloud-arrow-down"></i> {{ recoveredAnswers.length }} Jawaban Dipulihkan
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="space-y-3">
+                                        <div v-for="(check, index) in systemChecks" :key="index" class="flex items-center justify-between p-3 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm transition-all duration-300">
+                                            <div class="flex items-center gap-3 sm:gap-4">
+                                                <div :class="['w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-colors', check.status === 'passed' ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400' : (check.status === 'checking' ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400' : 'bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400')]">
+                                                    <i v-if="check.status === 'passed'" class="ph-bold ph-check text-xl sm:text-2xl"></i>
+                                                    <i v-else-if="check.status === 'checking'" class="ph ph-spinner animate-spin text-xl sm:text-2xl"></i>
+                                                    <i v-else :class="check.icon" class="text-xl sm:text-2xl"></i>
+                                                </div>
+                                                <div>
+                                                    <p class="font-bold text-sm sm:text-base text-slate-800 dark:text-white">{{ check.name }}</p>
+                                                    <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">{{ check.desc }}</p>
+                                                </div>
+                                            </div>
+                                            <span v-if="check.status === 'passed'" class="text-[10px] sm:text-xs font-bold text-green-700 bg-green-100 dark:bg-green-900/50 dark:text-green-300 px-2 sm:px-3 py-1 rounded-full border border-green-200 dark:border-green-800">READY</span>
+                                        </div>
+                                    </div>
+                                    <button @click="nextSetupStep" :disabled="!allChecksPassed" :class="['w-full mt-6 sm:mt-8 font-semibold py-3 sm:py-3.5 rounded-xl transition-all', allChecksPassed ? 'bg-brand hover:bg-slate-800 text-white dark:bg-primary-600 dark:hover:bg-primary-500 shadow-lg' : 'bg-slate-100 text-slate-400 cursor-not-allowed dark:bg-slate-800 dark:text-slate-600']">
+                                        Lanjutkan ke Pakta Integritas
+                                    </button>
+                                </div>
+
+                                
+                                <div v-else-if="setupStep === 'rules'" class="w-full flex flex-col h-full max-w-lg mx-auto" key="rules">
+                                    <h2 class="text-2xl sm:text-3xl font-bold mb-2">Pakta Integritas &amp; Kesadaran Belajar</h2>
+                                    <p class="text-sm sm:text-base text-slate-500 dark:text-slate-400 mb-4 sm:mb-6">Prinsip asesmen berkesadaran (<em>mindful</em>), jujur, dan bermakna.</p>
+                                    
+                                    <div class="flex-1 bg-slate-50 dark:bg-slate-900/50 rounded-xl p-4 sm:p-6 mb-4 border border-slate-200 dark:border-slate-700 overflow-y-auto max-h-[250px] sm:max-h-[300px] custom-scrollbar">
+                                        <ul class="space-y-3 sm:space-y-4 text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+                                            <li class="flex gap-3"><i class="ph-fill ph-clock text-primary-500 text-lg sm:text-xl shrink-0"></i> <span>Durasi asesmen <strong>{{ Math.floor(examInfo.duration) }} Menit</strong>. Timer berjalan mandiri (Zero-Polling).</span></li>
+                                            <li class="flex gap-3"><i class="ph-fill ph-brain text-primary-500 text-lg sm:text-xl shrink-0"></i> <span><strong>Pembelajaran Mendalam (Deep Learning).</strong> Cermati setiap wacana/stimulus dan jenis instrumen (Pilihan Ganda, PG Kompleks, Benar-Salah Majemuk, Isian Singkat, atau Uraian).</span></li>
+                                            <li class="flex gap-3"><i class="ph-fill ph-webcam text-primary-500 text-lg sm:text-xl shrink-0"></i> <span><strong>Proctoring &amp; Lockdown Mode.</strong> Wajah berada dalam frame kamera. Perpindahan tab/aplikasi dicatat oleh sistem (maksimal 5x toleransi).</span></li>
+                                            <li class="flex gap-3"><i class="ph-fill ph-users-three text-primary-500 text-lg sm:text-xl shrink-0"></i> <span><strong>Multi-Session Guard.</strong> Jawaban Anda terisolasi khusus untuk akun Anda meskipun perangkat digunakan bergantian.</span></li>
+                                        </ul>
+                                    </div>
+                                    
+                                    <div class="mt-auto">
+                                        <label class="flex items-start gap-3 sm:gap-4 cursor-pointer mb-4 sm:mb-6 p-3 sm:p-4 rounded-xl border-2 border-transparent hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" :class="{'border-primary-500 bg-primary-50 dark:bg-primary-900/20': agreedToRules}">
+                                            <input type="checkbox" v-model="agreedToRules" class="mt-1 w-4 h-4 sm:w-5 sm:h-5 text-primary-600 rounded border-slate-300 focus:ring-primary-500">
+                                            <span class="text-xs sm:text-sm font-medium leading-relaxed">Saya menyatakan mengerjakan asesmen ini dengan penuh kesadaran, kejujuran, dan kemandirian sesuai nilai 8 Dimensi Profil Lulusan.</span>
+                                        </label>
+
+                                        <div v-if="formError" class="mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-lg flex gap-2 items-start border border-red-100">
+                                            <i class="ph-fill ph-warning-circle text-lg"></i><span>{{ formError }}</span>
+                                        </div>
+                                        <button @click="startExam" :disabled="!agreedToRules || isLoading" :class="['w-full font-semibold py-3 sm:py-3.5 rounded-xl transition-all text-sm sm:text-base flex justify-center items-center gap-2', agreedToRules ? 'bg-primary-600 hover:bg-primary-700 text-white shadow-xl hover:shadow-primary-500/30 hover:-translate-y-1' : 'bg-slate-200 text-slate-400 cursor-not-allowed dark:bg-slate-800 dark:text-slate-600']">
+                                            <i v-if="isLoading" class="ph ph-spinner animate-spin text-lg sm:text-xl"></i>
+                                            <span v-if="isLoading">{{ retryStatusText || 'Menyiapkan Asesmen...' }}</span>    
+                                            <span v-if="!isLoading">Mulai Asesmen Sekarang</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </transition>
+
+                        </div>
+                    </div>
+                </div>
+            </transition>
+
+            
+            <transition name="fade">
+                <div v-if="currentPhase === 'exam'" class="flex flex-col h-screen overflow-hidden bg-slate-100 dark:bg-slate-900 relative">
+                    
+                    
+                    <header class="bg-white dark:bg-slate-800 shadow-sm z-[70] h-16 sm:h-20 flex items-center justify-between px-3 sm:px-6 lg:px-8 border-b border-slate-200 dark:border-slate-700 shrink-0 relative">
+                        
+                        <div class="flex items-center gap-4 lg:gap-8 flex-1 lg:w-1/3 min-w-0">
+                            <div class="font-bold text-lg hidden md:flex items-center gap-3 truncate">
+                                <div class="w-10 h-10 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center text-primary-600 shrink-0">
+                                    <i class="ph-bold ph-exam text-2xl"></i>
+                                </div>
+                                <div class="flex flex-col leading-tight truncate">
+                                    <span class="text-slate-900 dark:text-white uppercase tracking-wider text-xs flex items-center gap-2 truncate">
+                                        {{ userSession.subject || 'Memuat Mapel...' }}
+                                    </span>
+                                    <span class="text-xs sm:text-sm text-slate-500 font-medium truncate">
+                                        {{ formatAssessmentModeLabel(userSession.assessmentType || examInfo.assessmentMode) }} • Ruang: {{ userSession.room || 'General' }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="hidden lg:flex flex-col w-full max-w-[200px]">
+                                <div class="flex justify-between text-xs mb-1.5 font-semibold text-slate-500 uppercase tracking-wider">
+                                    <span>Progress</span>
+                                    <span>{{ answeredCount }}/{{ questions.length }}</span>
+                                </div>
+                                <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2 overflow-hidden">
+                                    <div class="bg-primary-500 h-full transition-all duration-700 ease-out" :style="{ width: progressPercentage &#43; '%' }"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="md:hidden font-bold text-slate-900 dark:text-white text-sm truncate">
+                                {{ userSession.subject || 'Asesmen' }}
+                            </div>
+                        </div>
+
+                        
+                        <div class="flex justify-center shrink-0 mx-2">
+                            <div :class="['px-3 sm:px-5 py-1.5 sm:py-2 rounded-xl font-mono text-base sm:text-xl lg:text-2xl font-bold border-2 flex items-center gap-1.5 sm:gap-3 shadow-sm transition-colors duration-300', timerColorClass]">
+                                <i class="ph-bold ph-hourglass-high" :class="{'animate-spin-slow': timer &gt; 0}"></i>
+                                {{ formattedTime }}
+                            </div>
+                        </div>
+
+                        
+                        <div class="flex items-center justify-end gap-2 sm:gap-3 lg:gap-4 flex-1 lg:w-1/3">
+                            <div class="text-[10px] sm:text-xs font-semibold px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-700 hidden md:flex items-center gap-2" :title="syncStatusTooltip">
+                                <span class="w-2 h-2 rounded-full" :class="saveStatus === 'saving' ? 'bg-yellow-500 animate-pulse' : (saveStatus === 'queued' ? 'bg-blue-500 animate-pulse' : (saveStatus === 'error' ? 'bg-red-500' : 'bg-green-500'))"></span>
+                                <span class="text-slate-600 dark:text-slate-300">
+                                    {{ saveStatus === 'saving' ? 'Sinkron Server...' : (saveStatus === 'queued' ? 'Vault Aman (Antre)' : (saveStatus === 'error' ? 'Vault Offline' : 'Tersinkron')) }}
+                                </span>
+                            </div>
+
+                            
+                            <div class="relative">
+                                <button @click="showTools = !showTools" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-slate-200 dark:border-slate-700 flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors z-50 relative bg-white dark:bg-slate-800" title="Pengaturan Tampilan">
+                                    <i class="ph-bold ph-text-aa text-base sm:text-lg"></i>
+                                </button>
+                                
+                                <div v-if="showTools" @click="showTools = false" class="fixed inset-0 z-40 bg-transparent"></div>
+                                
+                                <transition name="slide-up">
+                                    <div v-if="showTools" class="absolute right-0 mt-3 sm:mt-4 w-64 sm:w-72 bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl rounded-2xl shadow-[0_10px_50px_-10px_rgba(0,0,0,0.2)] dark:shadow-[0_10px_50px_-10px_rgba(0,0,0,0.8)] border border-slate-200/80 dark:border-slate-700/80 p-5 z-50 transform origin-top-right transition-all">
+                                        
+                                        <div class="absolute -top-2 right-3 sm:right-4 w-4 h-4 bg-white dark:bg-slate-800 border-t border-l border-slate-200/80 dark:border-slate-700/80 transform rotate-45 rounded-sm"></div>
+
+                                        <div class="relative z-10">
+                                            <div class="flex justify-between items-center mb-4">
+                                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Pengaturan Tampilan</p>
+                                                <button @click="showTools = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"><i class="ph-bold ph-x text-base"></i></button>
+                                            </div>
+                                            
+                                            <div class="flex items-center justify-between mb-5 bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-100 dark:border-slate-700/50">
+                                                <span class="text-sm font-medium flex items-center gap-2 text-slate-700 dark:text-slate-200"><i class="ph-fill ph-moon text-lg text-indigo-500"></i> Mode Gelap</span>
+                                                <button @click="isDarkMode = !isDarkMode" class="w-12 h-6 bg-slate-300 dark:bg-primary-600 rounded-full relative transition-colors shadow-inner flex-shrink-0">
+                                                    <div :class="['w-4 h-4 bg-white rounded-full absolute top-1 transition-transform shadow-sm', isDarkMode ? 'left-7' : 'left-1']"></div>
+                                                </button>
+                                            </div>
+                                            
+                                            <p class="text-xs font-bold text-slate-400 mb-3 uppercase tracking-wider">Ukuran Teks</p>
+                                            <div class="flex gap-2 bg-slate-50 dark:bg-slate-900/50 p-1.5 rounded-xl border border-slate-100 dark:border-slate-700/50">
+                                                <button @click="fontSize = 'text-sm'" :class="['flex-1 py-2 text-sm font-medium rounded-lg transition-all', fontSize === 'text-sm' ? 'bg-white dark:bg-slate-700 shadow-sm border border-slate-200 dark:border-slate-600 text-primary-600 dark:text-primary-400' : 'text-slate-500 hover:text-slate-800 dark:hover:text-white border border-transparent']">A-</button>
+                                                <button @click="fontSize = 'text-base'" :class="['flex-1 py-2 text-base font-medium rounded-lg transition-all', fontSize === 'text-base' ? 'bg-white dark:bg-slate-700 shadow-sm border border-slate-200 dark:border-slate-600 text-primary-600 dark:text-primary-400' : 'text-slate-500 hover:text-slate-800 dark:hover:text-white border border-transparent']">A</button>
+                                                <button @click="fontSize = 'text-lg'" :class="['flex-1 py-2 text-lg font-medium rounded-lg transition-all', fontSize === 'text-lg' ? 'bg-white dark:bg-slate-700 shadow-sm border border-slate-200 dark:border-slate-600 text-primary-600 dark:text-primary-400' : 'text-slate-500 hover:text-slate-800 dark:hover:text-white border border-transparent']">A+</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+
+                            
+                            <button @click="showSwitchUserModal = true" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-amber-200 dark:border-amber-800/60 text-amber-600 dark:text-amber-400 flex items-center justify-center hover:bg-amber-50 dark:hover:bg-amber-900/30 transition-colors bg-white dark:bg-slate-800" title="Parkir Sesi / Ganti Peserta">
+                                <i class="ph-bold ph-user-switch text-base sm:text-lg"></i>
+                            </button>
+                            
+                            <div class="h-8 w-px bg-slate-200 dark:bg-slate-700 hidden sm:block"></div>
+
+                            <div class="hidden md:flex items-center gap-3">
+                                <div class="text-right leading-tight max-w-[120px] lg:max-w-none truncate">
+                                    <p class="font-bold text-slate-900 dark:text-white text-sm truncate">{{ userSession.name || 'Peserta' }}</p>
+                                    <p class="text-[10px] lg:text-xs font-mono text-slate-500 truncate">{{ userSession.id || 'ID Unknown' }}</p>
+                                </div>
+                                <div class="w-10 h-10 rounded-full bg-slate-800 text-white dark:bg-white dark:text-slate-900 flex items-center justify-center font-bold text-lg shadow-sm shrink-0">
+                                    {{ userSession.name ? userSession.name.charAt(0).toUpperCase() : 'P' }}
+                                </div>
+                            </div>
+
+                            <button @click="showSidebar = !showSidebar" class="lg:hidden w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-slate-200 dark:border-slate-600 flex items-center justify-center bg-white dark:bg-slate-800 relative z-50">
+                                <i :class="showSidebar ? 'ph-bold ph-x' : 'ph-bold ph-squares-four'" class="text-lg"></i>
+                            </button>
+                        </div>
+                    </header>
+
+                    
+                    <div v-if="questions.length === 0" class="flex-1 flex items-center justify-center bg-slate-50 dark:bg-slate-900">
+                        <div class="text-center p-8 max-w-md">
+                            <i class="ph-fill ph-empty text-6xl text-slate-300 dark:text-slate-600 mb-4 block"></i>
+                            <h3 class="text-xl font-bold mb-2">Tidak Ada Soal</h3>
+                            <p class="text-slate-500">Paket instrumen belum tersedia untuk sesi asesmen ini. Harap hubungi pengawas.</p>
+                            <button @click="initApp" class="mt-6 px-6 py-2 bg-slate-800 text-white rounded-lg">Kembali</button>
+                        </div>
+                    </div>
+
+                    
+                    <div v-else class="flex-1 flex overflow-hidden relative">
+                        
+                        
+                        <main class="flex-1 overflow-y-auto p-3 sm:p-6 lg:p-10 scroll-smooth relative" id="question-container">
+                            <div class="max-w-4xl mx-auto bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-4 sm:p-8 lg:p-12 mb-20 lg:mb-10 min-h-[60vh]">
+                                
+                                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 pb-4 sm:pb-6 border-b border-slate-100 dark:border-slate-700 gap-3">
+                                    <div>
+                                        <div class="flex flex-wrap items-center gap-2 mb-2">
+                                            <span class="px-3 py-1 sm:px-4 sm:py-1.5 bg-brand text-white dark:bg-white dark:text-brand text-xs sm:text-sm font-bold rounded-lg shadow-sm">
+                                                SOAL {{ activeIndex + 1 }}
+                                            </span>
+                                            <span class="text-xs sm:text-sm font-semibold text-slate-400 tracking-widest uppercase">/ {{ questions.length }}</span>
+                                            <span class="px-2.5 py-1 rounded-md text-[10px] sm:text-xs font-bold bg-primary-50 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300 border border-primary-200 dark:border-primary-800">
+                                                {{ formatQuestionTypeBadge(currentQuestion.type) }}
+                                            </span>
+                                            <span v-if="currentQuestion.cognitiveLevel" class="px-2.5 py-1 rounded-md text-[10px] sm:text-xs font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                                                <i class="ph-fill ph-sparkle"></i> {{ currentQuestion.cognitiveLevel }}
+                                            </span>
+                                        </div>
+                                        <h3 class="text-slate-500 dark:text-slate-400 text-xs sm:text-sm font-medium flex flex-wrap items-center gap-1.5 sm:gap-2">
+                                            <i class="ph-bold ph-bookmark-simple text-primary-500"></i>
+                                            <span class="font-semibold text-slate-700 dark:text-slate-200">{{ currentQuestion.category }}</span>
+                                            <span v-if="currentQuestion.tpElement &amp;&amp; currentQuestion.tpElement !== currentQuestion.category" class="text-xs text-slate-400">
+                                                • TP/Elemen: {{ currentQuestion.tpElement }}
+                                            </span>
+                                        </h3>
+                                    </div>
+                                    <div class="flex items-center gap-3 self-end sm:self-center">
+                                        <button @click="openReportModal" class="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-semibold text-slate-500 hover:text-red-500 transition-colors bg-slate-50 dark:bg-slate-900 px-2.5 py-1.5 sm:px-3 sm:py-1.5 rounded-lg border border-slate-200 dark:border-slate-700">
+                                            <i class="ph-bold ph-flag"></i> <span class="hidden sm:inline">Lapor Soal</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <transition name="fade" mode="out-in">
+                                    <div :key="currentQuestion.id" class="space-y-6 sm:space-y-8">
+                                        
+                                        
+                                        <div v-math 
+                                             :class="['prose dark:prose-invert max-w-none prose-slate text-slate-800 dark:text-slate-100 font-medium', proseSizeClass]" 
+                                             v-html="renderEnhancedContent(currentQuestion.text)">
+                                        </div>
+                                        
+                                        
+                                        <div v-if="currentQuestion.image" class="rounded-xl overflow-hidden border-2 border-slate-100 dark:border-slate-700 relative bg-slate-50 dark:bg-slate-900 p-2 group">
+                                            <img :src="resolveCdnMediaUrl(currentQuestion.image)"
+                                                 @error="handleImageErrorFallback($event, currentQuestion.image)"
+                                                 loading="lazy"
+                                                 decoding="async"
+                                                 referrerpolicy="no-referrer"
+                                                 alt="Ilustrasi Soal"
+                                                 class="w-full max-h-64 sm:max-h-96 object-contain rounded-lg">
+                                        </div>
+
+                                        
+                                        <div v-if="currentQuestion.type === 'multiple-choice'" class="space-y-3 sm:space-y-4 pt-2 sm:pt-4">    
+                                            <label v-for="(opt, idx) in currentQuestion.options" :key="opt.id || idx" 
+                                                  :class="['flex items-start p-4 sm:p-5 rounded-xl border-2 cursor-pointer transition-all duration-200 group relative overflow-hidden', 
+                                                   currentQuestion.answer === opt.id ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/30' : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-600 hover:shadow-md']">
+
+                                              <div v-if="currentQuestion.answer === opt.id" class="absolute left-0 top-0 bottom-0 w-1 sm:w-1.5 bg-primary-500"></div>
+
+                                              <div class="flex items-center h-5 sm:h-6 mr-3 sm:mr-4 mt-0.5">
+                                                  <input type="radio" :name="'q-'&#43;currentQuestion.id" :value="opt.id" v-model="currentQuestion.answer" @change="markAnswered(currentQuestion)" class="w-4 h-4 sm:w-5 sm:h-5 text-primary-600 bg-white border-slate-300 focus:ring-primary-500 focus:ring-2 rounded-full cursor-pointer">
+                                              </div>
+                                              <div :class="['flex-1 font-medium transition-colors', fontSizeClass, currentQuestion.answer === opt.id ? 'text-primary-900 dark:text-primary-100' : 'text-slate-700 dark:text-slate-300']">
+                                                    <div class="flex"> 
+                                                        <span class="font-bold mr-2 sm:mr-3 mt-0.5 text-slate-400 dark:text-slate-500"> {{ String.fromCharCode(65 + idx) }}. </span>
+                                                        <div v-math v-html="renderEnhancedContent(opt.text, true)" class="flex-1 mt-0.5 leading-relaxed prose prose-sm sm:prose dark:prose-invert prose-slate max-w-none markdown-inline-fix break-words"></div>
+                                                    </div>
+                                              </div>
+                                            </label>
+                                        </div>
+
+                                        
+                                        <div v-else-if="currentQuestion.type === 'complex-mc'" class="space-y-3 sm:space-y-4 pt-2 sm:pt-4">
+                                            <div class="p-3 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-800 text-xs sm:text-sm text-indigo-800 dark:text-indigo-200 flex items-center gap-2 font-medium">
+                                                <i class="ph-fill ph-check-square-offset text-lg text-indigo-600 dark:text-indigo-400 shrink-0"></i>
+                                                <span><strong>Pilihan Ganda Kompleks:</strong> Anda dapat memilih <strong>lebih dari satu</strong> pernyataan/jawaban yang benar.</span>
+                                            </div>
+                                            <label v-for="(opt, idx) in currentQuestion.options" :key="opt.id || idx"
+                                                  :class="['flex items-start p-4 sm:p-5 rounded-xl border-2 cursor-pointer transition-all duration-200 group relative overflow-hidden',
+                                                   isComplexOptionSelected(currentQuestion, opt.id) ? 'border-indigo-500 bg-indigo-50/70 dark:bg-indigo-900/30' : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-600 hover:shadow-md']">
+                                                <div v-if="isComplexOptionSelected(currentQuestion, opt.id)" class="absolute left-0 top-0 bottom-0 w-1 sm:w-1.5 bg-indigo-500"></div>
+                                                <div class="flex items-center h-5 sm:h-6 mr-3 sm:mr-4 mt-0.5">
+                                                    <input type="checkbox"
+                                                           :checked="isComplexOptionSelected(currentQuestion, opt.id)"
+                                                           @change="toggleComplexOption(currentQuestion, opt.id)"
+                                                           class="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600 bg-white border-slate-300 focus:ring-indigo-500 focus:ring-2 rounded cursor-pointer">
+                                                </div>
+                                                <div :class="['flex-1 font-medium transition-colors', fontSizeClass, isComplexOptionSelected(currentQuestion, opt.id) ? 'text-indigo-950 dark:text-indigo-100' : 'text-slate-700 dark:text-slate-300']">
+                                                    <div class="flex">
+                                                        <span class="font-bold mr-2 sm:mr-3 mt-0.5 text-slate-400 dark:text-slate-500"> {{ String.fromCharCode(65 + idx) }}. </span>
+                                                        <div v-math v-html="renderEnhancedContent(opt.text, true)" class="flex-1 mt-0.5 leading-relaxed prose prose-sm sm:prose dark:prose-invert prose-slate max-w-none markdown-inline-fix break-words"></div>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
+
+                                        
+                                        <div v-else-if="currentQuestion.type === 'true-false'" class="pt-2 sm:pt-4 space-y-3">
+                                            <div class="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 text-xs sm:text-sm text-emerald-800 dark:text-emerald-200 flex items-center gap-2 font-medium">
+                                                <i class="ph-fill ph-scales text-lg text-emerald-600 shrink-0"></i>
+                                                <span><strong>Analisis Pernyataan Majemuk:</strong> Tentukan <strong>Benar</strong> atau <strong>Salah</strong> untuk setiap pernyataan berikut berdasarkan wacana/stimulus di atas!</span>
+                                            </div>
+                                            <div class="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-700">
+                                                <table class="w-full text-left border-collapse">
+                                                    <thead>
+                                                        <tr class="bg-slate-100 dark:bg-slate-900/70 text-slate-700 dark:text-slate-200 text-xs sm:text-sm uppercase tracking-wider">
+                                                            <th class="p-3 sm:p-4 border-b border-slate-200 dark:border-slate-700 w-10 text-center">#</th>
+                                                            <th class="p-3 sm:p-4 border-b border-slate-200 dark:border-slate-700">Pernyataan Analisis</th>
+                                                            <th class="p-3 sm:p-4 border-b border-slate-200 dark:border-slate-700 w-24 sm:w-28 text-center">Benar</th>
+                                                            <th class="p-3 sm:p-4 border-b border-slate-200 dark:border-slate-700 w-24 sm:w-28 text-center">Salah</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
+                                                        <tr v-for="(opt, idx) in currentQuestion.options" :key="opt.id || idx" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
+                                                            <td class="p-3 sm:p-4 text-center font-bold text-slate-400">{{ String.fromCharCode(65 + idx) }}</td>
+                                                            <td class="p-3 sm:p-4">
+                                                                <div v-math v-html="renderEnhancedContent(opt.text, true)" class="prose prose-sm sm:prose dark:prose-invert max-w-none markdown-inline-fix"></div>
+                                                            </td>
+                                                            <td class="p-3 sm:p-4 text-center">
+                                                                <button type="button"
+                                                                        @click="setTrueFalseStatement(currentQuestion, opt.id, 'B')"
+                                                                        :class="['px-3 py-1.5 rounded-lg font-bold text-xs sm:text-sm border-2 transition-all',
+                                                                                 getTrueFalseStatement(currentQuestion, opt.id) === 'B'
+                                                                                   ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm'
+                                                                                   : 'bg-white dark:bg-slate-800 text-slate-500 border-slate-200 dark:border-slate-700 hover:border-emerald-400']">
+                                                                    Benar
+                                                                </button>
+                                                            </td>
+                                                            <td class="p-3 sm:p-4 text-center">
+                                                                <button type="button"
+                                                                        @click="setTrueFalseStatement(currentQuestion, opt.id, 'S')"
+                                                                        :class="['px-3 py-1.5 rounded-lg font-bold text-xs sm:text-sm border-2 transition-all',
+                                                                                 getTrueFalseStatement(currentQuestion, opt.id) === 'S'
+                                                                                   ? 'bg-rose-600 text-white border-rose-600 shadow-sm'
+                                                                                   : 'bg-white dark:bg-slate-800 text-slate-500 border-slate-200 dark:border-slate-700 hover:border-rose-400']">
+                                                                    Salah
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                        
+                                        <div v-else-if="currentQuestion.type === 'short-answer'" class="pt-2 sm:pt-4 space-y-2">
+                                            <label class="block text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">
+                                                Jawaban Singkat Anda:
+                                            </label>
+                                            <input type="text"
+                                                   v-model="currentQuestion.answer"
+                                                   @input="markAnswered(currentQuestion)"
+                                                   class="w-full p-4 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 outline-none transition-all font-semibold shadow-sm"
+                                                   :class="fontSizeClass"
+                                                   placeholder="Ketik jawaban singkat dan tepat di sini...">
+                                            <p class="text-[11px] text-slate-400">Tuliskan jawaban istilah, angka, atau konsep inti tanpa kalimat panjang.</p>
+                                        </div>
+
+                                        
+                                        <div v-else-if="currentQuestion.type === 'essay'" class="pt-2 sm:pt-4">
+                                            <div class="relative">
+                                                <textarea v-model="currentQuestion.answer" @input="markAnswered(currentQuestion)" rows="6"
+                                                          class="w-full p-4 sm:p-5 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 outline-none transition-all resize-y shadow-sm font-medium leading-relaxed"
+                                                          :class="fontSizeClass"
+                                                          placeholder="Uraikan argumen, langkah penyelesaian, atau refleksi analitis Anda secara sistematis... (Tersimpan instan di Offline Vault)">
+                                                </textarea>
+                                            </div>
+                                            <div class="flex justify-between mt-2 sm:mt-3 px-1 text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                                                <span><i class="ph-bold ph-keyboard"></i> Penilaian Berbasis Rubrik KKTP</span>
+                                                <span :class="{'text-red-500': currentQuestion.answer &amp;&amp; currentQuestion.answer.length &gt; 2500}">
+                                                    {{ currentQuestion.answer ? currentQuestion.answer.length : 0 }} Karakter
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                        </main>
+
+                        
+                        <aside :class="['w-72 sm:w-80 bg-white dark:bg-slate-800 border-l border-slate-200 dark:border-slate-700 flex flex-col absolute lg:relative right-0 h-full z-[60] transition-transform duration-300 shadow-2xl lg:shadow-none', showSidebar ? 'translate-x-0' : 'translate-x-full lg:translate-x-0']">
+                            
+                            <div class="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-800/80 sticky top-0 shrink-0">
+                                <h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2 uppercase tracking-wider text-xs sm:text-sm">
+                                    <i class="ph-bold ph-grid-four text-primary-500 text-base sm:text-lg"></i> Peta Soal
+                                </h3>
+                                <button @click="showSidebar = false" class="lg:hidden w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-700 flex items-center justify-center hover:bg-slate-300 dark:hover:bg-slate-600">
+                                    <i class="ph-bold ph-x"></i>
+                                </button>
+                            </div>
+
+                            <div class="p-3 sm:p-4 grid grid-cols-2 gap-2 sm:gap-3 text-[10px] sm:text-xs font-medium border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shrink-0">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-sm bg-primary-600"></div> Terjawab</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-sm bg-yellow-400"></div> Ragu-ragu</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-sm border-2 border-red-500 bg-white dark:bg-slate-700"></div> Dilewati</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-sm border-2 border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800"></div> Kosong</div>
+                            </div>
+
+                            <div class="p-3 sm:p-4 overflow-y-auto flex-1 custom-scrollbar">
+                                <div class="grid grid-cols-5 gap-2 sm:gap-2.5">
+                                    <button v-for="(q, idx) in questions" :key="q.id" @click="goToQuestion(idx)"
+                                            :class="['w-full aspect-square rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center transition-all duration-200 relative', getGridStatusClass(q, idx)]">
+                                        {{ idx + 1 }}
+                                        <div v-if="activeIndex === idx" class="absolute inset-0 border-2 border-brand dark:border-white rounded-lg pointer-events-none"></div>
+                                    </button>
+                                </div>
+                            </div>
+
+                            
+                            <div class="p-3 sm:p-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 shrink-0">
+                                <div class="flex items-center justify-between mb-2 sm:mb-3">
+                                    <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+                                        <div class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span></div>
+                                        Live Proctoring
+                                    </span>
+                                    <span v-if="cheatCount &gt; 0" class="text-[10px] font-bold text-red-500 bg-red-50 dark:bg-red-900/30 px-2 py-0.5 rounded-full">
+                                        Pelanggaran: {{ cheatCount }}/5
+                                    </span>
+                                </div>
+                                <div class="w-full h-24 sm:h-36 bg-black rounded-xl overflow-hidden relative border-2 border-slate-800 shadow-inner group">
+                                    <video id="webcam-feed" autoplay muted playsinline class="w-full h-full object-cover transform scale-x-[-1] opacity-80 group-hover:opacity-100 transition-opacity"></video>
+                                    <div class="absolute inset-0 bg-[url('data:image/svg&#43;xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDUiLz4KPC9zdmc&#43;')] pointer-events-none"></div>
+                                    <div class="absolute inset-x-0 h-0.5 bg-green-500/50 shadow-[0_0_8px_rgba(34,197,94,0.8)] animate-[scan_3s_ease-in-out_infinite]"></div>
+                                    <div class="absolute bottom-1 right-1 sm:bottom-2 sm:right-2 text-[8px] sm:text-[10px] font-mono text-green-400 bg-black/60 px-1.5 py-0.5 rounded backdrop-blur">REC • {{ formattedTime }}</div>
+                                </div>
+                            </div>
+                        </aside>
+
+                        
+                        <div v-if="showSidebar" @click="showSidebar = false" class="fixed inset-0 bg-slate-900/60 lg:hidden z-[50] backdrop-blur-sm transition-opacity"></div>
+                    </div>
+
+                    
+                    <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 p-3 sm:p-5 shrink-0 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.05)] z-20 relative">
+                        <div class="max-w-4xl mx-auto flex items-center justify-between gap-2 sm:gap-4 lg:pr-80">
+        
+                            
+                            <div class="flex items-center gap-1.5 sm:gap-3 flex-1">
+                                <button @click="prevQuestion" :disabled="activeIndex === 0" class="px-2 py-2 sm:px-5 sm:py-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-base min-w-[3rem] sm:min-w-0">
+                                    <i class="ph-bold ph-arrow-left text-lg"></i> <span class="hidden sm:inline">Sebelumnya</span>
+                                </button>
+            
+                                <label class="flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer bg-yellow-50 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-500 px-2 py-2 sm:px-5 sm:py-3 rounded-xl border-2 border-yellow-200 dark:border-yellow-700/50 hover:bg-yellow-100 dark:hover:bg-yellow-900/50 transition-all font-bold select-none text-xs sm:text-base flex-1 sm:flex-none">
+                                    <input type="checkbox" v-model="currentQuestion.isDoubt" @change="saveStateToLocal" class="w-4 h-4 sm:w-5 sm:h-5 text-yellow-500 border-yellow-300 focus:ring-yellow-500 rounded cursor-pointer">
+                                    <span class="hidden sm:inline">Ragu-ragu</span>
+                                    <span class="sm:hidden">Ragu</span>
+                                </label>
+                            </div>
+
+                            
+                            <div class="flex justify-end flex-1">
+                                <button v-if="activeIndex &lt; questions.length - 1" @click="nextQuestion" class="px-3 py-2 sm:px-8 sm:py-3 rounded-xl bg-brand hover:bg-slate-800 text-white font-bold transition-all flex items-center justify-center gap-1 sm:gap-2 shadow-lg hover:-translate-y-0.5 text-xs sm:text-base w-full sm:w-auto">
+                                    <span class="hidden sm:inline">Selanjutnya</span> <span class="sm:hidden">Next</span> <i class="ph-bold ph-arrow-right text-lg"></i>
+                                </button>
+            
+                                <button v-else @click="confirmSubmit" class="px-3 py-2 sm:px-8 sm:py-3 rounded-xl bg-green-600 hover:bg-green-700 text-white font-bold transition-all shadow-lg shadow-green-600/30 hover:shadow-green-600/50 flex items-center justify-center gap-1 sm:gap-2 hover:-translate-y-0.5 ring-4 ring-green-600/20 text-xs sm:text-base w-full sm:w-auto">
+                                    <i class="ph-bold ph-check-square-offset text-lg sm:text-xl"></i> 
+                                    <span class="hidden sm:inline">Selesai Asesmen</span>
+                                    <span class="sm:hidden">Selesai</span>
+                                </button>
+                            </div>
+
+                        </div>
+                    </footer>
+
+                    
+                    <transition name="slide-up">
+                        <div v-if="showWarning" class="fixed top-20 right-2 left-2 sm:left-auto sm:right-4 lg:right-80 z-[100] glass-panel border-l-4 border-l-red-500 text-slate-800 dark:text-white p-4 sm:p-5 rounded-xl shadow-2xl flex items-start gap-3 sm:gap-4 max-w-sm mx-auto sm:mx-0">
+                            <i class="ph-fill ph-warning-octagon text-2xl sm:text-3xl text-red-500 shrink-0"></i>
+                            <div>
+                                <p class="font-bold text-base sm:text-lg leading-tight">Pelanggaran Terdeteksi!</p>
+                                <p class="text-xs sm:text-sm font-semibold text-red-600 dark:text-red-400 mt-0.5">{{ warningReason }}</p>
+                                <p class="text-[10px] sm:text-xs mt-1 opacity-90">Aktivitas di luar layar asesmen dicatat oleh sistem (Pelanggaran ke-{{ cheatCount }}/5).</p>
+                            </div>
+                        </div>
+                    </transition>
+
+                    
+                    <transition name="fade">
+                        <div v-if="showReportModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[100] flex items-center justify-center p-4">
+                            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-slate-200 dark:border-slate-700 p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                        <i class="ph-fill ph-flag text-red-500"></i> Lapor Soal #{{ activeIndex + 1 }}
+                                    </h3>
+                                    <button @click="showReportModal = false" class="text-slate-400 hover:text-slate-600"><i class="ph-bold ph-x"></i></button>
+                                </div>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mb-3">Jelaskan kendala pada soal ini (misal: gambar rusak, rumus tidak terbaca, atau opsi ganda):</p>
+                                <textarea v-model="reportNote" rows="3" class="w-full p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-sm outline-none focus:border-primary-500 mb-4" placeholder="Contoh: Gambar ilustrasi tidak muncul..."></textarea>
+                                <div class="flex gap-3">
+                                    <button @click="showReportModal = false" class="flex-1 py-2.5 rounded-xl font-bold text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-sm">Batal</button>
+                                    <button @click="submitQuestionReport" :disabled="isReporting || !reportNote.trim()" class="flex-1 py-2.5 rounded-xl font-bold text-white bg-red-600 hover:bg-red-700 disabled:opacity-50 text-sm">
+                                        {{ isReporting ? 'Mengirim...' : 'Kirim Laporan' }}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </transition>
+
+                    
+                    <transition name="fade">
+                        <div v-if="showSubmitModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[100] flex items-center justify-center p-4 overflow-y-auto">
+                            <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden transform transition-all border border-slate-200/20 my-8">
+                                <div class="p-5 sm:p-7 text-center bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700">
+                                    <div class="w-14 h-14 sm:w-16 sm:h-16 bg-brand text-white rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-lg">
+                                        <i class="ph-bold ph-paper-plane-tilt text-2xl sm:text-3xl"></i>
+                                    </div>
+                                    <h3 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-1">Konfirmasi &amp; Refleksi Belajar</h3>
+                                    <p class="text-slate-500 dark:text-slate-400 text-xs sm:text-sm px-2">Periksa kelengkapan jawaban dan tuliskan refleksi singkat pengalaman belajar Anda.</p>
+                                </div>
+                                <div class="p-5 sm:p-7 space-y-5">
+                                    <div class="grid grid-cols-3 gap-2.5 sm:gap-3">
+                                        <div class="bg-green-50 dark:bg-green-900/20 p-3 rounded-2xl border border-green-200 dark:border-green-800/50 text-center">
+                                            <span class="block text-xl sm:text-2xl font-bold text-green-600 dark:text-green-400">{{ answeredCount }}</span>
+                                            <span class="text-[10px] font-bold text-green-700 dark:text-green-500 uppercase tracking-widest mt-0.5 block">Terjawab</span>
+                                        </div>
+                                        <div class="bg-red-50 dark:bg-red-900/20 p-3 rounded-2xl border border-red-200 dark:border-red-800/50 text-center">
+                                            <span class="block text-xl sm:text-2xl font-bold text-red-600 dark:text-red-400">{{ questions.length - answeredCount }}</span>
+                                            <span class="text-[10px] font-bold text-red-700 dark:text-red-500 uppercase tracking-widest mt-0.5 block">Kosong</span>
+                                        </div>
+                                        <div class="bg-yellow-50 dark:bg-yellow-900/20 p-3 rounded-2xl border border-yellow-200 dark:border-yellow-800/50 text-center">
+                                            <span class="block text-xl sm:text-2xl font-bold text-yellow-600">{{ doubtCount }}</span>
+                                            <span class="text-[10px] font-bold text-yellow-700 dark:text-yellow-500 uppercase tracking-widest mt-0.5 block">Ragu-ragu</span>
+                                        </div>
+                                    </div>
+
+                                    
+                                    <div v-if="examInfo.enableReflection !== false" class="p-4 rounded-2xl bg-indigo-50/70 dark:bg-slate-900/80 border border-indigo-100 dark:border-slate-700 space-y-2.5">
+                                        <label class="block text-xs font-bold text-indigo-800 dark:text-indigo-300 uppercase tracking-wider flex items-center gap-1.5">
+                                            <i class="ph-fill ph-sparkle text-indigo-600"></i> Refleksi Pembelajaran Mendalam (Opsional)
+                                        </label>
+                                        <p class="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
+                                            Topik/materi apa yang paling Anda kuasai hari ini, dan bagian mana yang menurut Anda masih memerlukan bimbingan guru?
+                                        </p>
+                                        <textarea v-model="studentReflection" rows="2" class="w-full p-2.5 rounded-xl border border-indigo-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs sm:text-sm outline-none focus:border-primary-500" placeholder="Contoh: Saya sudah memahami konsep algoritma dasar, namun masih perlu latihan pada analisis struktur data..."></textarea>
+                                    </div>
+
+                                    <div v-if="formError" class="p-3 bg-red-50 text-red-600 text-xs sm:text-sm rounded-lg flex gap-2 border border-red-100">
+                                        <i class="ph-fill ph-warning-circle text-lg"></i><span>{{ formError }}</span>
+                                    </div>
+                                    <div class="flex flex-col-reverse sm:flex-row gap-3">
+                                        <button @click="showSubmitModal = false" :disabled="isSubmitting" class="w-full sm:w-1/3 py-3 rounded-xl font-bold text-slate-700 dark:text-slate-300 border-2 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors text-sm">Batal</button>
+                                        <button @click="finishExam(false)" :disabled="isSubmitting" class="w-full sm:w-2/3 py-3 rounded-xl font-bold text-white bg-green-600 hover:bg-green-700 shadow-xl shadow-green-600/20 transition-all flex justify-center items-center gap-2 disabled:opacity-80 disabled:cursor-wait text-sm">
+                                            <i v-if="isSubmitting" class="ph-bold ph-spinner animate-spin text-lg"></i>
+                                            <span v-if="isSubmitting">{{ retryStatusText || 'Memproses Data...' }}</span>    
+                                            <span v-if="!isSubmitting">Kirim Jawaban &amp; Refleksi</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </transition>
+
+                </div>
+            </transition>
+
+            
+            <transition name="fade">
+                <div v-if="currentPhase === 'result'" class="flex-1 flex flex-col p-4 sm:p-8 bg-slate-50 dark:bg-slate-900 overflow-y-auto">
+                    <div class="max-w-4xl w-full mx-auto mt-4 sm:mt-10 space-y-6 sm:space-y-8 animate-[slide-up_0.5s_ease-out]">
+                        
+                        <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-10 text-center shadow-xl border border-slate-200/50 dark:border-slate-700/50 relative overflow-hidden mt-8 sm:mt-0">
+                            <div class="absolute top-0 inset-x-0 h-3 bg-gradient-to-r from-green-400 via-emerald-500 to-teal-500"></div>
+                            <div class="w-20 h-20 sm:w-24 sm:h-24 bg-green-50 dark:bg-green-900/30 text-green-500 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 border-8 border-white dark:border-slate-800 shadow-sm relative -mt-12 sm:-mt-16">
+                                <i class="ph-fill ph-check-circle text-4xl sm:text-5xl"></i>
+                            </div>
+                            <span class="px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest bg-primary-50 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300 border border-primary-200 dark:border-primary-800">
+                                {{ formatAssessmentModeLabel(examResult.assessmentMode || userSession.assessmentType || examInfo.assessmentMode) }}
+                            </span>
+                            <h2 class="text-2xl sm:text-4xl font-bold text-slate-900 dark:text-white mt-3 mb-2 sm:mb-3 tracking-tight">Asesmen Selesai</h2>
+                            <p class="text-slate-500 dark:text-slate-400 text-sm sm:text-base max-w-2xl mx-auto px-2">
+                                Terima kasih <strong>{{ userSession.name }}</strong>. Jawaban dan refleksi belajar Anda telah dienkripsi dan disinkronisasi dengan pusat data penilaian Kurikulum Nasional.
+                            </p>
+                            
+                            <div class="mt-6 inline-flex flex-wrap items-center justify-center gap-3 px-4 py-2.5 sm:px-6 sm:py-3 bg-slate-50 dark:bg-slate-900 rounded-xl text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                                <span class="flex items-center gap-1.5"><i class="ph-bold ph-clock text-lg text-primary-500"></i> Waktu Pengerjaan: {{ Math.floor(examResult.timeUsed / 60) }}m {{ examResult.timeUsed % 60 }}s</span>
+                                <span class="text-slate-300 dark:text-slate-600">|</span>
+                                <span class="flex items-center gap-1.5"><i class="ph-bold ph-book-open text-lg text-emerald-500"></i> {{ userSession.subject }}</span>
+                            </div>
+                        </div>
+
+                        <div v-if="examInfo.showResult" class="space-y-6 sm:space-y-8">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+                                
+                                <div class="bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center text-center">
+                                    <p class="text-slate-400 text-[10px] sm:text-xs font-bold uppercase tracking-widest mb-4">Capaian Ketercapaian (KKTP)</p>
+                                    <div class="relative w-32 h-32 sm:w-40 sm:h-40 flex items-center justify-center mb-4">
+                                        <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                                            <path class="text-slate-100 dark:text-slate-700 stroke-current" stroke-width="2.5" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" stroke-linecap="round"/>
+                                            <path :class="[kktpSummary.ringColorClass, 'stroke-current transition-all duration-1000']" stroke-width="2.5" :stroke-dasharray="&#96;${examResult.score}, 100&#96;" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" stroke-linecap="round"/>
+                                        </svg>
+                                        <div class="absolute text-4xl sm:text-5xl font-black text-slate-900 dark:text-white">{{ examResult.score }}</div>
+                                    </div>
+                                    <span :class="['px-3.5 py-1.5 text-xs sm:text-sm font-bold rounded-full uppercase tracking-wider border', kktpSummary.badgeClass]">
+                                        {{ kktpSummary.predicate }}
+                                    </span>
+                                    <p class="text-[11px] text-slate-400 mt-2">Ambang Minimal KKTP Satuan Pendidikan: <strong>{{ examResult.kktpThreshold || examInfo.kktpThreshold || 66 }}%</strong></p>
+                                </div>
+
+                                
+                                <div class="md:col-span-2 bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col justify-between space-y-4">
+                                    <div>
+                                        <h3 class="font-bold text-lg sm:text-xl mb-3 text-slate-900 dark:text-white flex items-center gap-2">
+                                            <i class="ph-bold ph-compass-tool text-primary-500"></i> Deskripsi Capaian &amp; Rekomendasi Tindak Lanjut (PPA 2025)
+                                        </h3>
+                                        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/70 border border-slate-200 dark:border-slate-700 space-y-2">
+                                            <p class="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 leading-relaxed">
+                                                {{ kktpSummary.description }}
+                                            </p>
+                                            <p class="text-xs text-primary-700 dark:text-primary-300 bg-primary-50/80 dark:bg-primary-900/30 p-3 rounded-xl border border-primary-100 dark:border-primary-800/60 leading-relaxed">
+                                                <strong><i class="ph-fill ph-lightbulb"></i> Tindak Lanjut Pembelajaran:</strong> {{ kktpSummary.followUp }}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    
+                                    <div v-if="examResult.cognitiveBreakdown &amp;&amp; examResult.cognitiveBreakdown.length &gt; 0">
+                                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2.5">Capaian Pengalaman Belajar (Pembelajaran Mendalam)</h4>
+                                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                                            <div v-for="(cb, cIdx) in examResult.cognitiveBreakdown" :key="cIdx" class="p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/40 flex items-center justify-between">
+                                                <span class="text-xs font-semibold text-slate-600 dark:text-slate-300 truncate pr-2">{{ cb.level }}</span>
+                                                <span class="text-sm font-black text-primary-600 dark:text-primary-400">{{ cb.percentage }}%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            
+                            <div class="bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700">
+                                <h3 class="font-bold text-lg sm:text-xl mb-4 sm:mb-6 text-slate-900 dark:text-white flex items-center gap-2 sm:gap-3">
+                                    <i class="ph-bold ph-chart-bar text-primary-500"></i> Profil Ketercapaian per Tujuan Pembelajaran (TP) / Elemen CP
+                                </h3>
+                                <div v-if="examResult.analytics &amp;&amp; examResult.analytics.length &gt; 0" class="space-y-4 sm:space-y-5">
+                                    <div v-for="(stat, index) in examResult.analytics" :key="index" class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/80 dark:border-slate-700">
+                                        <div class="flex flex-wrap justify-between items-center gap-2 text-xs sm:text-sm mb-2 font-medium">
+                                            <span class="text-slate-800 dark:text-slate-100 font-bold">{{ stat.category }}</span> 
+                                            <div class="flex items-center gap-2">
+                                                <span v-if="stat.predicate" :class="['text-[10px] font-bold px-2.5 py-0.5 rounded-full border', getStatBadgeClass(stat.percentage)]">
+                                                    {{ stat.predicate }}
+                                                </span>
+                                                <span class="text-slate-900 dark:text-white font-black">{{ stat.percentage }}%</span>
+                                            </div>
+                                        </div>
+                                        <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2.5 overflow-hidden">
+                                            <div :class="['h-full rounded-full transition-all duration-1000', stat.percentage &gt;= (examResult.kktpThreshold || 66) ? 'bg-emerald-500' : (stat.percentage &gt; 40 ? 'bg-amber-500' : 'bg-rose-500')]" :style="{ width: stat.percentage &#43; '%' }"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div v-else class="text-center py-6 sm:py-10 text-slate-500">
+                                    <i class="ph-fill ph-empty text-3xl sm:text-4xl mb-2 opacity-50"></i>
+                                    <p class="text-xs sm:text-sm">Data analitik per Tujuan Pembelajaran belum tersedia.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div v-else class="bg-white dark:bg-slate-800 p-6 sm:p-10 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 text-center">
+                            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-500 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-5">
+                                <i class="ph-fill ph-lock-key text-3xl sm:text-4xl"></i>
+                            </div>
+                            <h3 class="text-xl sm:text-2xl font-bold text-slate-800 dark:text-white mb-2 sm:mb-3">Hasil Asesmen Disimpan</h3>
+                            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-lg mx-auto leading-relaxed">
+                                Lembar jawaban dan refleksi belajar Anda telah terkunci dan tersinkronisasi ke server pusat. Umpan balik ketercapaian Tujuan Pembelajaran (KKTP) akan disampaikan oleh Pendidik.
+                            </p>
+                        </div>
+
+                        <div class="text-center pt-4 pb-8 sm:pt-6 sm:pb-10">
+                            <button @click="initApp" class="px-6 py-3 sm:px-8 sm:py-3.5 bg-white border-2 border-slate-200 hover:border-slate-300 dark:bg-slate-800 dark:border-slate-700 dark:hover:border-slate-600 text-slate-700 dark:text-slate-200 rounded-xl font-bold transition-all inline-flex items-center gap-2 sm:gap-3 shadow-sm hover:shadow-md text-sm sm:text-base">
+                                <i class="ph-bold ph-sign-out text-lg sm:text-xl"></i> Keluar Sistem
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </transition>
+        </template>
+    </div>
+
+    <script>
+        const STANDALONE_GAS_CONFIG = {
+    "WORKER_URLS": [],
+    "PRIMARY_EXEC_URL": "https:\/\/script.google.com\/macros\/s\/AKfycbyM7-SjnciyxxBrl2V_GIwyLVuVk3WXLO0DaBUaa35-oFWg5TJ_adBrVd5wCwfF3KQJ\/exec",
+    "DEFAULT_EXAM_INFO": {
+        "duration": 60,
+        "defaultTheme": "light",
+        "kktpThreshold": 75,
+        "frontendUrl": "https:\/\/smaspgritakokak.github.io\/cbt\/",
+        "name": "Asesmen Berbasis Komputer (Kurikulum Nasional)",
+        "enableReflection": true,
+        "workerUrls": [],
+        "showResult": false,
+        "assessmentMode": "SUMATIF_AKHIR_SEMESTER"
+    },
+    "FRONTEND_URL": "https:\/\/smaspgritakokak.github.io\/cbt\/"
+};
+
+        const { createApp, ref, reactive, computed, onMounted, onUnmounted, watch } = Vue;
+
+        const app = createApp({
+            setup() {
+                
+                
+                
+                const hashStringSeed = (str) => {
+                    let h = 2166136261 >>> 0;
+                    const s = String(str || 'default');
+                    for (let i = 0; i < s.length; i++) {
+                        h ^= s.charCodeAt(i);
+                        h = Math.imul(h, 16777619);
+                    }
+                    return h >>> 0;
+                };
+
+                const mulberry32 = (a) => {
+                    return function() {
+                        let t = a += 0x6D2B79F5;
+                        t = Math.imul(t ^ (t >>> 15), t | 1);
+                        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+                        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+                    };
+                };
+
+                const shuffleArray = (array, seedStr) => {
+                    const cloned = Array.isArray(array) ? [...array] : [];
+                    const rng = mulberry32(hashStringSeed(seedStr));
+                    let currentIndex = cloned.length;
+                    while (currentIndex !== 0) {
+                        const randomIndex = Math.floor(rng() * currentIndex);
+                        currentIndex--;
+                        [cloned[currentIndex], cloned[randomIndex]] = [cloned[randomIndex], cloned[currentIndex]];
+                    }
+                    return cloned;
+                };
+
+                
+                
+                
+                const HTTPS_PROTO = 'https:\x2f\x2f';
+                const GAS_HOST_PREFIX = HTTPS_PROTO + 'script.google.com\x2f';
+
+                const resolveCdnMediaUrl = (rawUrl) => {
+                    if (!rawUrl || typeof rawUrl !== 'string') return '';
+                    const trimmed = rawUrl.trim();
+                    if (!trimmed) return '';
+
+                    if (
+                        trimmed.startsWith('data:') ||
+                        trimmed.includes('i.ibb.co/') ||
+                        trimmed.includes('i.imgur.com/') ||
+                        trimmed.includes('cdn.jsdelivr.net/') ||
+                        trimmed.includes('wsrv.nl/') ||
+                        trimmed.includes('imagedelivery.net/')
+                    ) {
+                        return trimmed;
+                    }
+
+                    const ghBlobMatch = trimmed.match(/^https?:\x2f\x2fgithub\.com\x2f([^\x2f]+)\x2f([^\x2f]+)\x2f(?:blob|raw)\x2f([^\x2f]+)\x2f(.+)$/i);
+                    if (ghBlobMatch) {
+                        return HTTPS_PROTO + 'cdn.jsdelivr.net/gh/' + ghBlobMatch[1] + '/' + ghBlobMatch[2] + '@' + ghBlobMatch[3] + '/' + ghBlobMatch[4];
+                    }
+                    const ghRawMatch = trimmed.match(/^https?:\x2f\x2fraw\.githubusercontent\.com\x2f([^\x2f]+)\x2f([^\x2f]+)\x2f([^\x2f]+)\x2f(.+)$/i);
+                    if (ghRawMatch) {
+                        return HTTPS_PROTO + 'cdn.jsdelivr.net/gh/' + ghRawMatch[1] + '/' + ghRawMatch[2] + '@' + ghRawMatch[3] + '/' + ghRawMatch[4];
+                    }
+
+                    const driveIdMatch =
+                        trimmed.match(/[?&]id=([a-zA-Z0-9_-]{15,})/) ||
+                        trimmed.match(/\x2ffile\x2fd\x2f([a-zA-Z0-9_-]{15,})/) ||
+                        trimmed.match(/googleusercontent\.com\x2fd\x2f([a-zA-Z0-9_-]{15,})/);
+
+                    if (driveIdMatch && driveIdMatch[1]) {
+                        const fileId = driveIdMatch[1];
+                        const sourceUrl = HTTPS_PROTO + 'drive.google.com/uc?id=' + fileId;
+                        return HTTPS_PROTO + 'wsrv.nl/?url=' + encodeURIComponent(sourceUrl) + '&w=1000&output=webp&q=80';
+                    }
+
+                    return trimmed;
+                };
+
+                const handleImageErrorFallback = (event, originalUrl) => {
+                    const imgEl = event && event.target;
+                    if (!imgEl || !originalUrl) return;
+                    const step = Number(imgEl.dataset.fallbackStep || 0);
+                    const decoded = decodeURIComponent(originalUrl);
+                    const driveIdMatch =
+                        decoded.match(/[?&]id=([a-zA-Z0-9_-]{15,})/) ||
+                        decoded.match(/\x2ffile\x2fd\x2f([a-zA-Z0-9_-]{15,})/) ||
+                        decoded.match(/googleusercontent\.com\x2fd\x2f([a-zA-Z0-9_-]{15,})/);
+
+                    if (driveIdMatch && driveIdMatch[1]) {
+                        const fileId = driveIdMatch[1];
+                        if (step === 0) {
+                            imgEl.dataset.fallbackStep = '1';
+                            imgEl.src = HTTPS_PROTO + 'lh3.googleusercontent.com/d/' + fileId + '=w1000';
+                            return;
+                        } else if (step === 1) {
+                            imgEl.dataset.fallbackStep = '2';
+                            imgEl.src = HTTPS_PROTO + 'drive.google.com/thumbnail?id=' + fileId + '&sz=w1000';
+                            return;
+                        }
+                    }
+                    if (step < 3 && imgEl.src !== originalUrl) {
+                        imgEl.dataset.fallbackStep = '3';
+                        imgEl.src = originalUrl;
+                    }
+                };
+
+                
+                
+                
+                const formatAssessmentModeLabel = (mode) => {
+                    const m = String(mode || 'SUMATIF_LINGKUP_MATERI').toUpperCase();
+                    if (m === 'FORMATIF_AWAL') return 'Asesmen Formatif Awal (Diagnostik)';
+                    if (m === 'FORMATIF_PROSES') return 'Asesmen Formatif Proses';
+                    if (m === 'SUMATIF_AKHIR_SEMESTER') return 'Asesmen Sumatif Akhir Semester';
+                    return 'Asesmen Sumatif Lingkup Materi';
+                };
+
+                const formatQuestionTypeBadge = (type) => {
+                    const t = String(type || 'multiple-choice').toLowerCase();
+                    if (t === 'complex-mc') return 'PG Kompleks (Multi-Jawaban)';
+                    if (t === 'true-false') return 'Benar / Salah Majemuk';
+                    if (t === 'short-answer') return 'Isian Singkat';
+                    if (t === 'essay') return 'Uraian / Esai Analitis';
+                    return 'Pilihan Ganda';
+                };
+
+                const isQuestionAnswered = (q) => {
+                    if (!q) return false;
+                    const t = String(q.type || 'multiple-choice').toLowerCase();
+                    if (t === 'complex-mc') {
+                        return Array.isArray(q.answer) && q.answer.length > 0;
+                    }
+                    if (t === 'true-false') {
+                        if (!q.answer || typeof q.answer !== 'object') return false;
+                        const optCount = Array.isArray(q.options) && q.options.length > 0 ? q.options.length : 1;
+                        return Object.keys(q.answer).filter(k => q.answer[k] === 'B' || q.answer[k] === 'S').length >= optCount;
+                    }
+                    if (t === 'essay' || t === 'short-answer') {
+                        return q.answer !== null && q.answer !== undefined && String(q.answer).trim().length > 0;
+                    }
+                    return q.answer !== null && q.answer !== undefined && String(q.answer).trim() !== '';
+                };
+
+                const isComplexOptionSelected = (q, optId) => {
+                    if (!q || !Array.isArray(q.answer)) return false;
+                    return q.answer.includes(optId);
+                };
+
+                const toggleComplexOption = (q, optId) => {
+                    if (!q) return;
+                    if (!Array.isArray(q.answer)) q.answer = [];
+                    const idx = q.answer.indexOf(optId);
+                    if (idx === -1) q.answer.push(optId);
+                    else q.answer.splice(idx, 1);
+                    q.answer.sort();
+                    markAnswered(q);
+                };
+
+                const getTrueFalseStatement = (q, optId) => {
+                    if (!q || !q.answer || typeof q.answer !== 'object') return '';
+                    return q.answer[optId] || '';
+                };
+
+                const setTrueFalseStatement = (q, optId, val) => {
+                    if (!q) return;
+                    if (!q.answer || typeof q.answer !== 'object' || Array.isArray(q.answer)) {
+                        q.answer = {};
+                    }
+                    q.answer = { ...q.answer, [optId]: val };
+                    markAnswered(q);
+                };
+
+                
+                
+                
+                const LS_PREFIX = 'cbt_enterprise_state_v4_';
+                const LS_POINTER_KEY = 'cbt_enterprise_last_uid_v4';
+                const LS_ENDPOINT_KEY = 'cbt_enterprise_gas_url_v4';
+                const LS_EXAMINFO_KEY = 'cbt_enterprise_examinfo_v4';
+                const IDB_NAME = 'CBT_Enterprise_Vault_v4';
+                const IDB_STORE = 'exam_sessions';
+
+                const OfflineVault = {
+                    _dbPromise: null,
+                    _getDb() {
+                        if (this._dbPromise) return this._dbPromise;
+                        this._dbPromise = new Promise((resolve) => {
+                            if (typeof indexedDB === 'undefined') return resolve(null);
+                            try {
+                                const req = indexedDB.open(IDB_NAME, 1);
+                                req.onupgradeneeded = (e) => {
+                                    const db = e.target.result;
+                                    if (!db.objectStoreNames.contains(IDB_STORE)) {
+                                        db.createObjectStore(IDB_STORE);
+                                    }
+                                };
+                                req.onsuccess = (e) => resolve(e.target.result);
+                                req.onerror = () => resolve(null);
+                            } catch (err) {
+                                resolve(null);
+                            }
+                        });
+                        return this._dbPromise;
+                    },
+                    async saveForUser(userId, subject, encodedState) {
+                        const cleanUid = String(userId || '').trim();
+                        if (!cleanUid) return;
+                        const slotKey = `${cleanUid}_${String(subject || 'general').replace(/\s+/g, '_')}`;
+
+                        try {
+                            if (typeof localStorage !== 'undefined') {
+                                localStorage.setItem(LS_PREFIX + slotKey, encodedState);
+                                localStorage.setItem(LS_POINTER_KEY, slotKey);
+                            }
+                        } catch (e) {}
+                        try {
+                            const db = await this._getDb();
+                            if (db) {
+                                const tx = db.transaction(IDB_STORE, 'readwrite');
+                                const store = tx.objectStore(IDB_STORE);
+                                store.put(encodedState, 'session_' + slotKey);
+                                store.put(slotKey, 'last_active_slot');
+                            }
+                        } catch (e) {}
+                    },
+                    async getLastActiveSlotKey() {
+                        try {
+                            if (typeof localStorage !== 'undefined') {
+                                const ptr = localStorage.getItem(LS_POINTER_KEY);
+                                if (ptr) return ptr;
+                            }
+                        } catch (e) {}
+                        try {
+                            const db = await this._getDb();
+                            if (db) {
+                                return await new Promise((resolve) => {
+                                    const tx = db.transaction(IDB_STORE, 'readonly');
+                                    const req = tx.objectStore(IDB_STORE).get('last_active_slot');
+                                    req.onsuccess = () => resolve(req.result || null);
+                                    req.onerror = () => resolve(null);
+                                });
+                            }
+                        } catch (e) {}
+                        return null;
+                    },
+                    async loadBySlotKey(slotKey) {
+                        if (!slotKey) return null;
+                        try {
+                            if (typeof localStorage !== 'undefined') {
+                                const lsVal = localStorage.getItem(LS_PREFIX + slotKey);
+                                if (lsVal) return lsVal;
+                            }
+                        } catch (e) {}
+                        try {
+                            const db = await this._getDb();
+                            if (db) {
+                                return await new Promise((resolve) => {
+                                    const tx = db.transaction(IDB_STORE, 'readonly');
+                                    const req = tx.objectStore(IDB_STORE).get('session_' + slotKey);
+                                    req.onsuccess = () => resolve(req.result || null);
+                                    req.onerror = () => resolve(null);
+                                });
+                            }
+                        } catch (e) {}
+                        return null;
+                    },
+                    async loadByUser(userId, subject) {
+                        const cleanUid = String(userId || '').trim();
+                        if (!cleanUid) return null;
+                        const slotKey = `${cleanUid}_${String(subject || 'general').replace(/\s+/g, '_')}`;
+                        return await this.loadBySlotKey(slotKey);
+                    },
+                    async clearPointerOnly() {
+                        try {
+                            if (typeof localStorage !== 'undefined') {
+                                localStorage.removeItem(LS_POINTER_KEY);
+                            }
+                        } catch (e) {}
+                        try {
+                            const db = await this._getDb();
+                            if (db) {
+                                const tx = db.transaction(IDB_STORE, 'readwrite');
+                                tx.objectStore(IDB_STORE).delete('last_active_slot');
+                            }
+                        } catch (e) {}
+                    },
+                    async clearUserSlot(userId, subject) {
+                        const cleanUid = String(userId || '').trim();
+                        const slotKey = `${cleanUid}_${String(subject || 'general').replace(/\s+/g, '_')}`;
+                        try {
+                            if (typeof localStorage !== 'undefined') {
+                                localStorage.removeItem(LS_PREFIX + slotKey);
+                                if (localStorage.getItem(LS_POINTER_KEY) === slotKey) {
+                                    localStorage.removeItem(LS_POINTER_KEY);
+                                }
+                            }
+                        } catch (e) {}
+                        try {
+                            const db = await this._getDb();
+                            if (db) {
+                                const tx = db.transaction(IDB_STORE, 'readwrite');
+                                const store = tx.objectStore(IDB_STORE);
+                                store.delete('session_' + slotKey);
+                                store.delete('last_active_slot');
+                            }
+                        } catch (e) {}
+                    }
+                };
+
+                
+                
+                
+                const hasNativeGasBridge = (typeof google !== 'undefined' && google.script && google.script.run);
+                const isStandaloneMode = ref(!hasNativeGasBridge);
+                const embeddedPrimaryUrl = String((STANDALONE_GAS_CONFIG && STANDALONE_GAS_CONFIG.PRIMARY_EXEC_URL) || '').trim();
+                const hasEmbeddedPrimaryUrl = ref(embeddedPrimaryUrl.startsWith(GAS_HOST_PREFIX));
+                const primaryGasUrl = ref(embeddedPrimaryUrl);
+                const customEndpointInput = ref(embeddedPrimaryUrl);
+                const showEndpointModal = ref(false);
+                const workerPoolUrls = ref(Array.isArray(STANDALONE_GAS_CONFIG.WORKER_URLS) ? [...STANDALONE_GAS_CONFIG.WORKER_URLS] : []);
+                const retryStatusText = ref('');
+                const loadingSubtitle = ref('Sinkronisasi konfigurasi server...');
+
+                const initStandaloneEndpoint = () => {
+                    try {
+                        const bakedUrl = String((STANDALONE_GAS_CONFIG && STANDALONE_GAS_CONFIG.PRIMARY_EXEC_URL) || '').trim();
+                        if (bakedUrl && bakedUrl.startsWith(GAS_HOST_PREFIX)) {
+                            primaryGasUrl.value = bakedUrl;
+                            hasEmbeddedPrimaryUrl.value = true;
+                            customEndpointInput.value = bakedUrl;
+                            if (typeof localStorage !== 'undefined') {
+                                localStorage.setItem(LS_ENDPOINT_KEY, bakedUrl);
+                            }
+                            return;
+                        }
+
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const apiParam = urlParams.get('api') || urlParams.get('exec');
+                        if (apiParam && apiParam.startsWith(GAS_HOST_PREFIX)) {
+                            primaryGasUrl.value = apiParam.trim();
+                            if (typeof localStorage !== 'undefined') {
+                                localStorage.setItem(LS_ENDPOINT_KEY, primaryGasUrl.value);
+                            }
+                        } else if (!primaryGasUrl.value && typeof localStorage !== 'undefined') {
+                            const savedUrl = localStorage.getItem(LS_ENDPOINT_KEY);
+                            if (savedUrl && savedUrl.startsWith(GAS_HOST_PREFIX)) {
+                                primaryGasUrl.value = savedUrl.trim();
+                            }
+                        }
+                        customEndpointInput.value = primaryGasUrl.value;
+                    } catch (e) {}
+                };
+
+                const saveCustomEndpoint = () => {
+                    const cleaned = (customEndpointInput.value || '').trim();
+                    if (!cleaned.startsWith(GAS_HOST_PREFIX)) {
+                        formError.value = 'URL Endpoint harus diawali ' + GAS_HOST_PREFIX + 'macros/s/.../exec';
+                        return;
+                    }
+                    formError.value = '';
+                    primaryGasUrl.value = cleaned;
+                    showEndpointModal.value = false;
+                    try {
+                        if (typeof localStorage !== 'undefined') {
+                            localStorage.setItem(LS_ENDPOINT_KEY, cleaned);
+                        }
+                    } catch (e) {}
+                };
+
+                const invokeWorkerEndpoint = async (workerUrl, functionName, args) => {
+                    const response = await fetch(workerUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify({ action: functionName, args: args }),
+                        redirect: 'follow'
+                    });
+                    if (!response.ok) throw new Error(`Worker HTTP ${response.status}`);
+                    return await response.json();
+                };
+
+                const invokeGasNative = (functionName, args) => {
+                    return new Promise((resolve, reject) => {
+                        if (hasNativeGasBridge) {
+                            google.script.run
+                                .withSuccessHandler(resolve)
+                                .withFailureHandler(reject)
+                                [functionName](...args);
+                        } else if (primaryGasUrl.value) {
+                            invokeWorkerEndpoint(primaryGasUrl.value, functionName, args)
+                                .then(resolve)
+                                .catch(reject);
+                        } else {
+                            
+                            setTimeout(() => {
+                                if (functionName === 'apiGetExamInfo') resolve({success: true, data: STANDALONE_GAS_CONFIG.DEFAULT_EXAM_INFO});
+                                else if (functionName === 'apiLogin') resolve({success: true, data: {
+                                    user: {id: loginData.value.id || '12345', name: 'Murid Simulasi (' + (loginData.value.id || '12345') + ')', subject: 'Koding dan Kecerdasan Artifisial (Pilihan)', room: 'Lab 1', assessmentType: 'SUMATIF_LINGKUP_MATERI', sessionToken: 'sim-token'},
+                                    examInfo: STANDALONE_GAS_CONFIG.DEFAULT_EXAM_INFO,
+                                    recoveredSession: [],
+                                    prefetchedQuestions: [
+                                        {id: 'q1', type: 'multiple-choice', category: 'Koding dan Kecerdasan Artifisial (Pilihan)', tpElement: 'Berpikir Komputasional', cognitiveLevel: 'Memahami (L1)', text: 'Manakah dekomposisi masalah yang paling tepat saat merancang algoritma penyortiran data nilai kelas?', options: [{id:'a', text:'Memecah proses menjadi input data, pembandingan elemen, dan penukaran posisi'}, {id:'b', text:'Menghapus seluruh data yang bernilai rendah'}, {id:'c', text:'Mengabaikan urutan indeks array'}]},
+                                        {id: 'q2', type: 'complex-mc', category: 'Koding dan Kecerdasan Artifisial (Pilihan)', tpElement: 'Literasi dan Etika Kecerdasan Artifisial', cognitiveLevel: 'Mengaplikasi (L2)', text: 'Pilihlah **dua** prinsip etika pemanfaatan Kecerdasan Artifisial (KA) generatif di lingkungan sekolah:', options: [{id:'a', text:'Memverifikasi kebenaran fakta dan sumber referensi dari output KA'}, {id:'b', text:'Menyalin penuh hasil KA tanpa mencantumkan atribusi atau proses berpikir sendiri'}, {id:'c', text:'Menjaga privasi data pribadi teman dan guru saat memasukkan prompt'}]},
+                                        {id: 'q3', type: 'essay', category: 'Koding dan Kecerdasan Artifisial (Pilihan)', tpElement: 'Algoritma Pemrograman', cognitiveLevel: 'Merefleksi (L3)', text: 'Jelaskan mengapa bias data latih (*training data bias*) dapat memengaruhi keadilan keputusan sistem Kecerdasan Artifisial!', options: []}
+                                    ],
+                                    cheatCount: 0,
+                                    timeRemaining: 5400,
+                                    workerUrls: []
+                                }});
+                                else if (functionName === 'apiGetQuestions') resolve({success: true, data: []});
+                                else if (functionName === 'apiAutoSave' || functionName === 'apiLogCheat' || functionName === 'apiReportQuestion') resolve({success: true});
+                                else if (functionName === 'apiSubmitExam') resolve({success: true, data: {
+                                    score: 88,
+                                    timeUsed: 1200,
+                                    kktpThreshold: 66,
+                                    assessmentMode: 'SUMATIF_LINGKUP_MATERI',
+                                    kktp: {
+                                        predicate: 'Sangat Baik (Melampaui KKTP)',
+                                        code: 'SANGAT_BAIK',
+                                        isAchieved: true,
+                                        description: 'Melampaui Kriteria Ketercapaian Tujuan Pembelajaran (KKTP) secara komprehensif pada tahap memahami, mengaplikasi, dan merefleksi.',
+                                        followUp: 'Diberikan tantangan pengayaan (enrichment) berbasis proyek/pemecahan masalah kompleks atau dilibatkan sebagai tutor sebaya.'
+                                    },
+                                    analytics: [
+                                        {category: 'Berpikir Komputasional', percentage: 100, predicate: 'Sangat Baik (Melampaui KKTP)'},
+                                        {category: 'Literasi dan Etika Kecerdasan Artifisial', percentage: 85, predicate: 'Baik (Mencapai KKTP)'}
+                                    ],
+                                    cognitiveBreakdown: [
+                                        {level: 'Memahami (L1)', percentage: 100},
+                                        {level: 'Mengaplikasi (L2)', percentage: 85},
+                                        {level: 'Merefleksi (L3)', percentage: 80}
+                                    ]
+                                }});
+                                else reject(new Error("Endpoint GAS belum dikonfigurasi."));
+                            }, 350);
+                        }
+                    });
+                };
+
+                const runServer = async (functionName, ...args) => {
+                    const maxRetries = 4;
+                    const baseDelayMs = 1100;
+
+                    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+                        try {
+                            let res = null;
+                            const pool = workerPoolUrls.value || [];
+                            const shardableActions = ['apiAutoSave', 'apiLogCheat', 'apiGetQuestions'];
+
+                            if (pool.length > 0 && (shardableActions.includes(functionName) || (!hasNativeGasBridge && !primaryGasUrl.value))) {
+                                const uidSeed = (userSession.value && userSession.value.id) ? userSession.value.id : String(Date.now());
+                                const shardIdx = (hashStringSeed(uidSeed) + attempt) % pool.length;
+                                const targetWorkerUrl = pool[shardIdx];
+                                try {
+                                    res = await invokeWorkerEndpoint(targetWorkerUrl, functionName, args);
+                                } catch (workerErr) {
+                                    res = await invokeGasNative(functionName, args);
+                                }
+                            } else {
+                                res = await invokeGasNative(functionName, args);
+                            }
+
+                            if (res && res.success === false && res.code === 503 && attempt < maxRetries) {
+                                throw new Error(res.message || 'SERVER_BUSY_503');
+                            }
+
+                            retryStatusText.value = '';
+                            return res;
+                        } catch (err) {
+                            const msg = (err && err.message ? err.message : String(err)).toLowerCase();
+                            const isTransient =
+                                msg.includes('503') ||
+                                msg.includes('sibuk') ||
+                                msg.includes('lock') ||
+                                msg.includes('simultaneous') ||
+                                msg.includes('too many') ||
+                                msg.includes('timeout') ||
+                                msg.includes('network') ||
+                                msg.includes('failed to fetch');
+
+                            if (!isTransient || attempt === maxRetries) {
+                                retryStatusText.value = '';
+                                throw err;
+                            }
+
+                            const backoffMs = Math.round((baseDelayMs * Math.pow(1.9, attempt)) + (Math.random() * 900));
+                            retryStatusText.value = `Antrean padat, mencoba ulang (${attempt + 1}/${maxRetries})...`;
+                            loadingSubtitle.value = retryStatusText.value;
+                            await new Promise(r => setTimeout(r, backoffMs));
+                        }
+                    }
+                };
+
+                // STATE: GLOBAL UI & NOTICE MODAL
+                const globalUiState = ref('loading'); 
+                const globalErrorMessage = ref('');
+                const formError = ref('');
+                const noticeModal = reactive({
+                    show: false,
+                    title: '',
+                    message: '',
+                    type: 'info',
+                    onClose: null
+                });
+
+                const showSystemNotice = (title, message, type = 'info', onClose = null) => {
+                    noticeModal.title = title;
+                    noticeModal.message = message;
+                    noticeModal.type = type;
+                    noticeModal.onClose = onClose;
+                    noticeModal.show = true;
+                };
+
+                const closeNoticeModal = () => {
+                    noticeModal.show = false;
+                    if (typeof noticeModal.onClose === 'function') {
+                        const cb = noticeModal.onClose;
+                        noticeModal.onClose = null;
+                        cb();
+                    }
+                };
+
+                
+                const sessionGuardModal = reactive({
+                    show: false,
+                    candidate: null,
+                    remainingSec: 0,
+                    answeredCount: 0,
+                    totalCount: 0
+                });
+                const showSwitchUserModal = ref(false);
+                const isParkingSession = ref(false);
+
+                
+                const currentPhase = ref('pre-exam'); 
+                const setupStep = ref('login'); 
+                
+                
+                const examInfo = ref({ ...(STANDALONE_GAS_CONFIG.DEFAULT_EXAM_INFO || { name: 'Asesmen Berbasis Komputer (Kurikulum Nasional)', duration: 60, defaultTheme: 'light', showResult: true, assessmentMode: 'SUMATIF_LINGKUP_MATERI', kktpThreshold: 66, enableReflection: true, workerUrls: [] }) });
+                const loginData = ref({ id: '', token: '' });
+                const userSession = ref({});
+                const recoveredAnswers = ref([]);
+                const prefetchedQuestions = ref([]);
+                const questions = ref([]);
+                const activeIndex = ref(0);
+                const timer = ref(3600);
+                const studentReflection = ref('');
+                const examResult = ref({ score: 0, timeUsed: 0, kktpThreshold: 66, kktp: null, analytics: [], cognitiveBreakdown: [] });
+
+                
+                const kktpSummary = computed(() => {
+                    const score = Number(examResult.value.score) || 0;
+                    const threshold = Number(examResult.value.kktpThreshold || examInfo.value.kktpThreshold) || 66;
+                    const serverKktp = examResult.value.kktp || {};
+
+                    if (score <= 40) {
+                        return {
+                            predicate: serverKktp.predicate || 'Perlu Bimbingan',
+                            description: serverKktp.description || 'Belum mencapai Kriteria Ketercapaian Tujuan Pembelajaran (KKTP). Peserta didik memerlukan pendampingan intensif pada konsep dasar.',
+                            followUp: serverKktp.followUp || 'Remedial menyeluruh pada konsep esensial dan bimbingan terstruktur bersama pendidik.',
+                            badgeClass: 'bg-rose-100 text-rose-700 border-rose-200 dark:bg-rose-900/40 dark:text-rose-300 dark:border-rose-800',
+                            ringColorClass: 'text-rose-500'
+                        };
+                    } else if (score < threshold) {
+                        return {
+                            predicate: serverKktp.predicate || 'Cukup (Hampir Mencapai)',
+                            description: serverKktp.description || 'Hampir mencapai Kriteria Ketercapaian Tujuan Pembelajaran (KKTP). Sebagian indikator dasar telah dipahami namun masih perlu penguatan.',
+                            followUp: serverKktp.followUp || 'Penguatan terfokus (remedial terbimbing) pada indikator Tujuan Pembelajaran yang belum tuntas.',
+                            badgeClass: 'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/40 dark:text-amber-300 dark:border-amber-800',
+                            ringColorClass: 'text-amber-500'
+                        };
+                    } else if (score <= 85) {
+                        return {
+                            predicate: serverKktp.predicate || 'Baik (Mencapai KKTP)',
+                            description: serverKktp.description || 'Sudah mencapai Kriteria Ketercapaian Tujuan Pembelajaran (KKTP). Sebagian besar indikator Tujuan Pembelajaran telah dikuasai dengan baik.',
+                            followUp: serverKktp.followUp || 'Siap melanjutkan ke Tujuan Pembelajaran berikutnya dan memperluas aplikasi konsep pada konteks baru.',
+                            badgeClass: 'bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-900/40 dark:text-emerald-300 dark:border-emerald-800',
+                            ringColorClass: 'text-emerald-500'
+                        };
+                    } else {
+                        return {
+                            predicate: serverKktp.predicate || 'Sangat Baik (Melampaui KKTP)',
+                            description: serverKktp.description || 'Melampaui Kriteria Ketercapaian Tujuan Pembelajaran (KKTP) secara komprehensif pada tahap memahami, mengaplikasi, dan merefleksi.',
+                            followUp: serverKktp.followUp || 'Diberikan tantangan pengayaan (enrichment) berbasis pemecahan masalah kompleks atau menjadi tutor sebaya.',
+                            badgeClass: 'bg-primary-100 text-primary-700 border-primary-200 dark:bg-primary-900/40 dark:text-primary-300 dark:border-primary-800',
+                            ringColorClass: 'text-primary-500'
+                        };
+                    }
+                });
+
+                const getStatBadgeClass = (pct) => {
+                    const threshold = Number(examResult.value.kktpThreshold || examInfo.value.kktpThreshold) || 66;
+                    if (pct <= 40) return 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-900/30 dark:text-rose-300 dark:border-rose-800';
+                    if (pct < threshold) return 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-800';
+                    if (pct <= 85) return 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-800';
+                    return 'bg-primary-50 text-primary-700 border-primary-200 dark:bg-primary-900/30 dark:text-primary-300 dark:border-primary-800';
+                };
+
+                
+                const isDirty = ref(false);
+                const dirtyDeltaMap = ref({});
+                const lastSyncedAt = ref(null);
+
+                
+                const drainState = reactive({
+                    active: false,
+                    totalSec: 10,
+                    remainingSec: 10,
+                    intervalId: null
+                });
+
+                const drainProgressPct = computed(() => {
+                    if (!drainState.totalSec) return 100;
+                    return Math.min(100, Math.round(((drainState.totalSec - drainState.remainingSec) / drainState.totalSec) * 100));
+                });
+                
+                
+                const systemChecks = ref([
+                    { name: 'Integritas Koneksi', desc: 'Memeriksa jaringan...', status: 'checking', icon: 'ph-wifi-high' },
+                    { name: 'Akses Periferal', desc: 'Memeriksa perangkat kamera...', status: 'pending', icon: 'ph-webcam' },
+                    { name: 'Wave Prefetch & Vault', desc: 'Menyiapkan instrumen di memori...', status: 'pending', icon: 'ph-lightning' }
+                ]);
+                const agreedToRules = ref(false);
+                const cheatCount = ref(0);
+                const mediaStream = ref(null);
+                const warningReason = ref('');
+
+                
+                const showReportModal = ref(false);
+                const reportNote = ref('');
+                const isReporting = ref(false);
+
+                
+                
+                
+                let lastViolationTimestamp = 0;
+                let isRequestingCamera = false;
+
+                const triggerViolation = (reason) => {
+                    if (isRequestingCamera) return;
+                    if (currentPhase.value !== 'exam') return;
+                    if (noticeModal.show || showSubmitModal.value || showReportModal.value || showSwitchUserModal.value || sessionGuardModal.show || drainState.active) return;
+
+                    const now = Date.now();
+                    if (now - lastViolationTimestamp < 1500) return;
+                    lastViolationTimestamp = now;
+
+                    cheatCount.value++; 
+                    warningReason.value = reason;
+                    showWarning.value = true; 
+                    saveStateToLocal();
+                    
+                    runServer('apiLogCheat', userSession.value.id, reason, userSession.value.sessionToken, userSession.value.subject).catch(() => {});
+
+                    if (cheatCount.value >= 5) {
+                        setTimeout(() => {
+                            showWarning.value = false;
+                            showSystemNotice(
+                                "Sistem Mengunci Asesmen",
+                                "Batas toleransi pelanggaran (5x) telah terlampaui. Asesmen Anda dihentikan dan dikumpulkan secara otomatis.",
+                                "error",
+                                () => startStaggeredDrainSubmit()
+                            );
+                        }, 1200);
+                    } else {
+                        setTimeout(() => { showWarning.value = false; }, 4000);
+                    }
+                };
+
+                const handleVisibilityChange = () => {
+                    if (document.hidden) triggerViolation("Meninggalkan Tab / Layar Asesmen!");
+                };
+
+                const handleWindowBlur = () => {
+                    if (isRequestingCamera) return;
+                    setTimeout(() => {
+                        if (isRequestingCamera || document.hasFocus()) return;
+                        const activeTag = document.activeElement ? document.activeElement.tagName : '';
+                        if (activeTag === 'IFRAME' || activeTag === 'AUDIO' || activeTag === 'VIDEO') return;
+                        if (currentPhase.value === 'exam' && !showSubmitModal.value && !showReportModal.value && !showSwitchUserModal.value && !sessionGuardModal.show && !noticeModal.show && !drainState.active) {
+                            triggerViolation("Fokus layar hilang! Menjalankan aplikasi lain dilarang.");
+                        }
+                    }, 300);
+                };
+
+                const preventDefaultActions = (e) => {
+                    if (currentPhase.value === 'exam') e.preventDefault();
+                };
+
+                const handleKeyDown = (e) => {
+                    if (currentPhase.value !== 'exam') return;
+                    if (
+                        e.key === 'F12' ||
+                        (e.ctrlKey && e.shiftKey && ['I', 'i', 'J', 'j', 'C', 'c'].includes(e.key)) ||
+                        (e.ctrlKey && ['U', 'u'].includes(e.key))
+                    ) {
+                        e.preventDefault();
+                        triggerViolation("Percobaan membuka Developer Tools terdeteksi!");
+                    }
+                };
+
+                const handleBeforeUnload = (e) => {
+                    if (currentPhase.value === 'exam') {
+                        saveStateToLocal();
+                        if (isDirty.value) {
+                            e.preventDefault();
+                            e.returnValue = '';
+                        }
+                    }
+                };
+
+                
+                const isLoading = ref(false);
+                const isSubmitting = ref(false);
+                const showSidebar = ref(false);
+                const showTools = ref(false);
+                const showSubmitModal = ref(false);
+                const showWarning = ref(false);
+                const isDarkMode = ref(false);
+                const fontSize = ref('text-sm');
+                const saveStatus = ref('saved');
+
+                let timerInterval = null;
+                let autoSaveTimeout = null;
+                let endTime = null;
+                let isSyncing = false;
+
+                const isOffline = ref(!navigator.onLine);
+
+                const syncStatusTooltip = computed(() => {
+                    if (lastSyncedAt.value) {
+                        return 'Sinkronisasi terakhir ke RAM Server: ' + new Date(lastSyncedAt.value).toLocaleTimeString('id-ID');
+                    }
+                    return 'Seluruh jawaban tersimpan di Offline Vault per-peserta.';
+                });
+
+                const saveStateToLocal = () => {
+                    if (currentPhase.value === 'exam' && userSession.value && userSession.value.id) {
+                        try {
+                            const stateToSave = {
+                                userSession: userSession.value,
+                                questions: questions.value,
+                                activeIndex: activeIndex.value,
+                                cheatCount: cheatCount.value,
+                                studentReflection: studentReflection.value,
+                                dirtyDeltaMap: dirtyDeltaMap.value,
+                                isDirty: isDirty.value,
+                                workerUrls: workerPoolUrls.value,
+                                primaryGasUrl: primaryGasUrl.value,
+                                timestamp: Date.now(),
+                                timerEndTimestamp: endTime || (Date.now() + (timer.value * 1000))
+                            };        
+                            
+                            const jsonString = JSON.stringify(stateToSave);
+                            const encodedState = btoa(encodeURIComponent(jsonString));
+                            OfflineVault.saveForUser(userSession.value.id, userSession.value.subject, encodedState);
+                        } catch (e) {
+                            console.warn("⚠️ Gagal menyimpan ke Offline Vault:", e);
+                        }
+                    }
+                };
+
+                const activateCandidateSession = (savedState, realRemainingTime) => {
+                    userSession.value = savedState.userSession;
+                    questions.value = savedState.questions;                
+                    endTime = savedState.timerEndTimestamp;
+                    timer.value = realRemainingTime; 
+                    activeIndex.value = savedState.activeIndex || 0;
+                    cheatCount.value = Number(savedState.cheatCount) || 0;
+                    studentReflection.value = savedState.studentReflection || '';
+                    dirtyDeltaMap.value = savedState.dirtyDeltaMap || {};
+                    isDirty.value = Boolean(savedState.isDirty);
+                    if (Array.isArray(savedState.workerUrls) && savedState.workerUrls.length > 0) {
+                        workerPoolUrls.value = savedState.workerUrls;
+                    }
+                    if (savedState.primaryGasUrl) {
+                        primaryGasUrl.value = savedState.primaryGasUrl;
+                    }
+                    currentPhase.value = 'exam';
+                    globalUiState.value = 'ready';                
+                    setTimeout(() => { 
+                        if (typeof startCamera === 'function') startCamera(); 
+                    }, 500);
+                    startTimer();
+                    if (isDirty.value) {
+                        scheduleJitteredSync();
+                    }
+                };
+
+                const checkExistingSessionOnBoot = async () => {
+                    try {
+                        const lastSlotKey = await OfflineVault.getLastActiveSlotKey();
+                        if (!lastSlotKey) return false;
+
+                        const savedStateStr = await OfflineVault.loadBySlotKey(lastSlotKey);
+                        if (!savedStateStr) return false;
+
+                        const decodedString = decodeURIComponent(atob(savedStateStr));         
+                        const savedState = JSON.parse(decodedString);            
+                        const realRemainingTime = Math.floor((savedState.timerEndTimestamp - Date.now()) / 1000);
+
+                        if (realRemainingTime > 0 && savedState.questions && savedState.questions.length > 0 && savedState.userSession) {
+                            const msSinceLastTouch = Date.now() - (Number(savedState.timestamp) || 0);
+
+                            if (msSinceLastTouch < 12000) {
+                                activateCandidateSession(savedState, realRemainingTime);
+                                return true;
+                            }
+
+                            const ansCount = savedState.questions.filter(q => isQuestionAnswered(q)).length;
+
+                            sessionGuardModal.candidate = savedState;
+                            sessionGuardModal.remainingSec = realRemainingTime;
+                            sessionGuardModal.answeredCount = ansCount;
+                            sessionGuardModal.totalCount = savedState.questions.length;
+                            sessionGuardModal.show = true;
+                            globalUiState.value = 'ready';
+                            return true;
+                        } else {
+                            await OfflineVault.clearPointerOnly();
+                        }
+                    } catch (e) {
+                        await OfflineVault.clearPointerOnly();
+                    }
+                    return false;
+                };
+
+                const confirmResumeCandidateSession = () => {
+                    const cand = sessionGuardModal.candidate;
+                    sessionGuardModal.show = false;
+                    if (!cand) return;
+                    const realRemaining = Math.max(1, Math.floor((cand.timerEndTimestamp - Date.now()) / 1000));
+                    activateCandidateSession(cand, realRemaining);
+                };
+
+                const switchToNewParticipant = async () => {
+                    const cand = sessionGuardModal.candidate;
+                    sessionGuardModal.show = false;
+                    sessionGuardModal.candidate = null;
+
+                    if (cand && cand.userSession && cand.userSession.id && cand.questions) {
+                        const ansMap = {};
+                        cand.questions.forEach(q => {
+                            if (isQuestionAnswered(q)) {
+                                ansMap[String(q.id)] = q.answer;
+                            }
+                        });
+                        if (Object.keys(ansMap).length > 0 && navigator.onLine) {
+                            runServer('apiAutoSave', cand.userSession.id, ansMap, cand.userSession.sessionToken, cand.userSession.subject).catch(() => {});
+                        }
+                    }
+
+                    await OfflineVault.clearPointerOnly();
+                    currentPhase.value = 'pre-exam';
+                    setupStep.value = 'login';
+                    loginData.value = { id: '', token: '' };
+                };
+
+                const parkCurrentSessionAndLogout = async () => {
+                    isParkingSession.value = true;
+                    try {
+                        saveStateToLocal();
+                        if (!isOffline.value && userSession.value && userSession.value.id) {
+                            const fullAnsMap = {};
+                            questions.value.forEach(q => {
+                                if (isQuestionAnswered(q)) {
+                                    fullAnsMap[String(q.id)] = q.answer;
+                                }
+                            });
+                            if (Object.keys(fullAnsMap).length > 0) {
+                                await runServer('apiAutoSave', userSession.value.id, fullAnsMap, userSession.value.sessionToken, userSession.value.subject).catch(() => {});
+                            }
+                        }
+                    } finally {
+                        isParkingSession.value = false;
+                        showSwitchUserModal.value = false;
+                        stopCamera();
+                        clearInterval(timerInterval);
+                        clearTimeout(autoSaveTimeout);
+                        autoSaveTimeout = null;
+                        await OfflineVault.clearPointerOnly();
+                        currentPhase.value = 'pre-exam';
+                        setupStep.value = 'login';
+                        loginData.value = { id: '', token: '' };
+                        agreedToRules.value = false;
+                        userSession.value = {};
+                        questions.value = [];
+                        dirtyDeltaMap.value = {};
+                        isDirty.value = false;
+                        showSystemNotice(
+                            "Sesi Berhasil Diparkir",
+                            "Seluruh jawaban telah diamankan di RAM Server dan slot Vault pribadi Anda. Perangkat kini siap digunakan oleh peserta lain.",
+                            "success"
+                        );
+                    }
+                };
+
+                
+                
+                
+                const applyExamInfoConfig = (cfgData) => {
+                    if (!cfgData) return;
+                    examInfo.value = { ...examInfo.value, ...cfgData };
+                    timer.value = (Number(cfgData.duration) || 60) * 60;
+                    isDarkMode.value = cfgData.defaultTheme === 'dark';
+                    if (Array.isArray(cfgData.workerUrls) && cfgData.workerUrls.length > 0) {
+                        workerPoolUrls.value = cfgData.workerUrls;
+                    }
+                    try {
+                        if (typeof localStorage !== 'undefined') {
+                            localStorage.setItem(LS_EXAMINFO_KEY, JSON.stringify(examInfo.value));
+                        }
+                    } catch (e) {}
+                };
+
+                const initApp = async () => {
+                    initStandaloneEndpoint();
+                    globalUiState.value = 'loading';
+                    loadingSubtitle.value = 'Memeriksa sesi Offline Vault...';
+
+                    if (await checkExistingSessionOnBoot()) {
+                        return;
+                    }
+
+                    globalErrorMessage.value = '';
+                    formError.value = '';
+                    stopCamera();
+                    clearInterval(timerInterval);
+                    clearTimeout(autoSaveTimeout);
+                    clearInterval(drainState.intervalId);
+                    drainState.active = false;
+                    currentPhase.value = 'pre-exam';
+                    setupStep.value = 'login';
+                    loginData.value = { id: '', token: '' };
+                    agreedToRules.value = false;
+                    cheatCount.value = 0;
+                    studentReflection.value = '';
+                    userSession.value = {};
+                    recoveredAnswers.value = [];
+                    prefetchedQuestions.value = [];
+                    questions.value = [];
+                    dirtyDeltaMap.value = {};
+                    isDirty.value = false;
+                    activeIndex.value = 0;
+
+                    if (isStandaloneMode.value) {
+                        try {
+                            const cachedInfoStr = typeof localStorage !== 'undefined' ? localStorage.getItem(LS_EXAMINFO_KEY) : null;
+                            if (cachedInfoStr) {
+                                applyExamInfoConfig(JSON.parse(cachedInfoStr));
+                            } else if (STANDALONE_GAS_CONFIG.DEFAULT_EXAM_INFO) {
+                                applyExamInfoConfig(STANDALONE_GAS_CONFIG.DEFAULT_EXAM_INFO);
+                            }
+                        } catch (e) {}
+                        globalUiState.value = 'ready';
+                        return;
+                    }
+
+                    try {
+                        const res = await runServer('apiGetExamInfo');
+                        if (res.success) {
+                            applyExamInfoConfig(res.data);
+                            globalUiState.value = 'ready';
+                        } else {
+                            throw new Error(res.message);
+                        }
+                    } catch (error) {
+                        globalErrorMessage.value = "Gagal memuat konfigurasi awal: " + error.message;
+                        globalUiState.value = 'error';
+                    }
+                };
+
+                
+                
+                
+                const allChecksPassed = computed(() => systemChecks.value.every(c => c.status === 'passed'));
+
+                const runRealSystemChecks = async () => {
+                    systemChecks.value[0].status = 'checking';
+                    await new Promise(r => setTimeout(r, 350));
+                    if (navigator.onLine) {
+                        systemChecks.value[0].desc = 'Terhubung ke Server (Stabil)';
+                        systemChecks.value[0].status = 'passed';
+                    } else {
+                        systemChecks.value[0].desc = 'Koneksi Offline (Periksa Jaringan)';
+                        systemChecks.value[0].status = 'failed';
+                        return;
+                    }
+
+                    systemChecks.value[1].status = 'checking';
+                    try {
+                        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                            const tempStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
+                            tempStream.getTracks().forEach(t => t.stop());
+                            systemChecks.value[1].desc = 'Kamera terdeteksi & diizinkan';
+                            systemChecks.value[1].status = 'passed';
+                        } else {
+                            systemChecks.value[1].desc = 'Mode Kompatibilitas Tanpa Kamera';
+                            systemChecks.value[1].status = 'passed';
+                        }
+                    } catch (camErr) {
+                        systemChecks.value[1].desc = 'Kamera tidak tersedia (Mode Fallback Aktif)';
+                        systemChecks.value[1].status = 'passed';
+                    }
+
+                    systemChecks.value[2].status = 'checking';
+                    if (prefetchedQuestions.value.length > 0) {
+                        systemChecks.value[2].desc = `${prefetchedQuestions.value.length} butir instrumen siap di memori lokal (0ms Start)`;
+                        systemChecks.value[2].status = 'passed';
+                    } else {
+                        try {
+                            const waveDelay = (hashStringSeed(userSession.value.id) % 1200) + 200;
+                            await new Promise(r => setTimeout(r, waveDelay));
+                            const qRes = await runServer('apiGetQuestions', userSession.value.id, userSession.value.sessionToken, userSession.value.subject);
+                            if (qRes && qRes.success && Array.isArray(qRes.data)) {
+                                prefetchedQuestions.value = qRes.data;
+                                systemChecks.value[2].desc = `${qRes.data.length} butir instrumen berhasil di-prefetch`;
+                            } else {
+                                systemChecks.value[2].desc = 'Engine Modern Terverifikasi';
+                            }
+                            systemChecks.value[2].status = 'passed';
+                        } catch (e) {
+                            systemChecks.value[2].desc = 'Siap memuat saat asesmen dimulai';
+                            systemChecks.value[2].status = 'passed';
+                        }
+                    }
+                };
+
+                const nextSetupStep = async () => {
+                    formError.value = '';
+                    if (setupStep.value === 'login') {
+                        if (isStandaloneMode.value && !primaryGasUrl.value && workerPoolUrls.value.length === 0) {
+                            showEndpointModal.value = true;
+                            formError.value = "Harap masukkan URL Endpoint Web App GAS (/exec) terlebih dahulu.";
+                            return;
+                        }
+                        isLoading.value = true;
+                        try {
+                            const res = await runServer('apiLogin', loginData.value.id, loginData.value.token);
+                            if (res.success) {
+                                if (res.data && res.data.examInfo) {
+                                    applyExamInfoConfig(res.data.examInfo);
+                                }
+                                if (res.data && res.data.autoSubmitted) {
+                                    userSession.value = res.data.user || { id: loginData.value.id, name: 'Peserta' };
+                                    examResult.value = res.data.examResult || { score: 0, timeUsed: 0, analytics: [] };
+                                    await OfflineVault.clearUserSlot(userSession.value.id, userSession.value.subject);
+                                    currentPhase.value = 'result';
+                                    showSystemNotice("Waktu Asesmen Berakhir", res.message || "Sesi asesmen sebelumnya telah habis dan jawaban terakhir Anda otomatis dikumpulkan.", "info");
+                                    return;
+                                }
+
+                                userSession.value = res.data.user;
+                                timer.value = res.data.timeRemaining;
+                                cheatCount.value = Number(res.data.cheatCount) || 0;
+
+                                const mergedMap = {};
+                                if (Array.isArray(res.data.recoveredSession)) {
+                                    res.data.recoveredSession.forEach(item => {
+                                        if (item && item.id !== undefined && item.id !== null && item.answer !== null && item.answer !== '') {
+                                            mergedMap[String(item.id)] = item.answer;
+                                        }
+                                    });
+                                }
+
+                                try {
+                                    const localSlotStr = await OfflineVault.loadByUser(userSession.value.id, userSession.value.subject);
+                                    if (localSlotStr) {
+                                        const localParsed = JSON.parse(decodeURIComponent(atob(localSlotStr)));
+                                        if (localParsed && Array.isArray(localParsed.questions)) {
+                                            localParsed.questions.forEach(lq => {
+                                                if (lq && lq.id !== undefined && isQuestionAnswered(lq)) {
+                                                    mergedMap[String(lq.id)] = lq.answer;
+                                                }
+                                            });
+                                        }
+                                    }
+                                } catch (e) {}
+
+                                recoveredAnswers.value = Object.keys(mergedMap).map(k => ({ id: k, answer: mergedMap[k] }));
+                                prefetchedQuestions.value = Array.isArray(res.data.prefetchedQuestions) ? res.data.prefetchedQuestions : [];
+                                if (Array.isArray(res.data.workerUrls) && res.data.workerUrls.length > 0) {
+                                    workerPoolUrls.value = res.data.workerUrls;
+                                }
+
+                                setupStep.value = 'check';
+                                runRealSystemChecks();
+                            } else {
+                                formError.value = res.message;
+                            }
+                        } catch (error) {
+                            formError.value = "ERROR SISTEM: " + (error.message || error);
+                        } finally {
+                            isLoading.value = false;
+                        }
+                    } else if (setupStep.value === 'check' && allChecksPassed.value) {
+                        setupStep.value = 'rules';
+                    }
+                };
+
+                const prepareAndShuffleQuestions = (rawQuestions) => {
+                    const recoveredMap = {};
+                    if (Array.isArray(recoveredAnswers.value)) {
+                        recoveredAnswers.value.forEach(item => {
+                            if (item && item.id !== undefined && item.id !== null) {
+                                recoveredMap[String(item.id)] = item.answer;
+                            }
+                        });
+                    }
+
+                    let fetchedQuestions = shuffleArray(rawQuestions, userSession.value.id + '|' + (userSession.value.subject || ''));
+                    fetchedQuestions.forEach(q => {
+                        if (q.image) {
+                            q.image = resolveCdnMediaUrl(q.image);
+                        }
+                        
+                        if ((q.type === 'multiple-choice' || q.type === 'complex-mc') && Array.isArray(q.options)) {
+                            q.options = shuffleArray(q.options, userSession.value.id + '|' + q.id);
+                        }
+                        if (recoveredMap[String(q.id)] !== undefined && recoveredMap[String(q.id)] !== null) {
+                            q.answer = recoveredMap[String(q.id)];
+                            q.visited = true;
+                        } else {
+                            if (q.type === 'complex-mc' && !Array.isArray(q.answer)) q.answer = [];
+                            if (q.type === 'true-false' && (!q.answer || typeof q.answer !== 'object')) q.answer = {};
+                        }
+                    });
+                    return fetchedQuestions;
+                };
+
+                const startExam = async () => {
+                    formError.value = '';
+                    isLoading.value = true;
+                    try {
+                        let rawQuestions = prefetchedQuestions.value;
+                        if (!Array.isArray(rawQuestions) || rawQuestions.length === 0) {
+                            const res = await runServer('apiGetQuestions', userSession.value.id, userSession.value.sessionToken, userSession.value.subject);
+                            if (res && res.success && Array.isArray(res.data)) {
+                                rawQuestions = res.data;
+                            } else {
+                                throw new Error((res && res.message) || "Paket soal kosong.");
+                            }
+                        }
+
+                        if (rawQuestions.length === 0) {
+                            formError.value = "Paket soal belum tersedia untuk mata pelajaran ini.";
+                            return;
+                        }
+
+                        questions.value = prepareAndShuffleQuestions(rawQuestions);
+                        currentPhase.value = 'exam';
+                        if (questions.value.length > 0) questions.value[0].visited = true;
+                        
+                        endTime = Date.now() + (timer.value * 1000);
+                        saveStateToLocal();
+
+                        await startCamera();
+                        startTimer();
+                    } catch (error) {
+                        formError.value = "Gagal menyiapkan soal: " + (error.message || error);
+                    } finally {
+                        isLoading.value = false;
+                    }
+                };
+
+                
+                
+                
+                const currentQuestion = computed(() => questions.value[activeIndex.value] || {});
+                
+                const answeredCount = computed(() => {
+                    return questions.value.filter(q => isQuestionAnswered(q)).length;
+                });
+                
+                const doubtCount = computed(() => questions.value.filter(q => q.isDoubt).length);
+                
+                const progressPercentage = computed(() => {
+                    if (questions.value.length === 0) return 0;
+                    return Math.round((answeredCount.value / questions.value.length) * 100);
+                });
+
+                const formattedTime = computed(() => {
+                    const m = Math.floor(timer.value / 60).toString().padStart(2, '0');
+                    const s = (timer.value % 60).toString().padStart(2, '0');
+                    return `${m}:${s}`;
+                });
+
+                const timerColorClass = computed(() => {
+                    if (timer.value > 600) return 'border-slate-200 text-slate-800 dark:border-slate-700 dark:text-white bg-slate-50 dark:bg-slate-800'; 
+                    if (timer.value > 120) return 'border-yellow-400 text-yellow-700 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-900/20 shadow-[0_0_15px_rgba(250,204,21,0.2)]'; 
+                    return 'border-red-500 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.3)]'; 
+                });
+
+                const fontSizeClass = computed(() => fontSize.value);
+                
+                const proseSizeClass = computed(() => {
+                    if (fontSize.value === 'text-sm') return 'prose-sm';
+                    if (fontSize.value === 'text-lg') return 'prose-lg';
+                    return 'prose-base';
+                });
+
+                const startTimer = () => {
+                    if (!endTime) {
+                        endTime = Date.now() + (timer.value * 1000);
+                    }
+
+                    clearInterval(timerInterval);
+                    timerInterval = setInterval(() => {
+                        const realRemainingTime = Math.floor((endTime - Date.now()) / 1000);        
+                        if (realRemainingTime > 0) {
+                            timer.value = realRemainingTime;
+                            if (timer.value % 10 === 0) {
+                                saveStateToLocal();
+                            }
+                        } else {
+                            timer.value = 0;
+                            clearInterval(timerInterval);            
+                            endTime = null;             
+                            startStaggeredDrainSubmit();
+                        }
+                    }, 1000);
+                };
+
+                const triggerAutoSave = async () => {
+                    saveStateToLocal();
+
+                    if (!isDirty.value || Object.keys(dirtyDeltaMap.value).length === 0) {
+                        saveStatus.value = 'saved';
+                        return;
+                    }
+
+                    if (isOffline.value) {
+                        saveStatus.value = 'error';
+                        return; 
+                    }
+
+                    if (isSyncing) return;
+                    isSyncing = true;
+                    saveStatus.value = 'saving';
+
+                    const deltaSnapshot = { ...dirtyDeltaMap.value };
+
+                    try {
+                        const res = await runServer(
+                            'apiAutoSave',
+                            userSession.value.id,
+                            deltaSnapshot,
+                            userSession.value.sessionToken,
+                            userSession.value.subject
+                        );
+                        if (res && res.success) {
+                            Object.keys(deltaSnapshot).forEach(qId => {
+                                if (JSON.stringify(dirtyDeltaMap.value[qId]) === JSON.stringify(deltaSnapshot[qId])) {
+                                    delete dirtyDeltaMap.value[qId];
+                                }
+                            });
+                            isDirty.value = Object.keys(dirtyDeltaMap.value).length > 0;
+                            lastSyncedAt.value = Date.now();
+                            saveStatus.value = isDirty.value ? 'queued' : 'saved';
+                            saveStateToLocal();
+                        } else {
+                            saveStatus.value = 'error';
+                        }
+                    } catch (e) {
+                        const errorMsg = e.message ? e.message.toLowerCase() : '';
+                        if (errorMsg.includes('network') || errorMsg.includes('fetch') || e.name === 'TypeError') {
+                            isOffline.value = true;
+                        }
+                        saveStatus.value = 'error';
+                    } finally {
+                        isSyncing = false;
+                    }
+                };
+
+                const scheduleJitteredSync = () => {
+                    if (autoSaveTimeout) return;
+                    const userJitter = (hashStringSeed(userSession.value.id) % 8000);
+                    const randomJitter = Math.floor(Math.random() * 7000);
+                    const totalDelayMs = 15000 + userJitter + randomJitter;
+
+                    autoSaveTimeout = setTimeout(async () => {
+                        autoSaveTimeout = null;
+                        await triggerAutoSave();
+                        if (isDirty.value && !isOffline.value) {
+                            scheduleJitteredSync();
+                        }
+                    }, totalDelayMs);
+                };
+
+                const markAnswered = (questionObj) => {
+                    const q = questionObj || currentQuestion.value;
+                    if (q && q.id !== undefined) {
+                        dirtyDeltaMap.value[String(q.id)] = q.answer;
+                        isDirty.value = true;
+                    }
+                    saveStatus.value = 'queued';
+                    saveStateToLocal();
+                    scheduleJitteredSync();
+                };
+
+                const goToQuestion = (index) => {
+                    if (index < 0 || index >= questions.value.length) return;
+                    activeIndex.value = index;
+                    questions.value[index].visited = true;
+                    saveStateToLocal();
+                    const container = document.getElementById('question-container');
+                    if (container) container.scrollTop = 0;
+                    if (window.innerWidth < 1024) showSidebar.value = false;
+                };
+
+                const nextQuestion = () => goToQuestion(activeIndex.value + 1);
+                const prevQuestion = () => goToQuestion(activeIndex.value - 1);
+
+                const getGridStatusClass = (q, idx) => {
+                    const isAns = isQuestionAnswered(q);
+                    if (q.isDoubt) return 'bg-yellow-400 text-yellow-900 shadow-inner';
+                    if (isAns) return 'bg-primary-600 text-white shadow-md';
+                    if (q.visited) return 'bg-white dark:bg-slate-800 text-red-500 dark:text-red-400 border-2 border-red-500 dark:border-red-500/50 shadow-sm';
+                    return 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 border-2 border-slate-200 dark:border-slate-600';
+                };
+
+                const openReportModal = () => {
+                    reportNote.value = '';
+                    showReportModal.value = true;
+                };
+
+                const submitQuestionReport = async () => {
+                    if (!reportNote.value.trim()) return;
+                    isReporting.value = true;
+                    try {
+                        await runServer('apiReportQuestion', userSession.value.id, currentQuestion.value.id, reportNote.value.trim(), userSession.value.sessionToken, userSession.value.subject);
+                        showReportModal.value = false;
+                        showSystemNotice("Laporan Terkirim", "Terima kasih. Laporan Anda mengenai soal ini telah diteruskan ke pengawas.", "success");
+                    } catch (e) {
+                        showReportModal.value = false;
+                        showSystemNotice("Gagal Mengirim Laporan", "Laporan gagal dikirim karena gangguan jaringan, silakan lanjutkan mengerjakan soal.", "error");
+                    } finally {
+                        isReporting.value = false;
+                    }
+                };
+
+                const confirmSubmit = () => {
+                    if (isOffline.value) {
+                        showSystemNotice(
+                            "Pengumpulan Diblokir (Offline)",
+                            "Sistem mencegah pengumpulan jawaban saat koneksi terputus agar nilai Anda tidak hilang.\n\nHarap tunggu hingga koneksi internet kembali (banner merah hilang). Semua jawaban Anda sudah aman di Offline Vault perangkat ini.",
+                            "error"
+                        );
+                        return;
+                    }
+                    showSubmitModal.value = true;
+                };
+
+                const startStaggeredDrainSubmit = () => {
+                    saveStateToLocal();
+                    stopCamera();
+                    clearTimeout(autoSaveTimeout);
+                    autoSaveTimeout = null;
+
+                    if (isOffline.value) {
+                        showSystemNotice(
+                            "Waktu Habis (Mode Offline Vault)",
+                            "Jawaban Anda telah dikunci dan diamankan di Vault Perangkat. Sistem akan otomatis mengumpulkannya begitu internet Anda menyala kembali.\n\nJANGAN TUTUP ATAU REFRESH HALAMAN INI!",
+                            "error"
+                        );
+                        saveStatus.value = 'error';
+                        return;
+                    }
+
+                    const slotSec = (hashStringSeed(userSession.value.id) % 14) + Math.floor(Math.random() * 5) + 1;
+                    drainState.totalSec = slotSec;
+                    drainState.remainingSec = slotSec;
+                    drainState.active = true;
+
+                    clearInterval(drainState.intervalId);
+                    drainState.intervalId = setInterval(() => {
+                        if (drainState.remainingSec > 1) {
+                            drainState.remainingSec--;
+                        } else {
+                            clearInterval(drainState.intervalId);
+                            drainState.active = false;
+                            finishExam(true);
+                        }
+                    }, 1000);
+                };
+
+                const executeImmediateDrain = () => {
+                    clearInterval(drainState.intervalId);
+                    drainState.active = false;
+                    finishExam(true);
+                };
+
+                const finishExam = async (isForce = false) => {
+                    if (isOffline.value) {
+                        if (isForce) {
+                            showSystemNotice(
+                                "Waktu Habis (Mode Offline)",
+                                "Jawaban Anda telah dikunci dan diamankan di perangkat. Sistem akan otomatis mengumpulkannya saat internet Anda menyala kembali.\n\nJANGAN TUTUP ATAU REFRESH HALAMAN INI!",
+                                "error"
+                            );
+                            saveStatus.value = 'error'; 
+                            return; 
+                        } else {
+                            showSystemNotice("Sistem Offline", "Harap tunggu hingga koneksi internet kembali terhubung.", "error");
+                            return;
+                        }
+                    }
+
+                    formError.value = '';
+                    isSubmitting.value = true;
+                    loadingSubtitle.value = 'Mengenkripsi lembar jawaban & mengolah capaian KKTP...';
+                    globalUiState.value = 'loading'; 
+                    clearInterval(timerInterval);
+                    clearTimeout(autoSaveTimeout);
+                    autoSaveTimeout = null;
+                    stopCamera();
+    
+                    const payload = questions.value.map(q => ({ id: q.id, answer: q.answer }));
+    
+                    try {
+                        const res = await runServer(
+                            'apiSubmitExam',
+                            userSession.value.id,
+                            payload,
+                            timer.value,
+                            isForce,
+                            userSession.value.sessionToken,
+                            studentReflection.value
+                        );
+
+                        if (res.success) {
+                            examResult.value = res.data;
+                            showSubmitModal.value = false;
+                            isDirty.value = false;
+                            dirtyDeltaMap.value = {};
+                            await OfflineVault.clearUserSlot(userSession.value.id, userSession.value.subject);
+                            
+                            endTime = null; 
+                            globalUiState.value = 'ready'; 
+                            currentPhase.value = 'result'; 
+                        } else {
+                            throw new Error(res.message || "Gagal menyimpan asesmen di server.");
+                        }
+
+                    } catch (e) {
+                        const errorMsg = e.message ? e.message.toLowerCase() : '';
+        
+                        if (errorMsg.includes('network') || errorMsg.includes('fetch') || e.name === 'TypeError') {
+                            isOffline.value = true;
+                            globalUiState.value = 'ready';             
+                            showSystemNotice(
+                                "Gagal Mengirim Jawaban",
+                                "Sistem mendeteksi tidak ada akses internet ke server.\n\nJawaban Anda TELAH DIAMANKAN di Offline Vault perangkat. Harap periksa koneksi internet Anda, lalu coba kumpulkan kembali.",
+                                "error"
+                            );
+                            if (!isForce) startTimer();             
+                        } else {
+                            formError.value = e.message || "Kesalahan fatal saat sinkronisasi akhir.";
+                            globalUiState.value = 'ready'; 
+                            showSystemNotice("Kesalahan Sistem", e.message || "Kesalahan fatal saat menyimpan jawaban.", "error");
+                            if (!isForce) startTimer(); 
+                        }        
+                    } finally {
+                        isSubmitting.value = false;
+                    }
+                };
+
+                
+                
+                
+                const normalizeLatexString = (rawLatex) => {
+                    if (!rawLatex || typeof rawLatex !== 'string') return '';
+                    let s = rawLatex.trim();
+                    const cmdRegex = /\\\\(frac|dfrac|tfrac|cfrac|sqrt|ce|pu|left|right|times|div|cdot|pm|mp|leq|geq|neq|approx|equiv|sim|propto|infty|partial|nabla|forall|exists|in|notin|subset|subseteq|cup|cap|emptyset|mathbb|mathcal|mathfrak|mathrm|mathbf|mathit|mathsf|mathtt|text|textbf|textit|textrm|overline|underline|widehat|widetilde|vec|bar|dot|ddot|hat|tilde|binom|sum|prod|coprod|int|oint|iint|iiint|lim|sin|cos|tan|cot|sec|csc|arcsin|arccos|arctan|sinh|cosh|tanh|log|ln|exp|det|gcd|lcm|min|max|sup|inf|alpha|beta|gamma|delta|epsilon|varepsilon|zeta|eta|theta|vartheta|iota|kappa|lambda|mu|nu|xi|pi|rho|sigma|tau|upsilon|phi|varphi|chi|psi|omega|Gamma|Delta|Theta|Lambda|Xi|Pi|Sigma|Upsilon|Phi|Psi|Omega|rightarrow|leftarrow|leftrightarrow|Rightarrow|Leftarrow|Leftrightarrow|mapsto|to|uparrow|downarrow|ldots|cdots|vdots|ddots|quad|qquad|begin|end|hline|not|cancel|bcancel|xcancel|boxed|color|textcolor|overbrace|underbrace|overset|underset|substack|angle|triangle|perp|parallel|cong|circ|degree)\b/g;
+                    s = s.replace(cmdRegex, '\\$1');
+                    s = s.replace(/\\\\(\{|\}|\(|\)|\[|\]|%|&|#)/g, '\\$1');
+                    return s;
+                };
+
+                const renderLatexToHtml = (latexExpr, displayMode) => {
+                    const cleaned = normalizeLatexString(latexExpr);
+                    if (!cleaned) return '';
+                    if (window.katex && typeof window.katex.renderToString === 'function') {
+                        try {
+                            return window.katex.renderToString(cleaned, {
+                                displayMode: Boolean(displayMode),
+                                throwOnError: false,
+                                strict: false,
+                                trust: false,
+                                errorColor: '#ef4444'
+                            });
+                        } catch (e) {
+                            return '<code class="text-red-500 font-mono text-xs">' + cleaned + '</code>';
+                        }
+                    }
+                    return (displayMode ? '$$' + cleaned + '$$' : '$' + cleaned + '$');
+                };
+
+                const renderEnhancedContent = (content, inlineMode = false) => {
+                    if (!content || typeof content !== 'string') return '';
+
+                    let safe = content.replace(/\r\n?/g, '\n');
+                    if (!safe.includes('\n') && safe.includes('\\n')) {
+                        safe = safe.replace(/\\n/g, '\n');
+                    }
+
+                    safe = safe.replace(/\\\\(\[|\]|\(|\))/g, '\\$1');
+                    safe = normalizeLatexString(safe);
+
+                    const mathBlocks = [];
+                    const pushMathBlock = (expr, display) => {
+                        const idx = mathBlocks.length;
+                        mathBlocks.push({ expr: expr, display: Boolean(display) });
+                        return '@@KATEXBLOCK' + idx + 'X@@';
+                    };
+
+                    safe = safe.replace(/\$\$([\s\S]+?)\$\$/g, (m, inner) => pushMathBlock(inner, true));
+                    safe = safe.replace(/\\\[([\s\S]+?)\\\]/g, (m, inner) => pushMathBlock(inner, true));
+                    safe = safe.replace(/(?:\$\s*)?(\\begin\{([a-zA-Z]+\*?)\}[\s\S]+?\\end\{\2\})(?:\s*\$)?/g, (m, envBlock) => pushMathBlock(envBlock, true));
+                    safe = safe.replace(/\\\(([\s\S]+?)\\\)/g, (m, inner) => pushMathBlock(inner, false));
+                    safe = safe.replace(/\$([^$\n]+?)\$/g, (m, inner) => {
+                        const t = inner.trim();
+                        if (!t) return m;
+                        if (/^\d+([.,]\d+)?\s+[a-zA-Z]{3,}/.test(t)) return m;
+                        return pushMathBlock(t, false);
+                    });
+                    safe = safe.replace(/\\(ce|pu)\{([^{}]*(?:\{[^{}]*\}[^{}]*)*)\}/g, (m) => pushMathBlock(m, false));
+                    safe = safe.replace(/([^\n])\n(\s*\|[^\n]+\|\s*\n\s*\|[\s\-:|]+\|)/g, '$1\n\n$2');
+
+                    if (window.marked && typeof window.marked.parse === 'function') {
+                        safe = window.marked.parse(safe, {
+                            gfm: true,
+                            breaks: true
+                        });
+                    }
+
+                    if (inlineMode) {
+                        const trimmedHtml = safe.trim();
+                        const pCount = (trimmedHtml.match(/<p[>\s]/gi) || []).length;
+                        if (pCount === 1 && /^<p>[\s\S]*<\/p>$/i.test(trimmedHtml)) {
+                            safe = trimmedHtml.replace(/^<p>([\s\S]*)<\/p>$/i, '$1');
+                        }
+                    }
+
+                    if (window.DOMPurify) {
+                        safe = window.DOMPurify.sanitize(safe, {
+                            ADD_TAGS: ['audio', 'source', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'blockquote', 'pre', 'code', 'hr', 'del', 'sup', 'sub'],
+                            ADD_ATTR: ['dir', 'target', 'class', 'style', 'controls', 'src', 'type', 'preload', 'colspan', 'rowspan', 'align']
+                        });
+                    }
+
+                    safe = safe.replace(/@@KATEXBLOCK(\d+)X@@/g, (match, i) => {
+                        const block = mathBlocks[Number(i)];
+                        if (!block) return match;
+                        return renderLatexToHtml(block.expr, block.display);
+                    });
+
+                    return safe;
+                };
+
+                const startCamera = async () => {
+                    if (!navigator || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                        return;
+                    }
+
+                    isRequestingCamera = true;
+                    try {
+                        const stream = await navigator.mediaDevices.getUserMedia({ 
+                            video: { facingMode: "user" },
+                            audio: false
+                        });
+                        const videoRef = document.getElementById('webcam-feed');
+                        if (videoRef) {
+                            if ("srcObject" in videoRef) {
+                                videoRef.srcObject = stream;
+                            } else {
+                                videoRef.src = window.URL.createObjectURL(stream);
+                            }
+                            videoRef.play().catch(() => {});
+                        }
+                        mediaStream.value = stream;
+                    } catch (err) {
+                        console.warn("Gagal mengakses kamera:", err.message);
+                    } finally {
+                        setTimeout(() => { isRequestingCamera = false; }, 600);
+                    }
+                };
+
+                const stopCamera = () => {
+                    if (mediaStream.value) {
+                        mediaStream.value.getTracks().forEach(track => track.stop());
+                        mediaStream.value = null;
+                    }
+                };
+
+                watch(isDarkMode, (isDark) => {
+                    if (isDark) document.documentElement.classList.add('dark');
+                    else document.documentElement.classList.remove('dark');
+                });
+
+                watch(showSidebar, (isOpen) => {
+                   if (isOpen && window.innerWidth < 1024) {
+                       document.body.classList.add('overflow-hidden-mobile');
+                   } else {
+                       document.body.classList.remove('overflow-hidden-mobile');
+                   }
+                });
+
+                const handleOnline = () => {
+                    isOffline.value = false;
+                    if (currentPhase.value === 'exam') {
+                        if (timer.value <= 0) {
+                            startStaggeredDrainSubmit();
+                        } else if (isDirty.value) {
+                            scheduleJitteredSync();
+                        }
+                    }
+                };
+
+                const handleOffline = () => {
+                    isOffline.value = true;
+                    saveStatus.value = 'error';
+                };
+                
+                onMounted(() => {
+                    window.addEventListener('offline', handleOffline);
+                    window.addEventListener('online', handleOnline);
+                    window.addEventListener('beforeunload', handleBeforeUnload);
+
+                    isOffline.value = !navigator.onLine;
+                    
+                    document.addEventListener('visibilitychange', handleVisibilityChange);
+                    window.addEventListener('blur', handleWindowBlur);
+                    document.addEventListener('contextmenu', preventDefaultActions);
+                    document.addEventListener('copy', preventDefaultActions);       
+                    document.addEventListener('paste', preventDefaultActions);       
+                    document.addEventListener('selectstart', preventDefaultActions); 
+                    window.addEventListener('keydown', handleKeyDown);
+                    
+                    initApp();
+                });
+
+                onUnmounted(() => {
+                    window.removeEventListener('offline', handleOffline);
+                    window.removeEventListener('online', handleOnline);
+                    window.removeEventListener('beforeunload', handleBeforeUnload);
+                    document.removeEventListener('visibilitychange', handleVisibilityChange);
+                    window.removeEventListener('blur', handleWindowBlur);
+                    document.removeEventListener('contextmenu', preventDefaultActions);
+                    document.removeEventListener('copy', preventDefaultActions);
+                    document.removeEventListener('paste', preventDefaultActions);
+                    document.removeEventListener('selectstart', preventDefaultActions);
+                    window.removeEventListener('keydown', handleKeyDown);
+                    stopCamera();
+                });
+
+                return {
+                    isOffline,
+                    isStandaloneMode, hasEmbeddedPrimaryUrl, primaryGasUrl, customEndpointInput, showEndpointModal, saveCustomEndpoint,
+                    resolveCdnMediaUrl, handleImageErrorFallback,
+                    formatAssessmentModeLabel, formatQuestionTypeBadge,
+                    isComplexOptionSelected, toggleComplexOption, getTrueFalseStatement, setTrueFalseStatement,
+                    kktpSummary, getStatBadgeClass, studentReflection,
+                    retryStatusText, loadingSubtitle, syncStatusTooltip,
+                    sessionGuardModal, confirmResumeCandidateSession, switchToNewParticipant,
+                    showSwitchUserModal, isParkingSession, parkCurrentSessionAndLogout,
+                    drainState, drainProgressPct, executeImmediateDrain,
+                    noticeModal, closeNoticeModal,
+                    globalUiState, globalErrorMessage, formError, initApp,
+                    currentPhase, setupStep, isDarkMode, fontSize, fontSizeClass, isLoading, isSubmitting, examResult, cheatCount, saveStatus,
+                    examInfo, proseSizeClass, loginData, systemChecks, allChecksPassed, agreedToRules, nextSetupStep,
+                    questions, prefetchedQuestions, activeIndex, currentQuestion, answeredCount, doubtCount, progressPercentage,
+                    timer, formattedTime, timerColorClass, startExam, userSession, recoveredAnswers,
+                    showSidebar, showTools, showSubmitModal, showWarning, warningReason,
+                    showReportModal, reportNote, isReporting, openReportModal, submitQuestionReport,
+                    markAnswered, saveStateToLocal, goToQuestion, nextQuestion, prevQuestion, confirmSubmit, finishExam, renderEnhancedContent,
+                    getGridStatusClass
+                };
+            }
+        });
+
+        const katexOptions = {
+            delimiters: [
+                {left: "$$", right: "$$", display: true},
+                {left: "\\[", right: "\\]", display: true},
+                {left: "$", right: "$", display: false},
+                {left: "\\(", right: "\\)", display: false}
+            ],
+            throwOnError: false,
+            errorColor: '#ef4444'
+        };
+
+        app.directive('math', {
+            mounted(el) {
+                if (window.renderMathInElement) window.renderMathInElement(el, katexOptions);
+            },
+            updated(el) {
+                if (window.renderMathInElement) window.renderMathInElement(el, katexOptions);
+            }
+        });
+
+        app.mount('#app');
+    </script>
+</body>
+</html>
